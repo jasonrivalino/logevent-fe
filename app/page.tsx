@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { FaSearch } from 'react-icons/fa';
 
 // Home component (unchanged)
 
@@ -15,6 +16,9 @@ export default function Home() {
         <Introduction />
         <ListPlace />
         <ContactBox />
+        <footer className="w-full bg-gray-200 text-gray-700 py-4 text-center font-sofia"> {/* Changed background color to bg-gray-200 and text color to text-gray-700 */}
+          <p>&copy; 2024 Eventee. All rights reserved.</p>
+        </footer>
       </main>
     </div>
   );
@@ -31,14 +35,15 @@ function Navbar() {
 
   return (
     <nav className="fixed top-0 left-0 w-full bg-gray-400 shadow-md z-50"> {/* Added z-50 for z-index */}
-      <div className="container mx-auto p-4 flex justify-between items-center">
-        <Link href="/" className="text-xl font-bold">eventee</Link>
-        <ul className="flex space-x-4">
-          <li><Link href="#home" className="hover:underline">Home</Link></li>
-          <li><Link href="#about" className="hover:underline">About</Link></li>
-          <li><Link href="#services" className="hover:underline">Services</Link></li>
-          <li><Link href="#contact" className="hover:underline">Contact</Link></li>
-          <li><button onClick={handleLoginClick}>Login</button></li>
+      <div className="container mx-auto px-10 py-4 flex justify-between items-center">
+        {/* Change this with my logo image */}
+        <Image src="/Image/logo.png" alt="Eventee Logo" width={120} height={80} />
+        <ul className="flex space-x-8">
+          <li><Link href="#home" className="hover:underline font-sofia">Home</Link></li>
+          <li><Link href="#about" className="hover:underline font-sofia">About</Link></li>
+          <li><Link href="#services" className="hover:underline font-sofia">Services</Link></li>
+          <li><Link href="#contact" className="hover:underline font-sofia">Contact</Link></li>
+          <li><button onClick={handleLoginClick} className='font-sofia mr-3'>Login</button></li>
         </ul>
       </div>
     </nav>
@@ -49,32 +54,35 @@ function Navbar() {
 
 function Introduction() {
   return (
-    <section className="text-center p-6 mt-16 md:mt-0"> {/* Added mt-16 md:mt-0 for margin-top */}
-      <h1 className="mt-10 mb-10 text-4xl text-gray-700 font-bold">Welcome to Eventee</h1>
-      
-      {/* Image Wrapper */}
-      <div className="relative w-full max-w-4xl mb-10">
-        {/* Image Component */}
-        <Image
-          src="/Image/landingPage.png"
-          alt="Landing Page Image"
-          width={1000}
-          height={300}
-          className="rounded-lg"
-        />
+    <section className="px-12 py-8 w-full">
+      <div className="flex flex-col items-left">
+        <h1 className="mb-10 text-4xl text-pink-900 font-bold font-sofia">Welcome to Eventee</h1>
+        
+        {/* Image Wrapper */}
+        <div className="relative w-full max-w-full mb-10"> {/* Adjusted max-width to 6xl for a larger image */}
+          {/* Image Component */}
+          <Image
+            src="/Image/landingPage.png"
+            alt="Landing Page Image"
+            width={1600}  // Increased width for a larger display
+            height={1000} // Increased height to maintain aspect ratio
+            className="rounded-3xl" // More rounded corners
+          />
 
-        {/* Purple Overlay */}
-        <div className="absolute inset-0 bg-pink-900 opacity-50 rounded-lg"></div>
+          {/* Purple Overlay */}
+          <div className="absolute inset-0 bg-pink-900 opacity-50 rounded-3xl"></div>
 
-        {/* Text Overlay */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-4">
-          <h2 className="text-3xl font-bold">Wujudkan Event Impianmu</h2>
-          <p className="mt-2 text-lg">Mencari vendor untuk eventmu dengan praktis</p>
+          {/* Text Overlay */}
+          <div className="absolute inset-0 flex flex-col items-start justify-start text-white p-12"> {/* Adjusted alignment to top-left */}
+            <h2 className="text-6xl font-bold font-poppins">Wujudkan Event Impianmu</h2>
+            <p className="mt-6 text-2xl font-sofia">Mencari vendor untuk eventmu dengan praktis</p>
+          </div>
         </div>
       </div>
 
-      {/* Search Bar */}
-      <SearchBar />
+      <div className="flex flex-col items-center">
+        <SearchBar />
+      </div>
     </section>
   );
 }
@@ -89,20 +97,20 @@ function SearchBar() {
   };
 
   return (
-    <form onSubmit={handleSearch} className="w-full max-w-4xl mb-10">
+    <form onSubmit={handleSearch} className="w-full max-w-md mb-10"> {/* Decreased max width */}
       <div className="flex w-full">
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search for vendors, events, or services..."
-          className="w-full p-3 border rounded-l-lg text-gray-700"
+          className="w-full p-4 h-14 border rounded-l-lg text-gray-700 font-sofia" // Increased padding and height
         />
         <button
           type="submit"
-          className="p-3 bg-blue-500 text-white rounded-r-lg hover:bg-blue-600"
+          className="flex items-center justify-center p-4 h-14 bg-pink-900 text-white rounded-r-lg hover:bg-pink-800" // Changed color to bg-pink-900 and added hover effect
         >
-          Search
+          <FaSearch className="text-xl" /> {/* Search icon with increased size */}
         </button>
       </div>
     </form>
@@ -172,10 +180,10 @@ function ListPlace() {
 
   return (
     <section className="p-6 mt-8">
-      <h2 className="text-3xl text-gray-700 font-bold mb-6 text-center">Discover Amazing Places</h2>
+      <h2 className="text-3xl text-gray-700 font-bold mb-10 text-center font-sofia">Discover Amazing Places</h2>
       <div className="flex flex-wrap justify-center gap-6">
         {places.map((place, index) => (
-          <div key={index} className="w-80 bg-white shadow-lg rounded-lg overflow-hidden">
+          <div key={index} className="w-80 bg-white shadow-lg rounded-3xl overflow-hidden">
             <Image
               src={place.image}
               alt={`${place.name} Image`}
@@ -183,8 +191,8 @@ function ListPlace() {
               height={200}
               className="object-cover"
             />
-            <div className="p-4">
-              <h3 className="text-xl text-gray-950 font-bold">{place.name}</h3>
+            <div className="p-4 font-sofia">
+              <h3 className="text-xl text-pink-900 font-bold">{place.name}</h3>
               <p className="text-gray-700">{place.type}</p>
               <p className="text-gray-500">Rating: {place.rate}</p>
               <p className="text-gray-500">{place.location}</p>
@@ -204,7 +212,7 @@ export function ContactBox() {
         <div className="text-center mb-6">
           <div className="flex flex-col items-center">
             <div className="text-4xl font-bold">eventee</div>
-            <p className="mt-2">Jangan khawatir pusing nyari vendor, eventee solusinya</p>
+            <p className="mt-2 mb-4 font-sofia">Jangan khawatir pusing nyari vendor, eventee solusinya</p>
           </div>
         </div>
         
