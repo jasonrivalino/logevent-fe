@@ -83,8 +83,8 @@ function ContactBoxLogin() {
   return (
     <footer className="w-full bg-pink-900 text-white py-4">
       <div className="container mx-auto flex flex-col items-center text-center">
-        <div className="text-4xl font-bold">eventee</div>
-        <p className="mt-2 font-sofia">Jangan khawatir pusing nyari vendor, eventee solusinya</p>
+        <div className="text-4xl font-bold">logevent</div>
+        <p className="mt-2 font-sofia">Jangan khawatir pusing nyari vendor, Logevent solusinya</p>
       </div>
     </footer>
   );
