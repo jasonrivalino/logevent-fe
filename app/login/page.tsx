@@ -24,13 +24,13 @@ export default function Login() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="flex-grow flex flex-col justify-center items-center p-4 md:p-6 font-sofia">
+      <div className="flex-grow flex flex-col justify-center items-center p-8 font-sofia">
         <form 
           onSubmit={handleSubmit} 
-          className="flex flex-col w-full max-w-3xl md:max-w-md p-8 shadow-lg rounded-lg bg-white"
+          className="flex flex-col w-full max-w-3xl md:max-w-md p-6 md:p-8 shadow-lg rounded-lg bg-white"
         >
-          <h2 className="mb-6 text-2xl md:text-3xl text-center text-gray-800">Sign In Menu</h2>
-          <p className="mb-2 text-gray-800">Username</p>
+          <h2 className="mb-5 md:mb-6 text-2xl md:text-3xl text-center text-gray-800">Sign In Menu</h2>
+          <p className="mb-1 md:mb-2 text-gray-800">Username</p>
           <input
             type="text"
             id="username"
@@ -38,9 +38,9 @@ export default function Login() {
             placeholder="Username"
             onChange={(e) => setUsername(e.target.value)}
             required
-            className="mb-4 p-2 rounded border border-gray-300 text-black"
+            className="mb-2 md:mb-4 p-1 md:p-2 rounded border border-gray-300 text-black"
           />
-          <label htmlFor="password" className="mb-2 text-gray-800">Password</label>
+          <label htmlFor="password" className="mb-1 md:mb-2 text-gray-800">Password</label>
           <input
             type="password"
             id="password"
@@ -48,9 +48,9 @@ export default function Login() {
             placeholder="Password"
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="mb-8 p-2 rounded border border-gray-300 text-black"
+            className="mb-8 p-1 md:p-2 rounded border border-gray-300 text-black"
           />
-          <button type="submit" className="mb-4 p-2 rounded bg-blue-500 text-white">Login</button>
+          <button type="submit" className="mb-4 md:mb-6 p-1 md:p-2 rounded bg-blue-500 text-white">Login</button>
           <p className="text-center text-gray-800 mb-2">or login with</p>
           <div className="flex justify-center gap-2">
             <button 
@@ -84,7 +84,7 @@ function ContactBoxLogin() {
     <footer className="w-full bg-pink-900 text-white py-4">
       <div className="container mx-auto flex flex-col items-center text-center">
         <div className="text-4xl font-bold">logevent</div>
-        <p className="mt-2 font-sofia">Jangan khawatir pusing nyari vendor, Logevent solusinya</p>
+        <p className="mt-6 md:mt-2 font-sofia">Jangan khawatir pusing nyari vendor, Logevent solusinya</p>
       </div>
     </footer>
   );

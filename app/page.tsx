@@ -10,9 +10,11 @@ export default function Home() {
   return (
     <div>
       <Navbar />
-      <main className="flex flex-col items-center justify-center min-h-screen py-2 md:pt-20">
+      <main className="flex flex-col items-center justify-center min-h-screen">
         <Introduction />
-        <DescriptionSection />
+        <AboutUsSection />
+        <LayananSection />
+        <KeunggulanSection />
         <ListPlace />
         <ContactBox />
         <footer className="w-full bg-gray-200 text-gray-700 py-4 text-center font-sofia">
@@ -25,44 +27,98 @@ export default function Home() {
 
 function Navbar() {
   const router = useRouter();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLoginClick = () => {
     router.push('/login');
   };
 
-  const handleScrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
-    e.preventDefault(); // Prevent the default anchor behavior
+  const handleScrollToSection1 = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+    e.preventDefault();
     const element = document.getElementById(sectionId);
     if (element) {
-      const offsetTop = element.getBoundingClientRect().top + window.scrollY - 60; // Adjust -100 based on the navbar height
+      const offsetTop = element.getBoundingClientRect().top + window.scrollY - 60;
       window.scrollTo({
         top: offsetTop,
-        behavior: "smooth",
+        behavior: 'smooth',
+      });
+    }
+  };
+
+  const handleScrollToSection2 = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+    e.preventDefault();
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const offsetTop = element.getBoundingClientRect().top + window.scrollY - 120;
+      window.scrollTo({
+        top: offsetTop,
+        behavior: 'smooth',
       });
     }
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full bg-gray-400 shadow-md z-50">
+    <nav className="fixed top-0 left-0 w-full bg-pink-900 shadow-md z-50">
       <div className="container mx-auto px-12 py-4 flex justify-between items-center">
-        <Image src="/Image/logo.png" alt="Logevent Logo" width={45} height={45} />
-        <ul className="flex space-x-8">
-          <li>
-            <Link href="#home" className="hover:underline font-sofia">Home</Link>
-          </li>
-          <li>
-            <a href="#services" onClick={(e) => handleScrollToSection(e, "services")} className="hover:underline font-sofia">
-              Produk & Layanan
-            </a>
-          </li>
-          <li>
-            <Link href="#contact" className="hover:underline font-sofia">QnA</Link>
-          </li>
-          <li>
-            <button onClick={handleLoginClick} className='font-sofia mr-3'>Login</button>
-          </li>
-        </ul>
+        <Image src="/Image/logo.png" alt="Logevent Logo" width={40} height={30} className='-ml-6 md:-ml-0 cursor-pointer' onClick={() => router.push('/')} />
+        <div className="hidden md:flex justify-center space-x-8">
+          <ul className="flex justify-center space-x-8">
+            <li>
+              <a href="#aboutUs" onClick={(e) => handleScrollToSection1(e, 'aboutUs')} className="hover:underline font-sofia">
+                About Us
+              </a>
+            </li>
+            <li>
+              <a href="#services" onClick={(e) => handleScrollToSection2(e, 'services')} className="hover:underline font-sofia">
+                Produk & Layanan
+              </a>
+            </li>
+            <li>
+              <Link href="#contact" className="hover:underline font-sofia">
+                QnA
+              </Link>
+            </li>
+            <li>
+              <button onClick={handleLoginClick} className='font-sofia'>
+                Login
+              </button>
+            </li>
+          </ul>
+        </div>
+        <div className="md:hidden">
+          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 20 20" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" />
+            </svg>
+          </button>
+        </div>
       </div>
+      {isMenuOpen && (
+        <div className="md:hidden bg-pink-900">
+          <ul className="flex flex-col items-center space-y-4 py-4 -ml-5">
+            <li>
+              <a href="#aboutUs" onClick={(e) => {handleScrollToSection1(e, 'aboutUs'); setIsMenuOpen(false);}} className="hover:underline font-sofia">
+                About Us
+              </a>
+            </li>
+            <li>
+              <a href="#services" onClick={(e) => {handleScrollToSection2(e, 'services'); setIsMenuOpen(false);}} className="hover:underline font-sofia">
+                Produk & Layanan
+              </a>
+            </li>
+            <li>
+              <Link href="#contact" className="hover:underline font-sofia" onClick={() => setIsMenuOpen(false)}>
+                QnA
+              </Link>
+            </li>
+            <li>
+              <button onClick={() => {handleLoginClick(); setIsMenuOpen(false);}} className='font-sofia'>
+                Login
+              </button>
+            </li>
+          </ul>
+        </div>
+      )}
     </nav>
   );
 }
@@ -99,78 +155,184 @@ function Introduction() {
   }, [currentImageIndex]);
 
   return (
-    <section className="px-12 py-8 w-full">
-      <div className="flex flex-col items-left">
-        <h1 className="mt-1 mb-10 text-4xl text-pink-900 font-bold font-sofia">Welcome to Logevent</h1>
-        
-        <div className="relative w-full overflow-hidden rounded-3xl mb-12" style={{ maxWidth: '1600px', maxHeight: '350px' }}>
-          <div
-            className="flex transition-transform duration-1000 ease-in-out"
-            style={{ transform: `translateX(${-currentImageIndex * 1600}px)` }}
-          >
-            {images.map((image, index) => (
-              <div key={index} className="flex-shrink-0 w-full relative" style={{ width: '1600px', height: '350px' }}>
-                <Image
-                  src={image}
-                  alt={`Landing Page Image ${index + 1}`}
-                  layout="fill"
-                  objectFit="cover"
-                  objectPosition="center"
-                  className="rounded-3xl"
-                />
-              </div>
-            ))}
+    <section className="relative w-full h-screen overflow-hidden">
+      <div className="absolute inset-0 flex transition-transform duration-1000 ease-in-out" style={{ transform: `translateX(${-currentImageIndex * 100}%)` }}>
+        {images.map((image, index) => (
+          <div key={index} className="w-full flex-shrink-0 relative">
+            <Image
+              src={image}
+              alt={`Landing Page Image ${index + 1}`}
+              fill={true}
+              style={{ objectFit: 'cover', objectPosition: 'center' }}
+            />
           </div>
-          <div className="absolute inset-0 bg-pink-900 opacity-50 rounded-3xl"></div>
-          <div className="absolute inset-0 flex flex-col items-start justify-start text-white p-12">
-            <h1 className="text-3xl md:text-6xl font-bold font-poppins">Wujudkan Event Impianmu</h1>
-            <p className="mt-3 md:mt-6 text-base md:text-2xl font-sofia">Mencari vendor untuk eventmu dengan praktis</p>
-            <div className="mt-20">
-              <button className="px-6 py-3 bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700">Pesan Event Organizer</button>
-              <button className="px-6 py-3 ml-6 bg-white text-pink-600 font-sofia font-bold rounded-lg hover:bg-pink-300">Cari Logistik Vendor</button>
-            </div>
+        ))}
+      </div>
+      <div className="absolute inset-0 bg-pink-900 opacity-50"></div>
+
+      {/* Add image and text content */}
+      <div className="absolute inset-0 flex flex-col text-white p-10 md:p-20 mt-20 md:mt-[6.5rem]">
+
+        {/* Titles and descriptions */}
+        <h1 className="text-5xl md:text-5xl font-bold font-poppins flex items-center">
+          Wujudkan Event Impianmu
+        </h1>
+        <h1 className="text-3xl md:text-5xl mt-4 font-bold font-poppins flex items-center">
+          dengan&nbsp;
+          <span className="text-pink-600">Logevent</span>
+        </h1>
+        <p className="mt-5 md:mt-14 text-base md:text-2xl font-sofia">Mencari vendor untuk eventmu dengan praktis</p>
+
+        {/* Circles with Information */}
+        <div className="flex space-x-6 mt-12">
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 bg-white rounded-full"></div>
+            <span className="text-base md:text-xl font-sofia text-pink-300">Logistik Vendor</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 bg-white rounded-full"></div>
+            <span className="text-base md:text-xl font-sofia text-pink-300">Event Organizer</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 bg-white rounded-full"></div>
+            <span className="text-base md:text-xl font-sofia text-pink-300">Paket Event</span>
           </div>
         </div>
-      </div>
-      <div className="flex flex-col items-center">
-        <SearchBar />
+
+        {/* Buttons */}
+        <div className="mt-16">
+          <button className="px-6 py-3 bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700">Pesan Event Organizer</button>
+          <button className="px-6 py-3 ml-6 bg-white text-pink-600 font-sofia font-bold rounded-lg hover:bg-pink-300">Cari Logistik Vendor</button>
+        </div>
+
+        {/* Positioning the light image */}
+        <div className="absolute -right-48 top-4 w-0 h-0 md:w-3/4 md:h-3/4">
+          <Image
+            src="/Image/lightimage.png" // Ensure this path is correct
+            alt="Decorative Light Image"
+            layout="fill"
+            objectFit="contain"
+          />
+        </div>
       </div>
     </section>
   );
 }
 
-function SearchBar() {
-  const [query, setQuery] = useState("");
-
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("Searching for:", query);
-  };
-
+function AboutUsSection() {
   return (
-    <form onSubmit={handleSearch} className="w-full max-w-md mb-10">
-      <div className="flex w-full">
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search for vendors, events, or services..."
-          className="w-full p-4 h-14 border rounded-l-lg text-gray-700 font-sofia"
-        />
-        <button
-          type="submit"
-          className="flex items-center justify-center p-4 h-14 bg-pink-900 text-white rounded-r-lg hover:bg-pink-800"
-        >
-          <FaSearch className="text-xl" />
-        </button>
+    <section id="aboutUs">
+      <div className="flex flex-col md:flex-row items-center bg-gray-100 p-16 md:mt-[4.5rem] rounded-lg">
+        <div className="w-full md:w-1/2">
+          <iframe 
+            className="w-full h-64 md:h-96 rounded-lg" 
+            src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+            title="YouTube video player" 
+            frameBorder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowFullScreen
+          ></iframe>
+        </div>
+        <div className="w-full md:w-1/2 mt-6 md:mt-0 md:pl-16">
+          <h2 className="text-4xl font-bold text-pink-500 font-poppins">Tentang Kami</h2>
+          <h3 className="text-5xl font-semibold font-poppins text-pink-900 mt-4">Welcome To Logevent</h3>
+          <p className="mt-8 font-sofia text-black">
+            Kami menghadirkan pengalaman terbaik untuk penyewaan vendor untuk event secara praktis. Dengan pilihan vendor yang handal dan produk yang berkualitas tinggi, kami memastikan bahwa setiap proyek bangunan Anda berjalan lancar dan sesuai harapan.
+          </p>
+          <div className="w-3/5 mt-8">
+            <div className="flex justify-between">
+              <div className="text-left">
+                <h4 className="text-3xl font-bold text-pink-900 font-poppins">30 +</h4>
+                <p className="text-sm text-black font-poppins">Vendor Mitra</p>
+              </div>
+              <div className="text-left">
+                <h4 className="text-3xl font-bold text-pink-900 font-poppins">30 +</h4>
+                <p className="text-sm text-black font-poppins">Vendor Mitra</p>
+              </div>
+              <div className="text-left">
+                <h4 className="text-3xl font-bold text-pink-900 font-poppins">30 +</h4>
+                <p className="text-sm text-black font-poppins">Vendor Mitra</p>
+              </div>
+            </div>
+          </div>
+          <div className="mt-8">
+            <button className="px-6 py-3 bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700">Pesan Event Organizer</button>
+            <button className="px-6 py-3 ml-6 bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold rounded-lg hover:bg-pink-300 hover:text-white hover:border-pink-300">Cari Logistik Vendor</button>          
+          </div>
+        </div>
       </div>
-    </form>
+  </section>
   );
 }
 
-function DescriptionCard ({ image, title, description }: { image: string, title: string, description: string }) {
+function LayananCard({ image, title, description }: { image: string, title: string, description: string }) {
   return (
-    <div className="flex flex-col md:flex-row items-center mb-8 md:mb-12 p-8 bg-white shadow-lg rounded-lg">
+    <div className="relative flex-col items-center mb-4 md:mb-8 md:p-4 rounded-lg">
+      {/* Pink Circle */}
+      <div className="absolute top-0 left-1 w-10 h-10 bg-pink-200 rounded-full z-0"></div>
+      
+      {/* Image with top-left alignment */}
+      <div className="relative z-10 ml-4 mt-4 mb-4 md:ml-0 md:mt-0">
+        <Image
+          src={image}
+          alt={title}
+          width={60}
+          height={60}
+          className="object-cover rounded-lg"
+        />
+      </div>
+      
+      <div>
+        <h2 className="text-2xl font-bold mb-2 font-sofia text-gray-700">{title}</h2>
+        <p className="text-gray-600 font-sofia mb-4">{description}</p>
+        {/* "Detail Layanan" Button */}
+        <button className="text-pink-500 hover:text-pink-700 font-bold">
+          Detail Layanan
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function LayananSection() {
+  const descriptions = [
+    {
+      image: "/Image/building.png", // You should replace this with the actual path to your image
+      title: "Logistik Vendor",
+      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae."
+    },
+    {
+      image: "/Image/building.png",
+      title: "Event Organizer",
+      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae."
+    },
+    {
+      image: "/Image/building.png",
+      title: "Paket Event",
+      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae."
+    },
+  ];
+
+  return (
+    <section id="services" className="p-8 md:p-16">
+      <h1 className="text-4xl text-pink-900 font-bold mt-10 mb-10 font-sofia">Layanan Kami</h1>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {descriptions.map((item, index) => (
+          <LayananCard
+            key={index}
+            image={item.image}
+            title={item.title}
+            description={item.description}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function KeunggulanCard ({ image, title, description }: { image: string, title: string, description: string }) {
+  return (
+    <div className="flex flex-col md:flex-row items-center mb-2 md:mb-3 p-8 bg-white shadow-lg rounded-lg">
       {/* Increased image container size */}
       <div className="flex-shrink-0">
         <Image
@@ -189,42 +351,37 @@ function DescriptionCard ({ image, title, description }: { image: string, title:
   );
 }
 
-function DescriptionSection() {
+function KeunggulanSection() {
   // Dummy data for the section
   const descriptions = [
     {
       image: "/Image/building.png",
       title: "Sample Title 1",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
     },
     {
       image: "/Image/building.png",
       title: "Sample Title 2",
-      description: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
     },
     {
       image: "/Image/building.png",
       title: "Sample Title 3",
-      description: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
+      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
     },
     {
       image: "/Image/building.png",
       title: "Sample Title 4",
-      description: "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
     },
-    {
-      image: "/Image/building.png",
-      title: "Sample Title 5",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-    }
   ];
 
   return (
-    <section id="services" className="p-12"> {/* Added id="services" */}
-      <h1 className="text-4xl text-pink-900 font-bold mb-10 font-sofia">Layanan Kami</h1>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <section id="services" className="p-16"> {/* Added id="services" */}
+      <h1 className="text-4xl text-pink-900 font-bold mt-5 mb-10 font-sofia">Mengapa memilih Logevent?</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         {descriptions.map((item, index) => (
-          <DescriptionCard
+          <KeunggulanCard
             key={index}
             image={item.image}
             title={item.title}
@@ -237,87 +394,73 @@ function DescriptionSection() {
 }
 
 function ListPlace() {
-  // Dummy data for a place
+  // Dummy data for places
   const places = [
-    {
-      image: "/Image/planetarium.jpg",
-      name: "Sunset Beach",
-      type: "Beach",
-      rate: "4.5",
-      location: "California, USA"
-    },
-    {
-      image: "/Image/planetarium.jpg",
-      name: "Mountain View",
-      type: "Mountain",
-      rate: "4.7",
-      location: "Alps, Switzerland"
-    },
-    {
-      image: "/Image/planetarium.jpg",
-      name: "City Park",
-      type: "Park",
-      rate: "4.3",
-      location: "New York, USA"
-    },
-    {
-      image: "/Image/planetarium.jpg",
-      name: "Planetarium",
-      type: "Museum",
-      rate: "4.8",
-      location: "Jakarta, Indonesia"
-    },
-    {
-      image: "/Image/planetarium.jpg",
-      name: "Sunset Beach",
-      type: "Beach",
-      rate: "4.5",
-      location: "California, USA"
-    },
-    {
-      image: "/Image/planetarium.jpg",
-      name: "Mountain View",
-      type: "Mountain",
-      rate: "4.7",
-      location: "Alps, Switzerland"
-    },
-    {
-      image: "/Image/planetarium.jpg",
-      name: "City Park",
-      type: "Park",
-      rate: "4.3",
-      location: "New York, USA"
-    },
-    {
-      image: "/Image/planetarium.jpg",
-      name: "Planetarium",
-      type: "Museum",
-      rate: "4.8",
-      location: "Jakarta, Indonesia"
-    }
+    { image: "/Image/planetarium.jpg", name: "Sunset Beach", type: "Beach", rate: "4.5", location: "California, USA" },
+    { image: "/Image/planetarium.jpg", name: "Mountain View", type: "Mountain", rate: "4.7", location: "Alps, Switzerland" },
+    { image: "/Image/planetarium.jpg", name: "City Park", type: "Park", rate: "4.3", location: "New York, USA" },
+    { image: "/Image/planetarium.jpg", name: "Planetarium", type: "Museum", rate: "4.8", location: "Jakarta, Indonesia" },
+    { image: "/Image/planetarium.jpg", name: "Grand Canyon", type: "Canyon", rate: "4.9", location: "Arizona, USA" },
+    { image: "/Image/planetarium.jpg", name: "Eiffel Tower", type: "Monument", rate: "4.6", location: "Paris, France" }
   ];
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const totalItems = places.length;
+  const itemsPerPage = 4;
+
+  const handleNext = () => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % totalItems);
+  };
+
+  const handlePrev = () => {
+    setCurrentIndex((prevIndex) => (prevIndex - 1 + totalItems) % totalItems);
+  };
+
+  const displayedPlaces = () => {
+    let display = [];
+    for (let i = 0; i < itemsPerPage; i++) {
+      const index = (currentIndex + i) % totalItems;
+      display.push(places[index]);
+    }
+    return display;
+  };
 
   return (
     <section className="p-12">
-      <h1 className="text-4xl text-pink-900 font-bold mb-10 font-sofia">Rekomendasi Vendor</h1>
-      <div className="flex flex-wrap gap-10">
-        {places.map((place, index) => (
-          <div key={index} className="w-80 bg-white shadow-lg rounded-3xl overflow-hidden">
-            <Image
-              src={place.image}
-              alt={`${place.name} Image`}
-              width={400}
-              height={200}
-              className="object-cover"
-            />
-            <div className="p-4 font-sofia">
-              <h3 className="text-xl text-pink-900 font-bold">{place.name}</h3>
-              <p className="text-gray-700">{place.type}</p>
-              <p className="text-gray-500">Rating: {place.rate}</p>
-              <p className="text-gray-500">{place.location}</p>
+      <h1 className="text-4xl text-pink-900 font-bold mt-20 mb-10 font-sofia">Rekomendasi Vendor</h1>
+      <div className="relative">
+        <div className="flex flex-wrap gap-10">
+          {displayedPlaces().map((place, index) => (
+            <div key={index} className="w-80 bg-white shadow-lg rounded-3xl overflow-hidden">
+              <Image
+                src={place.image}
+                alt={`${place.name} Image`}
+                width={400}
+                height={200}
+                className="object-cover"
+              />
+              <div className="p-4 font-sofia">
+                <h3 className="text-xl text-pink-900 font-bold">{place.name}</h3>
+                <p className="text-gray-700">{place.type}</p>
+                <p className="text-gray-500">Rating: {place.rate}</p>
+                <p className="text-gray-500">{place.location}</p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
+        <button 
+          className="absolute top-1/2 left-0 transform -translate-y-1/2 px-4 py-2 bg-pink-600 text-white rounded-full"
+          onClick={handlePrev}
+        >
+          &lt;
+        </button>
+        <button 
+          className="absolute top-1/2 right-0 transform -translate-y-1/2 px-4 py-2 bg-pink-600 text-white rounded-full"
+          onClick={handleNext}
+        >
+          &gt;
+        </button>
       </div>
     </section>
   );
