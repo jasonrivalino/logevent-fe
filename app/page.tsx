@@ -17,7 +17,7 @@ export default function Home() {
         <KeunggulanSection />
         <ListPlace />
         <ContactBox />
-        <footer className="w-full bg-gray-200 text-gray-700 py-4 text-center font-sofia">
+        <footer className="w-full bg-gray-200 text-gray-700 py-8 text-center font-sofia">
           <p>&copy; 2024 Logevent. All rights reserved.</p>
         </footer>
       </main>
@@ -86,7 +86,7 @@ function Navbar() {
           </ul>
         </div>
         <div className="md:hidden">
-          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-white">
+          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-white -mr-6">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 20 20" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" />
             </svg>
@@ -95,7 +95,7 @@ function Navbar() {
       </div>
       {isMenuOpen && (
         <div className="md:hidden bg-pink-900">
-          <ul className="flex flex-col items-center space-y-4 py-4 -ml-5">
+          <ul className="flex flex-col items-center space-y-4 py-4">
             <li>
               <a href="#aboutUs" onClick={(e) => {handleScrollToSection1(e, 'aboutUs'); setIsMenuOpen(false);}} className="hover:underline font-sofia">
                 About Us
@@ -171,7 +171,7 @@ function Introduction() {
       <div className="absolute inset-0 bg-pink-900 opacity-50"></div>
 
       {/* Add image and text content */}
-      <div className="absolute inset-0 flex flex-col text-white p-10 md:p-20 mt-20 md:mt-[6.5rem]">
+      <div className="absolute inset-0 flex flex-col text-white p-10 md:p-20 mt-[6.5rem]">
 
         {/* Titles and descriptions */}
         <h1 className="text-5xl md:text-5xl font-bold font-poppins flex items-center">
@@ -181,20 +181,20 @@ function Introduction() {
           dengan&nbsp;
           <span className="text-pink-600">Logevent</span>
         </h1>
-        <p className="mt-5 md:mt-14 text-base md:text-2xl font-sofia">Mencari vendor untuk eventmu dengan praktis</p>
+        <p className="mt-10 md:mt-14 text-base md:text-2xl font-sofia">Mencari vendor untuk eventmu dengan praktis</p>
 
         {/* Circles with Information */}
         <div className="flex space-x-6 mt-12">
           <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-white rounded-full"></div>
+            <div className="w-4 h-2 md:h-4 bg-white rounded-full"></div>
             <span className="text-base md:text-xl font-sofia text-pink-300">Logistik Vendor</span>
           </div>
           <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-white rounded-full"></div>
+            <div className="w-4 h-2 md:h-4 bg-white rounded-full"></div>
             <span className="text-base md:text-xl font-sofia text-pink-300">Event Organizer</span>
           </div>
           <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-white rounded-full"></div>
+            <div className="w-4 h-2 md:h-4 bg-white rounded-full"></div>
             <span className="text-base md:text-xl font-sofia text-pink-300">Paket Event</span>
           </div>
         </div>
@@ -202,13 +202,13 @@ function Introduction() {
         {/* Buttons */}
         <div className="mt-16">
           <button className="px-6 py-3 bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700">Pesan Event Organizer</button>
-          <button className="px-6 py-3 ml-6 bg-white text-pink-600 font-sofia font-bold rounded-lg hover:bg-pink-300">Cari Logistik Vendor</button>
+          <button className="px-6 py-3 mt-5 md:mt-0 md:ml-6 bg-white text-pink-600 font-sofia font-bold rounded-lg hover:bg-pink-300">Cari Logistik Vendor</button>
         </div>
 
         {/* Positioning the light image */}
         <div className="absolute -right-48 top-4 w-0 h-0 md:w-3/4 md:h-3/4">
           <Image
-            src="/Image/lightimage.png" // Ensure this path is correct
+            src="/Image/lightimage.png"
             alt="Decorative Light Image"
             layout="fill"
             objectFit="contain"
@@ -222,10 +222,10 @@ function Introduction() {
 function AboutUsSection() {
   return (
     <section id="aboutUs">
-      <div className="flex flex-col md:flex-row items-center bg-gray-100 p-16 md:mt-[4.5rem] rounded-lg">
+      <div className="flex flex-col md:flex-row items-center bg-gray-100 p-8 md:p-16 mt-28 md:mt-[4.5rem] rounded-lg">
         <div className="w-full md:w-1/2">
           <iframe 
-            className="w-full h-64 md:h-96 rounded-lg" 
+            className="w-full h-48 md:h-96 rounded-lg" 
             src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
             title="YouTube video player" 
             frameBorder="0" 
@@ -234,12 +234,12 @@ function AboutUsSection() {
           ></iframe>
         </div>
         <div className="w-full md:w-1/2 mt-6 md:mt-0 md:pl-16">
-          <h2 className="text-4xl font-bold text-pink-500 font-poppins">Tentang Kami</h2>
-          <h3 className="text-5xl font-semibold font-poppins text-pink-900 mt-4">Welcome To Logevent</h3>
-          <p className="mt-8 font-sofia text-black">
+          <h2 className="text-2xl md:text-4xl font-bold text-pink-500 font-poppins">Tentang Kami</h2>
+          <h3 className="text-4xl md:text-5xl font-semibold font-poppins text-pink-900 mt-2 md:mt-4">Welcome To Logevent</h3>
+          <p className="mt-4 md:mt-8 font-sofia text-black text-sm md:text-base">
             Kami menghadirkan pengalaman terbaik untuk penyewaan vendor untuk event secara praktis. Dengan pilihan vendor yang handal dan produk yang berkualitas tinggi, kami memastikan bahwa setiap proyek bangunan Anda berjalan lancar dan sesuai harapan.
           </p>
-          <div className="w-3/5 mt-8">
+          <div className="w-full md:w-3/5 mt-4 md:mt-8">
             <div className="flex justify-between">
               <div className="text-left">
                 <h4 className="text-3xl font-bold text-pink-900 font-poppins">30 +</h4>
@@ -256,8 +256,8 @@ function AboutUsSection() {
             </div>
           </div>
           <div className="mt-8">
-            <button className="px-6 py-3 bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700">Pesan Event Organizer</button>
-            <button className="px-6 py-3 ml-6 bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold rounded-lg hover:bg-pink-300 hover:text-white hover:border-pink-300">Cari Logistik Vendor</button>          
+            <button className="px-6 py-2 md:py-[0.88rem] bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700">Pesan Event Organizer</button>
+            <button className="px-6 py-2 md:py-3 mt-3 md:mt-0 md:ml-6 bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold rounded-lg hover:bg-pink-300 hover:text-white hover:border-pink-300">Cari Logistik Vendor</button>          
           </div>
         </div>
       </div>
@@ -314,9 +314,9 @@ function LayananSection() {
   ];
 
   return (
-    <section id="services" className="p-8 md:p-16">
-      <h1 className="text-4xl text-pink-900 font-bold mt-10 mb-10 font-sofia">Layanan Kami</h1>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <section id="services" className="p-8 md:p-16 mt-16 md:mt-0">
+      <h1 className="text-4xl text-pink-900 font-bold mt-10 mb-7 md:mb-10 font-sofia">Layanan Kami</h1>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
         {descriptions.map((item, index) => (
           <LayananCard
             key={index}
@@ -332,7 +332,7 @@ function LayananSection() {
 
 function KeunggulanCard ({ image, title, description }: { image: string, title: string, description: string }) {
   return (
-    <div className="flex flex-col md:flex-row items-center mb-2 md:mb-3 p-8 bg-white shadow-lg rounded-lg">
+    <div className="flex flex-col md:flex-row items-center mb-2 md:mb-3 p-6 md:p-8 bg-white shadow-lg rounded-lg">
       {/* Increased image container size */}
       <div className="flex-shrink-0">
         <Image
@@ -344,8 +344,8 @@ function KeunggulanCard ({ image, title, description }: { image: string, title: 
         />
       </div>
       <div className="text-center md:text-left md:ml-10 mt-4 md:mt-0">
-        <h2 className="text-2xl font-bold mb-2 font-sofia text-gray-700">{title}</h2>
-        <p className="text-gray-600 font-sofia">{description}</p>
+        <h2 className="text-2xl font-bold mb-4 md:mb-2 font-sofia text-gray-700">{title}</h2>
+        <p className="text-gray-600 font-sofia text-xs md:text-base">{description}</p>
       </div>
     </div>
   );
@@ -377,9 +377,9 @@ function KeunggulanSection() {
   ];
 
   return (
-    <section id="services" className="p-16"> {/* Added id="services" */}
-      <h1 className="text-4xl text-pink-900 font-bold mt-5 mb-10 font-sofia">Mengapa memilih Logevent?</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+    <section id="keunggulan" className="p-8 md:p-16">
+      <h1 className="text-4xl text-pink-900 font-bold mt-20 md:mt-5 mb-8 md:mb-10 font-sofia">Mengapa memilih Logevent?</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-7 md:gap-12">
         {descriptions.map((item, index) => (
           <KeunggulanCard
             key={index}
@@ -394,7 +394,6 @@ function KeunggulanSection() {
 }
 
 function ListPlace() {
-  // Dummy data for places
   const places = [
     { image: "/Image/planetarium.jpg", name: "Sunset Beach", type: "Beach", rate: "4.5", location: "California, USA" },
     { image: "/Image/planetarium.jpg", name: "Mountain View", type: "Mountain", rate: "4.7", location: "Alps, Switzerland" },
@@ -410,11 +409,11 @@ function ListPlace() {
   const itemsPerPage = 4;
 
   const handleNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % totalItems);
+    setCurrentIndex((prevIndex) => (prevIndex + itemsPerPage) % totalItems);
   };
 
   const handlePrev = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + totalItems) % totalItems);
+    setCurrentIndex((prevIndex) => (prevIndex - itemsPerPage + totalItems) % totalItems);
   };
 
   const displayedPlaces = () => {
@@ -427,12 +426,15 @@ function ListPlace() {
   };
 
   return (
-    <section className="p-12">
-      <h1 className="text-4xl text-pink-900 font-bold mt-20 mb-10 font-sofia">Rekomendasi Vendor</h1>
-      <div className="relative">
-        <div className="flex flex-wrap gap-10">
+    <section>
+      <div className="flex-col md:flex-col md:items-center ml-8 md:ml-0">
+          <h1 className="text-4xl md:text-4xl text-pink-900 font-bold mt-44 md:mt-32 mb-2 md:mb-0 md:-ml-[5.25rem] font-sofia">Rekomendasi Vendor</h1>
+          <button className="mt-2 md:mt-5 mb-2 md:mb-0 md:-ml-[5.25rem] px-6 py-2 bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700">Lihat Selengkapnya</button>
+      </div>
+      <div className="relative mt-10 mb-2">
+        <div className="flex flex-wrap gap-10 justify-center">
           {displayedPlaces().map((place, index) => (
-            <div key={index} className="w-80 bg-white shadow-lg rounded-3xl overflow-hidden">
+            <div key={index} className="w-[18.75rem] md:w-[17.5rem] bg-white shadow-lg rounded-3xl overflow-hidden">
               <Image
                 src={place.image}
                 alt={`${place.name} Image`}
@@ -449,18 +451,18 @@ function ListPlace() {
             </div>
           ))}
         </div>
-        <button 
-          className="absolute top-1/2 left-0 transform -translate-y-1/2 px-4 py-2 bg-pink-600 text-white rounded-full"
+        {/* <button 
+          className="absolute top-1/2 -left-20 transform -translate-y-1/2 px-4 py-2 bg-pink-600 text-white rounded-full"
           onClick={handlePrev}
         >
           &lt;
         </button>
         <button 
-          className="absolute top-1/2 right-0 transform -translate-y-1/2 px-4 py-2 bg-pink-600 text-white rounded-full"
+          className="absolute top-1/2 -right-20 transform -translate-y-1/2 px-4 py-2 bg-pink-600 text-white rounded-full"
           onClick={handleNext}
         >
           &gt;
-        </button>
+        </button> */}
       </div>
     </section>
   );
