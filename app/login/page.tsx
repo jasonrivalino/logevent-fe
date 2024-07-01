@@ -41,9 +41,9 @@ export default function Login() {
             placeholder="Email"
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="mb-4 p-2 rounded border border-gray-300 text-black"
+            className="mb-2 md:mb-4 p-1 md:p-2 rounded border border-gray-300 text-black"
           />
-          <label htmlFor="password" className="mb-2 text-gray-800">Password</label>
+          <label htmlFor="password" className="mb-1 md:mb-2 text-gray-800">Password</label>
           <input
             type="password"
             id="password"
@@ -51,9 +51,9 @@ export default function Login() {
             placeholder="Password"
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="mb-8 p-2 rounded border border-gray-300 text-black"
+            className="mb-8 p-1 md:p-2 rounded border border-gray-300 text-black"
           />
-          <button type="submit" className="mb-4 p-2 rounded bg-blue-500 text-white">Login</button>
+          <button type="submit" className="mb-4 md:mb-6 p-1 md:p-2 rounded bg-blue-500 text-white">Login</button>
           <p className="text-center text-gray-800 mb-2">or login with</p>
           <div className="flex justify-center gap-2">
             <button
@@ -78,7 +78,7 @@ function ContactBoxLogin() {
     <footer className="w-full bg-pink-900 text-white py-4">
       <div className="container mx-auto flex flex-col items-center text-center">
         <div className="text-4xl font-bold">logevent</div>
-        <p className="mt-2 font-sofia">Jangan khawatir pusing nyari vendor, Logevent solusinya</p>
+        <p className="mt-6 md:mt-2 font-sofia">Jangan khawatir pusing nyari vendor, Logevent solusinya</p>
       </div>
     </footer>
   );
