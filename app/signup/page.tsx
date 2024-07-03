@@ -57,7 +57,7 @@ export default function SignUp() {
           <h2 className="mb-6 md:mb-8 text-2xl md:text-3xl text-center text-gray-800">Sign Up Menu</h2>
           
           {/* Full Name and Phone Number in the same line */}
-          <div className="flex flex-col md:flex-row gap-2 md:gap-4 mb-2 md:mb-4">
+          <div className="flex flex-col md:flex-row gap-4 md:gap-6 mb-2 md:mb-4">
             <div className="flex-1">
               <label htmlFor="fullName" className="mb-3 md:mb-2 text-gray-800">Nama Lengkap</label>
               <input
@@ -67,7 +67,7 @@ export default function SignUp() {
                 placeholder="Nama Lengkap"
                 onChange={(e) => setFullName(e.target.value)}
                 required
-                className="w-full p-1 md:p-2 rounded border border-gray-300 text-black"
+                className="w-full mt-2 p-1 md:p-2 rounded border border-gray-300 text-black"
               />
             </div>
             <div className="flex-1">
@@ -79,13 +79,13 @@ export default function SignUp() {
                 placeholder="Nomor Telepon"
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 required
-                className="w-full p-1 md:p-2 rounded border border-gray-300 text-black"
+                className="w-full mt-2 p-1 md:p-2 rounded border border-gray-300 text-black"
               />
             </div>
           </div>
 
           {/* Email and Password in the same line */}
-          <div className="flex flex-col md:flex-row gap-2 md:gap-4 mb-2 md:mb-4">
+          <div className="flex flex-col md:flex-row gap-4 md:gap-6 mb-2 md:mb-4">
             <div className="flex-1">
               <label htmlFor="email" className="mb-1 md:mb-2 text-gray-800">Email</label>
               <input
@@ -95,7 +95,7 @@ export default function SignUp() {
                 placeholder="Email"
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full p-1 md:p-2 rounded border border-gray-300 text-black"
+                className="w-full mt-2 p-1 md:p-2 rounded border border-gray-300 text-black"
               />
             </div>
             <div className="flex-1">
@@ -107,7 +107,7 @@ export default function SignUp() {
                 placeholder="Password"
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full p-1 md:p-2 rounded border border-gray-300 text-black"
+                className="w-full mt-2 p-1 md:p-2 rounded border border-gray-300 text-black"
               />
             </div>
           </div>
@@ -122,11 +122,11 @@ export default function SignUp() {
               placeholder="Alamat"
               onChange={(e) => setAddress(e.target.value)}
               required
-              className="w-full p-1 md:p-2 rounded border border-gray-300 text-black"
+              className="w-full mt-2 p-1 md:p-2 rounded border border-gray-300 text-black"
             />
           </div>
 
-          <button type="submit" className="mb-4 md:mb-6 p-1 md:p-2 rounded bg-blue-500 text-white">Sign Up</button>
+          <button type="submit" className="mt-4 mb-4 md:mb-6 p-1 md:p-2 rounded bg-blue-500 text-white">Sign Up</button>
         </form>
       </div>
       <ContactBoxLogin />
@@ -143,4 +143,4 @@ function ContactBoxLogin() {
         </div>
       </footer>
     );
-  }
+}
