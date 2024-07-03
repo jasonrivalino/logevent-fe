@@ -30,7 +30,7 @@ function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLoginClick = () => {
-    router.push('/login');
+    router.push('/signin');
   };
 
   const handleScrollToSection1 = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
@@ -206,14 +206,14 @@ function Introduction() {
         </div>
 
         {/* Positioning the light image */}
-        <div className="absolute -right-48 top-4 w-0 h-0 md:w-3/4 md:h-3/4">
+        {/* <div className="absolute -right-48 top-4 w-0 h-0 md:w-3/4 md:h-3/4">
           <Image
             src="/Image/lightimage.png"
             alt="Decorative Light Image"
             layout="fill"
             objectFit="contain"
           />
-        </div>
+        </div> */}
       </div>
     </section>
   );
@@ -334,7 +334,7 @@ function KeunggulanCard ({ image, title, description }: { image: string, title: 
   return (
     <div className="flex flex-col md:flex-row items-center mb-2 md:mb-3 p-6 md:p-8 bg-white shadow-lg rounded-lg">
       {/* Increased image container size */}
-      <div className="flex-shrink-0">
+      <div className="flex-shrink-0 w-14 h-14 md:w-16 md:h-16">
         <Image
           src={image}
           alt={title}
@@ -404,9 +404,28 @@ function ListPlace() {
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(4);
 
   const totalItems = places.length;
-  const itemsPerPage = 4;
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setItemsPerPage(1);
+      } else {
+        setItemsPerPage(4);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Set the initial value
+    handleResize();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const handleNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + itemsPerPage) % totalItems);
@@ -427,14 +446,14 @@ function ListPlace() {
 
   return (
     <section>
-      <div className="flex-col md:flex-col md:items-center ml-8 md:ml-0">
-          <h1 className="text-4xl md:text-4xl text-pink-900 font-bold mt-44 md:mt-32 mb-2 md:mb-0 md:-ml-[5.25rem] font-sofia">Rekomendasi Vendor</h1>
-          <button className="mt-2 md:mt-5 mb-2 md:mb-0 md:-ml-[5.25rem] px-6 py-2 bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700">Lihat Selengkapnya</button>
+      <div className="flex-col md:flex-col md:items-center pl-8 md:pl-4">
+        <h1 className="text-4xl md:text-4xl text-pink-900 font-bold mt-44 md:mt-32 mb-2 md:mb-0 md:-ml-[5.25rem] font-sofia">Rekomendasi Vendor</h1>
+        <button className="mt-2 md:mt-5 mb-2 md:mb-0 md:-ml-[5.25rem] px-6 py-2 bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700">Lihat Selengkapnya</button>
       </div>
-      <div className="relative mt-10 mb-2">
-        <div className="flex flex-wrap gap-10 justify-center">
+      <div className="relative flex items-center justify-center mt-10 mb-2">
+        <div className="flex flex-wrap gap-10 justify-center mx-4">
           {displayedPlaces().map((place, index) => (
-            <div key={index} className="w-[18.75rem] md:w-[17.5rem] bg-white shadow-lg rounded-3xl overflow-hidden">
+            <div key={index} className="w-[16.75rem] md:w-[17.5rem] bg-white shadow-lg rounded-3xl overflow-hidden relative">
               <Image
                 src={place.image}
                 alt={`${place.name} Image`}
@@ -451,18 +470,22 @@ function ListPlace() {
             </div>
           ))}
         </div>
-        {/* <button 
-          className="absolute top-1/2 -left-20 transform -translate-y-1/2 px-4 py-2 bg-pink-600 text-white rounded-full"
+        <button 
+          className="absolute left-0 md:-left-3 px-1 md:px-3 py-1 md:py-2 bg-pink-600 text-white rounded-full shadow-lg hover:shadow-2xl focus:outline-none"
           onClick={handlePrev}
         >
-          &lt;
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
         </button>
         <button 
-          className="absolute top-1/2 -right-20 transform -translate-y-1/2 px-4 py-2 bg-pink-600 text-white rounded-full"
+          className="absolute right-0 md:-right-3 px-1 md:px-3 py-1 md:py-2 bg-pink-600 text-white rounded-full shadow-lg hover:shadow-2xl focus:outline-none"
           onClick={handleNext}
         >
-          &gt;
-        </button> */}
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
       </div>
     </section>
   );
@@ -475,7 +498,7 @@ export function ContactBox() {
         {/* Logo and Text */}
         <div className="text-center mb-6">
           <div className="flex flex-col items-center">
-            <div className="text-4xl font-bold">logevent</div>
+            <Image src="/Image/logo.png" alt="Logevent Logo" width={60} height={60} className='mb-2 cursor-pointer'/>
             <p className="mt-2 mb-4 font-sofia">Jangan khawatir pusing nyari vendor, Logevent solusinya</p>
           </div>
         </div>

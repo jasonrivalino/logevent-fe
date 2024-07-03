@@ -1,9 +1,12 @@
 'use client';
+import Image from 'next/image';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation'; // Import useRouter from Next.js for routing
 
-export default function Login() {
+export default function SignIn() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const router = useRouter(); // Initialize useRouter for navigation
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -22,8 +25,20 @@ export default function Login() {
     console.log('Login with Facebook');
   };
 
+  const handleBackClick = () => {
+    router.push('/'); // Navigate to home page
+  };
+
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen relative">
+      {/* Back button in the top right corner */}
+      <button 
+        onClick={handleBackClick} 
+        className="absolute top-4 left-4 p-2 rounded bg-gray-200 hover:bg-gray-300 text-black"
+      >
+        Back
+      </button>
+
       <div className="flex-grow flex flex-col justify-center items-center p-8 font-sofia">
         <form 
           onSubmit={handleSubmit} 
@@ -48,8 +63,11 @@ export default function Login() {
             placeholder="Password"
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="mb-8 p-1 md:p-2 rounded border border-gray-300 text-black"
+            className="mb-4 p-1 md:p-2 rounded border border-gray-300 text-black"
           />
+          <p className="text-gray-800 text-sm mb-4">
+            Not have an account yet? <a onClick={() => router.push('/signup')} className="text-blue-500 cursor-pointer">Sign Up</a> first
+          </p>
           <button type="submit" className="mb-4 md:mb-6 p-1 md:p-2 rounded bg-blue-500 text-white">Login</button>
           <p className="text-center text-gray-800 mb-2">or login with</p>
           <div className="flex justify-center gap-2">
@@ -83,7 +101,7 @@ function ContactBoxLogin() {
   return (
     <footer className="w-full bg-pink-900 text-white py-4">
       <div className="container mx-auto flex flex-col items-center text-center">
-        <div className="text-4xl font-bold">logevent</div>
+        <Image src="/Image/logo.png" alt="Logevent Logo" width={60} height={60} className='cursor-pointer'/>
         <p className="mt-6 md:mt-2 font-sofia">Jangan khawatir pusing nyari vendor, Logevent solusinya</p>
       </div>
     </footer>
