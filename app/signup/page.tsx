@@ -2,6 +2,7 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { signUp } from '../utils/api';
 
 export default function SignUp() {
   const [fullName, setFullName] = useState('');
@@ -9,39 +10,26 @@ export default function SignUp() {
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle signup logic here
-    console.log('Full Name:', fullName);
-    console.log('Phone Number:', phoneNumber);
-    console.log('Email:', email);
-    console.log('Address:', address);
-    console.log('Password:', password);
-
-    // You might want to make an API call here to register the user
-    // For example:
-    // const response = await fetch('/api/signup', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({ fullName, phoneNumber, email, address, password }),
-    // });
-
-    // if (response.ok) {
-    //   router.push('/login'); // Navigate to login page after successful signup
-    // }
+    try {
+      const response = await signUp(fullName, email, password);
+      console.log('Sign-up successful:', response);
+      router.push('/signin');
+    } catch (err: any) {
+      setError(err.message);
+    }
   };
 
   const handleBackClick = () => {
-    router.push('/'); // Navigate to home page
+    router.push('/signin');
   };
 
   return (
     <div className="flex flex-col min-h-screen relative">
-      {/* Back button in the top left corner */}
       <button 
         onClick={handleBackClick} 
         className="absolute top-4 left-4 p-2 rounded bg-gray-200 hover:bg-gray-300 text-black"
@@ -55,11 +43,11 @@ export default function SignUp() {
           className="flex flex-col w-full max-w-full md:max-w-xl p-6 md:p-8 shadow-lg rounded-lg bg-white"
         >
           <h2 className="mb-6 md:mb-8 text-2xl md:text-3xl text-center text-gray-800">Sign Up Menu</h2>
+          {error && <p className="mb-4 text-red-500 text-center">{error}</p>}
           
-          {/* Full Name and Phone Number in the same line */}
           <div className="flex flex-col md:flex-row gap-4 md:gap-6 mb-2 md:mb-4">
             <div className="flex-1">
-              <label htmlFor="fullName" className="mb-3 md:mb-2 text-gray-800">Nama Lengkap</label>
+              <label htmlFor="fullName" className="mb-1 md:mb-2 text-gray-800">Nama Lengkap</label>
               <input
                 type="text"
                 id="fullName"
@@ -71,7 +59,7 @@ export default function SignUp() {
               />
             </div>
             <div className="flex-1">
-              <label htmlFor="phoneNumber" className="mb-3 md:mb-2 text-gray-800">Nomor Telepon</label>
+              <label htmlFor="phoneNumber" className="mb-1 md:mb-2 text-gray-800">Nomor Telepon</label>
               <input
                 type="text"
                 id="phoneNumber"
@@ -84,7 +72,6 @@ export default function SignUp() {
             </div>
           </div>
 
-          {/* Email and Password in the same line */}
           <div className="flex flex-col md:flex-row gap-4 md:gap-6 mb-2 md:mb-4">
             <div className="flex-1">
               <label htmlFor="email" className="mb-1 md:mb-2 text-gray-800">Email</label>
@@ -112,7 +99,6 @@ export default function SignUp() {
             </div>
           </div>
 
-          {/* Address as a longer single line */}
           <div className="mb-2 md:mb-4">
             <label htmlFor="address" className="mb-1 md:mb-2 text-gray-800">Alamat</label>
             <input
@@ -129,12 +115,12 @@ export default function SignUp() {
           <button type="submit" className="mt-4 mb-4 md:mb-6 p-1 md:p-2 rounded bg-blue-500 text-white">Sign Up</button>
         </form>
       </div>
-      <ContactBoxLogin />
+      <ContactBoxSignIn />
     </div>
   );
 }
 
-function ContactBoxLogin() {
+function ContactBoxSignIn() {
     return (
       <footer className="w-full bg-pink-900 text-white py-4">
         <div className="container mx-auto flex flex-col items-center text-center">

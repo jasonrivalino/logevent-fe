@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { FaSearch } from 'react-icons/fa';
+import { getUserData } from './utils/api';
 
 export default function Home() {
   return (
@@ -28,9 +29,34 @@ export default function Home() {
 function Navbar() {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [userName, setUserName] = useState<string | null>(null);
 
-  const handleLoginClick = () => {
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const token = localStorage.getItem('token');
+      console.log('Token:', token);
+      if (token) {
+        try {
+          const user = await getUserData(token);
+          setUserName(user.name || user.email);
+        } catch (error: any) {
+          console.error('Failed to fetch user data:', error.message);
+          localStorage.removeItem('token');
+        }
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  const handleSignInClick = () => {
     router.push('/signin');
+  };
+
+  const handleSignOutClick = () => {
+    localStorage.removeItem('token');
+    setUserName(null);
+    router.push('/');
   };
 
   const handleScrollToSection1 = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
@@ -74,14 +100,23 @@ function Navbar() {
               </a>
             </li>
             <li>
-              <Link href="#contact" className="hover:underline font-sofia">
+              <a href="#contact" onClick={() => setIsMenuOpen(false)} className="hover:underline font-sofia">
                 QnA
-              </Link>
+              </a>
             </li>
             <li>
-              <button onClick={handleLoginClick} className='font-sofia'>
-                Login
-              </button>
+              {userName ? (
+                <div className='flex items-center space-x-4'>
+                  <span className='font-sofia'>{userName}</span>
+                  <button onClick={handleSignOutClick} className='font-sofia'>
+                    Sign Out
+                  </button>
+                </div>
+              ) : (
+                <button onClick={handleSignInClick} className='font-sofia'>
+                  Sign In
+                </button>
+              )}
             </li>
           </ul>
         </div>
@@ -107,14 +142,23 @@ function Navbar() {
               </a>
             </li>
             <li>
-              <Link href="#contact" className="hover:underline font-sofia" onClick={() => setIsMenuOpen(false)}>
+              <a href="#contact" onClick={() => setIsMenuOpen(false)} className="hover:underline font-sofia">
                 QnA
-              </Link>
+              </a>
             </li>
             <li>
-              <button onClick={() => {handleLoginClick(); setIsMenuOpen(false);}} className='font-sofia'>
-                Login
-              </button>
+              {userName ? (
+                <div className='flex flex-col items-center space-y-4'>
+                  <span className='font-sofia'>{userName}</span>
+                  <button onClick={handleSignOutClick} className='font-sofia'>
+                    Sign Out
+                  </button>
+                </div>
+              ) : (
+                <button onClick={() => {handleSignInClick(); setIsMenuOpen(false);}} className='font-sofia'>
+                  Sign In
+                </button>
+              )}
             </li>
           </ul>
         </div>

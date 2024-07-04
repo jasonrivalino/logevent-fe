@@ -8,13 +8,26 @@ interface SignInResponse {
   message?: string;
 }
 
+export const getUserData = async (token: string) => {
+  try {
+    const response = await axios.get(`${API_URL}/auth/read`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Failed to fetch user data');
+  }
+};
+
 export const signIn = async (email: string, password: string): Promise<SignInResponse> => {
   try {
     const response = await axios.post(`${API_URL}/auth/signin`, { email, password }, {
       headers: {
         'Content-Type': 'application/json'
       },
-      withCredentials: true  // Ensure credentials are sent
+      withCredentials: true
     });  
     return response.data;
   } catch (error: any) {
@@ -22,13 +35,13 @@ export const signIn = async (email: string, password: string): Promise<SignInRes
   }
 };
 
-export const signUp = async (email: string, password: string): Promise<SignInResponse> => {
+export const signUp = async (name: string, email: string, password: string): Promise<SignInResponse> => {
   try {
-    const response = await axios.post(`${API_URL}/auth/signup`, { email, password }, {
+    const response = await axios.post(`${API_URL}/auth/signup`, { name, email, password }, {
       headers: {
         'Content-Type': 'application/json'
       },
-      withCredentials: true  // Ensure credentials are sent
+      withCredentials: true
     });
     return response.data;
   } catch (error: any) {
@@ -36,6 +49,6 @@ export const signUp = async (email: string, password: string): Promise<SignInRes
   }
 };
 
-export const googleLogin = () => {
+export const googleSignIn = () => {
   window.location.href = `${API_URL}/auth/google`;
 };
