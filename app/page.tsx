@@ -41,7 +41,7 @@ function Navbar() {
           setUserName(user.name || user.email);
         } catch (error: any) {
           console.error('Failed to fetch user data:', error.message);
-          // localStorage.removeItem('token');
+          localStorage.removeItem('token');
         }
       }
     };
@@ -54,7 +54,7 @@ function Navbar() {
   };
 
   const handleSignOutClick = () => {
-    // localStorage.removeItem('token');
+    localStorage.removeItem('token');
     setUserName(null);
     router.push('/');
   };
