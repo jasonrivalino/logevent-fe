@@ -8,9 +8,9 @@ interface SignInResponse {
   message?: string;
 }
 
-export const getUserData = async (token: string) => {
+export const getUserProfile = async (token: string) => {
   try {
-    const response = await axios.get(`${API_URL}/auth/read`, {
+    const response = await axios.get(`${API_URL}/auth/profile`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

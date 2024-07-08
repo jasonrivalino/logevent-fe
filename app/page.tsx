@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { FaSearch } from 'react-icons/fa';
-import { getUserData } from './utils/api';
+import { getUserProfile } from './utils/api';
 
 export default function Home() {
   return (
@@ -32,21 +32,21 @@ function Navbar() {
   const [userName, setUserName] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchUserProfile = async () => {
       const token = localStorage.getItem('token');
       console.log('Token:', token);
       if (token) {
         try {
-          const user = await getUserData(token);
+          const user = await getUserProfile(token);
           setUserName(user.name || user.email);
         } catch (error: any) {
           console.error('Failed to fetch user data:', error.message);
-          localStorage.removeItem('token');
+          // localStorage.removeItem('token');
         }
       }
     };
 
-    fetchUserData();
+    fetchUserProfile();
   }, []);
 
   const handleSignInClick = () => {
@@ -54,7 +54,7 @@ function Navbar() {
   };
 
   const handleSignOutClick = () => {
-    localStorage.removeItem('token');
+    // localStorage.removeItem('token');
     setUserName(null);
     router.push('/');
   };
