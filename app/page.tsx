@@ -26,7 +26,7 @@ export default function Home() {
   );
 }
 
-function Navbar() {
+export function Navbar() {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [userName, setUserName] = useState<string | null>(null);
@@ -246,7 +246,7 @@ function Introduction() {
         {/* Buttons */}
         <div className="mt-16">
           <button className="px-6 py-3 bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700">Pesan Event Organizer</button>
-          <button className="px-6 py-3 mt-5 md:mt-0 md:ml-6 bg-white text-pink-600 font-sofia font-bold rounded-lg hover:bg-pink-300">Cari Logistik Vendor</button>
+          <button className="px-6 py-3 mt-5 md:mt-0 md:ml-6  bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold rounded-lg hover:bg-pink-100 hover:text-pink-600 hover:border-pink-600">Cari Logistik Vendor</button>
         </div>
 
         {/* Positioning the light image */}
@@ -301,7 +301,7 @@ function AboutUsSection() {
           </div>
           <div className="mt-8">
             <button className="px-6 py-2 md:py-[0.88rem] bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700">Pesan Event Organizer</button>
-            <button className="px-6 py-2 md:py-3 mt-3 md:mt-0 md:ml-6 bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold rounded-lg hover:bg-pink-300 hover:text-white hover:border-pink-300">Cari Logistik Vendor</button>          
+            <button className="px-6 py-2 md:py-3 mt-3 md:mt-0 md:ml-6 bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold rounded-lg hover:bg-pink-100 hover:text-pink-600 hover:border-pink-600">Cari Logistik Vendor</button>          
           </div>
         </div>
       </div>
@@ -309,7 +309,9 @@ function AboutUsSection() {
   );
 }
 
-function LayananCard({ image, title, description }: { image: string, title: string, description: string }) {
+function LayananCard({ image, title, description, link }: { image: string, title: string, description: string, link: string }) {
+  const router = useRouter();
+
   return (
     <div className="relative flex-col items-center mb-4 md:mb-8 md:p-4 rounded-lg">
       {/* Pink Circle */}
@@ -330,7 +332,10 @@ function LayananCard({ image, title, description }: { image: string, title: stri
         <h2 className="text-2xl font-bold mb-2 font-sofia text-gray-700">{title}</h2>
         <p className="text-gray-600 font-sofia mb-4">{description}</p>
         {/* "Detail Layanan" Button */}
-        <button className="text-pink-500 hover:text-pink-700 font-bold">
+        <button
+          className="text-pink-500 hover:text-pink-700 font-bold"
+          onClick={() => router.push(link)}
+        >
           Detail Layanan
         </button>
       </div>
@@ -343,17 +348,20 @@ function LayananSection() {
     {
       image: "/Image/building.png", // You should replace this with the actual path to your image
       title: "Logistik Vendor",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae."
+      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae.",
+      link: "/logistikVendor"
     },
     {
       image: "/Image/building.png",
       title: "Event Organizer",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae."
+      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae.",
+      link: "/eventOrganizer"
     },
     {
       image: "/Image/building.png",
       title: "Paket Event",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae."
+      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae.",
+      link: "/paketEvent"
     },
   ];
 
@@ -367,6 +375,7 @@ function LayananSection() {
             image={item.image}
             title={item.title}
             description={item.description}
+            link={item.link}
           />
         ))}
       </div>
@@ -489,11 +498,9 @@ function ListPlace() {
   };
 
   return (
-    <section>
-      <div className="flex-col md:flex-col md:items-center pl-8 md:pl-4">
-        <h1 className="text-4xl md:text-4xl text-pink-900 font-bold mt-44 md:mt-32 mb-2 md:mb-0 md:-ml-[5.25rem] font-sofia">Rekomendasi Vendor</h1>
-        <button className="mt-2 md:mt-5 mb-2 md:mb-0 md:-ml-[5.25rem] px-6 py-2 bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700">Lihat Selengkapnya</button>
-      </div>
+    <section className="p-8 md:p-16">
+      <h1 className="text-4xl md:text-4xl text-pink-900 font-bold mt-44 md:mt-32 mb-2 md:mb-0 md:-ml-[5.25rem] font-sofia">Rekomendasi Vendor</h1>
+      <button className="mt-2 md:mt-5 mb-2 md:mb-0 md:-ml-[5.25rem] px-6 py-2 bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700">Lihat Selengkapnya</button>
       <div className="relative flex items-center justify-center mt-10 mb-2">
         <div className="flex flex-wrap gap-10 justify-center mx-4">
           {displayedPlaces().map((place, index) => (
@@ -505,17 +512,22 @@ function ListPlace() {
                 height={200}
                 className="object-cover"
               />
-              <div className="p-4 font-sofia">
-                <h3 className="text-xl text-pink-900 font-bold">{place.name}</h3>
-                <p className="text-gray-700">{place.type}</p>
-                <p className="text-gray-500">Rating: {place.rate}</p>
-                <p className="text-gray-500">{place.location}</p>
+              <div className="p-4 ml-2 font-sofia flex flex-col justify-between flex-grow">
+                <div>
+                  <h3 className="text-xl text-pink-900 font-bold">{place.name}</h3>
+                  <p className="text-gray-700">{place.type}</p>
+                  <p className="text-gray-500">Rating: {place.rate}</p>
+                  <p className="text-gray-500">{place.location}</p>
+                </div>
+                <button className="self-start text-pink-500 hover:text-pink-700 font-bold mt-4">
+                    Lihat Detail
+                </button>
               </div>
             </div>
           ))}
         </div>
         <button 
-          className="absolute left-0 md:-left-3 px-1 md:px-3 py-1 md:py-2 bg-pink-600 text-white rounded-full shadow-lg hover:shadow-2xl focus:outline-none"
+          className="absolute left-0 md:-left-6 px-1 md:px-3 py-1 md:py-2 bg-pink-600 text-white rounded-full shadow-lg hover:shadow-2xl focus:outline-none"
           onClick={handlePrev}
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -523,7 +535,7 @@ function ListPlace() {
           </svg>
         </button>
         <button 
-          className="absolute right-0 md:-right-3 px-1 md:px-3 py-1 md:py-2 bg-pink-600 text-white rounded-full shadow-lg hover:shadow-2xl focus:outline-none"
+          className="absolute right-0 md:-right-6 px-1 md:px-3 py-1 md:py-2 bg-pink-600 text-white rounded-full shadow-lg hover:shadow-2xl focus:outline-none"
           onClick={handleNext}
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">

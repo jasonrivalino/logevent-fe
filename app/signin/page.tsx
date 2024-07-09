@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { signIn, googleSignIn } from '../utils/api';
 
@@ -9,6 +9,31 @@ export default function SignIn() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+
+  // Effect to adjust placeholder size based on screen width
+  useEffect(() => {
+    const updatePlaceholderSize = () => {
+      const inputs = document.querySelectorAll('.input-placeholder');
+      const isMediumScreen = window.matchMedia('(min-width: 768px)').matches;
+
+      inputs.forEach(input => {
+        if (isMediumScreen) {
+          input.classList.remove('placeholder:text-xs');
+          input.classList.add('placeholder:text-sm');
+        } else {
+          input.classList.remove('placeholder:text-sm');
+          input.classList.add('placeholder:text-xs');
+        }
+      });
+    };
+
+    updatePlaceholderSize();
+    window.addEventListener('resize', updatePlaceholderSize);
+
+    return () => {
+      window.removeEventListener('resize', updatePlaceholderSize);
+    };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -32,11 +57,20 @@ export default function SignIn() {
 
   return (
     <div className="flex flex-col min-h-screen relative">
+      {/* Back button with SVG arrow */}
       <button 
         onClick={handleBackClick} 
-        className="absolute top-4 left-4 p-2 rounded bg-gray-200 hover:bg-gray-300 text-black"
+        className="absolute top-4 left-4 p-2 rounded-full bg-white text-black shadow-lg flex items-center justify-center w-10 h-10 md:w-12 md:h-12 hover:bg-gray-100"
       >
-        Back
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          className="w-6 h-6 text-gray-700"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
       </button>
 
       <div className="flex-grow flex flex-col justify-center items-center p-8 font-sofia">
@@ -46,7 +80,7 @@ export default function SignIn() {
         >
           <h2 className="mb-5 md:mb-6 text-2xl md:text-3xl text-center text-gray-800">Sign In Menu</h2>
           {error && <p className="mb-4 text-red-500 text-center">{error}</p>}
-          <p className="mb-1 md:mb-2 text-gray-800">Email</p>
+          <p className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Email</p>
           <input
             type="text"
             id="email"
@@ -54,9 +88,9 @@ export default function SignIn() {
             placeholder="Email"
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="mb-2 md:mb-4 p-1 md:p-2 rounded border border-gray-300 text-black"
+            className="mb-2 md:mb-4 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs"
           />
-          <label htmlFor="password" className="mb-1 md:mb-2 text-gray-800">Password</label>
+          <label htmlFor="password" className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Password</label>
           <input
             type="password"
             id="password"
@@ -64,13 +98,13 @@ export default function SignIn() {
             placeholder="Password"
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="mb-4 p-1 md:p-2 rounded border border-gray-300 text-black"
+            className="mb-4 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs"
           />
-          <p className="text-gray-800 text-sm mb-4">
-            Not have an account yet? <a onClick={() => router.push('/signup')} className="text-blue-500 cursor-pointer">Sign Up</a> first
+          <p className="text-gray-800 text-xs md:text-sm mb-4">
+            Not have an account yet? <a onClick={() => router.push('/signup')} className="text-pink-600 hover:text-pink-800 cursor-pointer">Sign Up</a> first
           </p>
-          <button type="submit" className="mb-4 md:mb-6 p-1 md:p-2 rounded bg-blue-500 text-white">Sign In</button>
-          <p className="text-center text-gray-800 mb-2">or sign in with</p>
+          <button type="submit" className="mb-4 md:mb-6 p-1 md:p-2 rounded bg-pink-800 hover:bg-pink-900 text-white">Sign In</button>
+          <p className="text-center text-sm md:text-base text-gray-800 mb-2">or login with</p>
           <div className="flex justify-center gap-2">
             <button 
               type="button" 
