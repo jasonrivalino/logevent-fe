@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { signIn, googleSignIn } from '../utils/api';
+import { signIn, googleSignIn } from '../utils/authApi';
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
@@ -39,7 +39,6 @@ export default function SignIn() {
     e.preventDefault();
     try {
       const response = await signIn(email, password);
-      console.log('Sign-in successful:', response);
       localStorage.setItem('token', response.token);
       router.push('/');
     } catch (err: any) {
@@ -104,7 +103,7 @@ export default function SignIn() {
             Not have an account yet? <a onClick={() => router.push('/signup')} className="text-pink-600 hover:text-pink-800 cursor-pointer">Sign Up</a> first
           </p>
           <button type="submit" className="mb-4 md:mb-6 p-1 md:p-2 rounded bg-pink-800 hover:bg-pink-900 text-white">Sign In</button>
-          <p className="text-center text-sm md:text-base text-gray-800 mb-2">or login with</p>
+          <p className="text-center text-sm md:text-base text-gray-800 mb-2">or sign in with</p>
           <div className="flex justify-center gap-2">
             <button 
               type="button" 

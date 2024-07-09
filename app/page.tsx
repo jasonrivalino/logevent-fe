@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { FaSearch } from 'react-icons/fa';
-import { getUserProfile } from './utils/api';
+import { readUserProfile } from './utils/authApi';
 
 export default function Home() {
   return (
@@ -34,10 +34,9 @@ export function Navbar() {
   useEffect(() => {
     const fetchUserProfile = async () => {
       const token = localStorage.getItem('token');
-      console.log('Token:', token);
       if (token) {
         try {
-          const user = await getUserProfile(token);
+          const user = await readUserProfile(token);
           setUserName(user.name || user.email);
         } catch (error: any) {
           console.error('Failed to fetch user data:', error.message);
@@ -349,19 +348,19 @@ function LayananSection() {
       image: "/Image/building.png", // You should replace this with the actual path to your image
       title: "Logistik Vendor",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae.",
-      link: "/logistikVendor"
+      link: "/logistik-vendor"
     },
     {
       image: "/Image/building.png",
       title: "Event Organizer",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae.",
-      link: "/eventOrganizer"
+      link: "/event-organizer"
     },
     {
       image: "/Image/building.png",
       title: "Paket Event",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae.",
-      link: "/paketEvent"
+      link: "/paket-event"
     },
   ];
 

@@ -1,125 +1,48 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import { Navbar, ContactBox } from '../page';
-import { useRouter } from 'next/navigation'; // Import useRouter from Next.js for routing
+import { useRouter } from 'next/navigation';
+import { readAllProduct } from '../utils/productApi'; // Import the API function
 
-interface Vendor {
+interface Product {
   id: number;
+  vendorId: number;
   name: string;
-  type: string;
-  location: string;
+  specification: string;
+  category: string;
   price: number;
-  rate: number;
-  image: string;
+  description?: string;
 }
-
-const dummyVendors: Vendor[] = [
-  {
-    id: 1,
-    name: 'Gedung Sabuga ITB',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 5.0,
-    image: '/Image/planetarium.jpg',
-  },
-  {
-    id: 2,
-    name: 'Institut Francais Indonesia',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
-    image: '/Image/planetarium.jpg',
-  },
-  {
-    id: 3,
-    name: 'Balai Sartika',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
-    image: '/Image/planetarium.jpg',
-  },
-  {
-    id: 4,
-    name: 'Gedung Merdeka',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
-    image: '/Image/planetarium.jpg',
-  },
-  {
-    id: 5,
-    name: 'Gedung Sate',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
-    image: '/Image/planetarium.jpg',
-  },
-  {
-    id: 6,
-    name: 'Gedung Merah Putih',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
-    image: '/Image/planetarium.jpg',
-  },
-  {
-    id: 7,
-    name: 'Gedung Indonesia Menggugat',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
-    image: '/Image/planetarium.jpg',
-  },
-  {
-    id: 8,
-    name: 'Gedung Indonesia Menggugat',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
-    image: '/Image/planetarium.jpg',
-  },
-  {
-    id: 9,
-    name: 'Gedung Indonesia Menggugat',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
-    image: '/Image/planetarium.jpg',
-  },
-  {
-    id: 10,
-    name: 'Gedung Indonesia Menggugat',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
-    image: '/Image/planetarium.jpg',
-  }
-];
 
 export default function LogistikVendor() {
   const [minPrice, setMinPrice] = useState<number | string>('');
   const [maxPrice, setMaxPrice] = useState<number | string>('');
-  const [filteredVendors, setFilteredVendors] = useState<Vendor[]>(dummyVendors);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const data = await readAllProduct();
+        setProducts(data);
+        setFilteredProducts(data);
+      } catch (error) {
+        console.error('Failed to fetch products:', error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const handleFilter = () => {
-    setFilteredVendors(
-      dummyVendors.filter(
-        (vendor) =>
-          (minPrice === '' || vendor.price >= Number(minPrice)) &&
-          (maxPrice === '' || vendor.price <= Number(maxPrice))
+    setFilteredProducts(
+      products.filter(
+        (product) =>
+          (minPrice === '' || product.price >= Number(minPrice)) &&
+          (maxPrice === '' || product.price <= Number(maxPrice))
       )
     );
   };
@@ -127,7 +50,7 @@ export default function LogistikVendor() {
   const handleReset = () => {
     setMinPrice('');
     setMaxPrice('');
-    setFilteredVendors(dummyVendors);
+    setFilteredProducts(products);
   };
 
   return (
@@ -139,7 +62,7 @@ export default function LogistikVendor() {
         <Navbar />
         <div className="flex flex-col md:flex-row py-24">
           <Filter handleFilter={handleFilter} handleReset={handleReset} setMinPrice={setMinPrice} setMaxPrice={setMaxPrice} />
-          <VendorList vendors={filteredVendors} />
+          <VendorList vendors={filteredProducts} />
         </div>
       </div>
       <ContactBox />
@@ -169,13 +92,13 @@ export function Filter({ handleFilter, handleReset, setMinPrice, setMaxPrice }: 
         </select>
       </div>
       <div className="mb-8">
-        <label htmlFor="location" className="block mb-2 text-gray-700 font-sofia">Harga</label>
-        <select id="location" className="w-full p-2 border rounded bg-white text-black font-sofia">
+        <label htmlFor="price" className="block mb-2 text-gray-700 font-sofia">Harga</label>
+        <select id="price" className="w-full p-2 border rounded bg-white text-black font-sofia">
           <option value="" className="font-sofia">Pilih range harga</option>
-          <option value="Jakarta" className="font-sofia"> {`> 25.000.000`} </option>
-          <option value="Jawa Barat" className="font-sofia"> 15.000.000 - 25.000.000 </option>
-          <option value="Jawa Tengah" className="font-sofia"> 5.000.000 - 15.000.000 </option>
-          <option value="Jawa Timur" className="font-sofia"> { `< 5.000.000`} </option>
+          <option value="> 25000000" className="font-sofia"> {`> 25.000.000`} </option>
+          <option value="15000000 - 25000000" className="font-sofia"> 15.000.000 - 25.000.000 </option>
+          <option value="5000000 - 15000000" className="font-sofia"> 5.000.000 - 15.000.000 </option>
+          <option value="< 5000000" className="font-sofia"> { `< 5.000.000`} </option>
         </select>
       </div>
       <button
@@ -188,8 +111,8 @@ export function Filter({ handleFilter, handleReset, setMinPrice, setMaxPrice }: 
   );
 }
 
-export function VendorList({ vendors }: { vendors: Vendor[] }) {
-  const router = useRouter(); // Initialize useRouter for navigation
+export function VendorList({ vendors }: { vendors: Product[] }) {
+  const router = useRouter();
 
   return (
     <div className="w-full md:w-3/4 p-8 mr-4 bg-white rounded-2xl">
@@ -220,7 +143,7 @@ export function VendorList({ vendors }: { vendors: Vendor[] }) {
         {vendors.map((vendor) => (
           <div key={vendor.id} className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col justify-between">
             <Image
-              src={vendor.image}
+              src={'/Image/planetarium.jpg'}
               alt={`${vendor.name} Image`}
               width={400}
               height={200}
@@ -229,9 +152,9 @@ export function VendorList({ vendors }: { vendors: Vendor[] }) {
             <div className="p-4 font-sofia flex flex-col justify-between flex-grow">
               <div>
                 <h3 className="text-xl text-pink-900 font-bold mb-2">{vendor.name}</h3>
-                <p className="text-gray-700">{vendor.type}</p>
-                <p className="text-gray-500">Rating: {vendor.rate}</p>
-                <p className="text-gray-500">{vendor.location}</p>
+                <p className="text-gray-700">{vendor.specification}</p>
+                <p className="text-gray-500">Category: {vendor.category}</p>
+                <p className="text-gray-500">Price: {vendor.price}</p>
               </div>
               <button className="self-start text-pink-500 hover:text-pink-700 font-bold mt-4">
                 Lihat Detail

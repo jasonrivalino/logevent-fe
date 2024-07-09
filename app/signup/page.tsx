@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { signUp } from '../utils/api';
+import { signUp } from '../utils/authApi';
 
 export default function SignUp() {
   const [email, setEmail] = useState('');
@@ -39,8 +39,7 @@ export default function SignUp() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await signUp(email, password, fullName, phoneNumber);
-      console.log('Sign-up successful:', response);
+      await signUp(email, password, fullName, phoneNumber);
       router.push('/signin');
     } catch (err: any) {
       setError(err.message);
@@ -105,18 +104,32 @@ export default function SignUp() {
             </div>
           </div>          
 
-          {/* Address */}
-          <div className="mb-2 md:mb-4">
-            <label htmlFor="address" className="mb-1 md:mb-2 text-gray-800">Alamat</label>
-            <input
-              type="text"
-              id="address"
-              value={address}
-              placeholder="Alamat"
-              onChange={(e) => setAddress(e.target.value)}
-              required
-              className="w-full mt-2 p-1 md:p-2 rounded border border-gray-300 text-black"
-            />
+          {/* Full Name and Phone Number */}
+          <div className="flex flex-col md:flex-row gap-2 md:gap-6 mb-2 md:mb-4">
+            <div className="flex-1">
+              <label htmlFor="fullName" className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Nama Lengkap</label>
+              <input
+                type="text"
+                id="fullName"
+                value={fullName}
+                placeholder="Nama Lengkap"
+                onChange={(e) => setFullName(e.target.value)}
+                required
+                className="w-full mt-1 md:mt-2 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs"
+              />
+            </div>
+            <div className="flex-1">
+              <label htmlFor="phoneNumber" className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Nomor Telepon</label>
+              <input
+                type="text"
+                id="phoneNumber"
+                value={phoneNumber}
+                placeholder="Nomor Telepon"
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                required
+                className="w-full mt-1 md:mt-2 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs"
+              />
+            </div>
           </div>
 
           {/* Sign Up Button */}

@@ -1,14 +1,9 @@
-// app/utils/api.ts
+// app/utils/authApi.ts
 import axios from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-interface SignInResponse {
-  token: string;
-  message?: string;
-}
-
-export const getUserProfile = async (token: string) => {
+export const readUserProfile = async (token: string) => {
   try {
     const response = await axios.get(`${API_URL}/auth/profile`, {
       headers: {
@@ -21,7 +16,7 @@ export const getUserProfile = async (token: string) => {
   }
 };
 
-export const signIn = async (email: string, password: string): Promise<SignInResponse> => {
+export const signIn = async (email: string, password: string) => {
   try {
     const response = await axios.post(`${API_URL}/auth/signin`, { email, password }, {
       headers: {
@@ -35,9 +30,9 @@ export const signIn = async (email: string, password: string): Promise<SignInRes
   }
 };
 
-export const signUp = async (name: string, email: string, password: string): Promise<SignInResponse> => {
+export const signUp = async (email: string, password: string, name: string, phone: string) => {
   try {
-    const response = await axios.post(`${API_URL}/auth/signup`, { name, email, password }, {
+    const response = await axios.post(`${API_URL}/auth/signup`, { email, password, name, phone }, {
       headers: {
         'Content-Type': 'application/json'
       },
@@ -46,6 +41,20 @@ export const signUp = async (name: string, email: string, password: string): Pro
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Failed to sign up');
+  }
+};
+
+export const updateUser = async (token: string, userData: { name?: string; email?: string; password?: string; picture?: string; isAdmin?: boolean }) => {
+  try {
+    const response = await axios.put(`${API_URL}/auth/update`, userData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Failed to update user');
   }
 };
 
