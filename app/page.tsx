@@ -35,7 +35,6 @@ export function Navbar() {
   useEffect(() => {
     const fetchUserProfile = async () => {
       const token = localStorage.getItem('token');
-      console.log('Token:', token);
       if (token) {
         try {
           const user = await readUserProfile(token);
@@ -55,7 +54,7 @@ export function Navbar() {
   };
 
   const handleSignOutClick = () => {
-    localStorage.removeItem('token'); // Uncomment to remove the token
+    localStorage.removeItem('token');
     setUserName(null);
     setIsDropdownOpen(false);
     router.push('/');
@@ -107,7 +106,7 @@ export function Navbar() {
               <a
                 href="#aboutUs"
                 onClick={(e) => handleScrollToSection1(e, 'aboutUs')}
-                className="hover:underline font-sofia"
+                className="hover:underline font-sofia text-white"
               >
                 About Us
               </a>
@@ -116,7 +115,7 @@ export function Navbar() {
               <a
                 href="#services"
                 onClick={(e) => handleScrollToSection2(e, 'services')}
-                className="hover:underline font-sofia"
+                className="hover:underline font-sofia text-white"
               >
                 Produk & Layanan
               </a>
@@ -125,67 +124,65 @@ export function Navbar() {
               <a
                 href="#contact"
                 onClick={() => setIsMenuOpen(false)}
-                className="hover:underline font-sofia"
+                className="hover:underline font-sofia text-white"
               >
                 QnA
               </a>
             </li>
-            <li className="relative">
+            <li className="relative bg-pink-900">
               {userName ? (
                 <div className='flex items-center space-x-4'>
                   <span
-                    className='font-sofia cursor-pointer'
+                    className='font-sofia cursor-pointer text-white'
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   >
                     {userName}
                   </span>
-                  {isDropdownOpen && (
-                    <div className="absolute top-full right-0 mt-[1.125rem] w-48 bg-white rounded-lg shadow-lg py-2">
-                      <button
-                        onClick={handleProfileClick}
-                        className="pl-3 py-1 block text-gray-700 w-full text-left flex items-center font-sofia text-base"
+                  <div className={`absolute top-full right-0 mt-[1.125rem] w-32 bg-pink-900 shadow-lg max-h-40 overflow-y-auto transition-all duration-300 ease-in-out ${isDropdownOpen ? 'opacity-100 max-h-40' : 'opacity-0 max-h-0'}`}>
+                    <button
+                      onClick={handleProfileClick}
+                      className="pr-[2.15rem] py-[0.6rem] text-white w-full justify-end flex items-center font-sofia text-base hover:bg-pink-800"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="mr-3 h-5 w-5 text-white"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth="2"
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="mr-2 h-5 w-5 text-gray-700"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M5.121 17.804A7.963 7.963 0 0012 20c1.988 0 3.815-.73 5.121-1.928M5.121 17.804A7.963 7.963 0 012 12c0-2.088.8-3.977 2.121-5.276M5.121 17.804A8.008 8.008 0 0112 4a8.008 8.008 0 016.879 3.804M18.879 6.724A7.963 7.963 0 0122 12c0 2.088-.8 3.977-2.121 5.276M18.879 6.724A7.963 7.963 0 0012 4c-1.988 0-3.815.73-5.121 1.928"
-                          />
-                        </svg>
-                        Profile
-                      </button>
-                      <button
-                        onClick={handleSignOutClick}
-                        className="pl-3 py-1 block text-gray-700 w-full text-left flex items-center font-sofia text-base"
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M5.121 17.804A7.963 7.963 0 0012 20c1.988 0 3.815-.73 5.121-1.928M5.121 17.804A7.963 7.963 0 012 12c0-2.088.8-3.977 2.121-5.276M5.121 17.804A8.008 8.008 0 0112 4a8.008 8.008 0 016.879 3.804M18.879 6.724A7.963 7.963 0 0122 12c0 2.088-.8 3.977-2.121 5.276M18.879 6.724A7.963 7.963 0 0012 4c-1.988 0-3.815.73-5.121 1.928"
+                        />
+                      </svg>
+                      Profile
+                    </button>
+                    <button
+                      onClick={handleSignOutClick}
+                      className="pr-5 py-[0.6rem] text-white w-full justify-end flex items-center font-sofia text-base hover:bg-pink-800"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="mr-3 mb-1 h-5 w-5 text-white"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth="2"
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="mr-2 h-5 w-5 text-gray-700"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M15 12H3m12 0l-3-3m3 3l-3 3m6-8v2a3 3 0 00-3 3v4a3 3 0 003 3v2m-6-9h.01"
-                          />
-                        </svg>
-                        Sign Out
-                      </button>
-                    </div>
-                  )}
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M15 12H3m12 0l-3-3m3 3l-3 3m6-8v2a3 3 0 00-3 3v4a3 3 0 003 3v2m-6-9h.01"
+                        />
+                      </svg>
+                      Sign Out
+                    </button>
+                  </div>
                 </div>
               ) : (
-                <button onClick={handleSignInClick} className='font-sofia'>
+                <button onClick={handleSignInClick} className='font-sofia text-white'>
                   Sign In
                 </button>
               )}
@@ -207,7 +204,7 @@ export function Navbar() {
               <a
                 href="#aboutUs"
                 onClick={(e) => { handleScrollToSection1(e, 'aboutUs'); setIsMenuOpen(false); }}
-                className="hover:underline font-sofia"
+                className="hover:underline font-sofia text-white"
               >
                 About Us
               </a>
@@ -216,7 +213,7 @@ export function Navbar() {
               <a
                 href="#services"
                 onClick={(e) => { handleScrollToSection2(e, 'services'); setIsMenuOpen(false); }}
-                className="hover:underline font-sofia"
+                className="hover:underline font-sofia text-white"
               >
                 Produk & Layanan
               </a>
@@ -225,7 +222,7 @@ export function Navbar() {
               <a
                 href="#contact"
                 onClick={() => setIsMenuOpen(false)}
-                className="hover:underline font-sofia"
+                className="hover:underline font-sofia text-white"
               >
                 QnA
               </a>
@@ -234,20 +231,20 @@ export function Navbar() {
               {userName ? (
                 <div className='flex flex-col items-center space-y-4'>
                   <span
-                    className='font-sofia cursor-pointer'
+                    className='font-sofia cursor-pointer text-white'
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   >
                     {userName}
                   </span>
                   {isDropdownOpen && (
-                    <div className="flex flex-row md:flex-col w-full">
+                    <div className="flex flex-row md:flex-col w-full max-h-48 overflow-y-auto">
                       <button
                         onClick={handleProfileClick}
-                        className="px-4 mr-10 text-white md:text-gray-700 w-1/2 text-left flex items-center justify-center font-sofia text-base"
+                        className="px-4 -ml-3 mr-10 text-white w-1/2 text-left flex items-center justify-center font-sofia text-base"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          className="mr-2 h-5 w-5 text-white md:text-gray-700"
+                          className="mr-2 h-5 w-5 text-white"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -263,11 +260,11 @@ export function Navbar() {
                       </button>
                       <button
                         onClick={handleSignOutClick}
-                        className="ml-8 text-white md:text-gray-700 w-1/2 text-left flex items-center justify-center font-sofia text-base"
+                        className="ml-6 text-white w-1/2 text-left flex items-center justify-center font-sofia text-base"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          className="mr-2 h-5 w-5 text-white md:text-gray-700"
+                          className="mr-2 h-5 w-5 text-white"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -285,7 +282,7 @@ export function Navbar() {
                   )}
                 </div>
               ) : (
-                <button onClick={handleSignInClick} className='font-sofia'>
+                <button onClick={handleSignInClick} className='font-sofia text-white'>
                   Sign In
                 </button>
               )}
