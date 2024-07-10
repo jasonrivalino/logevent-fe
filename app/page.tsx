@@ -17,7 +17,7 @@ export default function Home() {
         <KeunggulanSection />
         <ListPlace />
         <ContactBox />
-        <footer className="w-full bg-gray-200 text-gray-700 py-8 text-center font-sofia">
+        <footer className="w-full bg-gray-200 text-gray-700 py-5 text-center font-sofia">
           <p>&copy; 2024 Logevent. All rights reserved.</p>
         </footer>
       </main>
@@ -454,7 +454,7 @@ function ListPlace() {
   };
 
   return (
-    <section className="p-8 md:p-16">
+    <section className="p-8">
       <h1 className="text-4xl md:text-4xl text-pink-900 font-bold mt-44 md:mt-32 mb-2 md:mb-0 md:-ml-[5.25rem] font-sofia">Rekomendasi Vendor</h1>
       <button className="mt-2 md:mt-5 mb-2 md:mb-0 md:-ml-[5.25rem] px-6 py-2 bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700">Lihat Selengkapnya</button>
       <div className="relative flex items-center justify-center mt-10 mb-2">
