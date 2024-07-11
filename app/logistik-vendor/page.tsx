@@ -10,11 +10,13 @@ import { readAllProduct } from '../utils/productApi'; // Import the API function
 interface Product {
   id: number;
   vendorId: number;
+  vendorAddress: string;
   name: string;
   specification: string;
   category: string;
   price: number;
   description?: string;
+  rating?: number;
 }
 
 export default function LogistikVendor() {
@@ -62,7 +64,7 @@ export default function LogistikVendor() {
         <Navbar />
         <div className="flex flex-col md:flex-row py-24">
           <Filter handleFilter={handleFilter} handleReset={handleReset} setMinPrice={setMinPrice} setMaxPrice={setMaxPrice} />
-          <VendorList vendors={filteredProducts} />
+          <ProductList products={filteredProducts} />
         </div>
       </div>
       <ContactBox />
@@ -111,7 +113,7 @@ export function Filter({ handleFilter, handleReset, setMinPrice, setMaxPrice }: 
   );
 }
 
-export function VendorList({ vendors }: { vendors: Product[] }) {
+export function ProductList({ products }: { products: Product[] }) {
   const router = useRouter();
 
   return (
@@ -140,21 +142,22 @@ export function VendorList({ vendors }: { vendors: Product[] }) {
       </div>
       <h2 className="text-2xl font-semibold mb-4 text-pink-900 font-sofia">Semua Venue</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {vendors.map((vendor) => (
-          <div key={vendor.id} className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col justify-between">
+        {products.map((product) => (
+          <div key={product.id} className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col justify-between">
             <Image
               src={'/Image/planetarium.jpg'}
-              alt={`${vendor.name} Image`}
+              alt={`${product.name} Image`}
               width={400}
               height={200}
               className="object-cover"
             />
             <div className="p-4 font-sofia flex flex-col justify-between flex-grow">
               <div>
-                <h3 className="text-xl text-pink-900 font-bold mb-2">{vendor.name}</h3>
-                <p className="text-gray-700">{vendor.specification}</p>
-                <p className="text-gray-500">Category: {vendor.category}</p>
-                <p className="text-gray-500">Price: {vendor.price}</p>
+                <h3 className="text-xl text-pink-900 font-bold mb-2">{product.name}</h3>
+                <p className="text-gray-700">{product.specification}</p>
+                {/* limit 2 points behind comma */}
+                <p className="text-gray-500">Rating: {product.rating?.toFixed(2) || "N/A"}</p>
+                <p className="text-gray-500">{product.vendorAddress}</p>
               </div>
               <button className="self-start text-pink-500 hover:text-pink-700 font-bold mt-4">
                 Lihat Detail
