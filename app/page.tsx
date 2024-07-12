@@ -305,19 +305,19 @@ function LayananSection() {
       image: "/Image/building.png", // You should replace this with the actual path to your image
       title: "Logistik Vendor",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae.",
-      link: "/logistikVendor"
+      link: "/logistik-vendor"
     },
     {
       image: "/Image/building.png",
       title: "Event Organizer",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae.",
-      link: "/eventOrganizer"
+      link: "/event-organizer"
     },
     {
       image: "/Image/building.png",
       title: "Paket Event",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae.",
-      link: "/paketEvent"
+      link: "/paket-event"
     },
   ];
 
@@ -403,6 +403,8 @@ function KeunggulanSection() {
 }
 
 function ListPlace() {
+  const router = useRouter();
+
   const places = [
     { image: "/Image/planetarium.jpg", name: "Sunset Beach", type: "Beach", rate: "4.5", location: "California, USA" },
     { image: "/Image/planetarium.jpg", name: "Mountain View", type: "Mountain", rate: "4.7", location: "Alps, Switzerland" },
@@ -472,10 +474,21 @@ function ListPlace() {
                 <div>
                   <h3 className="text-xl text-pink-900 font-bold">{place.name}</h3>
                   <p className="text-gray-700">{place.type}</p>
-                  <p className="text-gray-500">Rating: {place.rate}</p>
+                  <p className="text-gray-500 flex flex-row">
+                  <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className= "h-4 w-4 text-yellow-500 mr-[0.3rem] mt-[0.125rem]"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.14 3.51a1 1 0 00.95.69h3.7c.967 0 1.372 1.24.588 1.81l-2.992 2.179a1 1 0 00-.364 1.118l1.14 3.51c.3.921-.755 1.688-1.54 1.118l-2.992-2.178a1 1 0 00-1.175 0l-2.992 2.178c-.785.57-1.84-.197-1.54-1.118l1.14-3.51a1 1 0 00-.364-1.118L2.93 8.937c-.784-.57-.38-1.81.588-1.81h3.7a1 1 0 00.95-.69l1.14-3.51z" />
+                  </svg> {place.rate}
+                </p>
                   <p className="text-gray-500">{place.location}</p>
                 </div>
-                <button className="self-start text-pink-500 hover:text-pink-700 font-bold mt-4">
+                <button className="self-start text-pink-500 hover:text-pink-700 font-bold mt-4"
+                  onClick={() => router.push(`/info-detail`)}    
+                >
                     Lihat Detail
                 </button>
               </div>
