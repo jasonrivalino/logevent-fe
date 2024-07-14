@@ -127,10 +127,10 @@ const ProfilePage = () => {
                   onChange={(e) => setPhone(e.target.value)}
                 />
               </div>
-              <div className="flex justify-end">
+              <div className="flex justify-center md:justify-end">
                 <button className="bg-pink-600 text-white py-1 px-4 rounded-md text-xs md:text-base">Ubah Password</button>
               </div>
-              <div className="flex justify-end">
+              <div className="flex justify-center md:justify-end">
                 <button className="bg-pink-900 text-white py-1 md:py-2 px-4 rounded-md text-sm md:text-base">Simpan Perubahan</button>
               </div>
             </div>
