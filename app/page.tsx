@@ -204,16 +204,6 @@ function Introduction() {
           <button className="px-6 py-3 bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700">Pesan Event Organizer</button>
           <button className="px-6 py-3 mt-5 md:mt-0 md:ml-6  bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold rounded-lg hover:bg-pink-100 hover:text-pink-600 hover:border-pink-600">Cari Logistik Vendor</button>
         </div>
-
-        {/* Positioning the light image */}
-        {/* <div className="absolute -right-48 top-4 w-0 h-0 md:w-3/4 md:h-3/4">
-          <Image
-            src="/Image/lightimage.png"
-            alt="Decorative Light Image"
-            layout="fill"
-            objectFit="contain"
-          />
-        </div> */}
       </div>
     </section>
   );
