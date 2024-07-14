@@ -87,7 +87,7 @@ export default function SignUp() {
                 placeholder="Email"
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full mt-1 md:mt-2 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs"
+                className="w-full mt-1 md:mt-2 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs text-sm md:text-base"
               />
             </div>
             <div className="flex-1">
@@ -99,7 +99,7 @@ export default function SignUp() {
                 placeholder="Password"
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full mt-1 md:mt-2 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs"
+                className="w-full mt-1 md:mt-2 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs text-sm md:text-base"
               />
             </div>
           </div>          
@@ -115,7 +115,7 @@ export default function SignUp() {
                 placeholder="Nama Lengkap"
                 onChange={(e) => setFullName(e.target.value)}
                 required
-                className="w-full mt-1 md:mt-2 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs"
+                className="w-full mt-1 md:mt-2 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs text-sm md:text-base"
               />
             </div>
             <div className="flex-1">
@@ -127,7 +127,7 @@ export default function SignUp() {
                 placeholder="Nomor Telepon"
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 required
-                className="w-full mt-1 md:mt-2 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs"
+                className="w-full mt-1 md:mt-2 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs text-sm md:text-base"
               />
             </div>
           </div>

@@ -87,7 +87,7 @@ export default function SignIn() {
             placeholder="Email"
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="mb-2 md:mb-4 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs"
+            className="mb-2 md:mb-4 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs text-sm md:text-base"
           />
           <label htmlFor="password" className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Password</label>
           <input
@@ -97,7 +97,7 @@ export default function SignIn() {
             placeholder="Password"
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="mb-4 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs"
+            className="mb-4 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs text-sm md:text-base"
           />
           <p className="text-gray-800 text-xs md:text-sm mb-4">
             Not have an account yet? <a onClick={() => router.push('/signup')} className="text-pink-600 hover:text-pink-800 cursor-pointer">Sign Up</a> first
