@@ -5,16 +5,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import { Navbar, ContactBox } from '../page';
 import { useRouter } from 'next/navigation'; // Import useRouter from Next.js for routing
-
-interface Event {
-  id: number;
-  name: string;
-  type: string;
-  location: string;
-  price: number;
-  rate: number;
-  image: string;
-}
+import type { Event } from '../utils/types';
 
 const dummyEvents: Event[] = [
   {

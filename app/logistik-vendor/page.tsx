@@ -5,19 +5,8 @@ import Head from 'next/head';
 import Image from 'next/image';
 import { Navbar, ContactBox } from '../page';
 import { useRouter } from 'next/navigation';
-import { readAllProduct } from '../utils/productApi'; // Import the API function
-
-interface Product {
-  id: number;
-  vendorId: number;
-  vendorAddress: string;
-  name: string;
-  specification: string;
-  category: string;
-  price: number;
-  description?: string;
-  rating?: number;
-}
+import { readAllProduct } from '../utils/productApi';
+import type { Product } from '../utils/types';
 
 export default function LogistikVendor() {
   const [minPrice, setMinPrice] = useState<number | string>('');
@@ -159,7 +148,10 @@ export function ProductList({ products }: { products: Product[] }) {
                 <p className="text-gray-500">Rating: {product.rating?.toFixed(2) || "N/A"}</p>
                 <p className="text-gray-500">{product.vendorAddress}</p>
               </div>
-              <button className="self-start text-pink-500 hover:text-pink-700 font-bold mt-4">
+              <button
+                className="self-start text-pink-500 hover:text-pink-700 font-bold mt-4"
+                onClick={() => router.push(`/info-detail/${product.id}`)}
+              >
                 Lihat Detail
               </button>
             </div>

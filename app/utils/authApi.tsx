@@ -46,7 +46,6 @@ export const signUp = async (email: string, password: string, name: string, phon
 
 export const updateUser = async (token: string, userData: { name?: string; email?: string; password?: string; picture?: string; isAdmin?: boolean }) => {
   try {
-    console.log(userData.picture);
     const response = await axios.put(`${API_URL}/auth/update`, userData, {
       headers: {
         Authorization: `Bearer ${token}`,

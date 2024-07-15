@@ -2,12 +2,17 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { Navbar, ContactBox } from '../page';
+import { Navbar, ContactBox } from '../../page';
+import { usePathname } from 'next/navigation';
+import { readProductById } from '../../utils/productApi';
+import type { Product } from '../../utils/types';
 
 export default function Product() {
   const homeRef = useRef(null);
   const albumRef = useRef(null);
   const reviewsRef = useRef(null);
+  const pathname = usePathname();
+  const [product, setProduct] = useState<Product | null>(null);
 
   const scrollToSection = (ref: { current: { offsetTop: number; }; }) => {
     const offset = 20; // Adjust this value for the desired offset
@@ -18,11 +23,27 @@ export default function Product() {
     });
   };
 
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const id = pathname.split('/').pop();
+        if (id) {
+          const data = await readProductById(parseInt(id));
+          setProduct(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch product:', error);
+      }
+    };
+
+    fetchProduct();
+  }, [pathname]);
+
   return (
     <div className="font-sofia">
       <Navbar />
       <div className="container mx-auto mt-24 px-20">
-        <ProductImage />
+        {product && <ProductImage product={product} />}
         <Tabs scrollToSection={scrollToSection} refs={{ homeRef, albumRef, reviewsRef }} />
         <div ref={homeRef}><Home /></div>
         <div ref={albumRef}><ImageGallery /></div>
@@ -33,7 +54,7 @@ export default function Product() {
   );
 }
 
-function ProductImage() {
+function ProductImage({ product }: { product: Product }) {
   return (
     <div className="px-8 py-4">
       <div className="flex space-x-4">
@@ -47,18 +68,18 @@ function ProductImage() {
       </div>
       <div className="flex space-x-4">
         <div className="w-1/2">
-          <h1 className="text-3xl text-pink-900 font-bold mt-4">Gedung Sabuga ITB</h1>
-          <p className="text-base text-gray-600">Multifunctional Hall</p>
+          <h1 className="text-3xl text-pink-900 font-bold mt-4">{product.name || 'Product Name'}</h1>
+          <p className="text-base text-gray-600">{product.specification || 'Product Specification'}</p>
           <p className="text-base text-gray-600">Kapasitas: 1000 Orang</p>
-          <p className="text-base text-gray-600">Rp 5.000.000 / hari</p>
+          <p className="text-base text-gray-600">Rp {product.price || 'Product Price'} / hari</p>
           <div className="flex items-center space-x-2 text-gray-600">
-            <span>Dago, Bandung</span>
+            <span>{product.vendorAddress || 'Vendor Address'}</span>
             <span>|</span>
             <span>⭐⭐⭐⭐⭐ (190 reviews)</span>
           </div>
         </div>
         <div className="flex space-x-4 w-1/2 justify-end items-center">
-          <button className="bg-pink-500 text-white rounded-lg px-4 py-2">Chat vendor</button>
+          <button className="bg-pink-500 text-white rounded-lg px-4 py-2">Chat Admin</button>
           <button className="text-pink-500 flex flex-col items-center">
             <svg className="w-6 h-6 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
               <path d="M15 8a3 3 0 00-2.24-2.93 5 5 0 10-5.52 0A3 3 0 005 8v1h10V8zM5 11h10v1a4 4 0 01-4 4H9a4 4 0 01-4-4v-1zm5-9a4 4 0 014 4v1H6V6a4 4 0 014-4z" />

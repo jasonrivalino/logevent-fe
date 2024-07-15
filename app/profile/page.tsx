@@ -10,7 +10,6 @@ const ProfilePage = () => {
   const [userName, setUserName] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
   const [phone, setPhone] = useState<string | null>(null);
-  const [password, setPassword] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -53,10 +52,8 @@ const ProfilePage = () => {
           name: userName || undefined,
           email: email || undefined,
           phone: phone || undefined,
-          password: password || undefined,
           picture: imagePreview || undefined,
         };
-        console.log(updatedUserData.picture);
         await updateUser(token, updatedUserData);
         alert('Profile updated successfully');
       } catch (error: any) {
