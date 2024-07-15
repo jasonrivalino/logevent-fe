@@ -45,9 +45,9 @@ export default function Product() {
       <div className="container mx-auto mt-24 px-20">
         {product && <ProductImage product={product} />}
         <Tabs scrollToSection={scrollToSection} refs={{ homeRef, albumRef, reviewsRef }} />
-        <div ref={homeRef}><Home /></div>
-        <div ref={albumRef}><ImageGallery /></div>
-        <div ref={reviewsRef}><Reviews /></div>
+        {product && <div ref={homeRef}><Home product={product} /></div>}
+        {product && <div ref={albumRef}><ImageGallery product={product} /></div>}
+        {product && <div ref={reviewsRef}><Reviews product={product} /></div>}
       </div>
       <ContactBox />
     </div>
@@ -108,22 +108,18 @@ function Tabs({ scrollToSection, refs }: { scrollToSection: (ref: React.RefObjec
   );
 }
 
-function Home() {
+function Home({ product }: { product: Product }) {
   return (
     <div className="px-8 py-14 border-b">
       <h2 className="text-3xl font-bold text-pink-900 pt-10">Home</h2>
       <p className="text-gray-600 mt-4">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus odio nisi, pellentesque eu molestie eget, lobortis non nisl. Fusce sit amet massa porta, condimentum elit eu, finibus ipsum. Sed sed arcu eu turpis lacinia scelerisque. Vestibulum lacinia mauris vitae nunc tempus, sed laoreet eros gravida. Nullam rhoncus scelerisque odio, eu lobortis urna viverra sed. Quisque feugiat, eros at sagittis commodo, risus lectus viverra odio, a fringilla elit lectus eget purus. Suspendisse tortor mi, pulvinar at vulputate et, cursus ac odio. Integer faucibus quam non nulla lacinia, vel dignissim tellus pulvinar.
-        <br></br><br></br>
-        Suspendisse molestie dictum egestas. Proin vehicula nunc in volutpat cursus. Etiam eu ullamcorper metus. Integer commodo orci eu nisi gravida, a lacinia libero molestie. Nulla luctus rhoncus erat, eget blandit nunc maximus vel. Maecenas convallis vulputate orci, varius venenatis nunc lacinia non. Donec ac vestibulum sapien, eget ullamcorper metus. Donec dolor justo, accumsan ut est eu, maximus sollicitudin dui. Nullam dictum ex dui. Integer justo risus, tincidunt nec mattis lobortis, commodo non magna. Cras non ex eget magna euismod efficitur. Fusce in ullamcorper justo.
-        <br></br><br></br>
-        Phasellus id lorem non massa molestie iaculis. Ut porttitor varius purus, quis feugiat sem commodo et. Donec laoreet nulla sed dui bibendum accumsan. Nullam dignissim massa et commodo accumsan. Mauris suscipit tristique quam, vitae ullamcorper sapien molestie non. Nunc accumsan in felis sit amet posuere. Etiam sodales accumsan tempus. Aliquam nec velit commodo, suscipit ante ac, pulvinar libero. Praesent nunc lectus, venenatis vel libero sed, sollicitudin pellentesque tellus. Vivamus accumsan erat in turpis tincidunt, commodo pulvinar nisl pellentesque. Maecenas at dolor rhoncus, varius elit nec, facilisis nisl. 
+        {product.description || 'Product Description'}
       </p>
     </div>
   );
 }
 
-function ImageGallery() {
+function ImageGallery({ product }: { product: Product }) {
   const places = [
     { image: "/Image/planetarium.jpg" },
     { image: "/Image/planetarium.jpg" },
@@ -212,7 +208,7 @@ function ImageGallery() {
   );
 }
 
-function Reviews() {
+function Reviews({ product }: { product: Product }) {
   const reviews = [
     {
       user: "User1",
