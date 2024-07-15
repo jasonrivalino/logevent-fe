@@ -18,7 +18,7 @@ export default function Home() {
         <KeunggulanSection />
         <ListPlace />
         <ContactBox />
-        <footer className="w-full bg-gray-200 text-gray-700 py-8 text-center font-sofia">
+        <footer className="w-full bg-gray-200 text-gray-700 py-5 text-center font-sofia">
           <p>&copy; 2024 Logevent. All rights reserved.</p>
         </footer>
       </main>
@@ -375,16 +375,6 @@ function Introduction() {
           <button className="px-6 py-3 bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700">Pesan Event Organizer</button>
           <button className="px-6 py-3 mt-5 md:mt-0 md:ml-6  bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold rounded-lg hover:bg-pink-100 hover:text-pink-600 hover:border-pink-600">Cari Logistik Vendor</button>
         </div>
-
-        {/* Positioning the light image */}
-        {/* <div className="absolute -right-48 top-4 w-0 h-0 md:w-3/4 md:h-3/4">
-          <Image
-            src="/Image/lightimage.png"
-            alt="Decorative Light Image"
-            layout="fill"
-            objectFit="contain"
-          />
-        </div> */}
       </div>
     </section>
   );
@@ -574,6 +564,8 @@ function KeunggulanSection() {
 }
 
 function ListPlace() {
+  const router = useRouter();
+
   const places = [
     { image: "/Image/planetarium.jpg", name: "Sunset Beach", type: "Beach", rate: "4.5", location: "California, USA" },
     { image: "/Image/planetarium.jpg", name: "Mountain View", type: "Mountain", rate: "4.7", location: "Alps, Switzerland" },
@@ -625,7 +617,7 @@ function ListPlace() {
   };
 
   return (
-    <section className="p-8 md:p-16">
+    <section className="p-8">
       <h1 className="text-4xl md:text-4xl text-pink-900 font-bold mt-44 md:mt-32 mb-2 md:mb-0 md:-ml-[5.25rem] font-sofia">Rekomendasi Vendor</h1>
       <button className="mt-2 md:mt-5 mb-2 md:mb-0 md:-ml-[5.25rem] px-6 py-2 bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700">Lihat Selengkapnya</button>
       <div className="relative flex items-center justify-center mt-10 mb-2">
@@ -643,10 +635,21 @@ function ListPlace() {
                 <div>
                   <h3 className="text-xl text-pink-900 font-bold">{place.name}</h3>
                   <p className="text-gray-700">{place.type}</p>
-                  <p className="text-gray-500">Rating: {place.rate}</p>
+                  <p className="text-gray-500 flex flex-row">
+                  <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className= "h-4 w-4 text-yellow-500 mr-[0.3rem] mt-[0.125rem]"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.14 3.51a1 1 0 00.95.69h3.7c.967 0 1.372 1.24.588 1.81l-2.992 2.179a1 1 0 00-.364 1.118l1.14 3.51c.3.921-.755 1.688-1.54 1.118l-2.992-2.178a1 1 0 00-1.175 0l-2.992 2.178c-.785.57-1.84-.197-1.54-1.118l1.14-3.51a1 1 0 00-.364-1.118L2.93 8.937c-.784-.57-.38-1.81.588-1.81h3.7a1 1 0 00.95-.69l1.14-3.51z" />
+                  </svg> {place.rate}
+                </p>
                   <p className="text-gray-500">{place.location}</p>
                 </div>
-                <button className="self-start text-pink-500 hover:text-pink-700 font-bold mt-4">
+                <button className="self-start text-pink-500 hover:text-pink-700 font-bold mt-4"
+                  onClick={() => router.push(`/info-detail`)}    
+                >
                     Lihat Detail
                 </button>
               </div>
