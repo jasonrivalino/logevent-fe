@@ -41,7 +41,9 @@ export default function Product() {
 const images = [
   "/Image/landingpage1.jpg",
   "/Image/landingpage2.jpg",
-  "/Image/landingpage3.jpg"
+  "/Image/landingpage3.jpg",
+  "/Image/planetarium.jpg",
+  "/Image/partyevent.jpg"
 ];
 
 const useWindowWidth = () => {
@@ -77,7 +79,7 @@ const ProductImage = () => {
         setCurrentImageIndex((prevIndex) =>
           prevIndex === images.length - 1 ? 0 : prevIndex + 1
         ),
-      3000
+      2000
     );
 
     return () => {
@@ -90,12 +92,11 @@ const ProductImage = () => {
       {windowWidth >= 768 ? (
         <div className="px-8 py-4">
           <div className="flex md:space-x-4">
-            <img src="/Image/planetarium.jpg" alt="Main Hall" className="w-full md:w-1/2 h-auto rounded-md" />
+            <img src={images[0]} alt="Main Hall" className="w-full md:w-1/2 h-auto md:h-[21rem] rounded-md" />
             <div className="grid grid-cols-2 gap-4 w-0 md:w-1/2">
-              <img src="/Image/planetarium.jpg" alt="Hall Image" className="w-0 md:w-full h-auto rounded-md" />
-              <img src="/Image/planetarium.jpg" alt="Hall Image" className="w-0 md:w-full h-auto rounded-md" />
-              <img src="/Image/planetarium.jpg" alt="Hall Image" className="w-0 md:w-full h-auto rounded-md" />
-              <img src="/Image/planetarium.jpg" alt="Hall Image" className="w-0 md:w-full h-auto rounded-md" />
+              {images.slice(1).map((image, index) => (
+                <img key={index} src={image} alt={`Hall Image ${index + 1}`} className="w-0 md:w-full h-auto md:h-40 rounded-md" />
+              ))}
             </div>
           </div>
           <div className="flex flex-col md:flex-row space-x-4">
@@ -107,7 +108,7 @@ const ProductImage = () => {
               <div className="text-sm md:text-base flex items-center space-x-2 text-gray-600">
                 <span>Dago, Bandung</span>
                 <span>|</span>
-                <span>⭐ 4.2   (190 reviews)</span>
+                <span>⭐ 4.2 (190 reviews)</span>
               </div>
             </div>
             <div className="flex space-x-4 w-full md:w-1/2 md:justify-end items-center mt-3 md:mt-0">
