@@ -1,4 +1,4 @@
-// app/utils/orderApi.ts
+// app/utils/orderApi.tsx
 import axios from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;

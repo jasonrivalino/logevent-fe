@@ -5,7 +5,9 @@ import Image from 'next/image';
 import { Navbar, ContactBox } from '../../page';
 import { usePathname } from 'next/navigation';
 import { readProductById } from '../../utils/productApi';
-import type { Product } from '../../utils/types';
+import { readReviewByProductId } from '../../utils/reviewApi';
+import { convertDate, getStars } from '../../utils/helpers';
+import type { Product, Review } from '../../utils/types';
 
 export default function Product() {
   const homeRef = useRef(null);
@@ -13,6 +15,7 @@ export default function Product() {
   const reviewsRef = useRef(null);
   const pathname = usePathname();
   const [product, setProduct] = useState<Product | null>(null);
+  const [reviews, setReviews] = useState([] as Review[]);
 
   const scrollToSection = (ref: { current: { offsetTop: number; }; }) => {
     const offset = 20; // Adjust this value for the desired offset
@@ -39,6 +42,22 @@ export default function Product() {
     fetchProduct();
   }, [pathname]);
 
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const id = pathname.split('/').pop();
+        if (id) {
+          const data = await readReviewByProductId(parseInt(id));
+          setReviews(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch reviews:', error);
+      }
+    };
+
+    fetchReviews();
+  }, [pathname]);
+
   return (
     <div className="font-sofia">
       <Navbar />
@@ -47,7 +66,7 @@ export default function Product() {
         <Tabs scrollToSection={scrollToSection} refs={{ homeRef, albumRef, reviewsRef }} />
         {product && <div ref={homeRef}><Home product={product} /></div>}
         {product && <div ref={albumRef}><ImageGallery product={product} /></div>}
-        {product && <div ref={reviewsRef}><Reviews product={product} /></div>}
+        {product && <div ref={reviewsRef}><Reviews reviews={reviews} /></div>}
       </div>
       <ContactBox />
     </div>
@@ -70,12 +89,18 @@ function ProductImage({ product }: { product: Product }) {
         <div className="w-1/2">
           <h1 className="text-3xl text-pink-900 font-bold mt-4">{product.name || 'Product Name'}</h1>
           <p className="text-base text-gray-600">{product.specification || 'Product Specification'}</p>
-          <p className="text-base text-gray-600">Kapasitas: 1000 Orang</p>
+          {/* TODO: INTEGRATE CAPACITY */}
+          {/* <p className="text-base text-gray-600">Kapasitas: 1000 Orang</p> */}
           <p className="text-base text-gray-600">Rp {product.price || 'Product Price'} / hari</p>
           <div className="flex items-center space-x-2 text-gray-600">
             <span>{product.vendorAddress || 'Vendor Address'}</span>
             <span>|</span>
-            <span>⭐⭐⭐⭐⭐ (190 reviews)</span>
+            <div className="flex items-center">
+              {getStars(product.rating || 0)}
+              <span> ({product.rating?.toFixed(2) ?? 0})</span>
+            </div>
+            <span>|</span>
+            <span>{product.reviewCount} reviews</span>
           </div>
         </div>
         <div className="flex space-x-4 w-1/2 justify-end items-center">
@@ -208,31 +233,7 @@ function ImageGallery({ product }: { product: Product }) {
   );
 }
 
-function Reviews({ product }: { product: Product }) {
-  const reviews = [
-    {
-      user: "User1",
-      category: "Venue & Decoration",
-      date: "3 Maret 2024",
-      review: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae.",
-      imageUrl: "https://via.placeholder.com/50" // Replace with actual image URLs
-    },
-    {
-      user: "User2",
-      category: "Food & Service",
-      date: "5 April 2024",
-      review: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae.",
-      imageUrl: "https://via.placeholder.com/50" // Replace with actual image URLs
-    },
-    {
-      user: "User3",
-      category: "Overall Experience",
-      date: "10 Mei 2024",
-      review: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae.",
-      imageUrl: "https://via.placeholder.com/50" // Replace with actual image URLs
-    },
-  ];
-
+function Reviews({ reviews }: { reviews: Review[] }) {
   return (
     <div className="mt-4 px-8 py-14">
       <h2 className="text-3xl font-bold text-pink-900 pt-10">Reviews</h2>
@@ -240,15 +241,22 @@ function Reviews({ product }: { product: Product }) {
         {reviews.map((review, index) => (
           <div key={index} className="border border-gray-400 rounded-lg p-4 w-1/3">
             <div className="flex items-center space-x-4">
-              <img src={review.imageUrl} alt="User profile" className="w-12 h-12 rounded-full" />
+              {/* TODO: INTEGRATE USER PICTURE */}
+              {/* <img src={review.imageUrl} alt="User profile" className="w-12 h-12 rounded-full" /> */}
+              <img src={"https://via.placeholder.com/50"} alt="User profile" className="w-12 h-12 rounded-full" />
               <div>
-                <h3 className="text-xl text-gray-600 font-bold">{review.user}</h3>
-                <p className="text-gray-600">{review.category}</p>
-                <p className="text-gray-600">{review.date}</p>
+                {/* TODO: INTEGRATE USER NAME */}
+                {/* <h3 className="text-xl text-gray-600 font-bold">{review.user}</h3> */}
+                <h3 className="text-xl text-gray-600 font-bold">User {index+1}</h3>
+                <div className="flex items-center">
+                  {getStars(review.rating)}
+                  <span> ({review.rating})</span>
+                </div>
+                <p className="text-gray-600">{convertDate(review.reviewDate)}</p>
               </div>
             </div>
             <p className="text-gray-600 mt-2">
-              {review.review}
+              {review.comment}
             </p>
           </div>
         ))}

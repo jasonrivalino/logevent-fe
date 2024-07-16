@@ -1,3 +1,5 @@
+// app/utils/types.tsx
+
 interface Event {
   id: number;
   name: string;
@@ -18,6 +20,15 @@ interface Product {
   price: number;
   description?: string;
   rating?: number;
+  reviewCount: number;
 }
 
-export type { Event, Product };
+interface Review {
+  id: number;
+  orderId: number;
+  rating: number;
+  comment: string;
+  reviewDate: string;
+}
+
+export type { Event, Product, Review };

@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Navbar, ContactBox } from '../page';
 import { useRouter } from 'next/navigation';
 import { readAllProduct } from '../utils/productApi';
+import { generateGoogleMapsUrl } from '../utils/helpers';
 import type { Product } from '../utils/types';
 
 export default function LogistikVendor() {
@@ -129,6 +130,11 @@ export function ProductList({ products }: { products: Product[] }) {
 
   const totalPages = Math.ceil(products.length / itemsPerPage);
 
+  const handleAddressClick = (address: string) => {
+    const googleMapsUrl = generateGoogleMapsUrl(address);
+    window.open(googleMapsUrl, '_blank');
+  };
+
   return (
     <div className="w-full md:w-3/4 p-5 md:p-6 mr-4 bg-white rounded-2xl">
       {/* Breadcrumb Navigation */}
@@ -178,7 +184,12 @@ export function ProductList({ products }: { products: Product[] }) {
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.14 3.51a1 1 0 00.95.69h3.7c.967 0 1.372 1.24.588 1.81l-2.992 2.179a1 1 0 00-.364 1.118l1.14 3.51c.3.921-.755 1.688-1.54 1.118l-2.992-2.178a1 1 0 00-1.175 0l-2.992 2.178c-.785.57-1.84-.197-1.54-1.118l1.14-3.51a1 1 0 00-.364-1.118L2.93 8.937c-.784-.57-.38-1.81.588-1.81h3.7a1 1 0 00.95-.69l1.14-3.51z" />
                   </svg> {product.rating?.toFixed(2) || "N/A"}
                 </p>
-                <p className="text-gray-500">{product.vendorAddress}</p>
+                <p
+                  className="text-gray-500 cursor-pointer"
+                  onClick={() => handleAddressClick(product.vendorAddress)}
+                >
+                  {product.vendorAddress}
+                </p>
               </div>
               <button className="self-start text-xs md:text-base text-pink-500 hover:text-pink-700 font-bold mt-4"
               onClick={() => router.push(`/info-detail/${product.id}`)}
