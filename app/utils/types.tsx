@@ -1,5 +1,11 @@
 // app/utils/types.tsx
 
+interface Album {
+  id: number;
+  productId: number;
+  albumImage?: string;
+}
+
 interface Event {
   id: number;
   name: string;
@@ -19,7 +25,7 @@ interface Product {
   category: string;
   price: number;
   description?: string;
-  productImage: string;
+  productImage?: string;
   rating: number;
   reviewCount: number;
 }
@@ -35,4 +41,4 @@ interface Review {
   reviewDate: string;
 }
 
-export type { Event, Product, Review };
+export type { Album, Event, Product, Review };

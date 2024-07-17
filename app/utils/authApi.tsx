@@ -44,6 +44,19 @@ export const signUp = async (email: string, password: string, name: string, phon
   }
 };
 
+export const resetPassword = async (email: string) => {
+  try {
+    const response = await axios.post(`${API_URL}/auth/reset-password`, { email }, {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Failed to reset password');
+  }
+}
+
 export const updateUser = async (token: string, userData: { name?: string; email?: string; password?: string; picture?: string; isAdmin?: boolean }) => {
   try {
     const response = await axios.put(`${API_URL}/auth/update`, userData, {

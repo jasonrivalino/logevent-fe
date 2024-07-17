@@ -3,11 +3,11 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
-import { Navbar, ContactBox } from '../page';
+import { Navbar, ContactBox } from '@/app/page';
 import { useRouter } from 'next/navigation';
-import { readAllProduct } from '../utils/productApi';
-import { generateGoogleMapsUrl } from '../utils/helpers';
-import type { Product } from '../utils/types';
+import { readAllProduct } from '@/app/utils/productApi';
+import { generateGoogleMapsUrl } from '@/app/utils/helpers';
+import type { Product } from '@/app/utils/types';
 
 export default function LogistikVendor() {
   const [minPrice, setMinPrice] = useState<number | string>('');

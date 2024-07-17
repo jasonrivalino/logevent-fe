@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
-import { Navbar, ContactBox } from '../page';
+import { Navbar, ContactBox } from '@/app/page';
 import { useRouter } from 'next/navigation'; // Import useRouter from Next.js for routing
-import type { Event } from '../utils/types';
+import type { Event } from '@/app/utils/types';
 
 const dummyEvents: Event[] = [
   {

@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { signUp } from '../utils/authApi';
+import { signUp } from '@/app/utils/authApi';
 
 export default function SignUp() {
   const [email, setEmail] = useState('');

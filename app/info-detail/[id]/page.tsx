@@ -2,12 +2,13 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { Navbar, ContactBox } from '../../page';
+import { Navbar, ContactBox } from '@/app/page';
 import { usePathname } from 'next/navigation';
-import { readProductById } from '../../utils/productApi';
-import { readReviewByProductId } from '../../utils/itemApi';
-import { convertDate, getStars } from '../../utils/helpers';
-import type { Product, Review } from '../../utils/types';
+import { readAlbumByProductId } from '@/app/utils/albumApi';
+import { readProductById } from '@/app/utils/productApi';
+import { readReviewByProductId } from '@/app/utils/itemApi';
+import { convertDate, getStars } from '@/app/utils/helpers';
+import type { Album, Product, Review } from '@/app/utils/types';
 
 export default function Product() {
   const homeRef = useRef(null);
@@ -15,7 +16,8 @@ export default function Product() {
   const reviewsRef = useRef(null);
   const pathname = usePathname();
   const [product, setProduct] = useState<Product | null>(null);
-  const [reviews, setReviews] = useState([] as Review[]);
+  const [albums, setAlbums] = useState<Album[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
 
   const scrollToSection = (ref: { current: { offsetTop: number; }; }) => {
     const offset = 20; // Adjust this value for the desired offset
@@ -27,35 +29,23 @@ export default function Product() {
   };
 
   useEffect(() => {
-    const fetchProduct = async () => {
+    const fetchData = async () => {
       try {
         const id = pathname.split('/').pop();
         if (id) {
-          const data = await readProductById(parseInt(id));
-          setProduct(data);
+          const product = await readProductById(parseInt(id));
+          const albums = await readAlbumByProductId(parseInt(id));
+          const reviews = await readReviewByProductId(parseInt(id));
+          setProduct(product);
+          setAlbums(albums);
+          setReviews(reviews);
         }
       } catch (error) {
         console.error('Failed to fetch product:', error);
       }
     };
 
-    fetchProduct();
-  }, [pathname]);
-
-  useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        const id = pathname.split('/').pop();
-        if (id) {
-          const data = await readReviewByProductId(parseInt(id));
-          setReviews(data);
-        }
-      } catch (error) {
-        console.error('Failed to fetch reviews:', error);
-      }
-    };
-
-    fetchReviews();
+    fetchData();
   }, [pathname]);
 
   return (
@@ -65,7 +55,7 @@ export default function Product() {
         {product && <ProductImage product={product} />}
         <Tabs scrollToSection={scrollToSection} refs={{ homeRef, albumRef, reviewsRef }} />
         {product && <div ref={homeRef}><Home product={product} /></div>}
-        {product && <div ref={albumRef}><ImageGallery product={product} /></div>}
+        {product && <div ref={albumRef}><ImageGallery albums={albums} /></div>}
         {product && <div ref={reviewsRef}><Reviews reviews={reviews} /></div>}
       </div>
       <ContactBox />
@@ -107,23 +97,24 @@ function ProductImage({ product }: { product: Product }) {
   return (
     <div className="px-8 py-4">
       <div className="flex space-x-4">
-        <img src="/Image/planetarium.jpg" alt="Main Hall" className="w-1/2 h-auto rounded-md" />
-        <div className="grid grid-cols-2 gap-4 w-1/2">
+        <img src={product.productImage || "/Image/planetarium.jpg"} alt="Main Hall" className="w-1/2 h-auto rounded-md" />
+        {/* TODO: MAKE PRODUCT IMAGE SINGULAR */}
+        {/* <div className="grid grid-cols-2 gap-4 w-1/2">
           <img src="/Image/planetarium.jpg" alt="Hall Image" className="w-full h-auto rounded-md" />
           <img src="/Image/planetarium.jpg" alt="Hall Image" className="w-full h-auto rounded-md" />
           <img src="/Image/planetarium.jpg" alt="Hall Image" className="w-full h-auto rounded-md" />
           <img src="/Image/planetarium.jpg" alt="Hall Image" className="w-full h-auto rounded-md" />
-        </div>
+        </div> */}
       </div>
       <div className="flex space-x-4">
         <div className="w-1/2">
-          <h1 className="text-3xl text-pink-900 font-bold mt-4">{product.name || 'Product Name'}</h1>
-          <p className="text-base text-gray-600">{product.specification || 'Product Specification'}</p>
+          <h1 className="text-3xl text-pink-900 font-bold mt-4">{product.name}</h1>
+          <p className="text-base text-gray-600">{product.specification}</p>
           {/* TODO: INTEGRATE CAPACITY */}
           {/* <p className="text-base text-gray-600">Kapasitas: 1000 Orang</p> */}
-          <p className="text-base text-gray-600">Rp {product.price || 'Product Price'} / hari</p>
+          <p className="text-base text-gray-600">Rp {product.price} / hari</p>
           <div className="flex items-center space-x-2 text-gray-600">
-            <span>{product.vendorAddress || 'Vendor Address'}</span>
+            <span>{product.vendorAddress}</span>
             <span>|</span>
             <div className="flex items-center">
               {getStars(product.rating)}
@@ -168,20 +159,14 @@ function Home({ product }: { product: Product }) {
   );
 }
 
-function ImageGallery({ product }: { product: Product }) {
-  const places = [
-    { image: "/Image/planetarium.jpg" },
-    { image: "/Image/planetarium.jpg" },
-    { image: "/Image/planetarium.jpg" },
-    { image: "/Image/planetarium.jpg" },
-    { image: "/Image/planetarium.jpg" },
-    { image: "/Image/planetarium.jpg" },
-  ];
-
+function ImageGallery({ albums }: { albums: Album[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(4);
 
-  const totalItems = places.length;
+  const totalItems = albums.length;
+  if (totalItems < itemsPerPage) {
+    setItemsPerPage(totalItems);
+  }
 
   useEffect(() => {
     const handleResize = () => {
@@ -203,31 +188,44 @@ function ImageGallery({ product }: { product: Product }) {
   }, []);
 
   const handleNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + itemsPerPage) % totalItems);
+    if (totalItems > 0) {
+      setCurrentIndex((prevIndex) => (prevIndex + itemsPerPage) % totalItems);
+    }
   };
 
   const handlePrev = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - itemsPerPage + totalItems) % totalItems);
+    if (totalItems > 0) {
+      setCurrentIndex((prevIndex) => (prevIndex - itemsPerPage + totalItems) % totalItems);
+    }
   };
 
-  const displayedPlaces = () => {
+  const displayedImages = () => {
     const display = [];
     for (let i = 0; i < itemsPerPage; i++) {
       const index = (currentIndex + i) % totalItems;
-      display.push(places[index]);
+      display.push(albums[index]);
     }
     return display;
   };
+
+  if (totalItems === 0) {
+    return (
+      <section className="px-8 py-14 border-b">
+        <h2 className="text-3xl font-bold text-pink-900 pt-10">Album</h2>
+        <p className="text-gray-700 mt-6">No images available</p>
+      </section>
+    );
+  }
 
   return (
     <section className="px-8 py-14 border-b">
       <h2 className="text-3xl font-bold text-pink-900 pt-10">Album</h2>
       <div className="relative flex items-center justify-center mt-6 mb-2">
         <div className="flex flex-wrap gap-10 justify-center mx-4">
-          {displayedPlaces().map((place, index) => (
+          {displayedImages().map((album, index) => (
             <div key={index} className="w-[16.75rem] md:w-[17.5rem] bg-white shadow-lg rounded-3xl overflow-hidden relative">
               <Image
-                src={place.image}
+                src={album.albumImage || "https://via.placeholder.com/400x200"}
                 alt={`Image`}
                 width={400}
                 height={200}
@@ -258,6 +256,15 @@ function ImageGallery({ product }: { product: Product }) {
 }
 
 function Reviews({ reviews }: { reviews: Review[] }) {
+  if (reviews.length === 0) {
+    return (
+      <div className="px-8 py-14 border-b">
+        <h2 className="text-3xl font-bold text-pink-900 pt-10">Reviews</h2>
+        <p className="text-gray-700 mt-6">No reviews available</p>
+      </div>
+    );
+  }
+
   return (
     <div className="mt-4 px-8 py-14">
       <h2 className="text-3xl font-bold text-pink-900 pt-10">Reviews</h2>

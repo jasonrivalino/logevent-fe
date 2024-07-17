@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { signIn, googleSignIn } from '../utils/authApi';
+import { signIn, googleSignIn } from '@/app/utils/authApi';
 
 export default function SignIn() {
   const [email, setEmail] = useState('');

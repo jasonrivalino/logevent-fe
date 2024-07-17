@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Navbar } from '../page';
-import { readUserProfile, updateUser } from '../utils/authApi';
+import { Navbar } from '@/app/page';
+import { readUserProfile, updateUser, resetPassword } from '@/app/utils/authApi';
 import Image from 'next/image';
 
 const ProfilePage = () => {
@@ -62,6 +62,20 @@ const ProfilePage = () => {
       }
     } else {
       alert('User is not authenticated');
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (email) {
+      try {
+        await resetPassword(email);
+        alert('Password reset email sent');
+      } catch (error: any) {
+        console.error('Failed to reset password:', error.message);
+        alert('Failed to reset password');
+      }
+    } else {
+      alert('Email is required');
     }
   };
 
@@ -125,7 +139,7 @@ const ProfilePage = () => {
                 />
               </div>
               <div className="flex justify-center md:justify-end">
-                <button className="bg-pink-600 text-white py-1 px-4 rounded-md text-xs md:text-base">Ubah Password</button>
+                <button onClick={handleResetPassword} className="bg-pink-600 text-white py-1 px-4 rounded-md text-xs md:text-base">Ubah Password</button>
               </div>
               <div className="flex justify-center md:justify-end">
                 <button className="bg-pink-900 text-white py-1 md:py-2 px-4 rounded-md text-sm md:text-base">Simpan Perubahan</button>
