@@ -19,15 +19,19 @@ interface Product {
   category: string;
   price: number;
   description?: string;
-  rating?: number;
+  productImage: string;
+  rating: number;
   reviewCount: number;
 }
 
 interface Review {
   id: number;
+  productId: number;
   orderId: number;
-  rating: number;
-  comment: string;
+  userName: string;
+  userPicture?: string;
+  reviewRating: number;
+  reviewComment: string;
   reviewDate: string;
 }
 

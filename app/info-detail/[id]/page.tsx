@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Navbar, ContactBox } from '../../page';
 import { usePathname } from 'next/navigation';
 import { readProductById } from '../../utils/productApi';
-import { readReviewByProductId } from '../../utils/reviewApi';
+import { readReviewByProductId } from '../../utils/itemApi';
 import { convertDate, getStars } from '../../utils/helpers';
 import type { Product, Review } from '../../utils/types';
 
@@ -74,6 +74,36 @@ export default function Product() {
 }
 
 function ProductImage({ product }: { product: Product }) {
+  const productUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: document.title,
+          url: productUrl,
+        });
+      } catch (error) {
+        console.error('Error sharing:', error);
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(productUrl);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch (error) {
+        console.error('Failed to copy the text to clipboard:', error);
+      }
+    }
+  };
+
+  const handleChat = () => {
+    const adminNumber = process.env.NEXT_PUBLIC_ADMIN_NUMBER;
+    const whatsappUrl = `https://wa.me/${adminNumber}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
   return (
     <div className="px-8 py-4">
       <div className="flex space-x-4">
@@ -96,26 +126,20 @@ function ProductImage({ product }: { product: Product }) {
             <span>{product.vendorAddress || 'Vendor Address'}</span>
             <span>|</span>
             <div className="flex items-center">
-              {getStars(product.rating || 0)}
-              <span> ({product.rating?.toFixed(2) ?? 0})</span>
+              {getStars(product.rating)}
+              <span> ({product.rating && product.rating.toFixed(2) !== "0.00" ? product.rating.toFixed(2) : "N/A"})</span>
             </div>
             <span>|</span>
             <span>{product.reviewCount} reviews</span>
           </div>
         </div>
         <div className="flex space-x-4 w-1/2 justify-end items-center">
-          <button className="bg-pink-500 text-white rounded-lg px-4 py-2">Chat Admin</button>
-          <button className="text-pink-500 flex flex-col items-center">
+          <button onClick={handleChat} className="bg-pink-500 text-white rounded-lg px-4 py-2">Chat Admin</button>
+          <button onClick={handleShare} className="text-pink-500 flex flex-col items-center">
             <svg className="w-6 h-6 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
               <path d="M15 8a3 3 0 00-2.24-2.93 5 5 0 10-5.52 0A3 3 0 005 8v1h10V8zM5 11h10v1a4 4 0 01-4 4H9a4 4 0 01-4-4v-1zm5-9a4 4 0 014 4v1H6V6a4 4 0 014-4z" />
             </svg>
-            Share
-          </button>
-          <button className="text-pink-500 flex flex-col items-center">
-            <svg className="w-6 h-6 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-              <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 18.343l-6.828-6.828a4 4 0 010-5.656z" />
-            </svg>
-            Save
+            {copied ? 'Link Copied!' : 'Share'}
           </button>
         </div>
       </div>
@@ -241,22 +265,18 @@ function Reviews({ reviews }: { reviews: Review[] }) {
         {reviews.map((review, index) => (
           <div key={index} className="border border-gray-400 rounded-lg p-4 w-1/3">
             <div className="flex items-center space-x-4">
-              {/* TODO: INTEGRATE USER PICTURE */}
-              {/* <img src={review.imageUrl} alt="User profile" className="w-12 h-12 rounded-full" /> */}
-              <img src={"https://via.placeholder.com/50"} alt="User profile" className="w-12 h-12 rounded-full" />
+              <img src={review.userPicture || "https://via.placeholder.com/50"} alt="User profile" className="w-12 h-12 rounded-full" />
               <div>
-                {/* TODO: INTEGRATE USER NAME */}
-                {/* <h3 className="text-xl text-gray-600 font-bold">{review.user}</h3> */}
-                <h3 className="text-xl text-gray-600 font-bold">User {index+1}</h3>
+                <h3 className="text-xl text-gray-600 font-bold">{review.userName}</h3>
                 <div className="flex items-center">
-                  {getStars(review.rating)}
-                  <span> ({review.rating})</span>
+                  {getStars(review.reviewRating)}
+                  <span> ({review.reviewRating})</span>
                 </div>
                 <p className="text-gray-600">{convertDate(review.reviewDate)}</p>
               </div>
             </div>
             <p className="text-gray-600 mt-2">
-              {review.comment}
+              {review.reviewComment}
             </p>
           </div>
         ))}
