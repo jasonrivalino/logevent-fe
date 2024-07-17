@@ -45,7 +45,7 @@ export default function SignUp() {
   };
 
   const handleBackClick = () => {
-    router.push('/');
+    router.push('/signin');
   };
 
   return (

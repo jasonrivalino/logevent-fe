@@ -98,8 +98,11 @@ export default function SignIn() {
             required
             className="mb-4 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs"
           />
-          <p className="text-gray-800 text-xs md:text-sm mb-4">
+          <p className="text-gray-800 text-xs md:text-sm mb-1">
             Not have an account yet? <a onClick={() => router.push('/signup')} className="text-pink-600 hover:text-pink-800 cursor-pointer">Sign Up</a> first
+          </p>
+          <p className="text-gray-800 text-xs md:text-sm mb-4">
+            <a onClick={() => router.push('/email-forgot')} className="text-pink-600 hover:text-pink-800 cursor-pointer">Forgot Password?</a>
           </p>
           <button type="submit" className="mb-4 md:mb-6 p-1 md:p-2 rounded bg-pink-800 hover:bg-pink-900 text-white">Sign In</button>
           <p className="text-center text-sm md:text-base text-gray-800 mb-2">or login with</p>

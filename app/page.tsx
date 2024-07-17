@@ -75,7 +75,7 @@ export function Navbar() {
             </li>
             <li>
               <Link href="#contact" className="hover:underline font-sofia">
-                QnA
+                FaQ
               </Link>
             </li>
             <li>
@@ -132,6 +132,7 @@ function Introduction() {
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const timeoutRef = useRef<null | NodeJS.Timeout>(null);
+  const router = useRouter();
 
   const resetTimeout = () => {
     if (timeoutRef.current) {
@@ -202,7 +203,7 @@ function Introduction() {
         {/* Buttons */}
         <div className="mt-16">
           <button className="px-6 py-3 bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700">Pesan Event Organizer</button>
-          <button className="px-6 py-3 mt-5 md:mt-0 md:ml-6  bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold rounded-lg hover:bg-pink-100 hover:text-pink-600 hover:border-pink-600">Cari Logistik Vendor</button>
+          <button className="px-6 py-3 mt-5 md:mt-0 md:ml-6  bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold rounded-lg hover:bg-pink-100 hover:text-pink-600 hover:border-pink-600" onClick={() => router.push('/logistik-vendor')}>Cari Logistik Vendor</button>
         </div>
       </div>
     </section>
@@ -210,6 +211,7 @@ function Introduction() {
 }
 
 function AboutUsSection() {
+  const router = useRouter();
   return (
     <section id="aboutUs">
       <div className="flex flex-col md:flex-row items-center bg-gray-100 p-8 md:p-16 mt-28 md:mt-[4.5rem] rounded-lg">
@@ -247,7 +249,7 @@ function AboutUsSection() {
           </div>
           <div className="mt-8">
             <button className="px-6 py-2 md:py-[0.88rem] bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700">Pesan Event Organizer</button>
-            <button className="px-6 py-2 md:py-3 mt-3 md:mt-0 md:ml-6 bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold rounded-lg hover:bg-pink-100 hover:text-pink-600 hover:border-pink-600">Cari Logistik Vendor</button>          
+            <button className="px-6 py-2 md:py-3 mt-3 md:mt-0 md:ml-6 bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold rounded-lg hover:bg-pink-100 hover:text-pink-600 hover:border-pink-600" onClick={() => router.push('/logistik-vendor')}>Cari Logistik Vendor</button>          
           </div>
         </div>
       </div>
@@ -447,8 +449,8 @@ function ListPlace() {
 
   return (
     <section className="p-8">
-      <h1 className="text-4xl md:text-4xl text-pink-900 font-bold mt-44 md:mt-32 mb-2 md:mb-0 md:-ml-[5.25rem] font-sofia">Rekomendasi Vendor</h1>
-      <button className="mt-2 md:mt-5 mb-2 md:mb-0 md:-ml-[5.25rem] px-6 py-2 bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700">Lihat Selengkapnya</button>
+      <h1 className="text-4xl md:text-4xl text-pink-900 font-bold mt-44 md:mt-32 mb-2 md:mb-0 md:-ml-[5.25rem] font-sofia">Rekomendasi Produk</h1>
+      <button className="mt-2 md:mt-5 mb-2 md:mb-0 md:-ml-[5.25rem] px-6 py-2 bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700" onClick={() => router.push('/logistik-vendor')}>Lihat Selengkapnya</button>
       <div className="relative flex items-center justify-center mt-10 mb-2">
         <div className="flex flex-wrap gap-10 justify-center mx-4">
           {displayedPlaces().map((place, index) => (

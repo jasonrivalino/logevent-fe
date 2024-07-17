@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Navbar, ContactBox } from '../page';
 
 export default function Product() {
-  const homeRef = useRef(null);
+  const descriptionRef = useRef(null);
   const albumRef = useRef(null);
   const reviewsRef = useRef(null);
 
@@ -28,8 +28,8 @@ export default function Product() {
       <Navbar />
       <div className="container mx-auto mt-24 md:px-20 -mb-6 md:mb-0">
         <ProductImage />
-        <Tabs scrollToSection={scrollToSection} refs={{ homeRef, albumRef, reviewsRef }} />
-        <div ref={homeRef}><Home /></div>
+        <Tabs scrollToSection={scrollToSection} refs={{ descriptionRef, albumRef, reviewsRef }} />
+        <div ref={descriptionRef}><Description/></div>
         <div ref={albumRef}><ImageGallery /></div>
         <div ref={reviewsRef}><Reviews /></div>
       </div>
@@ -90,7 +90,7 @@ const ProductImage = () => {
   return (
     <div className="px-8 py-4">
       {windowWidth >= 768 ? (
-        <div className="px-8 py-4">
+        <div className="py-4">
           <div className="flex md:space-x-4">
             <img src={images[0]} alt="Main Hall" className="w-full md:w-1/2 h-auto md:h-[21rem] rounded-md" />
             <div className="grid grid-cols-2 gap-4 w-0 md:w-1/2">
@@ -112,18 +112,19 @@ const ProductImage = () => {
               </div>
             </div>
             <div className="flex space-x-4 w-full md:w-1/2 md:justify-end items-center mt-3 md:mt-0">
-              <button className="bg-pink-500 text-white rounded-lg px-3 md:px-4 py-2 -ml-4 md:ml-0 mr-[6.5rem] md:mr-0 text-sm md:text-base">Chat vendor</button>
+              <button className="bg-pink-500 text-white rounded-lg px-3 md:px-4 py-2 -ml-4 md:ml-0 mr-[6.5rem] md:mr-0 text-sm md:text-base">Tambahkan Vendor</button>
+              <button className="text-pink-500 flex flex-col items-center text-sm md:text-base">
+                {/* SVG icon for chat button */}
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m-2 9a9 9 0 110-18 9 9 0 010 18z"/>
+                </svg>
+                Chat
+              </button>
               <button className="text-pink-500 flex flex-col items-center text-sm md:text-base">
                 <svg className="w-5 md:w-6 h-5 md:h-6 md:mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                   <path d="M15 8a3 3 0 00-2.24-2.93 5 5 0 10-5.52 0A3 3 0 005 8v1h10V8zM5 11h10v1a4 4 0 01-4 4H9a4 4 0 01-4-4v-1zm5-9a4 4 0 014 4v1H6V6a4 4 0 014-4z" />
                 </svg>
                 Share
-              </button>
-              <button className="text-pink-500 flex flex-col items-center text-sm md:text-base">
-                <svg className="w-5 md:w-6 h-5 md:h-6 md:mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 18.343l-6.828-6.828a4 4 0 010-5.656z" />
-                </svg>
-                Save
               </button>
             </div>
           </div>
@@ -181,20 +182,20 @@ const ProductImage = () => {
   );
 };
 
-function Tabs({ scrollToSection, refs }: { scrollToSection: (ref: React.RefObject<any>) => void; refs: { homeRef: React.RefObject<any>; albumRef: React.RefObject<any>; reviewsRef: React.RefObject<any> } }) {
+function Tabs({ scrollToSection, refs }: { scrollToSection: (ref: React.RefObject<any>) => void; refs: { descriptionRef: React.RefObject<any>; albumRef: React.RefObject<any>; reviewsRef: React.RefObject<any> } }) {
   return (
     <nav className="flex justify-center space-x-8 mt-2 md:mt-0 py-2 border-b">
-      <button onClick={() => scrollToSection(refs.homeRef)} className="text-gray-600 hover:text-pink-500">Home</button>
+      <button onClick={() => scrollToSection(refs.descriptionRef)} className="text-gray-600 hover:text-pink-500">Description</button>
       <button onClick={() => scrollToSection(refs.albumRef)} className="text-gray-600 hover:text-pink-500">Album</button>
       <button onClick={() => scrollToSection(refs.reviewsRef)} className="text-gray-600 hover:text-pink-500">Reviews</button>
     </nav>
   );
 }
 
-function Home() {
+function Description() {
   return (
     <div className="px-8 pb-8 md:py-14 border-b">
-      <h2 className="text-2xl md:text-3xl font-bold text-pink-900 pt-10">Home</h2>
+      <h2 className="text-2xl md:text-3xl font-bold text-pink-900 pt-10">Description</h2>
       <p className="text-gray-600 mt-4 text-sm md:text-base">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus odio nisi, pellentesque eu molestie eget, lobortis non nisl. Fusce sit amet massa porta, condimentum elit eu, finibus ipsum. Sed sed arcu eu turpis lacinia scelerisque. Vestibulum lacinia mauris vitae nunc tempus, sed laoreet eros gravida. Nullam rhoncus scelerisque odio, eu lobortis urna viverra sed. Quisque feugiat, eros at sagittis commodo, risus lectus viverra odio, a fringilla elit lectus eget purus. Suspendisse tortor mi, pulvinar at vulputate et, cursus ac odio. Integer faucibus quam non nulla lacinia, vel dignissim tellus pulvinar.
         <br></br><br></br>
@@ -322,8 +323,11 @@ function Reviews() {
 
   return (
     <div className="mt-4 px-8 pb-8 md:py-14">
-      <h2 className="text-2xl md:text-3xl font-bold text-pink-900 pt-10">Reviews</h2>
-      <div className="flex flex-col md:flex-row md:items-center space-y-4 md:space-x-8 mt-6">
+      <div className="flex items-center justify-between space-x-4">
+        <h2 className="text-2xl md:text-3xl font-bold text-pink-900 pt-10">Reviews</h2>
+        <button className="bg-pink-600 text-white px-4 py-2 rounded-lg -mb-8">Lihat Review lengkap</button>
+      </div>
+      <div className="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-8 mt-6">
         {reviews.map((review, index) => (
           <div key={index} className="border border-gray-400 rounded-lg p-4 w-full md:w-1/3">
             <div className="flex items-center space-x-4">
