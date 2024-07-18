@@ -6,8 +6,25 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { readUserProfile } from './utils/authApi';
+import { readTopProducts } from '@/app/utils/productApi';
+import type { Product } from '@/app/utils/types';
 
 export default function Home() {
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const data = await readTopProducts();
+        setProducts(data);
+      } catch (error) {
+        console.error('Failed to fetch products:', error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
   return (
     <div>
       <Navbar />
@@ -16,7 +33,7 @@ export default function Home() {
         <AboutUsSection />
         <LayananSection />
         <KeunggulanSection />
-        <ListPlace />
+        <ListProduct products={products}/>
         <ContactBox />
         <footer className="w-full bg-gray-200 text-gray-700 py-5 text-center font-sofia">
           <p>&copy; 2024 Logevent. All rights reserved.</p>
@@ -307,6 +324,12 @@ function Introduction() {
     }
   };
 
+  const handleChat = () => {
+    const adminNumber = process.env.NEXT_PUBLIC_ADMIN_NUMBER;
+    const whatsappUrl = `https://wa.me/${adminNumber}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
   useEffect(() => {
     resetTimeout();
     timeoutRef.current = setTimeout(
@@ -369,7 +392,7 @@ function Introduction() {
 
         {/* Buttons */}
         <div className="mt-16">
-          <button className="px-6 py-3 bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700">Pesan Event Organizer</button>
+          <button className="px-6 py-3 bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700" onClick={handleChat}>Pesan Event Organizer</button>
           <button className="px-6 py-3 mt-5 md:mt-0 md:ml-6  bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold rounded-lg hover:bg-pink-100 hover:text-pink-600 hover:border-pink-600" onClick={() => router.push('/logistik-vendor')}>Cari Logistik Vendor</button>
         </div>
       </div>
@@ -379,6 +402,13 @@ function Introduction() {
 
 function AboutUsSection() {
   const router = useRouter();
+  
+  const handleChat = () => {
+    const adminNumber = process.env.NEXT_PUBLIC_ADMIN_NUMBER;
+    const whatsappUrl = `https://wa.me/${adminNumber}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
   return (
     <section id="aboutUs">
       <div className="flex flex-col md:flex-row items-center bg-gray-100 p-8 md:p-16 mt-28 md:mt-[4.5rem] rounded-lg">
@@ -387,7 +417,6 @@ function AboutUsSection() {
             className="w-full h-48 md:h-96 rounded-lg" 
             src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
             title="YouTube video player" 
-            frameBorder="0" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
             allowFullScreen
           ></iframe>
@@ -415,7 +444,7 @@ function AboutUsSection() {
             </div>
           </div>
           <div className="mt-8">
-            <button className="px-6 py-2 md:py-[0.88rem] bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700">Pesan Event Organizer</button>
+            <button className="px-6 py-2 md:py-[0.88rem] bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700" onClick={handleChat}>Pesan Event Organizer</button>
             <button className="px-6 py-2 md:py-3 mt-3 md:mt-0 md:ml-6 bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold rounded-lg hover:bg-pink-100 hover:text-pink-600 hover:border-pink-600" onClick={() => router.push('/logistik-vendor')}>Cari Logistik Vendor</button>          
           </div>
         </div>
@@ -424,8 +453,18 @@ function AboutUsSection() {
   );
 }
 
-function LayananCard({ image, title, description, link }: { image: string, title: string, description: string, link: string }) {
+function LayananCard({ image, title, description, link, onClick }: { image: string, title: string, description: string, link: string, onClick?: () => void }) {
   const router = useRouter();
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    } else if (link.startsWith('http')) {
+      window.open(link, '_blank');
+    } else {
+      router.push(link);
+    }
+  };
 
   return (
     <div className="relative flex-col items-center mb-4 md:mb-8 md:p-4 rounded-lg">
@@ -449,7 +488,7 @@ function LayananCard({ image, title, description, link }: { image: string, title
         {/* "Detail Layanan" Button */}
         <button
           className="text-pink-500 hover:text-pink-700 font-bold"
-          onClick={() => router.push(link)}
+          onClick={handleClick}
         >
           Detail Layanan
         </button>
@@ -459,6 +498,12 @@ function LayananCard({ image, title, description, link }: { image: string, title
 }
 
 function LayananSection() {
+  const handleChat = () => {
+    const adminNumber = process.env.NEXT_PUBLIC_ADMIN_NUMBER;
+    const whatsappUrl = `https://wa.me/${adminNumber}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
   const descriptions = [
     {
       image: "/Image/building.png", // You should replace this with the actual path to your image
@@ -470,7 +515,8 @@ function LayananSection() {
       image: "/Image/building.png",
       title: "Event Organizer",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae.",
-      link: "/event-organizer"
+      link: `https://wa.me/${process.env.NEXT_PUBLIC_ADMIN_NUMBER}`,
+      onClick: handleChat
     },
     {
       image: "/Image/building.png",
@@ -491,6 +537,7 @@ function LayananSection() {
             title={item.title}
             description={item.description}
             link={item.link}
+            onClick={item.onClick}
           />
         ))}
       </div>
@@ -561,22 +608,13 @@ function KeunggulanSection() {
   );
 }
 
-function ListPlace() {
+function ListProduct({ products }: { products: Product[] }) {
   const router = useRouter();
-
-  const places = [
-    { image: "/Image/planetarium.jpg", name: "Sunset Beach", type: "Beach", rate: "4.5", location: "California, USA" },
-    { image: "/Image/planetarium.jpg", name: "Mountain View", type: "Mountain", rate: "4.7", location: "Alps, Switzerland" },
-    { image: "/Image/planetarium.jpg", name: "City Park", type: "Park", rate: "4.3", location: "New York, USA" },
-    { image: "/Image/planetarium.jpg", name: "Planetarium", type: "Museum", rate: "4.8", location: "Jakarta, Indonesia" },
-    { image: "/Image/planetarium.jpg", name: "Grand Canyon", type: "Canyon", rate: "4.9", location: "Arizona, USA" },
-    { image: "/Image/planetarium.jpg", name: "Eiffel Tower", type: "Monument", rate: "4.6", location: "Paris, France" }
-  ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(4);
 
-  const totalItems = places.length;
+  const totalItems = products.length;
 
   useEffect(() => {
     const handleResize = () => {
@@ -605,11 +643,11 @@ function ListPlace() {
     setCurrentIndex((prevIndex) => (prevIndex - itemsPerPage + totalItems) % totalItems);
   };
 
-  const displayedPlaces = () => {
+  const displayedProducts = () => {
     let display = [];
     for (let i = 0; i < itemsPerPage; i++) {
       const index = (currentIndex + i) % totalItems;
-      display.push(places[index]);
+      display.push(products[index]);
     }
     return display;
   };
@@ -620,38 +658,40 @@ function ListPlace() {
       <button className="mt-2 md:mt-5 mb-2 md:mb-0 md:-ml-[5.25rem] px-6 py-2 bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700" onClick={() => router.push('/logistik-vendor')}>Lihat Selengkapnya</button>
       <div className="relative flex items-center justify-center mt-10 mb-2">
         <div className="flex flex-wrap gap-10 justify-center mx-4">
-          {displayedPlaces().map((place, index) => (
-            <div key={index} className="w-[16.75rem] md:w-[17.5rem] bg-white shadow-lg rounded-3xl overflow-hidden relative">
-              <Image
-                src={place.image}
-                alt={`${place.name} Image`}
-                width={400}
-                height={200}
-                className="object-cover"
-              />
-              <div className="p-4 ml-2 font-sofia flex flex-col justify-between flex-grow">
-                <div>
-                  <h3 className="text-xl text-pink-900 font-bold">{place.name}</h3>
-                  <p className="text-gray-700">{place.type}</p>
-                  <p className="text-gray-500 flex flex-row">
-                  <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className= "h-4 w-4 text-yellow-500 mr-[0.3rem] mt-[0.125rem]"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.14 3.51a1 1 0 00.95.69h3.7c.967 0 1.372 1.24.588 1.81l-2.992 2.179a1 1 0 00-.364 1.118l1.14 3.51c.3.921-.755 1.688-1.54 1.118l-2.992-2.178a1 1 0 00-1.175 0l-2.992 2.178c-.785.57-1.84-.197-1.54-1.118l1.14-3.51a1 1 0 00-.364-1.118L2.93 8.937c-.784-.57-.38-1.81.588-1.81h3.7a1 1 0 00.95-.69l1.14-3.51z" />
-                  </svg> {place.rate}
-                </p>
-                  <p className="text-gray-500">{place.location}</p>
-                </div>
-                <button className="self-start text-pink-500 hover:text-pink-700 font-bold mt-4"
-                  onClick={() => router.push(`/info-detail`)}    
-                >
+          {displayedProducts().map((product, index) => (
+            product && (
+              <div key={index} className="w-[16.75rem] md:w-[17.5rem] bg-white shadow-lg rounded-3xl overflow-hidden relative">
+                <Image
+                  src={product.productImage || "/Image/planetarium.jpg"}
+                  alt={`${product.name} Image`}
+                  width={400}
+                  height={200}
+                  className="object-cover"
+                />
+                <div className="p-4 ml-2 font-sofia flex flex-col justify-between flex-grow">
+                  <div>
+                    <h3 className="text-xl text-pink-900 font-bold">{product.name}</h3>
+                    <p className="text-gray-700">{product.specification}</p>
+                    <p className="text-gray-500 flex flex-row">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4 text-yellow-500 mr-[0.3rem] mt-[0.125rem]"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.14 3.51a1 1 0 00.95.69h3.7c.967 0 1.372 1.24.588 1.81l-2.992 2.179a1 1 0 00-.364 1.118l1.14 3.51c.3.921-.755 1.688-1.54 1.118l-2.992-2.178a1 1 0 00-1.175 0l-2.992 2.178c-.785.57-1.84-.197-1.54-1.118l1.14-3.51a1 1 0 00-.364-1.118L2.93 8.937c-.784-.57-.38-1.81.588-1.81h3.7a1 1 0 00.95-.69l1.14-3.51z" />
+                      </svg> {product.rating && product.rating.toFixed(2) !== "0.00" ? product.rating.toFixed(2) : "N/A"}
+                    </p>
+                    <p className="text-gray-500">{product.vendorAddress}</p>
+                  </div>
+                  <button className="self-start text-pink-500 hover:text-pink-700 font-bold mt-4"
+                    onClick={() => router.push(`/info-detail/${product.id}`)}
+                  >
                     Lihat Detail
-                </button>
+                  </button>
+                </div>
               </div>
-            </div>
+            )
           ))}
         </div>
         <button 

@@ -81,7 +81,7 @@ export default function SignIn() {
           {error && <p className="mb-4 text-red-500 text-center">{error}</p>}
           <p className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Email</p>
           <input
-            type="text"
+            type="email"
             id="email"
             value={email}
             placeholder="Email"

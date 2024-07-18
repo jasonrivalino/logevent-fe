@@ -67,9 +67,9 @@ export function Filter({ handleFilter, handleReset, setMinPrice, setMaxPrice }: 
     <div className="w-full md:w-1/4 md:pl-4 md:pr-8 py-4 -mb-2 md:mb-0">
       <h2 className="text-xl md:text-2xl font-semibold font-sofia text-black mb-4">Filter by</h2>
       <div className="mb-2 md:mb-4">
-        <label htmlFor="category" className="block mb-1 md:mb-2 text-gray-700 font-sofia text-sm md:text-base">Kategori Vendor</label>
+        <label htmlFor="category" className="block mb-1 md:mb-2 text-gray-700 font-sofia text-sm md:text-base">Kategori Produk</label>
         <select id="category" className="w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia">
-          <option value="" className="font-sofia">Pilih kategori vendor</option>
+          <option value="" className="font-sofia">Pilih kategori produk</option>
           <option value="Multifunctional Hall" className="font-sofia">Multifunctional Hall</option>
         </select>
       </div>

@@ -133,8 +133,9 @@ function ProductImage({ product, albums }: { product: Product, albums: Album[] }
   };
 
   const handleChat = () => {
-    const adminNumber = process.env.NEXT_PUBLIC_ADMIN_NUMBER;
-    const whatsappUrl = `https://wa.me/${adminNumber}`;
+    // TODO: Change the vendor number to the actual vendor number
+    const vendorNumber = '6285295055828';
+    const whatsappUrl = `https://wa.me/${vendorNumber}`;
     window.open(whatsappUrl, '_blank');
   };
 
@@ -146,7 +147,7 @@ function ProductImage({ product, albums }: { product: Product, albums: Album[] }
             <img src={product.productImage || "/Image/planetarium.jpg"} alt="Main Hall" className="w-full md:w-1/2 h-auto md:h-[21rem] rounded-md" />
             {/* TODO: INTEGRATE ALBUM */}
             <div className="grid grid-cols-2 gap-4 w-0 md:w-1/2">
-              {albums.slice(1).map((album, index) => (
+              {albums.map((album, index) => (
                 <img key={index} src={album.albumImage || "/Image/planetarium.jpg"} alt={`Hall Image ${index + 1}`} className="w-0 md:w-full h-auto md:h-40 rounded-md" />
               ))}
             </div>
@@ -160,6 +161,7 @@ function ProductImage({ product, albums }: { product: Product, albums: Album[] }
               <p className="text-sm md:text-base text-gray-600">Rp {product.price} / hari</p>
               <div className="text-sm md:text-base flex items-center space-x-2 text-gray-600">
                 <span>{product.vendorAddress}</span>
+                <span>|</span>
                 <div className="flex items-center">
                   {getStars(product.rating)}
                   <span> ({product.rating && product.rating.toFixed(2) !== "0.00" ? product.rating.toFixed(2) : "N/A"})</span>
@@ -169,7 +171,7 @@ function ProductImage({ product, albums }: { product: Product, albums: Album[] }
               </div>
             </div>
             <div className="flex space-x-4 w-full md:w-1/2 md:justify-end items-center mt-3 md:mt-0">
-              <button className="bg-pink-500 text-white rounded-lg px-3 md:px-4 py-2 -ml-4 md:ml-0 mr-[6.5rem] md:mr-0 text-sm md:text-base">Tambahkan Vendor</button>
+              <button className="bg-pink-500 text-white rounded-lg px-3 md:px-4 py-2 -ml-4 md:ml-0 mr-[6.5rem] md:mr-0 text-sm md:text-base">Tambahkan ke Keranjang</button>
               <button onClick={handleChat} className="text-pink-500 flex flex-col items-center text-sm md:text-base">
                 {/* SVG icon for chat button */}
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6">
@@ -181,7 +183,7 @@ function ProductImage({ product, albums }: { product: Product, albums: Album[] }
                 <svg className="w-5 md:w-6 h-5 md:h-6 md:mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                   <path d="M15 8a3 3 0 00-2.24-2.93 5 5 0 10-5.52 0A3 3 0 005 8v1h10V8zM5 11h10v1a4 4 0 01-4 4H9a4 4 0 01-4-4v-1zm5-9a4 4 0 014 4v1H6V6a4 4 0 014-4z" />
                 </svg>
-                Share
+                {copied ? 'Link Copied!' : 'Share'}
               </button>
             </div>
           </div>
@@ -207,14 +209,20 @@ function ProductImage({ product, albums }: { product: Product, albums: Album[] }
           </div>
           <div className="flex flex-col md:flex-row space-x-4">
             <div className="w-full md:w-1/2">
-              <h1 className="text-2xl md:text-3xl text-pink-900 font-bold mt-4">Gedung Sabuga ITB</h1>
-              <p className="text-sm md:text-base text-gray-600">Multifunctional Hall</p>
+              <h1 className="text-2xl md:text-3xl text-pink-900 font-bold mt-4">{product.name}</h1>
+              <p className="text-sm md:text-base text-gray-600">{product.specification}</p>
+              {/* TODO: INTEGRATE CAPACITY */}
               <p className="text-sm md:text-base text-gray-600">Kapasitas: 1000 Orang</p>
-              <p className="text-sm md:text-base text-gray-600">Rp 5.000.000 / hari</p>
+              <p className="text-sm md:text-base text-gray-600">Rp {product.price} / hari</p>
               <div className="text-sm md:text-base flex items-center space-x-2 text-gray-600">
-                <span>Dago, Bandung</span>
+                <span>{product.vendorAddress}</span>
                 <span>|</span>
-                <span>⭐ 4.2 (190 reviews)</span>
+                <div className="flex items-center">
+                  {getStars(product.rating)}
+                  <span> ({product.rating && product.rating.toFixed(2) !== "0.00" ? product.rating.toFixed(2) : "N/A"})</span>
+                </div>
+                <span>|</span>
+                <span>{product.reviewCount} reviews</span>
               </div>
             </div>
             <div className="flex space-x-4 w-full md:w-1/2 md:justify-end items-center mt-3 md:mt-0">
@@ -225,7 +233,7 @@ function ProductImage({ product, albums }: { product: Product, albums: Album[] }
                 </svg>
                 {copied ? 'Link Copied!' : 'Share'}
               </button>
-              <button className="text-pink-500 flex flex-col items-center text-sm md:text-base">
+              <button  onClick={handleShare} className="text-pink-500 flex flex-col items-center text-sm md:text-base">
                 <svg className="w-5 md:w-6 h-5 md:h-6 md:mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                   <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 18.343l-6.828-6.828a4 4 0 010-5.656z" />
                 </svg>

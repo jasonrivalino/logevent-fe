@@ -21,6 +21,15 @@ export const readProductById = async (id: number) => {
   }
 };
 
+export const readTopProducts = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/products/read/top`);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Failed to fetch top products');
+  }
+}
+
 export const createProduct = async (productData: {
   vendorId: number;
   name: string;

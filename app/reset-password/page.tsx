@@ -1,12 +1,14 @@
 'use client';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
+import { updateUser } from '@/app/utils/authApi';
 
 export default function ResetPassword() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPopup, setShowPopup] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -38,9 +40,17 @@ export default function ResetPassword() {
     if (password !== confirmPassword) {
       setShowPopup(true);
     } else {
-      console.log('password:', password);
-      console.log('confirmPassword:', confirmPassword);
-      router.push('/email-verification');
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get('token');
+        if (!token) {
+          throw new Error('Invalid Token');
+        }
+        await updateUser(token, { password });
+        router.push('/signin');
+      } catch (err: any) {
+        setError(err.message);
+      }
     }
   };
 
@@ -56,6 +66,7 @@ export default function ResetPassword() {
           className="flex flex-col w-full max-w-full md:max-w-sm p-6 md:p-8 shadow-lg rounded-lg bg-white"
         >
           <h2 className="mb-6 md:mb-8 text-2xl md:text-3xl text-center text-gray-800">Reset your Password</h2>
+          {error && <p className="mb-4 text-red-500 text-center">{error}</p>}
           <div className="flex flex-col md:flex-row gap-2 md:gap-6 mb-2 md:mb-4">
             <div className="flex-1">
               <label htmlFor="password" className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Enter your new Password:</label>
