@@ -65,7 +65,8 @@ const ProfilePage = () => {
     }
   };
 
-  const handleResetPassword = async () => {
+  const handleResetPassword = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     if (email) {
       try {
         await resetPassword(email);
