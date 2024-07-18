@@ -70,7 +70,7 @@ export const resetPassword = async (email: string) => {
   }
 }
 
-export const updateUser = async (token: string, userData: { name?: string; email?: string; password?: string; picture?: string; isAdmin?: boolean }) => {
+export const updateUser = async (token: string, userData: { name?: string; email?: string; password?: string; phone?: string, picture?: string; isAdmin?: boolean, isVerified?: boolean }) => {
   try {
     const response = await axios.put(`${API_URL}/auth/update`, userData, {
       headers: {

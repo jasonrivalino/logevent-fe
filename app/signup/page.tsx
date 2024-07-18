@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { signUp } from '@/app/utils/authApi';
+import { readUserProfile, signUp, updateUser } from '@/app/utils/authApi';
 
 export default function SignUp() {
   const [email, setEmail] = useState('');
@@ -36,11 +36,35 @@ export default function SignUp() {
     };
   }, []);
 
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      const token = new URLSearchParams(window.location.search).get('token');
+      if (token) {
+        try {
+          const user = await readUserProfile(token);
+          setFullName(user.name);
+          setEmail(user.email);
+        } catch (error: any) {
+          setError(error.message);
+        }
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await signUp(email, password, fullName, phoneNumber);
-      router.push('/signin');
+      const token = new URLSearchParams(window.location.search).get('token');
+      if (token) {
+        await updateUser(token, { password, phone: phoneNumber, isVerified: true });
+        localStorage.setItem('token', token);
+        router.push('/');
+      } else {
+        await signUp(email, password, fullName, phoneNumber);
+        router.push('/signin');
+      }
     } catch (err: any) {
       setError(err.message);
     }
