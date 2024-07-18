@@ -1,7 +1,7 @@
 'use client';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { updateUser } from '@/app/utils/authApi';
 
 export default function ResetPassword() {
@@ -41,8 +41,7 @@ export default function ResetPassword() {
       setShowPopup(true);
     } else {
       try {
-        const params = new URLSearchParams(window.location.search);
-        const token = params.get('token');
+        const token = new URLSearchParams(window.location.search).get('token');
         if (!token) {
           throw new Error('Invalid Token');
         }

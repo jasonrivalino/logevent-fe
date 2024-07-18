@@ -16,6 +16,19 @@ export const readUserProfile = async (token: string) => {
   }
 };
 
+export const verifyEmail = async (token: string) => {
+  try {
+    const response = await axios.get(`${API_URL}/auth/verify`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Failed to verify email');
+  }
+}
+
 export const signIn = async (email: string, password: string) => {
   try {
     const response = await axios.post(`${API_URL}/auth/signin`, { email, password }, {
