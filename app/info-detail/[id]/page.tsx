@@ -332,7 +332,7 @@ function ImageGallery({ albums }: { albums: Album[] }) {
           {displayedImages().map((album, index) => (
             <div key={index} className="w-[16.75rem] md:w-[17.5rem] bg-white shadow-lg rounded-3xl overflow-hidden relative">
               <Image
-                src={album.albumImage || "https://via.placeholder.com/400x200"}
+                src={album.albumImage || "/Image/planetarium.jpg"}
                 alt={`Image`}
                 width={400}
                 height={200}
