@@ -9,6 +9,7 @@ import { readProductById } from '@/app/utils/productApi';
 import { readReviewByProductId } from '@/app/utils/itemApi';
 import { convertDate, getStars } from '@/app/utils/helpers';
 import type { Album, Product, Review } from '@/app/utils/types';
+import { useRouter } from 'next/navigation';
 
 export default function Product() {
   const descriptionRef = useRef(null);
@@ -89,6 +90,7 @@ function ProductImage({ product, albums }: { product: Product, albums: Album[] }
   const windowWidth = useWindowWidth();
   const productUrl = typeof window !== 'undefined' ? window.location.href : '';
   const [copied, setCopied] = useState(false);
+  const router = useRouter();
 
   const resetTimeout = () => {
     if (timeoutRef.current) {
@@ -158,7 +160,7 @@ function ProductImage({ product, albums }: { product: Product, albums: Album[] }
               <p className="text-sm md:text-base text-gray-600">{product.specification}</p>
               {/* TODO: INTEGRATE CAPACITY */}
               <p className="text-sm md:text-base text-gray-600">Kapasitas: 1000 Orang</p>
-              <p className="text-sm md:text-base text-gray-600">Rp {product.price} / hari</p>
+              <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp {product.price} / hari</p>
               <div className="text-sm md:text-base flex items-center space-x-2 text-gray-600">
                 <span>{product.vendorAddress}</span>
                 <span>|</span>
@@ -171,25 +173,21 @@ function ProductImage({ product, albums }: { product: Product, albums: Album[] }
               </div>
             </div>
             <div className="flex space-x-4 w-full md:w-1/2 md:justify-end items-center mt-3 md:mt-0">
-              <button className="bg-pink-500 text-white rounded-lg px-3 md:px-4 py-2 -ml-4 md:ml-0 mr-[6.5rem] md:mr-0 text-sm md:text-base">Tambahkan ke Keranjang</button>
+              <button className="bg-white text-pink-500 border-pink-500 border-2 rounded-lg px-3 md:px-4 py-2 -ml-4 md:ml-0 mr-[6.5rem] md:mr-0 text-sm md:text-base">+ Keranjang</button>
+              <button className="bg-pink-500 text-white rounded-lg px-3 md:px-4 py-2 -ml-4 md:ml-0 mr-[6.5rem] md:mr-0 text-sm md:text-base" onClick={() => router.push('/isi-pemesanan')}>Pesan Langsung</button>
               <button onClick={handleChat} className="text-pink-500 flex flex-col items-center text-sm md:text-base">
-                {/* SVG icon for chat button */}
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m-2 9a9 9 0 110-18 9 9 0 010 18z"/>
-                </svg>
+                <img src="/Image/IconButton/chat_button.png" alt="Whatsapp" className="w-5 md:w-6 h-5 md:h-6" />
                 Chat
               </button>
               <button onClick={handleShare} className="text-pink-500 flex flex-col items-center text-sm md:text-base">
-                <svg className="w-5 md:w-6 h-5 md:h-6 md:mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M15 8a3 3 0 00-2.24-2.93 5 5 0 10-5.52 0A3 3 0 005 8v1h10V8zM5 11h10v1a4 4 0 01-4 4H9a4 4 0 01-4-4v-1zm5-9a4 4 0 014 4v1H6V6a4 4 0 014-4z" />
-                </svg>
+                <img src="/Image/IconButton/share_button.png" alt="Whatsapp" className="w-5 md:w-6 h-5 md:h-6" />
                 {copied ? 'Link Copied!' : 'Share'}
               </button>
             </div>
           </div>
         </div>
       ) : (
-        <div className="md:px-8 py-4">
+        <div className="md:px-8 pb-4">
           <div className="flex md:space-x-4">
             <img
               src={albums[currentImageIndex].albumImage || "/Image/planetarium.jpg"}
@@ -213,7 +211,7 @@ function ProductImage({ product, albums }: { product: Product, albums: Album[] }
               <p className="text-sm md:text-base text-gray-600">{product.specification}</p>
               {/* TODO: INTEGRATE CAPACITY */}
               <p className="text-sm md:text-base text-gray-600">Kapasitas: 1000 Orang</p>
-              <p className="text-sm md:text-base text-gray-600">Rp {product.price} / hari</p>
+              <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp {product.price} / hari</p>
               <div className="text-sm md:text-base flex items-center space-x-2 text-gray-600">
                 <span>{product.vendorAddress}</span>
                 <span>|</span>
@@ -225,20 +223,21 @@ function ProductImage({ product, albums }: { product: Product, albums: Album[] }
                 <span>{product.reviewCount} reviews</span>
               </div>
             </div>
-            <div className="flex space-x-4 w-full md:w-1/2 md:justify-end items-center mt-3 md:mt-0">
-              <button className="bg-pink-500 text-white rounded-lg px-3 md:px-4 py-2 -ml-4 md:ml-0 mr-[6.5rem] md:mr-0 text-sm md:text-base">Chat vendor</button>
-              <button className="text-pink-500 flex flex-col items-center text-sm md:text-base">
-                <svg className="w-5 md:w-6 h-5 md:h-6 md:mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M15 8a3 3 0 00-2.24-2.93 5 5 0 10-5.52 0A3 3 0 005 8v1h10V8zM5 11h10v1a4 4 0 01-4 4H9a4 4 0 01-4-4v-1zm5-9a4 4 0 014 4v1H6V6a4 4 0 014-4z" />
-                </svg>
-                {copied ? 'Link Copied!' : 'Share'}
-              </button>
-              <button  onClick={handleShare} className="text-pink-500 flex flex-col items-center text-sm md:text-base">
-                <svg className="w-5 md:w-6 h-5 md:h-6 md:mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 18.343l-6.828-6.828a4 4 0 010-5.656z" />
-                </svg>
-                Save
-              </button>
+            <div className="flex space-x-4 w-full md:w-1/2 md:justify-end items-center mt-1 md:mt-0">
+              <div className="flex flex-col md:flex-row md:space-x-0 md:space-y-4 md:items-center mr-[5.5rem]">
+                <button className="bg-pink-500 text-white rounded-lg px-2 md:px-4 py-[0.35rem] md:py-2 mt-2 text-sm md:text-base -ml-4" onClick={() => router.push('/isi-pemesanan')}>Pesan Langsung</button>
+                <button className="bg-white text-pink-500 border-pink-500 border-2 rounded-lg md:px-4 py-1 md:py-2 -ml-4 md:ml-0 md:mr-0 text-sm md:text-base mt-2">+ Keranjang</button>
+              </div>
+              <div className="flex flex-row space-x-4 mt-3">
+                <button onClick={handleShare} className="text-pink-500 flex flex-col items-center text-sm md:text-base">
+                  <img src="/Image/IconButton/chat_button.png" alt="Whatsapp" className="w-5 md:w-6 h-5 md:h-6" />
+                  {copied ? 'Link Copied!' : 'Share'}
+                </button>
+                <button className="text-pink-500 flex flex-col items-center text-sm md:text-base">
+                  <img src="/Image/IconButton/share_button.png" alt="Whatsapp" className="w-5 md:w-6 h-5 md:h-6" />
+                  Save
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -378,7 +377,7 @@ function Reviews({ reviews }: { reviews: Review[] }) {
     <div className="mt-4 px-8 pb-8 md:py-14">
       <div className="flex items-center justify-between space-x-4">
         <h2 className="text-2xl md:text-3xl font-bold text-pink-900 pt-10">Reviews</h2>
-        <button className="bg-pink-600 text-white px-4 py-2 rounded-lg -mb-8">Lihat Review lengkap</button>
+        <button className="text-sm md:text-base bg-pink-600 text-white px-2 md:px-4 py-1 md:py-2 rounded-lg -mb-10 md:-mb-8">Lihat Review lengkap</button>
       </div>
       <div className="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-8 mt-6">
         {reviews.map((review, index) => (

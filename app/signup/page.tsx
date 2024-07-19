@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { readUserProfile, signUp, updateUser } from '@/app/utils/authApi';
+import { ContactBoxShort } from '../signin/page';
 
 export default function SignUp() {
   const [email, setEmail] = useState('');
@@ -160,18 +161,7 @@ export default function SignUp() {
           <button type="submit" className="mt-6 md:mt-4 mb-4 md:mb-6 p-1 md:p-2 rounded bg-pink-800 hover:bg-pink-900 text-white">Sign Up</button>
         </form>
       </div>
-      <ContactBoxSignIn />
+      <ContactBoxShort/>
     </div>
   );
-}
-
-function ContactBoxSignIn() {
-    return (
-      <footer className="w-full bg-pink-900 text-white py-4">
-        <div className="container mx-auto flex flex-col items-center text-center">
-          <Image src="/Image/logo.png" alt="Logevent Logo" width={60} height={60} className='cursor-pointer'/>
-          <p className="mt-6 md:mt-2 font-sofia">Jangan khawatir pusing nyari vendor, Logevent solusinya</p>
-        </div>
-      </footer>
-    );
 }
