@@ -1,9 +1,9 @@
+// app/signup/page.tsx
 'use client';
-import Image from 'next/image';
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { ContactBoxShort } from '@/app/signin/page';
 import { readUserProfile, signUp, updateUser } from '@/app/utils/authApi';
-import { ContactBoxShort } from '../signin/page';
 
 export default function SignUp() {
   const [email, setEmail] = useState('');

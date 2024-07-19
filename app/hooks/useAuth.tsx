@@ -1,7 +1,7 @@
 // app/hooks/useAuth.ts
 'use client';
-import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export const useAuth = () => {
   const router = useRouter();

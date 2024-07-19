@@ -1,15 +1,14 @@
+// app/info-detail/[id]/page.tsx
 'use client';
-
-import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
+import { usePathname, useRouter } from 'next/navigation';
+import { useState, useEffect, useRef } from 'react';
 import { Navbar, ContactBox } from '@/app/page';
-import { usePathname } from 'next/navigation';
 import { readAlbumByProductId } from '@/app/utils/albumApi';
-import { readProductById } from '@/app/utils/productApi';
-import { readReviewByProductId } from '@/app/utils/itemApi';
 import { convertDate, getStars } from '@/app/utils/helpers';
+import { readReviewByProductId } from '@/app/utils/itemApi';
+import { readProductById } from '@/app/utils/productApi';
 import type { Album, Product, Review } from '@/app/utils/types';
-import { useRouter } from 'next/navigation';
 
 export default function Product() {
   const descriptionRef = useRef(null);

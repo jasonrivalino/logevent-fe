@@ -1,9 +1,9 @@
+// app/email-forgot/page.tsx
 'use client';
-import Image from 'next/image';
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { resetPassword } from '@/app/utils/authApi';
-import { ContactBoxShort } from '../signin/page';
+import { ContactBoxShort } from '@/app/signin/page';
 
 export default function EmailForgot() {
   const [email, setEmail] = useState('');

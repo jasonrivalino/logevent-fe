@@ -1,12 +1,12 @@
+// app/logistik-vendor/page.tsx
 'use client';
-
-import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
-import { Navbar, ContactBox } from '@/app/page';
 import { useRouter } from 'next/navigation';
-import { readAllProduct } from '@/app/utils/productApi';
+import { useState, useEffect } from 'react';
+import { Navbar, ContactBox } from '@/app/page';
 import { generateGoogleMapsUrl } from '@/app/utils/helpers';
+import { readAllProduct } from '@/app/utils/productApi';
 import type { Product } from '@/app/utils/types';
 
 export default function LogistikVendor() {

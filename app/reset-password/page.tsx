@@ -1,9 +1,9 @@
+// app/reset-password/page.tsx
 'use client';
-import Image from 'next/image';
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { ContactBoxShort } from '@/app/signin/page';
 import { updateUser } from '@/app/utils/authApi';
-import { ContactBoxShort } from '../signin/page';
 
 export default function ResetPassword() {
   const [password, setPassword] = useState('');

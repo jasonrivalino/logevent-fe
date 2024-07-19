@@ -1,14 +1,21 @@
+// app/isi-pemesanan/page.tsx
 'use client';
-import Image from 'next/image';
-import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { ContactBox, Navbar } from '../page';
-import { ContactBoxShort } from '../signin/page';
+import { Navbar } from '@/app/page';
+import { useAuth } from '@/app/hooks/useAuth';
+import { ContactBoxShort } from '@/app/signin/page';
+import { readUserProfile } from '@/app/utils/authApi';
 
 export default function ReservationFill() {
+  useAuth();
+
   const router = useRouter();
+  const [name, setName] = useState<string | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
+  const [phone, setPhone] = useState<string | null>(null);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [address, setAddress] = useState<string>('');
@@ -54,6 +61,25 @@ export default function ReservationFill() {
       setErrors(newErrors);
     }
   };
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          const user = await readUserProfile(token);
+          setName(user.name);
+          setEmail(user.email);
+          setPhone(user.phone);
+        } catch (error: any) {
+          console.error('Failed to fetch user data:', error.message);
+          localStorage.removeItem('token');
+        }
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
 
   useEffect(() => {
     const updatePlaceholderSize = () => {
@@ -112,7 +138,7 @@ export default function ReservationFill() {
                     name="name"
                     type="text"
                     className="input-placeholder border bg-gray-200 border-gray-300 rounded-md p-[0.4rem] text-gray-500 text-xs md:text-sm w-40 mr-[0.95rem]"
-                    value="John Doe"
+                    value={name || ''}
                     disabled
                   />
                 </div>
@@ -123,7 +149,7 @@ export default function ReservationFill() {
                     name="email"
                     type="email"
                     className="input-placeholder border bg-gray-200 border-gray-300 rounded-md p-[0.4rem] text-gray-500 text-xs md:text-sm w-40 mr-[0.95rem]"
-                    value="johndoe@gmail.com"
+                    value={email || ''}
                     disabled
                   />
                 </div>
@@ -134,7 +160,7 @@ export default function ReservationFill() {
                     name="phone"
                     type="tel"
                     className="input-placeholder border bg-gray-200 border-gray-300 rounded-md p-[0.4rem] text-gray-500 text-xs md:text-sm w-40"
-                    value="081234567890"
+                    value={phone || ''}
                     disabled
                   />
                 </div>

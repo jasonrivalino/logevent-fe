@@ -1,7 +1,8 @@
+// app/signin/page.tsx
 'use client';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { signIn, googleSignIn } from '@/app/utils/authApi';
 
 export default function SignIn() {

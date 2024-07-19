@@ -1,13 +1,16 @@
+// app/profile/page.tsx
 'use client';
-
+import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { Navbar } from '@/app/page';
+import { useAuth } from '@/app/hooks/useAuth';
 import { readUserProfile, updateUser, resetPassword } from '@/app/utils/authApi';
-import Image from 'next/image';
 
 const ProfilePage = () => {
+  useAuth();
+
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [userName, setUserName] = useState<string | null>(null);
+  const [name, setName] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
   const [phone, setPhone] = useState<string | null>(null);
 
@@ -18,7 +21,7 @@ const ProfilePage = () => {
         try {
           const user = await readUserProfile(token);
           setImagePreview(user.picture);
-          setUserName(user.name);
+          setName(user.name);
           setEmail(user.email);
           setPhone(user.phone);
         } catch (error: any) {
@@ -49,7 +52,7 @@ const ProfilePage = () => {
     if (token) {
       try {
         const updatedUserData = {
-          name: userName || undefined,
+          name: name || undefined,
           email: email || undefined,
           phone: phone || undefined,
           picture: imagePreview || undefined,
@@ -115,8 +118,8 @@ const ProfilePage = () => {
                   type="text"
                   className="w-full border border-gray-300 px-2 md:py-[0.3rem] rounded-md placeholder:text-xs text-black text-sm md:text-base"
                   placeholder="Nama Lengkap"
-                  value={userName || ''}
-                  onChange={(e) => setUserName(e.target.value)}
+                  value={name || ''}
+                  onChange={(e) => setName(e.target.value)}
                 />
               </div>
               <div>
