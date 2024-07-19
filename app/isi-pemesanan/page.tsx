@@ -8,11 +8,13 @@ import { Navbar } from '@/app/page';
 import { useAuth } from '@/app/hooks/useAuth';
 import { ContactBoxShort } from '@/app/signin/page';
 import { readUserProfile } from '@/app/utils/authApi';
+import { createOrder } from '@/app/utils/orderApi';
 
 export default function ReservationFill() {
   useAuth();
 
   const router = useRouter();
+  const [userId, setUserId] = useState<number | null>(null);
   const [name, setName] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
   const [phone, setPhone] = useState<string | null>(null);
@@ -34,31 +36,49 @@ export default function ReservationFill() {
     return bookedDates.some(bookedDate => bookedDate.toDateString() === date.toDateString());
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    let formValid = true;
     const newErrors: { address?: string; startDate?: string; endDate?: string } = {};
 
     if (!address) {
-      formValid = false;
       newErrors.address = 'Alamat tidak boleh kosong';
     }
-
     if (!startDate) {
-      formValid = false;
       newErrors.startDate = 'Tanggal mulai tidak boleh kosong';
     }
-
     if (!endDate) {
-      formValid = false;
       newErrors.endDate = 'Tanggal akhir tidak boleh kosong';
     }
-
-    if (formValid) {
-      // Handle form submission logic
-      router.push('/reset-password');
-    } else {
+    if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+      newErrors.endDate = 'Tanggal akhir harus setelah tanggal mulai';
+    }
+    if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
+      return;
+    }
+
+    try {
+      if (!userId) {
+        throw new Error('User ID is missing');
+      }
+      if (!startDate) {
+        throw new Error('Start date is missing');
+      }
+      if (!endDate) {
+        throw new Error('End date is missing');
+      }
+
+      const order = await createOrder({
+        userId,
+        address,
+        startDate: startDate,
+        endDate: endDate,
+      });
+
+      console.log('Order created:', order);
+      router.push('/');
+    } catch (error: any) {
+      console.error('Failed to create order:', error.message);
     }
   };
 
@@ -68,6 +88,7 @@ export default function ReservationFill() {
       if (token) {
         try {
           const user = await readUserProfile(token);
+          setUserId(user.id);
           setName(user.name);
           setEmail(user.email);
           setPhone(user.phone);

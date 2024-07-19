@@ -22,13 +22,10 @@ export const readOrderById = async (id: number) => {
 };
 
 export const createOrder = async (orderData: {
-  productId: number;
-  name: string;
-  phone: string;
-  email: string;
+  userId: number;
   address: string;
-  usageDate: Date;
-  orderImage?: string;
+  startDate: Date;
+  endDate: Date;
 }) => {
   try {
     const response = await axios.post(`${API_URL}/orders/create`, orderData, {
