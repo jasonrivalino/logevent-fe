@@ -79,7 +79,7 @@ export default function EmailForgot() {
               />
             </div>
           </div>
-          <button type="submit" className="mt-6 md:mt-4 mb-4 md:mb-6 p-1 md:p-2 rounded bg-pink-800 hover:bg-pink-900 text-white" onClick={() => router.push('/reset-password')}>Submit</button>
+          <button type="submit" className="mt-6 md:mt-4 mb-4 md:mb-6 p-1 md:p-2 rounded bg-pink-800 hover:bg-pink-900 text-white" onClick={() => router.push('/email-forgot/verifications')}>Submit</button>
         </form>
       </div>
       <ContactBoxShort />

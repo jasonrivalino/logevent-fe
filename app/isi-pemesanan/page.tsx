@@ -49,7 +49,7 @@ export default function ReservationFill() {
 
     if (formValid) {
       // Handle form submission logic
-      router.push('/reset-password');
+      router.push('/isi-pemesanan/complete');
     } else {
       setErrors(newErrors);
     }
@@ -105,22 +105,22 @@ export default function ReservationFill() {
             <h2 className="mb-4 md:mb-8 text-2xl md:text-3xl text-center text-gray-800">Isi Data Pemesanan</h2>
               <div className="flex flex-col md:flex-row gap-4 md:gap-6 mb-3 md:mb-4">
                 <div className="flex flex-1 flex-row -mb-2 md:mb-0">
-                  <label htmlFor="name" className="mt-1 text-sm md:text-base text-gray-800 mr-[2.6rem] md:mr-2">Nama:</label>
+                  <label htmlFor="name" className="mt-1 text-sm md:text-base text-gray-800 mr-[4.42rem] md:mr-2">Nama:</label>
                   <input
                     id="name"
                     name="name"
                     type="text"
-                    className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] text-black text-xs md:text-sm md:mr-[3rem] w-[9.9rem] md:w-auto"
+                    className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] text-black text-xs md:text-sm md:mr-[3rem] w-[8.1rem] md:w-auto"
                     placeholder="Isi nama pemesan"
                   />
                 </div>
                 <div className="flex flex-1 flex-row">
-                  <label htmlFor="phone" className="mt-1 text-sm md:text-base text-gray-800 mr-2 md:mr-5">No. Telepon:</label>
+                  <label htmlFor="phone" className="mt-1 text-sm md:text-base text-gray-800 mr-9 md:mr-5">No. Telepon:</label>
                   <input
                     id="phone"
                     name="phone"
                     type="tel"
-                    className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] text-gray-500 text-xs md:text-sm w-[9.9rem] md:w-[8.8rem]"
+                    className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] text-black text-xs md:text-sm w-[8.1rem] md:w-[8.8rem]"
                     placeholder="Isi nomor telepon"
                   />
                 </div>
@@ -136,11 +136,11 @@ export default function ReservationFill() {
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder="Enter your address"
               />
-              {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
+              {errors.address && <p className="text-red-500 text-xs md:text-sm mt-1">{errors.address}</p>}
             </div>
             <div className="flex flex-row gap-4 md:gap-6 mb-4">
               <div className="flex-1 md:mr-9">
-                <label htmlFor="startDate" className="text-sm md:text-base text-gray-800 mb-1 md:mb-2">Mulai Acara:</label>
+                <label htmlFor="startDate" className="text-sm md:text-base text-gray-800 mb-1 md:mb-2 mr-3">Mulai Acara:</label>
                 <DatePicker
                   selected={startDate}
                   onChange={(date: Date | null) => setStartDate(date)}
@@ -148,7 +148,7 @@ export default function ReservationFill() {
                   placeholderText="Select start date"
                   excludeDates={[new Date(2024, 6, 20), new Date(2024, 6, 21), new Date(2024, 6, 22)]}
                 />
-                {errors.startDate && <p className="text-red-500 text-sm mt-1">{errors.startDate}</p>}
+                {errors.startDate && <p className="text-red-500 text-xs md:text-sm mt-1">{errors.startDate}</p>}
               </div>
               <div className="flex-1">
                 <label htmlFor="endDate" className="mb-4 text-sm md:text-base text-gray-800 mr-3">Selesai Acara:</label>
@@ -159,7 +159,7 @@ export default function ReservationFill() {
                   placeholderText="Select end date"
                   excludeDates={[new Date(2024, 6, 20), new Date(2024, 6, 21), new Date(2024, 6, 22)]}
                 />
-                {errors.endDate && <p className="text-red-500 text-sm mt-1">{errors.endDate}</p>}
+                {errors.endDate && <p className="text-red-500 text-xs md:text-sm mt-1">{errors.endDate}</p>}
               </div>
             </div>
             <button type="submit" className="mt-2 p-2 md:p-2 rounded bg-pink-800 hover:bg-pink-900 text-white">Submit</button>

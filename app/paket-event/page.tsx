@@ -10,114 +10,11 @@ import { useRouter } from 'next/navigation'; // Import useRouter from Next.js fo
 interface Vendor {
   id: number;
   name: string;
-  type: string;
-  location: string;
-  price: number;
-  rate: number;
   image: string;
+  price: number;
+  description: string;
+  listPackage: string[]; // Add listPackage property
 }
-
-const dummyVendors: Vendor[] = [
-  {
-    id: 1,
-    name: 'Gedung Sabuga ITB',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 5.0,
-    image: '/Image/partyevent.jpg',
-  },
-  {
-    id: 2,
-    name: 'Institut Francais Indonesia',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
-    image: '/Image/partyevent.jpg',
-  },
-  {
-    id: 3,
-    name: 'Balai Sartika',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
-    image: '/Image/partyevent.jpg',
-  },
-  {
-    id: 4,
-    name: 'Gedung Merdeka',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
-    image: '/Image/partyevent.jpg',
-  },
-  {
-    id: 5,
-    name: 'Gedung Sate',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
-    image: '/Image/partyevent.jpg',
-  },
-  {
-    id: 6,
-    name: 'Gedung Merah Putih',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
-    image: '/Image/partyevent.jpg',
-  },
-  {
-    id: 7,
-    name: 'Gedung Indonesia Menggugat',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
-    image: '/Image/partyevent.jpg',
-  },
-  {
-    id: 8,
-    name: 'Asia Africa Museum',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
-    image: '/Image/partyevent.jpg',
-  },
-  {
-    id: 9,
-    name: 'Geology Museum',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
-    image: '/Image/partyevent.jpg',
-  },
-  {
-    id: 10,
-    name: 'Museum Konferensi Asia Afrika',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
-    image: '/Image/partyevent.jpg',
-  },
-  {
-    id: 11,
-    name: 'Museum Konferensi Asia Afrika',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
-    image: '/Image/partyevent.jpg',
-  }
-];
 
 export default function PaketEvent() {
   const [minPrice, setMinPrice] = useState<number | string>('');
@@ -210,7 +107,7 @@ export function Filter({ handleFilter, handleReset, setMinPrice, setMaxPrice }: 
 
 export function VendorList({ vendors }: { vendors: Vendor[] }) {
   const router = useRouter(); // Initialize useRouter for navigation
-  const itemsPerPage = 10;
+  const itemsPerPage = 5; // Set the number of items per page to 5
   const [currentPage, setCurrentPage] = useState(1);
 
   const handlePageChange = (page: number) => {
@@ -249,37 +146,36 @@ export function VendorList({ vendors }: { vendors: Vendor[] }) {
           />
         </div>
       </div>
-      <h2 className="text-xl md:text-2xl font-semibold mb-4 text-pink-900 font-sofia">Semua Venue</h2>
-      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <h2 className="text-xl md:text-2xl font-semibold mb-4 text-pink-900 font-sofia">Semua Paket</h2>
+      <div className="flex flex-col gap-4">
         {paginatedVendors.map((vendor) => (
-          <div key={vendor.id} className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col justify-between">
+          <div key={vendor.id} className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col md:flex-row justify-between relative">
             <Image
               src={vendor.image}
               alt={`${vendor.name} Image`}
               width={400}
               height={200}
-              className="object-cover"
+              className="object-cover w-40 md:w-80"
             />
-            <div className="p-3 md:p-3 font-sofia flex flex-col justify-between flex-grow">
-              <div>
-                <h3 className="text-sm md:text-base text-pink-900 font-bold mb-2">{vendor.name}</h3>
-                <p className="text-xs md:text-sm text-gray-700">{vendor.type}</p>
-                <p className="text-xs md:text-sm text-gray-500 flex flex-row">
-                  <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className= "h-3 md:h-4 w-3 md:w-4 text-yellow-500 mr-[0.3rem] mt-[0.075rem] md:mt-[0.05rem]"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.14 3.51a1 1 0 00.95.69h3.7c.967 0 1.372 1.24.588 1.81l-2.992 2.179a1 1 0 00-.364 1.118l1.14 3.51c.3.921-.755 1.688-1.54 1.118l-2.992-2.178a1 1 0 00-1.175 0l-2.992 2.178c-.785.57-1.84-.197-1.54-1.118l1.14-3.51a1 1 0 00-.364-1.118L2.93 8.937c-.784-.57-.38-1.81.588-1.81h3.7a1 1 0 00.95-.69l1.14-3.51z" />
-                  </svg> {vendor.rate}
-                </p>
-                <p className="text-xs md:text-sm text-gray-500">{vendor.location}</p>
+            <div className="p-3 md:p-4 flex-grow font-sofia">
+              <h3 className="text-lg md:text-xl text-pink-900 font-bold mb-2">{vendor.name}</h3>
+              <p className="text-sm md:text-base text-gray-700 font-sofia">{vendor.description}</p>
+              <div className="mt-2 flex justify-between items-center">
+                <span className="text-lg md:text-xl font-bold text-pink-600">Rp{vendor.price.toLocaleString('id-ID')}</span>
               </div>
-              <button className="self-start text-xs md:text-base text-pink-500 hover:text-pink-700 font-bold mt-4"
-               onClick={() => router.push(`/info-detail`)}>
-                Lihat Detail
-              </button>
+              <div className="mt-2 flex justify-between items-center">
+                <div className="flex flex-col gap-2">
+                  <p className="text-sm md:text-base text-gray-700 font-sofia">Rincian Paket:</p>
+                  <ul className="list-disc pl-5 text-gray-700 text-sm md:text-base">
+                    {vendor.listPackage.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+                <Link legacyBehavior href={`/paket-event/${vendor.id}`}>
+                  <a className="absolute bottom-4 right-4 text-sm md:text-base bg-pink-600 text-white font-semibold px-3 py-2 rounded">Lihat Detail</a>
+                </Link>
+              </div>
             </div>
           </div>
         ))}
@@ -346,3 +242,63 @@ function Pagination({ currentPage, totalPages, onPageChange }: any) {
     </div>
   );
 }
+
+// Sample data
+const dummyVendors: Vendor[] = [
+  {
+    id: 1,
+    name: 'Ballroom A',
+    image: '/Image/partyevent.jpg',
+    price: 10000000,
+    description: 'Paket ulang tahun yang cocok untuk kantong pelajar, murah dan berkelas untuk membuat ulang tahunmu semakin berkesan.',
+    listPackage: ['Gedung Sabuga ITB', 'Set sound system - Raka Sound', 'Dekorasi Tema lautan', 'Catering - Sari Rasa']
+  },
+  {
+    id: 2,
+    name: 'Hall B',
+    image: '/Image/partyevent.jpg',
+    price: 15000000,
+    description: 'Sweet Seventeen Anda hanya sekali seumur hidup, jangan lewatkan memori indah yang akan Anda ingat selamanya. Paket ini menawarkan perencanaan ulang tahun mewah dan elegan bernuansa pantai Bali.',
+    listPackage: ['Gedung Sabuga ITB', 'Set sound system - Raka Sound', 'Dekorasi Tema lautan']
+  },
+  {
+    id: 3,
+    name: 'Event Space C',
+    image: '/Image/partyevent.jpg',
+    price: 20000000,
+    description: 'Perfect event space for corporate events.',
+    listPackage: ['Gedung Sabuga ITB', 'Set sound system - Raka Sound', 'Dekorasi Tema lautan']
+  },
+  {
+    id: 4,
+    name: 'Venue D',
+    image: '/Image/partyevent.jpg',
+    price: 25000000,
+    description: 'Luxury venue for special occasions.',
+    listPackage: ['Gedung Sabuga ITB', 'Set sound system - Raka Sound', 'Dekorasi Tema lautan']
+  },
+  {
+    id: 5,
+    name: 'Conference Room E',
+    image: '/Image/partyevent.jpg',
+    price: 5000000,
+    description: 'Ideal for conferences and seminars.',
+    listPackage: ['Gedung Sabuga ITB', 'Set sound system - Raka Sound', 'Dekorasi Tema lautan']
+  },
+  {
+    id: 6,
+    name: 'Outdoor Venue F',
+    image: '/Image/partyevent.jpg',
+    price: 7500000,
+    description: 'Beautiful outdoor space for any event.',
+    listPackage: ['Gedung Sabuga ITB', 'Set sound system - Raka Sound', 'Dekorasi Tema lautan']
+  },
+  {
+    id: 7,
+    name: 'Banquet Hall G',
+    image: '/Image/partyevent.jpg',
+    price: 12500000,
+    description: 'Elegant banquet hall for weddings and receptions.',
+    listPackage: ['Gedung Sabuga ITB', 'Set sound system - Raka Sound', 'Dekorasi Tema lautan']
+  },
+];
