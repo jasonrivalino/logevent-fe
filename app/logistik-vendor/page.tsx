@@ -275,9 +275,10 @@ export function VendorList({ vendors }: { vendors: Vendor[] }) {
                   </svg> {vendor.rate}
                 </p>
                 <p className="text-xs md:text-sm text-gray-500">{vendor.location}</p>
+                <p className="text-xs md:text-sm text-pink-500 font-bold mt-2">Rp {vendor.price.toLocaleString('id-ID')}</p>
               </div>
               <button className="self-start text-xs md:text-base text-pink-500 hover:text-pink-700 font-bold mt-4"
-              onClick={() => router.push(`/info-detail`)}
+              onClick={() => router.push(`/logistik-vendor/info-detail`)}
               >
                 Lihat Detail
               </button>

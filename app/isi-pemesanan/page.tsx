@@ -15,7 +15,7 @@ export default function ReservationFill() {
   const [errors, setErrors] = useState<{ address?: string; startDate?: string; endDate?: string }>({});
 
   const handleBackClick = () => {
-    router.push('/info-detail');
+    router.push('/logistik-vendor/info-detail');
   };
 
   const isDateBooked = (date: Date) => {

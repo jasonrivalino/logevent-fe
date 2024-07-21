@@ -32,7 +32,11 @@ export default function EmailRequest() {
     };
   }, []);
 
-  const handleBackClick = () => {
+  const handleOrderClick = () => {
+    router.push('/logistik-vendor')
+  }
+
+  const handleMenuClick = () => {
     router.push('/');
   };
 
@@ -42,7 +46,8 @@ export default function EmailRequest() {
         <div className="flex flex-col items-center bg-white p-6 md:p-10 w-max max-w-72 md:max-w-sm">
           <Image src="/Image/IconButton/check_reservation.png" width={100} height={100} alt="Email" />
           <p className="text-center text-black mt-5">Terimakasih sudah  melakukan pemesanan, Silakan cek email/WA Anda untuk melanjutkan pembayaran!</p>
-          {/* <button className="text-center text-pink-600 hover:text-pink-800 underline mt-5" onClick={handleBackClick}>Kembali ke halaman login</button> */}
+          <button className="text-center text-pink-600 hover:text-pink-800 underline mt-5" onClick={handleOrderClick}>Lanjut Pemesanan Kembali</button>
+          <button className="text-center text-pink-600 hover:text-pink-800 underline mt-2" onClick={handleMenuClick}>Kembali ke halaman login</button>
         </div>
       </div>
       <ContactBoxShort />

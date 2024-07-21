@@ -27,11 +27,19 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+  font-family: 'Sofia Sans', sans-serif;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
-}
 
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

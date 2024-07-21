@@ -214,7 +214,7 @@ function AboutUsSection() {
   const router = useRouter();
   return (
     <section id="aboutUs">
-      <div className="flex flex-col md:flex-row items-center bg-gray-100 p-8 md:p-16 mt-28 md:mt-[4.5rem] rounded-lg">
+      <div className="flex flex-col md:flex-row items-center p-8 md:p-16 mt-28 md:mt-[4.5rem] rounded-lg">
         <div className="w-full md:w-1/2">
           <iframe 
             className="w-full h-48 md:h-96 rounded-lg" 
@@ -479,7 +479,7 @@ function ListPlace() {
                   <p className="text-gray-500">{place.location}</p>
                 </div>
                 <button className="self-start text-pink-500 hover:text-pink-700 font-bold mt-4"
-                  onClick={() => router.push(`/info-detail`)}    
+                  onClick={() => router.push(`/logistik-vendor/info-detail`)}    
                 >
                     Lihat Detail
                 </button>
