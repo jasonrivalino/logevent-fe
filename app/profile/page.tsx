@@ -1,5 +1,6 @@
 // app/profile/page.tsx
 'use client';
+import Cookies from 'js-cookie';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { Navbar } from '@/app/page';
@@ -24,6 +25,7 @@ const ProfilePage = () => {
         } catch (error: any) {
           console.error('Failed to fetch user data:', error.message);
           localStorage.removeItem('token');
+          Cookies.remove('token');
         }
       }
     };

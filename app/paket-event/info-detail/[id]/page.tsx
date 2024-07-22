@@ -1,9 +1,9 @@
+// app/paket-event/info-detail/[id]/page.tsx
 'use client';
-
-import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { Navbar, ContactBox } from '../../page';
 import { useRouter } from 'next/navigation';
+import { useState, useEffect, useRef } from 'react';
+import { Navbar, ContactBox } from '@/app/page';
 
 export default function Product() {
   const descriptionRef = useRef(null);

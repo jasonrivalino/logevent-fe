@@ -1,5 +1,6 @@
 // app/isi-pemesanan/page.tsx
 'use client';
+import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
@@ -13,7 +14,6 @@ export default function ReservationFill() {
   const router = useRouter();
   const [userId, setUserId] = useState<number | null>(null);
   const [name, setName] = useState<string | null>(null);
-  const [email, setEmail] = useState<string | null>(null);
   const [phone, setPhone] = useState<string | null>(null);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -21,7 +21,7 @@ export default function ReservationFill() {
   const [errors, setErrors] = useState<{ address?: string; startDate?: string; endDate?: string }>({});
 
   const handleBackClick = () => {
-    router.push('/logistik-vendor/info-detail');
+    router.push('/logistik-vendor');
   };
 
   const isDateBooked = (date: Date) => {
@@ -65,14 +65,13 @@ export default function ReservationFill() {
         throw new Error('End date is missing');
       }
 
-      const order = await createOrder({
+      await createOrder({
         userId,
         address,
         startDate: startDate,
         endDate: endDate,
       });
 
-      console.log('Order created:', order);
       router.push('/isi-pemesanan/complete');
     } catch (error: any) {
       console.error('Failed to create order:', error.message);
@@ -86,12 +85,10 @@ export default function ReservationFill() {
         try {
           const user = await readUserProfile(token);
           setUserId(user.id);
-          setName(user.name);
-          setEmail(user.email);
-          setPhone(user.phone);
         } catch (error: any) {
           console.error('Failed to fetch user data:', error.message);
           localStorage.removeItem('token');
+          Cookies.remove('token');
         }
       }
     };
@@ -156,6 +153,8 @@ export default function ReservationFill() {
                     type="text"
                     className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] text-black text-xs md:text-sm md:mr-[3rem] w-[8.1rem] md:w-auto"
                     placeholder="Isi nama pemesan"
+                    value={name || ''}
+                    onChange={(e) => setName(e.target.value)}
                   />
                 </div>
                 <div className="flex flex-1 flex-row">
@@ -166,6 +165,8 @@ export default function ReservationFill() {
                     type="tel"
                     className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] text-black text-xs md:text-sm w-[8.1rem] md:w-[8.8rem]"
                     placeholder="Isi nomor telepon"
+                    value={phone || ''}
+                    onChange={(e) => setPhone(e.target.value)}
                   />
                 </div>
               </div>

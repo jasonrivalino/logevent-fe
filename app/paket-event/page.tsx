@@ -2,126 +2,95 @@
 'use client';
 import Head from 'next/head';
 import Image from 'next/image';
-import Link from 'next/link';
-import { Navbar, ContactBox } from '../page';
-import { useRouter } from 'next/navigation'; // Import useRouter from Next.js for routing
+import { useRouter } from 'next/navigation'; 
+import { useState } from 'react';
+import { Navbar, ContactBox } from '@/app/page';
+import type { Event } from '@/app/utils/types';
 
-interface Vendor {
-  id: number;
-  name: string;
-  type: string;
-  location: string;
-  price: number;
-  rate: number;
-  image: string;
-}
-
-const dummyVendors: Vendor[] = [
+const dummyEvents: Event[] = [
   {
     id: 1,
-    name: 'Gedung Sabuga ITB',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 5.0,
+    name: 'Ballroom A',
+    description: 'Paket ulang tahun yang cocok untuk kantong pelajar, murah dan berkelas untuk membuat ulang tahunmu semakin berkesan. Dapatkan harga spesial untuk ulang tahunmu di Ballroom A. Tersedia berbagai pilihan paket yang bisa disesuaikan dengan kebutuhanmu. Jangan lewatkan kesempatan ini, segera pesan sekarang!',
+    type: 'Ballroom',
     image: '/Image/partyevent.jpg',
+    rate: 4.5,
+    location: 'Lebak Bulus, Jakarta',
+    price: 10000000,
+    listProduct: ['Gedung Sabuga ITB', 'Set sound system - Raka Sound', 'Dekorasi Tema lautan', 'Catering - Sari Rasa', 'Marina Catering', 'Photobooth - Snapy' ]
   },
   {
     id: 2,
-    name: 'Institut Francais Indonesia',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
+    name: 'Hall B',
+    description: 'Sweet Seventeen Anda hanya sekali seumur hidup, jangan lewatkan memori indah yang akan Anda ingat selamanya. Paket ini menawarkan perencanaan ulang tahun mewah dan elegan bernuansa pantai Bali.',
+    type: 'Hall',
     image: '/Image/partyevent.jpg',
+    rate: 4.7,
+    location: 'Cihampelas, Bandung',
+    price: 15000000,
+    listProduct: ['Gedung Sabuga ITB', 'Set sound system - Raka Sound', 'Dekorasi Tema lautan']
   },
   {
     id: 3,
-    name: 'Balai Sartika',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
+    name: 'Event Space C',
+    description: 'Perfect event space for corporate events.',
+    type: 'Event Space',
     image: '/Image/partyevent.jpg',
+    rate: 4.3,
+    location: 'Pakuwon, Surabaya',
+    price: 20000000,
+    listProduct: ['Gedung Sabuga ITB', 'Set sound system - Raka Sound', 'Dekorasi Tema lautan']
   },
   {
     id: 4,
-    name: 'Gedung Merdeka',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
+    name: 'Venue D',
+    description: 'Luxury venue for special occasions.',
+    type: 'Venue',
     image: '/Image/partyevent.jpg',
+    rate: 4.8,
+    location: 'Denpasar, Bali',
+    price: 25000000,
+    listProduct: ['Gedung Sabuga ITB', 'Set sound system - Raka Sound', 'Dekorasi Tema lautan']
   },
   {
     id: 5,
-    name: 'Gedung Sate',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
+    name: 'Conference Room E',
+    description: 'Ideal for conferences and seminars.',
+    type: 'Conference Room',
     image: '/Image/partyevent.jpg',
+    rate: 4.2,
+    location: 'Malioboro, Yogyakarta',
+    price: 5000000,
+    listProduct: ['Gedung Sabuga ITB', 'Set sound system - Raka Sound', 'Dekorasi Tema lautan']
   },
   {
     id: 6,
-    name: 'Gedung Merah Putih',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
+    name: 'Outdoor Venue F',
+    description: 'Beautiful outdoor space for any event.',
+    type: 'Outdoor Venue',
     image: '/Image/partyevent.jpg',
+    rate: 4.6,
+    location: 'Lombok, NTT',
+    price: 7500000,
+    listProduct: ['Gedung Sabuga ITB', 'Set sound system - Raka Sound', 'Dekorasi Tema lautan']
   },
   {
     id: 7,
-    name: 'Gedung Indonesia Menggugat',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
+    name: 'Banquet Hall G',
+    description: 'Elegant banquet hall for weddings and receptions.',
+    type: 'Banquet Hall',
     image: '/Image/partyevent.jpg',
-  },
-  {
-    id: 8,
-    name: 'Asia Africa Museum',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
-    image: '/Image/partyevent.jpg',
-  },
-  {
-    id: 9,
-    name: 'Geology Museum',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
-    image: '/Image/partyevent.jpg',
-  },
-  {
-    id: 10,
-    name: 'Museum Konferensi Asia Afrika',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
-    image: '/Image/partyevent.jpg',
-  },
-  {
-    id: 11,
-    name: 'Museum Konferensi Asia Afrika',
-    type: 'Multifunctional Hall',
-    location: 'Dago, Bandung',
-    price: 25000000,
-    rate: 4.5,
-    image: '/Image/partyevent.jpg',
+    rate: 4.9,
+    location: 'Medan, Sumatera Utara',
+    price: 12500000,
+    listProduct: ['Gedung Sabuga ITB', 'Set sound system - Raka Sound', 'Dekorasi Tema lautan']
   }
 ];
 
 export default function PaketEvent() {
   const [minPrice, setMinPrice] = useState<number | string>('');
   const [maxPrice, setMaxPrice] = useState<number | string>('');
-  const [filteredEvents, setFilteredEvents] = useState<Event[]>(dummyVendors);
+  const [filteredEvents, setFilteredEvents] = useState<Event[]>(dummyEvents);
 
   const handleFilter = () => {
     setFilteredEvents(
@@ -148,7 +117,7 @@ export default function PaketEvent() {
         <Navbar />
         <div className="flex flex-col md:flex-row py-24">
           <Filter handleFilter={handleFilter} handleReset={handleReset} setMinPrice={setMinPrice} setMaxPrice={setMaxPrice} />
-          <EventList Events={filteredEvents} />
+          <EventList events={filteredEvents} />
         </div>
       </div>
       <ContactBox />
@@ -197,11 +166,11 @@ export function Filter({ handleFilter, handleReset, setMinPrice, setMaxPrice }: 
   );
 }
 
-export function VendorList({ vendors }: VendorListProps) {
+export function EventList({ events }: { events: Event[] }) {
   const router = useRouter();
   const itemsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
-  const [expandedPackages, setExpandedPackages] = useState<{ [key: number]: boolean }>({});
+  const [expandedProducts, setExpandedPproducts] = useState<{ [key: number]: boolean }>({});
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -209,15 +178,15 @@ export function VendorList({ vendors }: VendorListProps) {
   };
 
   const handleDetailClick = (id: number) => {
-    router.push(`/paket-event/info-detail`);
+    router.push(`/paket-event/info-detail/${id}`);
   };
 
-  const paginatedVendors = vendors.slice(
+  const paginatedEvents = events.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  const totalPages = Math.ceil(vendors.length / itemsPerPage);
+  const totalPages = Math.ceil(events.length / itemsPerPage);
 
   return (
     <div className="w-full md:w-3/4 p-8 mr-4 bg-white rounded-2xl">
@@ -245,18 +214,18 @@ export function VendorList({ vendors }: VendorListProps) {
       </div>
       <h2 className="text-xl md:text-2xl font-semibold mb-4 text-pink-900 font-sofia">Semua Paket</h2>
       <div className="flex flex-col gap-4">
-        {paginatedVendors.map((vendor) => (
-          <div key={vendor.id} className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col md:flex-row justify-between relative">
+        {paginatedEvents.map((event) => (
+          <div key={event.id} className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col md:flex-row justify-between relative">
             <Image
-              src={Event.image}
-              alt={`${Event.name} Image`}
+              src={event.image}
+              alt={`${event.name} Image`}
               width={400}
               height={200}
               className="object-cover w-80 h-28 md:h-auto"
             />
             <div className="p-3 md:p-4 md:ml-3 flex-grow font-sofia">
-              <h3 className="text-base md:text-xl text-pink-900 font-bold">{vendor.name}</h3>
-              <p className="text-xs md:text-sm text-gray-700">{vendor.type}</p>
+              <h3 className="text-base md:text-xl text-pink-900 font-bold">{event.name}</h3>
+              <p className="text-xs md:text-sm text-gray-700">{event.type}</p>
               <p className="text-xs md:text-sm text-gray-700 flex flex-row">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -265,25 +234,25 @@ export function VendorList({ vendors }: VendorListProps) {
                   viewBox="0 0 20 20"
                 >
                   <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.14 3.51a1 1 0 00.95.69h3.7c.967 0 1.372 1.24.588 1.81l-2.992 2.179a1 1 0 00-.364 1.118l1.14 3.51c.3.921-.755 1.688-1.54 1.118l-2.992-2.178a1 1 0 00-1.175 0l-2.992 2.178c-.785.57-1.84-.197-1.54-1.118l1.14-3.51a1 1 0 00-.364-1.118L2.93 8.937c-.784-.57-.38-1.81.588-1.81h3.7a1 1 0 00.95-.69l1.14-3.51z" />
-                </svg> {vendor.rate}
+                </svg> {event.rate}
               </p>
-              <p className="text-xs md:text-sm text-gray-700 mb-3">{vendor.location}</p>
-              <p className="line-clamp-3 text-xs md:text-sm text-gray-700 font-sofia">{vendor.description}</p>
+              <p className="text-xs md:text-sm text-gray-700 mb-3">{event.location}</p>
+              <p className="line-clamp-3 text-xs md:text-sm text-gray-700 font-sofia">{event.description}</p>
               <div className="mt-1 mb-2 flex justify-between items-center">
-                <span className="text-base md:text-lg font-bold text-pink-600">Rp{vendor.price.toLocaleString('id-ID')}</span>
+                <span className="text-base md:text-lg font-bold text-pink-600">Rp{event.price.toLocaleString('id-ID')}</span>
               </div>
               <div className="mt-2 flex justify-between items-center">
                 <div className="flex flex-col">
                   <p className="text-xs md:text-sm text-gray-700 font-sofia">Rincian Paket:</p>
                   <p className="text-xs md:text-sm text-gray-700 w-full md:w-[36rem] mb-14 md:mb-0">
-                    {expandedPackages[vendor.id]
-                      ? vendor.listPackage.join(', ')
-                      : vendor.listPackage.join(', ')}
+                    {expandedProducts[event.id]
+                      ? event.listProduct.join(', ')
+                      : event.listProduct.join(', ')}
                   </p>
                 </div>
                 <button
                   className="absolute bottom-4 right-4 text-sm md:text-base bg-pink-600 hover:bg-pink-800 text-white font-semibold px-3 py-1 md:py-2 rounded"
-                  onClick={() => handleDetailClick(vendor.id)}
+                  onClick={() => handleDetailClick(event.id)}
                 >
                   Lihat Detail
                 </button>
@@ -354,83 +323,3 @@ function Pagination({ currentPage, totalPages, onPageChange }: any) {
     </div>
   );
 }
-
-const dummyVendors: Vendor[] = [
-  {
-    id: 1,
-    name: 'Ballroom A',
-    description: 'Paket ulang tahun yang cocok untuk kantong pelajar, murah dan berkelas untuk membuat ulang tahunmu semakin berkesan. Dapatkan harga spesial untuk ulang tahunmu di Ballroom A. Tersedia berbagai pilihan paket yang bisa disesuaikan dengan kebutuhanmu. Jangan lewatkan kesempatan ini, segera pesan sekarang!',
-    type: 'Ballroom',
-    image: '/Image/partyevent.jpg',
-    rate: 4.5,
-    location: 'Lebak Bulus, Jakarta',
-    price: 10000000,
-    listPackage: ['Gedung Sabuga ITB', 'Set sound system - Raka Sound', 'Dekorasi Tema lautan', 'Catering - Sari Rasa', 'Marina Catering', 'Photobooth - Snapy' ]
-  },
-  {
-    id: 2,
-    name: 'Hall B',
-    description: 'Sweet Seventeen Anda hanya sekali seumur hidup, jangan lewatkan memori indah yang akan Anda ingat selamanya. Paket ini menawarkan perencanaan ulang tahun mewah dan elegan bernuansa pantai Bali.',
-    type: 'Hall',
-    image: '/Image/partyevent.jpg',
-    rate: 4.7,
-    location: 'Cihampelas, Bandung',
-    price: 15000000,
-    listPackage: ['Gedung Sabuga ITB', 'Set sound system - Raka Sound', 'Dekorasi Tema lautan']
-  },
-  {
-    id: 3,
-    name: 'Event Space C',
-    description: 'Perfect event space for corporate events.',
-    type: 'Event Space',
-    image: '/Image/partyevent.jpg',
-    rate: 4.3,
-    location: 'Pakuwon, Surabaya',
-    price: 20000000,
-    listPackage: ['Gedung Sabuga ITB', 'Set sound system - Raka Sound', 'Dekorasi Tema lautan']
-  },
-  {
-    id: 4,
-    name: 'Venue D',
-    description: 'Luxury venue for special occasions.',
-    type: 'Venue',
-    image: '/Image/partyevent.jpg',
-    rate: 4.8,
-    location: 'Denpasar, Bali',
-    price: 25000000,
-    listPackage: ['Gedung Sabuga ITB', 'Set sound system - Raka Sound', 'Dekorasi Tema lautan']
-  },
-  {
-    id: 5,
-    name: 'Conference Room E',
-    description: 'Ideal for conferences and seminars.',
-    type: 'Conference Room',
-    image: '/Image/partyevent.jpg',
-    rate: 4.2,
-    location: 'Malioboro, Yogyakarta',
-    price: 5000000,
-    listPackage: ['Gedung Sabuga ITB', 'Set sound system - Raka Sound', 'Dekorasi Tema lautan']
-  },
-  {
-    id: 6,
-    name: 'Outdoor Venue F',
-    description: 'Beautiful outdoor space for any event.',
-    type: 'Outdoor Venue',
-    image: '/Image/partyevent.jpg',
-    rate: 4.6,
-    location: 'Lombok, NTT',
-    price: 7500000,
-    listPackage: ['Gedung Sabuga ITB', 'Set sound system - Raka Sound', 'Dekorasi Tema lautan']
-  },
-  {
-    id: 7,
-    name: 'Banquet Hall G',
-    description: 'Elegant banquet hall for weddings and receptions.',
-    type: 'Banquet Hall',
-    image: '/Image/partyevent.jpg',
-    rate: 4.9,
-    location: 'Medan, Sumatera Utara',
-    price: 12500000,
-    listPackage: ['Gedung Sabuga ITB', 'Set sound system - Raka Sound', 'Dekorasi Tema lautan']
-  }
-];

@@ -1,11 +1,11 @@
-"use client"; // Ensures client-side rendering
+// app/page.tsx
+"use client";
 import Cookies from 'js-cookie';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect, useRef } from 'react';
-import { FaSearch } from 'react-icons/fa';
-import { readUserProfile } from './utils/authApi';
+import { useEffect, useRef, useState } from 'react';
+import { readUserProfile } from '@/app/utils/authApi';
 import { readTopProducts } from '@/app/utils/productApi';
 import type { Product } from '@/app/utils/types';
 
@@ -59,6 +59,7 @@ export function Navbar() {
         } catch (error: any) {
           console.error('Failed to fetch user data:', error.message);
           localStorage.removeItem('token');
+          Cookies.remove('token');
         }
       }
     };

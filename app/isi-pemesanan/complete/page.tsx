@@ -1,11 +1,11 @@
+// app/isi-pemesanan/complete/page.tsx
 'use client';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ContactBoxShort } from '../../signin/page';
+import { useEffect } from 'react';
+import { ContactBoxShort } from '@/app/signin/page';
 
 export default function EmailRequest() {
-  const [email, setEmail] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export default function EmailRequest() {
       <div className="flex-grow flex flex-col justify-center items-center p-8 font-sofia">
         <div className="flex flex-col items-center bg-white p-6 md:p-10 w-max max-w-72 md:max-w-sm">
           <Image src="/Image/IconButton/check_reservation.png" width={100} height={100} alt="Email" />
-          <p className="text-center text-black mt-5">Terimakasih sudah  melakukan pemesanan, Silakan cek email/WA Anda untuk melanjutkan pembayaran!</p>
+          <p className="text-center text-black mt-5">Terimakasih sudah  melakukan pemesanan, Silakan cek email Anda untuk melanjutkan pembayaran!</p>
           <button className="text-center text-pink-600 hover:text-pink-800 underline mt-5" onClick={handleOrderClick}>Lanjut Pemesanan Kembali</button>
           <button className="text-center text-pink-600 hover:text-pink-800 underline mt-2" onClick={handleMenuClick}>Kembali ke halaman login</button>
         </div>

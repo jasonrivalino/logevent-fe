@@ -2,12 +2,11 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { resetPassword } from '@/app/utils/authApi';
 import { ContactBoxShort } from '@/app/signin/page';
+import { resetPassword } from '@/app/utils/authApi';
 
 export default function EmailForgot() {
   const [email, setEmail] = useState('');
-  const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
@@ -37,11 +36,10 @@ export default function EmailForgot() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setMessage(null);
     setError(null);
     try {
-      const response = await resetPassword(email);
-      setMessage(response.message);
+      await resetPassword(email);
+      router.push('/email-forgot/verifications');
     } catch (err: any) {
       setError(err.message);
     }
@@ -75,7 +73,6 @@ export default function EmailForgot() {
           className="flex flex-col w-full max-w-full md:max-w-sm p-6 md:p-8 shadow-lg rounded-lg bg-white"
         >
           <h2 className="mb-6 md:mb-8 text-2xl md:text-3xl text-center text-gray-800">Forgot Password</h2>
-          {message && <p className="mb-4 text-green-500 text-center">{message}</p>}
           {error && <p className="mb-4 text-red-500 text-center">{error}</p>}
           <div className="flex flex-col md:flex-row gap-2 md:gap-6 mb-2 md:mb-4">
             <div className="flex-1">

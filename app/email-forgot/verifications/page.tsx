@@ -1,11 +1,11 @@
+// app/email-forgot/verifications/page.tsx
 'use client';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ContactBoxShort } from '../../signin/page';
+import { useEffect } from 'react';
+import { ContactBoxShort } from '@/app/signin/page';
 
 export default function EmailRequest() {
-  const [email, setEmail] = useState('');
   const router = useRouter();
 
   useEffect(() => {

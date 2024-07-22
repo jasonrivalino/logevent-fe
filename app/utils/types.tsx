@@ -9,11 +9,13 @@ interface Album {
 interface Event {
   id: number;
   name: string;
+  description: string;
   type: string;
+  image: string;
+  rate: number;
   location: string;
   price: number;
-  rate: number;
-  image: string;
+  listProduct: string[];
 }
 
 interface Order {

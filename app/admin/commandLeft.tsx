@@ -1,7 +1,8 @@
 // app/admin/commandLeft.tsx
+import Cookies from 'js-cookie';
+import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FaChartBar, FaClipboardList, FaUserPlus, FaCalendarAlt } from 'react-icons/fa';
-import { useRouter, usePathname } from 'next/navigation';
 import { readUserProfile } from '@/app/utils/authApi';
 
 export function CommandLeft() {
@@ -21,6 +22,7 @@ export function CommandLeft() {
           } catch (error: any) {
             console.error('Failed to fetch user data:', error.message);
             localStorage.removeItem('token');
+            Cookies.remove('token');
           }
         }
       };
