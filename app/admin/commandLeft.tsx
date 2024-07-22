@@ -6,7 +6,7 @@ export function CommandLeft() {
     const pathname = usePathname();
   
     return (
-        <div className="bg-white border-2 rounded-xl w-full md:w-80 max-h-[27rem] mb-4 md:mb-0">
+        <div className="bg-white border-2 rounded-xl w-full md:w-80 max-h-[27rem] mb-4 md:mb-0 mt-[0.1rem]">
             <div className="flex items-center border-b mb-4 p-6">
                 <img src="/path-to-image" alt="Admin" className="w-12 h-12 rounded-full mr-4 border-xl bg-gray-400" />
                 <div>
@@ -28,7 +28,7 @@ export function CommandLeft() {
                         <FaClipboardList className="mr-5 text-pink-900" /> Rekap Pesanan
                     </button>
                     <button 
-                        className={`flex items-center mb-4 text-lg p-3 w-full rounded-lg ${pathname === '/admin/manage-vendor' ? 'border-pink-400 border-2 shadow-lg' : 'bg-white'}`}
+                        className={`flex items-center mb-4 text-lg p-3 w-full rounded-lg ${pathname === '/admin/manage-vendor' || pathname === '/admin/manage-vendor/add' || pathname === '/admin/manage-vendor/edit' ? 'border-pink-400 border-2 shadow-lg' : 'bg-white'}`}
                         onClick={() => router.push('/admin/manage-vendor')}
                     >
                         <FaUserPlus className="mr-5 text-pink-900" /> Kelola Vendor
