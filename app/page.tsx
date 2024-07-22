@@ -367,9 +367,9 @@ function Introduction() {
         </div>
 
         {/* Buttons */}
-        <div className="mt-16">
-          <button className="px-6 py-3 bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700" onClick={handleChat}>Pesan Event Organizer</button>
-          <button className="px-6 py-3 mt-5 md:mt-0 md:ml-6  bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold rounded-lg hover:bg-pink-100 hover:text-pink-600 hover:border-pink-600" onClick={() => router.push('/logistik-vendor')}>Cari Logistik Vendor</button>
+        <div className="mt-12">
+          <button className="px-6 py-2 md:py-3 bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700" onClick={handleChat}>Pesan Event Organizer</button>
+          <button className="px-6 py-2 md:py-3 mt-5 md:mt-0 md:ml-6  bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold rounded-lg hover:bg-pink-100 hover:text-pink-600 hover:border-pink-600" onClick={() => router.push('/logistik-vendor')}>Cari Logistik Vendor</button>
         </div>
       </div>
     </section>
@@ -387,7 +387,7 @@ function AboutUsSection() {
 
   return (
     <section id="aboutUs">
-      <div className="flex flex-col md:flex-row items-center bg-gray-100 p-8 md:p-16 mt-28 md:mt-[4.5rem] rounded-lg">
+      <div className="flex flex-col md:flex-row items-center p-8 md:p-16 mt-28 md:mt-[4.5rem] rounded-lg">
         <div className="w-full md:w-1/2">
           <iframe 
             className="w-full h-48 md:h-96 rounded-lg" 

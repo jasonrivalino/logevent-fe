@@ -190,6 +190,7 @@ export function ProductList({ products }: { products: Product[] }) {
                 >
                   {product.vendorAddress}
                 </p>
+                <p className="text-xs md:text-sm text-pink-500 font-bold mt-2">Rp {product.price.toLocaleString('id-ID')}</p>
               </div>
               <button className="self-start text-xs md:text-base text-pink-500 hover:text-pink-700 font-bold mt-4"
               onClick={() => router.push(`/info-detail/${product.id}`)}

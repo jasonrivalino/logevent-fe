@@ -131,7 +131,9 @@ export function ContactBoxShort() {
     <footer className="w-full bg-pink-900 text-white py-4">
       <div className="container mx-auto flex flex-col items-center text-center">
         <Image src="/Image/logo.png" alt="Logevent Logo" width={60} height={60} className='cursor-pointer'/>
-        <p className="mt-4 md:mt-2 font-sofia text-sm md:text-base">Jangan khawatir pusing nyari vendor, Logevent solusinya</p>
+        <p className="mt-4 md:mt-2 font-sofia text-sm md:text-base">
+          Jangan khawatir pusing nyari vendor,<br className="md:hidden" /> Logevent solusinya
+        </p>
       </div>
     </footer>
   );
