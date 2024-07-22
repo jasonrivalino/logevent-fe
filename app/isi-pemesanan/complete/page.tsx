@@ -33,6 +33,7 @@ export default function EmailRequest() {
   }, []);
 
   const handleOrderClick = () => {
+    {/* TODO: Go to cart before isi-pemesanan */}
     router.push('/logistik-vendor')
   }
 
