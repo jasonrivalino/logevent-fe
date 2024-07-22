@@ -16,6 +16,19 @@ interface Event {
   image: string;
 }
 
+interface Order {
+  id: number;
+  userId: number;
+  userEmail: string;
+  userName: string;
+  userPhone: string;
+  address: string;
+  startDate: string;
+  endDate: string;
+  orderDate: string;
+  orderStatus: string;
+}
+
 interface Product {
   id: number;
   vendorId: number;
@@ -41,4 +54,4 @@ interface Review {
   reviewDate: string;
 }
 
-export type { Album, Event, Product, Review };
+export type { Album, Event, Order, Product, Review };

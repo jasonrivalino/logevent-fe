@@ -1,11 +1,14 @@
+// app/admin/statistics/page.tsx
 'use client';
-import React from 'react';
-import { Line } from 'react-chartjs-2';
+
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
-import { FaChartBar, FaClipboardList, FaUserPlus, FaCalendarAlt } from 'react-icons/fa';
-import { ContactBox, Navbar } from '../../page';
-import { useRouter, usePathname } from 'next/navigation';
-import { CommandLeft } from '../commandLeft';
+import React, { useEffect, useState } from 'react';
+import { Line } from 'react-chartjs-2';
+import { ContactBox, Navbar } from '@/app/page';
+import { CommandLeft } from '@/app/admin/commandLeft';
+import { readAllOrder } from '@/app/utils/orderApi';
+import { readAllProduct } from '@/app/utils/productApi';
+import type { Order, Product } from '@/app/utils/types';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -36,6 +39,24 @@ const dataStatistik = {
 };
 
 export default function AdminStatistics() {
+    const [products, setProducts] = useState<Product[]>([]);
+    const [orders, setOrders] = useState<Order[]>([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+              const products = await readAllProduct();
+                const orders = await readAllOrder();
+                setProducts(products);
+                setOrders(orders);
+            } catch (error: any) {
+                console.error('Failed to fetch data:', error.message);
+            }
+        };
+
+        fetchData();
+    }, []);
+
     return (
       <div>
         <div className="min-h-screen flex flex-col p-10 mt-16">
