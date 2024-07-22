@@ -5,14 +5,11 @@ import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Navbar } from '@/app/page';
-import { useAuth } from '@/app/hooks/useAuth';
 import { ContactBoxShort } from '@/app/signin/page';
 import { readUserProfile } from '@/app/utils/authApi';
 import { createOrder } from '@/app/utils/orderApi';
 
 export default function ReservationFill() {
-  useAuth();
-
   const router = useRouter();
   const [userId, setUserId] = useState<number | null>(null);
   const [name, setName] = useState<string | null>(null);

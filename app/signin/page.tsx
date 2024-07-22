@@ -1,9 +1,10 @@
 // app/signin/page.tsx
 'use client';
+import Cookies from 'js-cookie';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { signIn, googleSignIn } from '@/app/utils/authApi';
+import { readUserProfile, signIn, googleSignIn } from '@/app/utils/authApi';
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
@@ -41,7 +42,14 @@ export default function SignIn() {
     try {
       const response = await signIn(email, password);
       localStorage.setItem('token', response.token);
-      router.push('/');
+      Cookies.set('token', response.token, { expires: 7 });
+
+      const user = await readUserProfile(response.token);
+      if (user.isAdmin) {
+        router.push('/admin/statistics');
+      } else {
+        router.push('/');
+      }
     } catch (err: any) {
       setError(err.message);
     }

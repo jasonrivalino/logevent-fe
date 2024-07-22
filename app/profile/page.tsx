@@ -3,12 +3,9 @@
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { Navbar } from '@/app/page';
-import { useAuth } from '@/app/hooks/useAuth';
 import { readUserProfile, updateUser, resetPassword } from '@/app/utils/authApi';
 
 const ProfilePage = () => {
-  useAuth();
-
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [name, setName] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);

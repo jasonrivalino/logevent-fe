@@ -1,5 +1,5 @@
 "use client"; // Ensures client-side rendering
-
+import Cookies from 'js-cookie';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -72,6 +72,7 @@ export function Navbar() {
 
   const handleSignOutClick = () => {
     localStorage.removeItem('token');
+    Cookies.remove('token');
     setUserName(null);
     setIsDropdownOpen(false);
     router.push('/');
