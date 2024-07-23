@@ -1,12 +1,12 @@
 // app/utils/types.tsx
 
-interface Album {
+export interface Album {
   id: number;
   productId: number;
   albumImage?: string;
 }
 
-interface Event {
+export interface Event {
   id: number;
   name: string;
   description: string;
@@ -18,7 +18,7 @@ interface Event {
   listProduct: string[];
 }
 
-interface Order {
+export interface Order {
   id: number;
   userId: number;
   userEmail: string;
@@ -31,7 +31,7 @@ interface Order {
   orderStatus: string;
 }
 
-interface Product {
+export interface Product {
   id: number;
   vendorId: number;
   vendorPhone: string;
@@ -46,7 +46,7 @@ interface Product {
   reviewCount: number;
 }
 
-interface Review {
+export interface Review {
   id: number;
   productId: number;
   orderId: number;
@@ -57,7 +57,7 @@ interface Review {
   reviewDate: string;
 }
 
-interface Vendor {
+export interface Vendor {
   id: number;
   email: string;
   name: string;
@@ -72,5 +72,3 @@ interface Vendor {
   picture?: string;
   productCount: number;
 }
-
-export type { Album, Event, Order, Product, Review, Vendor };

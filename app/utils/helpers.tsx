@@ -1,6 +1,9 @@
 // app/utils/helpers.tsx
 
-const convertDate = (date: string) => {
+// self-defined modules
+import { Order } from '@/app/utils/types';
+
+export const convertDate = (date: string) => {
   return new Date(date).toLocaleDateString('id-GB', {
     day: '2-digit',
     month: 'long',
@@ -8,12 +11,12 @@ const convertDate = (date: string) => {
   });
 };
 
-const generateGoogleMapsUrl = (address: string) => {
+export const generateGoogleMapsUrl = (address: string) => {
   const encodedAddress = encodeURIComponent(address);
   return `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
 };
 
-const getStars = (rating: number) => {
+export const getStars = (rating: number) => {
   const fullStars = Math.floor(rating);
   const halfStars = rating % 1 >= 0.5 ? 1 : 0;
   const emptyStars = 5 - fullStars - halfStars;
@@ -33,20 +36,66 @@ const getStars = (rating: number) => {
       {Array(fullStars)
         .fill(0)
         .map((_, index) => (
-          <span key={`full-${index}`} style={starStyle}>&#9733;</span> // filled star
+          <span key={`full-${index}`} style={starStyle}>&#9733;</span>
         ))}
       {Array(halfStars)
         .fill(0)
         .map((_, index) => (
-          <span key={`half-${index}`} style={starStyle}>&#9733;</span> // half-filled star
+          <span key={`half-${index}`} style={starStyle}>&#9733;</span>
         ))}
       {Array(emptyStars)
         .fill(0)
         .map((_, index) => (
-          <span key={`empty-${index}`} style={starEmptyStyle}>&#9733;</span> // empty star
+          <span key={`empty-${index}`} style={starEmptyStyle}>&#9733;</span>
         ))}
     </>
   );
 };
 
-export { convertDate, generateGoogleMapsUrl, getStars };
+export const getOrderAveragePerDay = (orders: Order[]) => {
+  const currentDate = new Date();
+  const past30Days = new Date(currentDate.getTime() - (30 * 24 * 60 * 60 * 1000));
+  let totalOrders = 0;
+
+  orders.forEach(order => {
+      const orderDate = new Date(order.orderDate);
+      if (orderDate >= past30Days) {
+          totalOrders++;
+      }
+  });
+
+  return Math.round(totalOrders / 30);
+}
+
+export const getOrderCountsToday = (orders: Order[]) => {
+  const currentDate = new Date();
+  const today = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+  let count = 0;
+
+  orders.forEach(order => {
+      const orderDate = new Date(order.orderDate);
+      if (orderDate >= today) {
+          count++;
+      }
+  });
+
+  return count;
+};
+
+export const getOrderCountsWeekly = (orders: Order[]) => {
+  const currentDate = new Date();
+  const past30Days = new Date(currentDate.getTime() - (30 * 24 * 60 * 60 * 1000));
+  const weeks = [0, 0, 0, 0];
+
+  orders.forEach(order => {
+      const orderDate = new Date(order.orderDate);
+      if (orderDate >= past30Days) {
+          const weekIndex = Math.floor((currentDate.getTime() - orderDate.getTime()) / (7 * 24 * 60 * 60 * 1000));
+          if (weekIndex < 4) {
+              weeks[3 - weekIndex]++;
+          }
+      }
+  });
+
+  return weeks;
+};
