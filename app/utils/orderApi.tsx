@@ -14,6 +14,15 @@ export const readAllOrder = async () => {
   }
 };
 
+export const readPastMonthOrder = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/orders/read/past-month`);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Failed to fetch orders');
+  }
+};
+
 export const readOrderById = async (id: number) => {
   try {
     const response = await axios.get(`${API_URL}/orders/read/${id}`);

@@ -8,10 +8,12 @@ import { useState, useEffect, useRef } from 'react';
 // self-defined modules
 import { Navbar, ContactBox } from '@/app/page';
 import { readAlbumByProductId } from '@/app/utils/albumApi';
+import { readUserProfile } from '@/app/utils/authApi';
 import { convertDate, getStars } from '@/app/utils/helpers';
 import { readReviewByProductId } from '@/app/utils/itemApi';
 import { readProductById } from '@/app/utils/productApi';
 import type { Album, Product, Review } from '@/app/utils/types';
+import { createVisit } from '@/app/utils/visitApi';
 
 export default function Product() {
   const descriptionRef = useRef(null);
@@ -41,6 +43,19 @@ export default function Product() {
       try {
         const id = pathname.split('/').pop();
         if (id) {
+          const token = localStorage.getItem('token');
+          
+          try {
+            if (token) {
+              const user = await readUserProfile(token);
+              await createVisit({ userId: user.id, productId: parseInt(id) });
+            } else {
+              await createVisit({ userId: null, productId: parseInt(id) });
+            }
+          } catch (visitError) {
+            console.error('Failed to create visit:', visitError);
+          }
+  
           const product = await readProductById(parseInt(id));
           const albums = await readAlbumByProductId(parseInt(id));
           const reviews = await readReviewByProductId(parseInt(id));
@@ -52,7 +67,7 @@ export default function Product() {
         console.error('Failed to fetch product:', error);
       }
     };
-
+  
     fetchData();
   }, [pathname]);
 

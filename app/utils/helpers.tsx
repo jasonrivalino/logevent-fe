@@ -1,7 +1,7 @@
 // app/utils/helpers.tsx
 
 // self-defined modules
-import { Order } from '@/app/utils/types';
+import { Order, Visit } from '@/app/utils/types';
 
 export const convertDate = (date: string) => {
   return new Date(date).toLocaleDateString('id-GB', {
@@ -52,21 +52,6 @@ export const getStars = (rating: number) => {
   );
 };
 
-export const getOrderAveragePerDay = (orders: Order[]) => {
-  const currentDate = new Date();
-  const past30Days = new Date(currentDate.getTime() - (30 * 24 * 60 * 60 * 1000));
-  let totalOrders = 0;
-
-  orders.forEach(order => {
-      const orderDate = new Date(order.orderDate);
-      if (orderDate >= past30Days) {
-          totalOrders++;
-      }
-  });
-
-  return Math.round(totalOrders / 30);
-}
-
 export const getOrderCountsToday = (orders: Order[]) => {
   const currentDate = new Date();
   const today = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
@@ -85,14 +70,47 @@ export const getOrderCountsToday = (orders: Order[]) => {
 export const getOrderCountsWeekly = (orders: Order[]) => {
   const currentDate = new Date();
   const past30Days = new Date(currentDate.getTime() - (30 * 24 * 60 * 60 * 1000));
-  const weeks = [0, 0, 0, 0];
+  const weeks = [0, 0, 0, 0, 0];
 
   orders.forEach(order => {
       const orderDate = new Date(order.orderDate);
       if (orderDate >= past30Days) {
           const weekIndex = Math.floor((currentDate.getTime() - orderDate.getTime()) / (7 * 24 * 60 * 60 * 1000));
-          if (weekIndex < 4) {
-              weeks[3 - weekIndex]++;
+          if (weekIndex < 5) {
+              weeks[4 - weekIndex]++;
+          }
+      }
+  });
+
+  return weeks;
+};
+
+export const getVisitCountsToday = (visits: Visit[]) => {
+  const currentDate = new Date();
+  const today = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+  let count = 0;
+
+  visits.forEach(visit => {
+      const visitDate = new Date(visit.visitDate);
+      if (visitDate >= today) {
+          count++;
+      }
+  });
+
+  return count;
+};
+
+export const getVisitCountsWeekly = (visits: Visit[]) => {
+  const currentDate = new Date();
+  const past30Days = new Date(currentDate.getTime() - (30 * 24 * 60 * 60 * 1000));
+  const weeks = [0, 0, 0, 0, 0];
+
+  visits.forEach(visit => {
+      const visitDate = new Date(visit.visitDate);
+      if (visitDate >= past30Days) {
+          const weekIndex = Math.floor((currentDate.getTime() - visitDate.getTime()) / (7 * 24 * 60 * 60 * 1000));
+          if (weekIndex < 5) {
+              weeks[4 - weekIndex]++;
           }
       }
   });

@@ -72,3 +72,10 @@ export interface Vendor {
   picture?: string;
   productCount: number;
 }
+
+export interface Visit {
+  id: number;
+  userId: number | null;
+  productId: number | null;
+  visitDate: string;
+}
