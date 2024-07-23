@@ -1,13 +1,8 @@
 // app/admin/statistics/page.tsx
 'use client';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
-import React, { useEffect, useState } from 'react';
-import { Line } from 'react-chartjs-2';
-import { ContactBox, Navbar } from '@/app/page';
-import { CommandLeft } from '@/app/admin/commandLeft';
-import { readAllOrder } from '@/app/utils/orderApi';
-import { readAllProduct } from '@/app/utils/productApi';
-import type { Order, Product } from '@/app/utils/types';
+import { ContactBox, Navbar } from '../../page';
+import { CommandLeft } from '../commandLeft';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
