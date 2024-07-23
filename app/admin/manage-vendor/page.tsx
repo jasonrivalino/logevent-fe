@@ -4,6 +4,7 @@
 // dependency modules
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import * as XLSX from 'xlsx';
 // self-defined modules
 import { ContactBox, Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
@@ -30,6 +31,17 @@ export default function AdminVendor() {
     const triggerFetch = () => {
         setRefresh(!refresh);
     };
+
+    function exportToExcel(vendors: Vendor[]) {
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.json_to_sheet(vendors);
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Vendors');
+        XLSX.writeFile(workbook, 'vendors.xlsx');
+    }
+
+    const handleExport = () => {
+        exportToExcel(vendors);
+    };
         
     return (
       <div>
@@ -38,7 +50,7 @@ export default function AdminVendor() {
             <div className="flex flex-col md:flex-row flex-grow">
                 <CommandLeft />
                 <div className="flex-grow ml-0 md:ml-7 py-[0.15rem]">
-                    <ManageVendor vendors={vendors} triggerFetch={triggerFetch} />
+                    <ManageVendor vendors={vendors} triggerFetch={triggerFetch} onExport={handleExport} />
                 </div>
             </div>
         </div>
@@ -47,7 +59,7 @@ export default function AdminVendor() {
     );
 }
 
-function ManageVendor({ vendors, triggerFetch }: { vendors: Vendor[], triggerFetch: () => void }) {
+function ManageVendor({ vendors, triggerFetch, onExport }: { vendors: Vendor[], triggerFetch: () => void, onExport: () => void }) {
     const router = useRouter();
     const [expandedVendorId, setExpandedVendorId] = useState<number | null>(null);
     const [showPopup, setShowPopup] = useState(false);
@@ -97,7 +109,7 @@ function ManageVendor({ vendors, triggerFetch }: { vendors: Vendor[], triggerFet
                 </div>
                 <div className="flex w-full md:w-1/3 justify-end items-center space-x-4">
                     <button className="bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-md" onClick={() => router.push('/admin/manage-vendor/add')}>+ Tambah Vendor</button>
-                    <button className="bg-pink-500 hover:bg-pink-600 p-2 rounded-md">Export to Excel</button>
+                    <button className="bg-pink-500 hover:bg-pink-600 p-2 rounded-md" onClick={onExport}>Export to Excel</button>
                 </div>
             </div>
             {vendors.map((vendor) => (

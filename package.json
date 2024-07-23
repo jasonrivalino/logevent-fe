@@ -18,7 +18,8 @@
     "react-datepicker": "^7.3.0",
     "react-dom": "^18",
     "react-icons": "^5.2.1",
-    "react-responsive-carousel": "^3.2.23"
+    "react-responsive-carousel": "^3.2.23",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz"
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.6",
