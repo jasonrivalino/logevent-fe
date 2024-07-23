@@ -24,10 +24,10 @@ export const readVendorById = async (id: number) => {
 };
 
 export const createVendor = async (vendorData: {
+  email: string;
   name: string;
   phone: string;
   address: string;
-  picture: string;
 }) => {
   try {
     const response = await axios.post(`${API_URL}/vendors/create`, vendorData, {
@@ -42,6 +42,7 @@ export const createVendor = async (vendorData: {
 };
 
 export const updateVendor = async (id: number, vendorData: {
+  email?: string;
   name?: string;
   phone?: string;
   address?: string;

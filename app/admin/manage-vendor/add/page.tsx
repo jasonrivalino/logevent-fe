@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
 import { ContactBoxShort } from '@/app/signin/page';
+import { createVendor } from '@/app/utils/vendorApi';
 
 export default function AdminVendor() {
     return (
@@ -49,10 +50,14 @@ function AddVendor() {
         }));
     };
 
-    const handleSubmit = (e: { preventDefault: () => void; }) => {
+    const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
-        // TODO: Add your form submission logic here
-        console.log(vendorData);
+        try {
+            await createVendor(vendorData);
+            router.push('/admin/manage-vendor');
+        } catch (error: any) {
+            console.error('Failed to create vendor:', error.message);
+        }
     };
 
     return (
@@ -164,7 +169,6 @@ function AddVendor() {
                     <button
                         type="submit"
                         className="bg-pink-800 hover:bg-pink-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                        onClick={() => router.push('/admin/manage-vendor')}
                     >
                         Tambah Vendor
                     </button>

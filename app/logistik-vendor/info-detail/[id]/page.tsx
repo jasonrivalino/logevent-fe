@@ -137,8 +137,7 @@ function ProductImage({ product, albums }: { product: Product, albums: Album[] }
   };
 
   const handleChat = () => {
-    // TODO: Change the vendor number to the actual vendor number
-    const vendorNumber = '6285295055828';
+    const vendorNumber = product.vendorPhone;
     const whatsappUrl = `https://wa.me/${vendorNumber}`;
     window.open(whatsappUrl, '_blank');
   };
@@ -149,7 +148,6 @@ function ProductImage({ product, albums }: { product: Product, albums: Album[] }
         <div className="py-4">
           <div className="flex space-x-4">
             <img src={product.productImage || "/Image/planetarium.jpg"} alt="Main Hall" className="w-full md:w-1/2 h-auto md:h-[21rem] rounded-md" />
-            {/* TODO: INTEGRATE ALBUM */}
             <div className="grid grid-cols-2 gap-4 w-0 md:w-1/2">
               {albums.map((album, index) => (
                 <img key={index} src={album.albumImage || "/Image/planetarium.jpg"} alt={`Hall Image ${index + 1}`} className="w-0 md:w-full h-auto md:h-40 rounded-md" />
@@ -324,7 +322,7 @@ function ImageGallery({ albums }: { albums: Album[] }) {
     return (
       <section className="px-8 py-14 border-b">
         <h2 className="text-3xl font-bold text-pink-900 pt-10">Album</h2>
-        <p className="text-gray-700 mt-6">No images available</p>
+        <p className="text-gray-700 mt-6">Tidak ada album yang tersedia</p>
       </section>
     );
   }
@@ -372,7 +370,7 @@ function Reviews({ reviews }: { reviews: Review[] }) {
     return (
       <div className="px-8 py-14 border-b">
         <h2 className="text-3xl font-bold text-pink-900 pt-10">Reviews</h2>
-        <p className="text-gray-700 mt-6">No reviews available</p>
+        <p className="text-gray-700 mt-6">Tidak ada review yang tersedia</p>
       </div>
     );
   }

@@ -34,6 +34,7 @@ interface Order {
 interface Product {
   id: number;
   vendorId: number;
+  vendorPhone: string;
   vendorAddress: string;
   name: string;
   specification: string;
@@ -56,4 +57,20 @@ interface Review {
   reviewDate: string;
 }
 
-export type { Album, Event, Order, Product, Review };
+interface Vendor {
+  id: number;
+  email: string;
+  name: string;
+  phone: string;
+  address: string;
+  joined: string;
+  instagram?: string;
+  facebook?: string;
+  socialMedia?: string;
+  MoU?: string;
+  other?: string;
+  picture?: string;
+  productCount: number;
+}
+
+export type { Album, Event, Order, Product, Review, Vendor };

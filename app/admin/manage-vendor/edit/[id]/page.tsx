@@ -1,15 +1,36 @@
-// app/admin/manage-vendor/edit/page.tsx
+// app/admin/manage-vendor/edit/[id]/page.tsx
 'use client';
 
 // dependency modules
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 // self-defined modules
 import { Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
 import { ContactBoxShort } from '@/app/signin/page';
+import { readVendorById, updateVendor } from '@/app/utils/vendorApi';
+import { Vendor } from '@/app/utils/types';
 
 export default function AdminVendor() {
+    const pathname = usePathname();
+    const [vendor, setVendor] = useState<Vendor | null>(null);
+
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const id = pathname.split('/').pop();
+          if (id) {
+            const vendor = await readVendorById(parseInt(id));
+            setVendor(vendor);
+          }
+        } catch (error) {
+          console.error('Failed to fetch product:', error);
+        }
+      };
+  
+      fetchData();
+    }, [pathname]);
+
     return (
       <div className="min-h-screen flex flex-col overflow-hidden">
         <div className="flex-grow p-10 mt-16">
@@ -17,7 +38,7 @@ export default function AdminVendor() {
             <div className="flex flex-col md:flex-row flex-grow">
                 <CommandLeft />
                 <div className="flex-grow ml-0 md:ml-7 py-[0.15rem]">
-                    <EditVendor />
+                    {vendor && <EditVendor vendor={vendor} />}
                 </div>
             </div>
         </div>
@@ -28,17 +49,17 @@ export default function AdminVendor() {
     );
 }
 
-function EditVendor() {
+function EditVendor({ vendor }: { vendor: Vendor }) {
     const router = useRouter();
 
     const [vendorData, setVendorData] = useState({
-        name: '',
-        phone: '',
-        email: '',
-        address: '',
-        instagram: '',
-        socialMedia: '',
-        MoU: ''
+        name: vendor.name,
+        phone: vendor.phone,
+        email: vendor.email,
+        address: vendor.address,
+        instagram: vendor.instagram || '',
+        socialMedia: vendor.socialMedia || '',
+        MoU: vendor.MoU || ''
     });
 
     const handleChange = (e: { target: { name: any; value: any; }; }) => {
@@ -49,10 +70,14 @@ function EditVendor() {
         }));
     };
 
-    const handleSubmit = (e: { preventDefault: () => void; }) => {
+    const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
-        // TODO: Add your form submission logic here
-        console.log(vendorData);
+        try {
+            await updateVendor(vendor.id, vendorData);
+            router.push('/admin/manage-vendor');
+        } catch (error: any) {
+            console.error('Failed to update vendor:', error.message);
+        }
     };
 
     return (
@@ -164,7 +189,6 @@ function EditVendor() {
                     <button
                         type="submit"
                         className="bg-pink-800 hover:bg-pink-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                        onClick={() => router.push('/admin/manage-vendor')}
                     >
                         Edit Vendor
                     </button>

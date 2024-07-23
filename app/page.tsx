@@ -633,6 +633,15 @@ function ListProduct({ products }: { products: Product[] }) {
     return display;
   };
 
+  if (products.length === 0) {
+    return (
+      <section className="px-8 py-14 border-b">
+        <h2 className="text-3xl font-bold text-pink-900 pt-10">Rekomendasi Produk</h2>
+        <p className="text-gray-700 mt-6">Rekomendasi produk tidak tersedia saat ini.</p>
+      </section>
+    );
+  }
+
   return (
     <section className="p-8">
       <h1 className="text-4xl md:text-4xl text-pink-900 font-bold mt-44 md:mt-32 mb-2 md:mb-0 md:-ml-[5.25rem] font-sofia">Rekomendasi Produk</h1>
@@ -666,7 +675,7 @@ function ListProduct({ products }: { products: Product[] }) {
                     <p className="text-gray-500">{product.vendorAddress}</p>
                   </div>
                   <button className="self-start text-pink-500 hover:text-pink-700 font-bold mt-4"
-                    onClick={() => router.push(`/info-detail/${product.id}`)}
+                    onClick={() => router.push(`logistik-vendor/info-detail/${product.id}`)}
                   >
                     Lihat Detail
                   </button>

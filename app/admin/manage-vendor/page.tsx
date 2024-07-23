@@ -3,12 +3,34 @@
 
 // dependency modules
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // self-defined modules
 import { ContactBox, Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
+import { readAllVendor, deleteVendor } from '@/app/utils/vendorApi';
+import { Vendor } from '@/app/utils/types';
 
 export default function AdminVendor() {
+    const [vendors, setVendors] = useState<Vendor[]>([]);
+    const [refresh, setRefresh] = useState(false);
+
+    useEffect(() => {
+        const fetchVendors = async () => {
+            try {
+                const data = await readAllVendor();
+                setVendors(data);
+            } catch (error: any) {
+                console.error('Failed to fetch vendors:', error.message);
+            }
+        };
+
+        fetchVendors();
+    }, [refresh]);
+
+    const triggerFetch = () => {
+        setRefresh(!refresh);
+    };
+        
     return (
       <div>
         <div className="min-h-screen flex flex-col p-10 mt-16">
@@ -16,7 +38,7 @@ export default function AdminVendor() {
             <div className="flex flex-col md:flex-row flex-grow">
                 <CommandLeft />
                 <div className="flex-grow ml-0 md:ml-7 py-[0.15rem]">
-                    <ManageVendor />
+                    <ManageVendor vendors={vendors} triggerFetch={triggerFetch} />
                 </div>
             </div>
         </div>
@@ -25,18 +47,11 @@ export default function AdminVendor() {
     );
 }
 
-function ManageVendor() {
+function ManageVendor({ vendors, triggerFetch }: { vendors: Vendor[], triggerFetch: () => void }) {
     const router = useRouter();
     const [expandedVendorId, setExpandedVendorId] = useState<number | null>(null);
     const [showPopup, setShowPopup] = useState(false);
     const [vendorToDelete, setVendorToDelete] = useState<number | null>(null);
-    const [vendors, setVendors] = useState([
-        { id: 1, name: 'Vendor A', phone: '083456478967', email: 'vendorA@example.com', address: '123 Main St, City A, Country A', joined: '2022-01-15', instagram: 'https://instagram.com/vendorA', facebook: 'https://facebook.com/vendorA', other: 'Lihat MOU Kerjasama disini', productCount: 17 },
-        { id: 2, name: 'Vendor B', phone: '083456478968', email: 'vendorB@example.com', address: '456 Oak St, City B, Country B', joined: '2022-02-20', instagram: 'https://instagram.com/vendorB', facebook: 'https://facebook.com/vendorB', other: 'Lihat MOU Kerjasama disini', productCount: 25 },
-        { id: 3, name: 'Vendor C', phone: '083456478969', email: 'vendorC@example.com', address: '789 Pine St, City C, Country C', joined: '2022-03-18', instagram: 'https://instagram.com/vendorC', facebook: 'https://facebook.com/vendorC', other: 'Lihat MOU Kerjasama disini', productCount: 12 },
-        { id: 4, name: 'Vendor D', phone: '083456478970', email: 'vendorD@example.com', address: '101 Maple St, City D, Country D', joined: '2022-04-25', instagram: 'https://instagram.com/vendorD', facebook: 'https://facebook.com/vendorD', other: 'Lihat MOU Kerjasama disini', productCount: 9 },
-        { id: 5, name: 'Vendor E', phone: '083456478971', email: 'vendorE@example.com', address: '202 Birch St, City E, Country E', joined: '2022-05-10', instagram: 'https://instagram.com/vendorE', facebook: 'https://facebook.com/vendorE', other: 'Lihat MOU Kerjasama disini', productCount: 7 },
-    ]);
 
     const toggleExpand = (id: number | null) => {
         setExpandedVendorId(expandedVendorId === id ? null : id);
@@ -47,11 +62,16 @@ function ManageVendor() {
         setShowPopup(true);
     };
 
-    const handleDelete = () => {
-        if (vendorToDelete !== null) {
-            setVendors(vendors.filter(vendor => vendor.id !== vendorToDelete));
+    const handleDelete = async () => {
+        try {
+            if (vendorToDelete !== null) {
+                await deleteVendor(vendorToDelete);
+                triggerFetch();
+            }
             setShowPopup(false);
             setVendorToDelete(null);
+        } catch (error: any) {
+            console.error('Failed to delete vendor:', error.message);
         }
     };
 
@@ -92,7 +112,7 @@ function ManageVendor() {
                         <div className="flex items-center">
                             <span className="mr-5">Jumlah Produk: {vendor.productCount}</span>
                             <button className="bg-white hover:bg-pink-100 border border-pink-500 text-pink-500 px-3 py-[0.35rem] rounded-md mr-2">Kelola Produk</button>
-                            <button className="bg-white hover:bg-pink-100 border border-pink-500 text-pink-500 px-3 py-[0.35rem] rounded-md mr-2" onClick={() => router.push('/admin/manage-vendor/edit')}>Edit Vendor</button>
+                            <button className="bg-white hover:bg-pink-100 border border-pink-500 text-pink-500 px-3 py-[0.35rem] rounded-md mr-2" onClick={() => router.push(`/admin/manage-vendor/edit/${vendor.id}`)}>Edit</button>
                             <button className="bg-red-500 text-white p-2 rounded-md" onClick={() => confirmDelete(vendor.id)}>
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                     <path fillRule="evenodd" d="M6.5 4a1 1 0 00-.894.553L5 5H3a1 1 0 000 2h1v9a2 2 0 002 2h8a2 2 0 002-2V7h1a1 1 0 100-2h-2l-.606-1.447A1 1 0 0013.5 4h-7zM6 7v9h8V7H6zm4-3a1 1 0 011 1v1h-2V5a1 1 0 011-1z" clipRule="evenodd" />
@@ -106,11 +126,12 @@ function ManageVendor() {
                             <p>Nomor Telepon: {vendor.phone}</p>
                             <p>Email: {vendor.email}</p>
                             <p>Alamat: {vendor.address}</p>
-                            <p>Tanggal bergabung: {vendor.joined}</p>
-                            <p>Instagram: {vendor.instagram}</p>
-                            <p>Facebook: {vendor.facebook}</p>
+                            {/* TODO: Add Join Date, Instagram, Facebook, Other Socmed */}
+                            {/* <p>Tanggal bergabung: {vendor.joined}</p> */}
+                            {/* <p>Instagram: {vendor.instagram}</p> */}
+                            {/* <p>Facebook: {vendor.facebook}</p> */}
                             <p>Sosial Media Lainnya:</p>
-                            <p><a href="#" className="text-pink-500">{vendor.other}</a></p>
+                            {/* <p><a href="#" className="text-pink-500">{vendor.other}</a></p> */}
                         </div>
                     )}
                 </div>
