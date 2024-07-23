@@ -1,13 +1,16 @@
 // app/logistik-vendor/page.tsx
 'use client';
+
+// dependency modules
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
+// self-defined modules
 import { Navbar, ContactBox } from '@/app/page';
 import { generateGoogleMapsUrl } from '@/app/utils/helpers';
 import { readAllProduct } from '@/app/utils/productApi';
-import type { Product } from '@/app/utils/types';
+import { Product } from '@/app/utils/types';
 
 export default function LogistikVendor() {
   const [minPrice, setMinPrice] = useState<number | string>('');

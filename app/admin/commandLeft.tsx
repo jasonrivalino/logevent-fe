@@ -1,8 +1,11 @@
 // app/admin/commandLeft.tsx
+
+// dependency modules
 import Cookies from 'js-cookie';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FaChartBar, FaClipboardList, FaUserPlus, FaCalendarAlt } from 'react-icons/fa';
+// self-defined modules
 import { readUserProfile } from '@/app/utils/authApi';
 
 export function CommandLeft() {

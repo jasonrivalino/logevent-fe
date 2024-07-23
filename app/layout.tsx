@@ -1,6 +1,10 @@
+// app/layout.tsx
+
+// dependency modules
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
+// self-defined modules
+import "@/app/globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 

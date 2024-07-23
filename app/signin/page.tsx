@@ -1,9 +1,12 @@
 // app/signin/page.tsx
 'use client';
+
+// dependency modules
 import Cookies from 'js-cookie';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
+// self-defined modules
 import { readUserProfile, signIn, googleSignIn } from '@/app/utils/authApi';
 
 export default function SignIn() {

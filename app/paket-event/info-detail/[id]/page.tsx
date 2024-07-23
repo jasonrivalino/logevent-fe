@@ -1,8 +1,11 @@
 // app/paket-event/info-detail/[id]/page.tsx
 'use client';
+
+// dependency modules
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
+// self-defined modules
 import { Navbar, ContactBox } from '@/app/page';
 
 export default function Product() {

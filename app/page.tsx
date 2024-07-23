@@ -1,13 +1,16 @@
 // app/page.tsx
 "use client";
+
+// dependency modules
 import Cookies from 'js-cookie';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+// self-defined modules
 import { readUserProfile } from '@/app/utils/authApi';
 import { readTopProducts } from '@/app/utils/productApi';
-import type { Product } from '@/app/utils/types';
+import { Product } from '@/app/utils/types';
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);

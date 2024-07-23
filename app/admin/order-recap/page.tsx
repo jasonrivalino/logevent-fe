@@ -1,8 +1,14 @@
 // app/admin/order-recap/page.tsx
 'use client';
-import React from 'react';
-import { ContactBox, Navbar } from '../../page';
-import { CommandLeft } from '../commandLeft';
+
+// dependency modules
+import { useEffect, useState } from 'react';
+// self-defined modules
+import { ContactBox, Navbar } from '@/app/page';
+import { CommandLeft } from '@/app/admin/commandLeft';
+import { convertDate } from '@/app/utils/helpers';
+import { readAllOrder } from '@/app/utils/orderApi';
+import { Order } from '@/app/utils/types';
 
 export default function AdminOrderRecap() {
     const [orders, setOrders] = useState<Order[]>([]);

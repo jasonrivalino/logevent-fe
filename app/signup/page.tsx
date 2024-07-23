@@ -1,7 +1,10 @@
 // app/signup/page.tsx
 'use client';
+
+// dependency modules
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
+// self-defined modules
 import { ContactBoxShort } from '@/app/signin/page';
 import { readUserProfile, signUp, updateUser } from '@/app/utils/authApi';
 

@@ -1,10 +1,13 @@
 // app/isi-pemesanan/page.tsx
 'use client';
+
+// dependency modules
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+// self-defined modules
 import { Navbar } from '@/app/page';
 import { ContactBoxShort } from '@/app/signin/page';
 import { readUserProfile } from '@/app/utils/authApi';

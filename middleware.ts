@@ -1,6 +1,8 @@
 // middleware.ts
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+
+// dependency modules
+import { NextRequest, NextResponse } from 'next/server';
+// self-defined modules
 import { readUserProfile } from '@/app/utils/authApi';
 
 export async function middleware(request: NextRequest) {

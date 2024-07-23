@@ -1,8 +1,16 @@
 // app/admin/statistics/page.tsx
 'use client';
+
+// dependency modules
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
-import { ContactBox, Navbar } from '../../page';
-import { CommandLeft } from '../commandLeft';
+import { useEffect, useState } from 'react';
+import { Line } from 'react-chartjs-2';
+// self-defined modules
+import { ContactBox, Navbar } from '@/app/page';
+import { CommandLeft } from '@/app/admin/commandLeft';
+import { readAllOrder } from '@/app/utils/orderApi';
+import { readAllProduct } from '@/app/utils/productApi';
+import { Order, Product } from '@/app/utils/types';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 

@@ -1,8 +1,11 @@
 // app/profile/page.tsx
 'use client';
+
+// dependency modules
 import Cookies from 'js-cookie';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
+// self-defined modules
 import { Navbar } from '@/app/page';
 import { readUserProfile, updateUser, resetPassword } from '@/app/utils/authApi';
 

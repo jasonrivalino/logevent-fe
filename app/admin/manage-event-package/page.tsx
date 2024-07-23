@@ -1,6 +1,7 @@
 // app/admin/manage-event-package/page.tsx
 'use client';
-import React from 'react';
+
+// self-defined modules
 import { ContactBox, Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
 

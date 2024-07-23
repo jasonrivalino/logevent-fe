@@ -1,8 +1,11 @@
 // app/email-forgot/verifications/page.tsx
 'use client';
+
+// dependency modules
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+// self-defined modules
 import { ContactBoxShort } from '@/app/signin/page';
 
 export default function EmailRequest() {

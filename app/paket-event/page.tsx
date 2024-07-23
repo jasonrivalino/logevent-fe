@@ -1,11 +1,14 @@
 // app/paket-event/page.tsx
 'use client';
+
+// dependency modules
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation'; 
 import { useState } from 'react';
+// self-defined modules
 import { Navbar, ContactBox } from '@/app/page';
-import type { Event } from '@/app/utils/types';
+import { Event } from '@/app/utils/types';
 
 const dummyEvents: Event[] = [
   {

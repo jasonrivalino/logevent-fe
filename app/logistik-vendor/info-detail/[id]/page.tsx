@@ -1,8 +1,11 @@
 // app/info-detail/[id]/page.tsx
 'use client';
+
+// dependency modules
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
+// self-defined modules
 import { Navbar, ContactBox } from '@/app/page';
 import { readAlbumByProductId } from '@/app/utils/albumApi';
 import { convertDate, getStars } from '@/app/utils/helpers';

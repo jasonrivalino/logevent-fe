@@ -1,7 +1,10 @@
 // app/email-verification/page.tsx
 'use client';
+
+// dependency modules
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+// self-defined modules
 import { verifyEmail } from '@/app/utils/authApi';
 
 export default function EmailVerificationPage() {

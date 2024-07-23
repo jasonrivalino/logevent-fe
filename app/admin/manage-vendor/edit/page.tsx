@@ -1,9 +1,13 @@
+// app/admin/manage-vendor/edit/page.tsx
 'use client';
-import React, { useState } from 'react';
-import { Navbar } from '../../../page';
-import { CommandLeft } from '../../commandLeft';
-import { ContactBoxShort } from '@/app/signin/page';
+
+// dependency modules
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+// self-defined modules
+import { Navbar } from '@/app/page';
+import { CommandLeft } from '@/app/admin/commandLeft';
+import { ContactBoxShort } from '@/app/signin/page';
 
 export default function AdminVendor() {
     return (
