@@ -42,7 +42,7 @@ export default function SignIn() {
     try {
       const response = await signIn(email, password);
       localStorage.setItem('token', response.token);
-      Cookies.set('token', response.token, { expires: 7 });
+      Cookies.set('token', response.token);
 
       const user = await readUserProfile(response.token);
       if (user.isAdmin) {

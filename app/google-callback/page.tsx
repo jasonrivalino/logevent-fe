@@ -1,5 +1,6 @@
 // app/google-callback/page.tsx
 'use client';
+import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -11,6 +12,7 @@ export default function GoogleCallback() {
       const token = new URLSearchParams(window.location.search).get('token');
       if (token) {
         localStorage.setItem('token', token);
+        Cookies.set('token', token);
         router.push('/');
       } else {
         console.error('No token found in URL');
