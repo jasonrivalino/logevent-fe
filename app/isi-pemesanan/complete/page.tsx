@@ -47,7 +47,7 @@ export default function EmailRequest() {
           <Image src="/Image/IconButton/check_reservation.png" width={100} height={100} alt="Email" />
           <p className="text-center text-black mt-5">Terimakasih sudah  melakukan pemesanan, Silakan cek email/WA Anda untuk melanjutkan pembayaran!</p>
           <button className="text-center text-pink-600 hover:text-pink-800 underline mt-5" onClick={handleOrderClick}>Lanjut Pemesanan Kembali</button>
-          <button className="text-center text-pink-600 hover:text-pink-800 underline mt-2" onClick={handleMenuClick}>Kembali ke halaman login</button>
+          <button className="text-center text-pink-600 hover:text-pink-800 underline mt-2" onClick={handleMenuClick}>Kembali ke menu utama</button>
         </div>
       </div>
       <ContactBoxShort />

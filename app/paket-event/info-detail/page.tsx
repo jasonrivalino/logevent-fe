@@ -185,9 +185,9 @@ const ProductImage = () => {
 
 function Tabs({ scrollToSection, refs }: { scrollToSection: (ref: React.RefObject<any>) => void; refs: { descriptionRef: React.RefObject<any>; vendorListRef: React.RefObject<any>; albumRef: React.RefObject<any>; reviewsRef: React.RefObject<any>; }; }) {
   return (
-    <nav className="flex justify-center space-x-6 md:space-x-8 mt-2 md:mt-0 py-2 border-b text-sm md:text-base">
+    <nav className="flex justify-center space-x-4 md:space-x-8 mt-2 md:mt-0 py-2 border-b text-sm md:text-base">
       <button onClick={() => scrollToSection(refs.descriptionRef)} className="text-gray-600 hover:text-pink-500">Description</button>
-      <button onClick={() => scrollToSection(refs.vendorListRef)} className="text-gray-600 hover:text-pink-500">List Vendor</button>
+      <button onClick={() => scrollToSection(refs.vendorListRef)} className="text-gray-600 hover:text-pink-500">Bundle Logistik</button>
       <button onClick={() => scrollToSection(refs.albumRef)} className="text-gray-600 hover:text-pink-500">Album</button>
       <button onClick={() => scrollToSection(refs.reviewsRef)} className="text-gray-600 hover:text-pink-500">Reviews</button>
     </nav>
@@ -262,7 +262,7 @@ function VendorList() {
 
   return (
     <section className="px-8 py-12 md:pb-16 border-b">
-      <h2 className="text-2xl md:text-3xl font-bold text-pink-900 md:pt-5 mb-6">List Vendor</h2>
+      <h2 className="text-2xl md:text-3xl font-bold text-pink-900 md:pt-5 mb-6">Bundle Logistik</h2>
       {windowWidth >= 768 ? (
         <div className="grid grid-cols-2 md:grid-cols-7 gap-4">
           {places.map((place, index) => (
