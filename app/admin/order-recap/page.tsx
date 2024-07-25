@@ -21,9 +21,6 @@ export default function AdminOrderRecap() {
         { id: 14, name: 'Laura Foster', phone: '987654321', email: 'laura@example.com', address: '1111 Birch St', startDate: '2024-09-10', endDate: '2024-09-13' },
         { id: 15, name: 'Michael Green', phone: '456789123', email: 'michael@example.com', address: '1212 Walnut St', startDate: '2024-09-15', endDate: '2024-09-18' },
     ]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10;
-    const totalPages = Math.ceil(data.length / itemsPerPage);
 
     return (
         <div>
@@ -32,8 +29,7 @@ export default function AdminOrderRecap() {
                 <div className="flex flex-col md:flex-row flex-grow">
                     <CommandLeft />
                     <div className="flex-grow ml-0 md:ml-7 py-[0.15rem]">
-                        <Table data={data} currentPage={currentPage} itemsPerPage={itemsPerPage} />
-                        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+                        <Table data={data} />
                     </div>
                 </div>
             </div>
@@ -42,13 +38,17 @@ export default function AdminOrderRecap() {
     );
 };
 
-function Table({ data, currentPage, itemsPerPage }: { data: any[], currentPage: number, itemsPerPage: number }) {
+function Table({ data }: { data: any[] }) {
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+    const totalPages = Math.ceil(data.length / itemsPerPage);
+
     const startIndex = (currentPage - 1) * itemsPerPage;
     const paginatedData = data.slice(startIndex, startIndex + itemsPerPage);
 
     return (
         <div className="bg-white border-2 rounded-xl w-full mb-4 md:mb-0 px-8 pt-6 pb-10 overflow-x-auto">
-            <h1 className="text-3xl font-bold mb-6 text-pink-900 font-sofia">Welcome Admin LogEvent!</h1>
+            <h1 className="text-3xl font-bold mb-6 text-pink-900 font-sofia">Welcome Admin LogEvent !</h1>
             <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                     <tr>
@@ -62,7 +62,7 @@ function Table({ data, currentPage, itemsPerPage }: { data: any[], currentPage: 
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                    {paginatedData.map((data: { id: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; name: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; phone: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; email: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; address: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; startDate: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; endDate: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; }, index: React.Key | null | undefined) => (
+                    {paginatedData.map((data, index) => (
                         <tr key={index}>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{data.id}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{data.name}</td>
@@ -75,6 +75,7 @@ function Table({ data, currentPage, itemsPerPage }: { data: any[], currentPage: 
                     ))}
                 </tbody>
             </table>
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
         </div>
     );
 }

@@ -77,7 +77,7 @@ function ManageVendor() {
 
     return (
         <div className="px-8 pt-6 pb-10 bg-white rounded-xl font-sofia shadow-md">
-            <h1 className="text-3xl font-bold mb-3 text-pink-900">Welcome Admin LogEvent!</h1>
+            <h1 className="text-3xl font-bold mb-3 text-pink-900">Welcome Admin LogEvent !</h1>
             <div className="flex items-center text-black mb-4">
                 <span className="mr-2 text-lg">Total Vendor</span>
                 <span className="text-2xl font-bold border-pink-900 border-2 px-3 py-1">{vendors.length}</span>
@@ -111,7 +111,7 @@ function ManageVendor() {
                         </div>
                         <div className="flex items-center">
                             <span className="mr-5">Jumlah Produk: {vendor.productCount}</span>
-                            <button className="bg-white hover:bg-pink-100 border border-pink-500 text-pink-500 px-3 py-[0.35rem] rounded-md mr-2">Kelola Produk</button>
+                            <button className="bg-white hover:bg-pink-100 border border-pink-500 text-pink-500 px-3 py-[0.35rem] rounded-md mr-2" onClick={() => router.push('/admin/manage-vendor/product')}>Kelola Produk</button>
                             <button className="bg-white hover:bg-pink-100 border border-pink-500 text-pink-500 px-3 py-[0.35rem] rounded-md mr-2" onClick={() => router.push('/admin/manage-vendor/edit')}>Edit Vendor</button>
                             <button className="bg-red-500 text-white p-2 rounded-md" onClick={() => confirmDelete(vendor.id)}>
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
