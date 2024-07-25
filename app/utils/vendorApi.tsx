@@ -5,7 +5,7 @@ import axios from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export const readAllVendor = async () => {
+export const readAllVendors = async () => {
   try {
     const response = await axios.get(`${API_URL}/vendors/read`);
     return response.data;

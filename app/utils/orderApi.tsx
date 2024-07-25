@@ -5,7 +5,7 @@ import axios from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export const readAllOrder = async () => {
+export const readAllOrders = async () => {
   try {
     const response = await axios.get(`${API_URL}/orders/read`);
     return response.data;
@@ -14,7 +14,7 @@ export const readAllOrder = async () => {
   }
 };
 
-export const readPastMonthOrder = async () => {
+export const readPastMonthOrders = async () => {
   try {
     const response = await axios.get(`${API_URL}/orders/read/past-month`);
     return response.data;

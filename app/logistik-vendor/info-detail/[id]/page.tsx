@@ -7,10 +7,10 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 // self-defined modules
 import { Navbar, ContactBox } from '@/app/page';
-import { readAlbumByProductId } from '@/app/utils/albumApi';
+import { readAlbumsByProductId } from '@/app/utils/albumApi';
 import { readUserProfile } from '@/app/utils/authApi';
 import { convertDate, getStars } from '@/app/utils/helpers';
-import { readReviewByProductId } from '@/app/utils/itemApi';
+import { readReviewsByProductId } from '@/app/utils/reviewApi';
 import { readProductById } from '@/app/utils/productApi';
 import type { Album, Product, Review } from '@/app/utils/types';
 import { createVisit } from '@/app/utils/visitApi';
@@ -57,8 +57,8 @@ export default function Product() {
           }
   
           const product = await readProductById(parseInt(id));
-          const albums = await readAlbumByProductId(parseInt(id));
-          const reviews = await readReviewByProductId(parseInt(id));
+          const albums = await readAlbumsByProductId(parseInt(id));
+          const reviews = await readReviewsByProductId(parseInt(id));
           setProduct(product);
           setAlbums(albums);
           setReviews(reviews);
@@ -404,14 +404,14 @@ function Reviews({ reviews }: { reviews: Review[] }) {
               <div>
                 <h3 className="text-lg md:text-xl text-gray-600 font-bold">{review.userName}</h3>
                 <div className="flex items-center">
-                  {getStars(review.reviewRating)}
-                  <span> ({review.reviewRating})</span>
+                  {getStars(review.rating)}
+                  <span> ({review.rating})</span>
                 </div>
                 <p className="text-gray-600 text-sm md:text-base">{convertDate(review.reviewDate)}</p>
               </div>
             </div>
             <p className="text-gray-600 mt-2 text-xs md:text-base">
-              {review.reviewComment}
+              {review.comment}
             </p>
           </div>
         ))}

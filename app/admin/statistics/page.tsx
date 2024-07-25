@@ -9,23 +9,23 @@ import { Line } from 'react-chartjs-2';
 import { ContactBox, Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
 import { getOrderCountsToday, getOrderCountsWeekly, getVisitCountsToday, getVisitCountsWeekly } from '@/app/utils/helpers';
-import { readPastMonthOrder } from '@/app/utils/orderApi';
-import { readPastMonthVisit } from '@/app/utils/visitApi';
+import { readPastWeekVisits } from '@/app/utils/visitApi';
+import { readPastMonthOrders } from '@/app/utils/orderApi';
 import { Order, Visit } from '@/app/utils/types';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 export default function AdminStatistics() {
-    const [orders, setOrders] = useState<Order[]>([]);
     const [visits, setVisits] = useState<Visit[]>([]);
+    const [orders, setOrders] = useState<Order[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const orders = await readPastMonthOrder();
-                const visits = await readPastMonthVisit();
-                setOrders(orders);
+                const visits = await readPastWeekVisits();
+                const orders = await readPastMonthOrders();
                 setVisits(visits);
+                setOrders(orders);
             } catch (error: any) {
                 console.error('Failed to fetch data:', error.message);
             }

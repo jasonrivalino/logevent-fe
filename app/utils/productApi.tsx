@@ -5,12 +5,21 @@ import axios from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export const readAllProduct = async () => {
+export const readAllProducts = async () => {
   try {
     const response = await axios.get(`${API_URL}/products/read`);
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Failed to fetch products');
+  }
+};
+
+export const readTopProducts = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/products/read/top`);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Failed to fetch top products');
   }
 };
 
@@ -22,15 +31,6 @@ export const readProductById = async (id: number) => {
     throw new Error(error.response?.data?.message || 'Failed to fetch product');
   }
 };
-
-export const readTopProducts = async () => {
-  try {
-    const response = await axios.get(`${API_URL}/products/read/top`);
-    return response.data;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.message || 'Failed to fetch top products');
-  }
-}
 
 export const createProduct = async (productData: {
   vendorId: number;

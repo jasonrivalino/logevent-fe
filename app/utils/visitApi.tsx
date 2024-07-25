@@ -5,9 +5,9 @@ import axios from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export const readPastMonthVisit = async () => {
+export const readPastWeekVisits = async () => {
   try {
-    const response = await axios.get(`${API_URL}/visits/read/past-month`);
+    const response = await axios.get(`${API_URL}/visits/read/past-week`);
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Failed to fetch visits');

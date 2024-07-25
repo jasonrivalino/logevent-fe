@@ -8,27 +8,37 @@ export interface Album {
 
 export interface Event {
   id: number;
+  categoryId: number;
+  categoryName: string;
   name: string;
-  description: string;
-  type: string;
-  image: string;
-  rate: number;
-  location: string;
+  rate: string;
   price: number;
-  listProduct: string[];
+  capacity: number | null;
+  description: string | null;
+  eventImage: string | null;
+  isDeleted: boolean;
+  bundles: string | null;
+  rating: number;
+  reviewCount: number;
 }
 
 export interface Order {
   id: number;
+  cartId: number;
+  cartType: string;
   userId: number;
   userEmail: string;
   userName: string;
-  userPhone: string;
+  userPhone: string | null;
+  name: string;
+  phone: string;
   address: string;
+  notes: string | null;
   startDate: string;
   endDate: string;
   orderDate: string;
-  orderStatus: string;
+  orderStatus: string | null;
+  orderTotal: number;
 }
 
 export interface Product {
@@ -36,24 +46,31 @@ export interface Product {
   vendorId: number;
   vendorPhone: string;
   vendorAddress: string;
+  categoryId: number;
+  categoryName: string;
   name: string;
   specification: string;
-  category: string;
+  rate: string;
   price: number;
-  description?: string;
-  productImage?: string;
+  description: string | null;
+  productImage: string | null;
+  isDeleted: boolean;
   rating: number;
   reviewCount: number;
 }
 
 export interface Review {
   id: number;
-  productId: number;
-  orderId: number;
+  itemId: number;
+  eventId: number | null;
+  productId: number | null;
+  cartId: number;
+  userId: number;
   userName: string;
-  userPicture?: string;
-  reviewRating: number;
-  reviewComment: string;
+  userPicture: string | null;
+  rating: number;
+  comment: string;
+  tag: string | null;
   reviewDate: string;
 }
 
@@ -63,19 +80,16 @@ export interface Vendor {
   name: string;
   phone: string;
   address: string;
-  joined: string;
-  instagram?: string;
-  facebook?: string;
-  socialMedia?: string;
-  MoU?: string;
-  other?: string;
-  picture?: string;
+  instagram: string | null;
+  socialMedia: string | null;
+  documentUrl: string | null;
+  joinDate: string;
+  isDeleted: boolean;
   productCount: number;
 }
 
 export interface Visit {
   id: number;
-  userId: number | null;
-  productId: number | null;
+  ipAddress: string | null;
   visitDate: string;
 }

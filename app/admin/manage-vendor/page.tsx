@@ -8,7 +8,7 @@ import * as XLSX from 'xlsx';
 // self-defined modules
 import { ContactBox, Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
-import { readAllVendor, deleteVendor } from '@/app/utils/vendorApi';
+import { readAllVendors, deleteVendor } from '@/app/utils/vendorApi';
 import { Vendor } from '@/app/utils/types';
 
 export default function AdminVendor() {
@@ -18,7 +18,7 @@ export default function AdminVendor() {
     useEffect(() => {
         const fetchVendors = async () => {
             try {
-                const data = await readAllVendor();
+                const data = await readAllVendors();
                 setVendors(data);
             } catch (error: any) {
                 console.error('Failed to fetch vendors:', error.message);

@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { ContactBox, Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
 import { convertDate } from '@/app/utils/helpers';
-import { readAllOrder } from '@/app/utils/orderApi';
+import { readAllOrders } from '@/app/utils/orderApi';
 import { Order } from '@/app/utils/types';
 
 export default function AdminOrderRecap() {
@@ -16,7 +16,7 @@ export default function AdminOrderRecap() {
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                const data = await readAllOrder();
+                const data = await readAllOrders();
                 setOrders(data);
             } catch (error: any) {
                 console.error('Failed to fetch orders:', error.message);

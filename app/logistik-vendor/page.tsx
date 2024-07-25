@@ -9,7 +9,7 @@ import { useState, useEffect } from 'react';
 // self-defined modules
 import { Navbar, ContactBox } from '@/app/page';
 import { generateGoogleMapsUrl } from '@/app/utils/helpers';
-import { readAllProduct } from '@/app/utils/productApi';
+import { readAllProducts } from '@/app/utils/productApi';
 import { Product } from '@/app/utils/types';
 
 export default function LogistikVendor() {
@@ -21,7 +21,7 @@ export default function LogistikVendor() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await readAllProduct();
+        const data = await readAllProducts();
         setProducts(data);
         setFilteredProducts(data);
       } catch (error) {
