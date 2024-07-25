@@ -8,9 +8,9 @@ import { Line } from 'react-chartjs-2';
 // self-defined modules
 import { ContactBox, Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
-import { getOrderCountsToday, getOrderCountsWeekly, getVisitCountsToday, getVisitCountsWeekly } from '@/app/utils/helpers';
+import { getVisitToday, getVisitYesterday, getVisitDaily, getOrderPastMonth, getOrderPastTwoMonths, getOrderWeekly } from '@/app/utils/helpers';
 import { readPastWeekVisits } from '@/app/utils/visitApi';
-import { readPastMonthOrders } from '@/app/utils/orderApi';
+import { readPastTwoMonthOrders } from '@/app/utils/orderApi';
 import { Order, Visit } from '@/app/utils/types';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
@@ -22,8 +22,9 @@ export default function AdminStatistics() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const visits = await readPastWeekVisits();
-                const orders = await readPastMonthOrders();
+                const chosenDate = new Date();
+                const visits = await readPastWeekVisits(chosenDate);
+                const orders = await readPastTwoMonthOrders(chosenDate);
                 setVisits(visits);
                 setOrders(orders);
             } catch (error: any) {
@@ -51,19 +52,20 @@ export default function AdminStatistics() {
 }
 
 function Statistics({ orders, visits }: { orders: Order[], visits: Visit[] }) {
-    const visitCount = getVisitCountsToday(visits);
-    const visitStats = getVisitCountsWeekly(visits);
-    const totalVisits = visits.length;
-    const visitPercentage = totalVisits === 0 ? 0 : Math.round((visitCount / totalVisits) * 100);
+    const chosenDate = new Date();
 
-    const orderCount = getOrderCountsToday(orders);
-    const orderStats = getOrderCountsWeekly(orders);
-    const totalOrders = orders.length;
-    const orderAverage = totalOrders === 0 ? 0 : Math.round(totalOrders / 30);
-    const orderImprovement = orderAverage === 0 ? 0 : Math.round((orderCount - orderAverage) / orderAverage * 100);
+    const visitToday = getVisitToday(visits, chosenDate);
+    const visitYesterday = getVisitYesterday(visits, chosenDate);
+    const visitImprovement = visitYesterday === 0 ? 0 : Math.round(((visitToday - visitYesterday) / visitYesterday) * 100);
+    const visitStats = getVisitDaily(visits, chosenDate);
+
+    const orderPastMonth = getOrderPastMonth(orders, chosenDate);
+    const orderPastTwoMonths = getOrderPastTwoMonths(orders, chosenDate);
+    const orderImprovement = orderPastTwoMonths === 0 ? 0 : Math.round(((orderPastMonth - orderPastTwoMonths) / orderPastTwoMonths) * 100);
+    const orderStats = getOrderWeekly(orders, chosenDate);
 
     const visitData = {
-        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],
+        labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'],
         datasets: [
             {
                 label: 'Pengunjung Harian',
@@ -102,7 +104,7 @@ function Statistics({ orders, visits }: { orders: Order[], visits: Visit[] }) {
         maintainAspectRatio: false,
         scales: {
             y: {
-                min: 0,
+                beginAtZero: true,
                 max: orderStats.reduce((a, b) => Math.max(a, b)) + 1
             }
         }
@@ -114,16 +116,16 @@ function Statistics({ orders, visits }: { orders: Order[], visits: Visit[] }) {
             <div className="grid grid-cols-1 gap-6 font-sofia">
                 <div className="bg-gray-100 shadow-md rounded-lg p-4">
                     <h2 className="text-xl font-bold text-black">Pengunjung Harian</h2>
-                    <p className="text-gray-600">Pengunjung Hari Ini: {visitCount}</p>
-                    <p className="text-gray-600">{visitPercentage}% dari 30 hari terakhir</p>
+                    <p className="text-gray-600">Pengunjung Hari Ini: {visitToday}</p>
+                    <p className="text-gray-600">Perubahan {visitImprovement}% dari hari sebelumnya</p>
                     <div className="h-[18rem]">
                         <Line data={visitData} options={visitOptions} />
                     </div>
                 </div>
                 <div className="bg-gray-100 shadow-md rounded-lg p-4 text-black">
                     <h2 className="text-xl font-bold">Statistik Pemesanan</h2>
-                    <p className="text-gray-600">Pemesanan Hari Ini: {orderCount}</p>
-                    <p className="text-gray-600">{orderImprovement}% sejak 30 hari terakhir</p>
+                    <p className="text-gray-600">Pemesanan Bulan Ini: {orderPastMonth}</p>
+                    <p className="text-gray-600">Perubahan {orderImprovement}% dari 30 hari sebelumnya</p>
                     <div className="h-[18rem]">
                         <Line data={orderData} options={orderOptions} />
                     </div>

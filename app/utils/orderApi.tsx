@@ -14,9 +14,9 @@ export const readAllOrders = async () => {
   }
 };
 
-export const readPastMonthOrders = async () => {
+export const readPastTwoMonthOrders = async (chosenDate: Date) => {
   try {
-    const response = await axios.get(`${API_URL}/orders/read/past-month`);
+    const response = await axios.get(`${API_URL}/orders/read/past-two-month/${chosenDate}`);
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Failed to fetch orders');
