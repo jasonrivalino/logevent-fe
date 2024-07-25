@@ -65,6 +65,15 @@ function ManageVendor({ vendors, triggerFetch, onExport }: { vendors: Vendor[], 
     const [showPopup, setShowPopup] = useState(false);
     const [vendorToDelete, setVendorToDelete] = useState<number | null>(null);
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const vendorsPerPage = 10;
+
+    const totalPages = Math.ceil(vendors.length / vendorsPerPage);
+
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+    };
+
     const toggleExpand = (id: number | null) => {
         setExpandedVendorId(expandedVendorId === id ? null : id);
     };
@@ -86,6 +95,11 @@ function ManageVendor({ vendors, triggerFetch, onExport }: { vendors: Vendor[], 
             console.error('Failed to delete vendor:', error.message);
         }
     };
+
+    // Get current vendors
+    const indexOfLastVendor = currentPage * vendorsPerPage;
+    const indexOfFirstVendor = indexOfLastVendor - vendorsPerPage;
+    const currentVendors = vendors.slice(indexOfFirstVendor, indexOfLastVendor);
 
     return (
         <div className="px-8 pt-6 pb-10 bg-white rounded-xl font-sofia shadow-md">
@@ -112,7 +126,7 @@ function ManageVendor({ vendors, triggerFetch, onExport }: { vendors: Vendor[], 
                     <button className="bg-pink-500 hover:bg-pink-600 p-2 rounded-md" onClick={onExport}>Export to Excel</button>
                 </div>
             </div>
-            {vendors.map((vendor) => (
+            {currentVendors.map((vendor) => (
                 <div key={vendor.id} className="bg-white p-4 rounded-md mb-2 text-black shadow-md">
                     <div className="flex justify-between items-center">
                         <div className="flex items-center">
@@ -134,27 +148,40 @@ function ManageVendor({ vendors, triggerFetch, onExport }: { vendors: Vendor[], 
                     </div>
                     {expandedVendorId === vendor.id && (
                         <div className="mt-2">
-                            <p>Nama Lengkap: {vendor.name}</p>
-                            <p>Nomor Telepon: {vendor.phone}</p>
-                            <p>Email: {vendor.email}</p>
-                            <p>Alamat: {vendor.address}</p>
-                            {/* TODO: Add Join Date, Instagram, Facebook, Other Socmed */}
-                            {/* <p>Tanggal bergabung: {vendor.joined}</p> */}
-                            {/* <p>Instagram: {vendor.instagram}</p> */}
-                            {/* <p>Facebook: {vendor.facebook}</p> */}
-                            <p>Sosial Media Lainnya:</p>
-                            {/* <p><a href="#" className="text-pink-500">{vendor.other}</a></p> */}
+                            {[
+                                { label: "Nama Lengkap", value: vendor.name },
+                                { label: "Nomor Telepon", value: vendor.phone },
+                                { label: "Email", value: vendor.email },
+                                { label: "Alamat", value: vendor.address },
+                                { label: "Tanggal bergabung", value: vendor.joinDate },
+                                { label: "Instagram", value: vendor.instagram },
+                                { label: "Sosial Media Lainnya", value: vendor.socialMedia },
+                            ].map((item, index) => (
+                                <div key={index} className="flex justify-between">
+                                    <div className="w-1/6">{item.label}:</div>
+                                    <div className="flex-grow">{item.value}</div>
+                                </div>
+                            ))}
+                            <div className="flex justify-between">
+                                <div className="flex-grow">
+                                    <a href="#" className="text-blue-600 hover:underline">Lihat MoU Kerjasama disini</a>
+                                </div>
+                                <div className="w-1/6"></div>
+                            </div>
                         </div>
                     )}
                 </div>
             ))}
+            {vendors.length > vendorsPerPage && (
+                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+            )}
             {showPopup && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                     <div className="bg-white p-6 rounded-md shadow-lg text-center">
                         <div className="flex items-center justify-center mb-4">
                             <div className="bg-red-500 text-white p-2 rounded-full">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M12 8v4m0 4h.01m0-4h-.01m-.01 0h.01M11 8v4m0 4h.01m0-4h-.01m-.01 0h.01M13 16h-1v-4h-1m1-4h.01M12 8v4m0 4h.01m0-4h-.01m-.01 0h.01M11 8v4m0 4h.01m0-4h-.01m-.01 0h.01" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M12 8v4m0 4h.01m0-4h-.01m-.01 0h.01M11 8v4m0 4h.01m0-4h-.01m-.01 0h.01" />
                                 </svg>
                             </div>
                         </div>
@@ -167,6 +194,64 @@ function ManageVendor({ vendors, triggerFetch, onExport }: { vendors: Vendor[], 
                     </div>
                 </div>
             )}
+        </div>
+    );
+}
+
+function Pagination({ currentPage, totalPages, onPageChange }: { currentPage: number, totalPages: number, onPageChange: (page: number) => void }) {
+    const getPages = () => {
+        const pages = [];
+        if (totalPages <= 5) {
+            for (let i = 1; i <= totalPages; i++) {
+                pages.push(i);
+            }
+        } else {
+            if (currentPage <= 3) {
+                pages.push(1, 2, 3, '...', totalPages);
+            } else if (currentPage >= totalPages - 2) {
+                pages.push(1, '...', totalPages - 2, totalPages - 1, totalPages);
+            } else {
+                pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
+            }
+        }
+        return pages;
+    };
+
+    return (
+        <div className="flex justify-center mt-8">
+            <button
+                className="px-1 md:px-2 py-1 md:py-2 mx-1 bg-black text-gray-300 rounded-full"
+                onClick={() => onPageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+            {getPages().map((page, index) =>
+                typeof page === 'number' ? (
+                    <button
+                        key={index}
+                        className={`px-2 md:px-4 py-1 md:py-2 mx-1 ${page === currentPage ? 'bg-pink-600 text-white' : 'bg-white text-black'} rounded-full`}
+                        onClick={() => onPageChange(page)}
+                    >
+                        {page}
+                    </button>
+                ) : (
+                    <span key={index} className="px-4 py-2 mx-1 text-black">
+                        {page}
+                    </span>
+                )
+            )}
+            <button
+                className="px-1 md:px-2 py-1 md:py-2 mx-1 bg-black text-gray-300 rounded-full"
+                onClick={() => onPageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
         </div>
     );
 }
