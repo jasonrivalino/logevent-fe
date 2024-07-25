@@ -49,7 +49,7 @@ export default function AdminOrderRecap() {
 
 function Table({ orders, currentPage, itemsPerPage }: { orders: Order[], currentPage: number, itemsPerPage: number }) {
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const paginatedData = orders.slice(startIndex, startIndex + itemsPerPage);
+    const paginatedOrders = orders.slice(startIndex, startIndex + itemsPerPage);
 
     return (
         <div className="bg-white border-2 rounded-xl w-full mb-4 md:mb-0 px-8 pt-6 pb-10 overflow-x-auto">
@@ -67,11 +67,11 @@ function Table({ orders, currentPage, itemsPerPage }: { orders: Order[], current
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                    {paginatedData.map((orders: { id: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; name: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; phone: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; email: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; address: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; startDate: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; endDate: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; }, index: React.Key | null | undefined) => (
+                    {paginatedOrders.map((order, index) => (
                         <tr key={index}>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{order.id}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{order.userName}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{order.userPhone}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{order.name}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{order.phone}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{order.userEmail}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{order.address}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{convertDate(order.startDate)}</td>
