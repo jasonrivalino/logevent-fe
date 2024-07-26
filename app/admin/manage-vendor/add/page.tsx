@@ -62,7 +62,7 @@ function AddVendor() {
 
     return (
         <div className="px-8 pt-6 pb-10 bg-white rounded-xl font-sofia shadow-md">
-            <h1 className="text-3xl font-bold mb-3 text-pink-900">Welcome Admin LogEvent!</h1>
+            <h1 className="text-3xl font-bold mb-3 text-pink-900">Welcome Admin LogEvent !</h1>
             {/* Breadcrumb Navigation */}
             <div className="hidden md:flex items-center mb-4">
                 <a onClick={() => router.push('/admin/manage-vendor')} className="text-pink-600 font-semibold font-sofia cursor-pointer">Kelola Vendor</a>
@@ -73,7 +73,7 @@ function AddVendor() {
                 <div className="flex flex-wrap mb-3">
                     <div className="flex-1 mr-2">
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
-                            Nama
+                            Nama *
                         </label>
                         <input
                             type="text"
@@ -86,7 +86,7 @@ function AddVendor() {
                     </div>
                     <div className="flex-1 mx-2">
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="phone">
-                            Nomor Telepon / Hp
+                            Nomor Telepon / Hp *
                         </label>
                         <input
                             type="text"
@@ -99,7 +99,7 @@ function AddVendor() {
                     </div>
                     <div className="flex-1 ml-2">
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-                            Email
+                            Email *
                         </label>
                         <input
                             type="email"
@@ -113,7 +113,7 @@ function AddVendor() {
                 </div>
                 <div className="mb-3">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="address">
-                        Alamat
+                        Alamat *
                     </label>
                     <input
                         type="text"
@@ -127,7 +127,7 @@ function AddVendor() {
                 <div className="flex flex-wrap mb-3">
                     <div className="flex-1 mr-4">
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="instagram">
-                            Instagram
+                            Instagram *
                         </label>
                         <input
                             type="text"
@@ -154,7 +154,7 @@ function AddVendor() {
                 </div>
                 <div className="mb-7">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="MoU">
-                        Link MoU Kerjasama
+                        Link MoU Kerjasama *
                     </label>
                     <input
                         type="text"

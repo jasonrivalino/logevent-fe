@@ -82,7 +82,7 @@ function EditVendor({ vendor }: { vendor: Vendor }) {
 
     return (
         <div className="px-8 pt-6 pb-10 bg-white rounded-xl font-sofia shadow-md">
-            <h1 className="text-3xl font-bold mb-3 text-pink-900">Welcome Admin LogEvent!</h1>
+            <h1 className="text-3xl font-bold mb-3 text-pink-900">Welcome Admin LogEvent !</h1>
             {/* Breadcrumb Navigation */}
             <div className="hidden md:flex items-center mb-4">
                 <a onClick={() => router.push('/admin/manage-vendor')} className="text-pink-600 font-semibold font-sofia cursor-pointer">Kelola Vendor</a>

@@ -26,10 +26,6 @@ export default function AdminOrderRecap() {
         fetchOrders();
     }, []);
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10;
-    const totalPages = Math.ceil(orders.length / itemsPerPage);
-
     return (
         <div>
             <div className="min-h-screen flex flex-col p-10 mt-16">
@@ -37,8 +33,7 @@ export default function AdminOrderRecap() {
                 <div className="flex flex-col md:flex-row flex-grow">
                     <CommandLeft />
                     <div className="flex-grow ml-0 md:ml-7 py-[0.15rem]">
-                        <Table orders={orders} currentPage={currentPage} itemsPerPage={itemsPerPage} />
-                        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+                        <Table orders={orders} />
                     </div>
                 </div>
             </div>
@@ -47,13 +42,17 @@ export default function AdminOrderRecap() {
     );
 };
 
-function Table({ orders, currentPage, itemsPerPage }: { orders: Order[], currentPage: number, itemsPerPage: number }) {
+function Table({ orders }: { orders: Order[] }) {
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+    const totalPages = Math.ceil(orders.length / itemsPerPage);
+
     const startIndex = (currentPage - 1) * itemsPerPage;
     const paginatedOrders = orders.slice(startIndex, startIndex + itemsPerPage);
 
     return (
         <div className="bg-white border-2 rounded-xl w-full mb-4 md:mb-0 px-8 pt-6 pb-10 overflow-x-auto">
-            <h1 className="text-3xl font-bold mb-6 text-pink-900 font-sofia">Welcome Admin LogEvent!</h1>
+            <h1 className="text-3xl font-bold mb-6 text-pink-900 font-sofia">Welcome Admin LogEvent !</h1>
             <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                     <tr>
@@ -80,6 +79,7 @@ function Table({ orders, currentPage, itemsPerPage }: { orders: Order[], current
                     ))}
                 </tbody>
             </table>
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
         </div>
     );
 }
