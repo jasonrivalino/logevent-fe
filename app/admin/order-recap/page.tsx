@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 // self-defined modules
 import { ContactBox, Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
-import { convertDate } from '@/app/utils/helpers';
+import { convertDate, generateEmailUrl, generateGoogleMapsUrl, generateWhatsAppUrl } from '@/app/utils/helpers';
 import { readAllOrders } from '@/app/utils/orderApi';
 import { Order } from '@/app/utils/types';
 
@@ -70,9 +70,21 @@ function Table({ orders }: { orders: Order[] }) {
                         <tr key={index}>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{order.id}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{order.name}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{order.phone}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{order.userEmail}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{order.address}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                <a href={generateWhatsAppUrl(order.phone)} target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:underline">
+                                    {order.phone}
+                                </a>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                <a href={generateEmailUrl(order.userEmail)} className="text-gray-900 hover:underline">
+                                    {order.userEmail}
+                                </a>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                <a href={generateGoogleMapsUrl(order.address)} target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:underline">
+                                    {order.address}
+                                </a>
+                            </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{convertDate(order.startDate)}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{convertDate(order.endDate)}</td>
                         </tr>

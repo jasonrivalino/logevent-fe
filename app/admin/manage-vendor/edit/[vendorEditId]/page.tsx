@@ -59,7 +59,7 @@ function EditVendor({ vendor }: { vendor: Vendor }) {
         address: vendor.address,
         instagram: vendor.instagram || '',
         socialMedia: vendor.socialMedia || '',
-        MoU: vendor.MoU || ''
+        MoU: vendor.documentUrl || ''
     });
 
     const handleChange = (e: { target: { name: any; value: any; }; }) => {

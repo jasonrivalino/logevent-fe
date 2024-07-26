@@ -91,7 +91,7 @@ function Statistics({ orders, visits }: { orders: Order[], visits: Visit[] }) {
         labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],
         datasets: [
             {
-                label: 'Statistik Pemesanan',
+                label: 'Pemesanan Mingguan',
                 data: orderStats,
                 fill: false,
                 borderColor: 'rgb(255, 99, 132)',
@@ -115,7 +115,7 @@ function Statistics({ orders, visits }: { orders: Order[], visits: Visit[] }) {
             <h1 className="text-3xl font-bold mb-6 text-pink-900 font-sofia">Welcome Admin LogEvent !</h1>
             <div className="grid grid-cols-1 gap-6 font-sofia">
                 <div className="bg-gray-100 shadow-md rounded-lg p-4">
-                    <h2 className="text-xl font-bold text-black">Pengunjung Harian</h2>
+                    <h2 className="text-xl font-bold text-black">Statistik Pengunjung</h2>
                     <p className="text-gray-600">Pengunjung Hari Ini: {visitToday}</p>
                     <p className="text-gray-600">Perubahan {visitImprovement}% dari hari sebelumnya</p>
                     <div className="h-[18rem]">

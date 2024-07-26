@@ -1,8 +1,12 @@
+// app/admin/manage-vendor/product/[id]/add/page.tsx
 'use client';
-import React, { useState } from 'react';
-import { ContactBox, Navbar } from '../../../../page';
-import { useRouter, usePathname } from 'next/navigation';
-import { CommandLeft } from '../../../commandLeft';
+
+// dependency modules
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+// self-defined modules
+import { ContactBox, Navbar } from '@/app/page';
+import { CommandLeft } from '@/app/admin/commandLeft';
 
 export default function AdminEventPackage() {
     return (

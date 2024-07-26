@@ -9,7 +9,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Navbar, ContactBox } from '@/app/page';
 import { readAlbumsByProductId } from '@/app/utils/albumApi';
 import { readUserProfile } from '@/app/utils/authApi';
-import { convertDate, getStars } from '@/app/utils/helpers';
+import { convertDate, generateWhatsAppUrl, getStars } from '@/app/utils/helpers';
 import { readReviewsByProductId } from '@/app/utils/reviewApi';
 import { readProductById } from '@/app/utils/productApi';
 import type { Album, Product, Review } from '@/app/utils/types';
@@ -153,8 +153,7 @@ function ProductImage({ product, albums }: { product: Product, albums: Album[] }
 
   const handleChat = () => {
     const vendorNumber = product.vendorPhone;
-    const whatsappUrl = `https://wa.me/${vendorNumber}`;
-    window.open(whatsappUrl, '_blank');
+    window.open(generateWhatsAppUrl(vendorNumber || ""), '_blank', 'noopener,noreferrer');
   };
 
   return (

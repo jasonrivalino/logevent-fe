@@ -6,6 +6,12 @@ export interface Album {
   albumImage?: string;
 }
 
+export interface Category {
+  id: number;
+  name: string;
+  type: string;
+}
+
 export interface Event {
   id: number;
   categoryId: number;
@@ -52,6 +58,7 @@ export interface Product {
   specification: string;
   rate: string;
   price: number;
+  capacity: number | null;
   description: string | null;
   productImage: string | null;
   isDeleted: boolean;

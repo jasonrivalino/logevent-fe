@@ -72,7 +72,7 @@ export function CommandLeft() {
                         onClick={() => router.push('/admin/manage-faq')}
                     >
                         {/* Import chatbox from react icons */}
-                        <FaComment className="mr-5 text-pink-900" /> Kelola FaQ
+                        <FaComment className="mr-5 text-pink-900" /> Kelola FAQ
                     </button>
                 </div>
             </div>

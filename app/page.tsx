@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 // self-defined modules
 import { readUserProfile } from '@/app/utils/authApi';
+import { generateWhatsAppUrl } from '@/app/utils/helpers';
 import { readTopProducts } from '@/app/utils/productApi';
 import { Product } from '@/app/utils/types';
 
@@ -307,8 +308,7 @@ function Introduction() {
 
   const handleChat = () => {
     const adminNumber = process.env.NEXT_PUBLIC_ADMIN_NUMBER;
-    const whatsappUrl = `https://wa.me/${adminNumber}`;
-    window.open(whatsappUrl, '_blank');
+    window.open(generateWhatsAppUrl(adminNumber || ""), '_blank', 'noopener,noreferrer');
   };
 
   useEffect(() => {
@@ -386,8 +386,7 @@ function AboutUsSection() {
   
   const handleChat = () => {
     const adminNumber = process.env.NEXT_PUBLIC_ADMIN_NUMBER;
-    const whatsappUrl = `https://wa.me/${adminNumber}`;
-    window.open(whatsappUrl, '_blank');
+    window.open(generateWhatsAppUrl(adminNumber || ""), '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -481,8 +480,7 @@ function LayananCard({ image, title, description, link, onClick }: { image: stri
 function LayananSection() {
   const handleChat = () => {
     const adminNumber = process.env.NEXT_PUBLIC_ADMIN_NUMBER;
-    const whatsappUrl = `https://wa.me/${adminNumber}`;
-    window.open(whatsappUrl, '_blank');
+    window.open(generateWhatsAppUrl(adminNumber || ""), '_blank', 'noopener,noreferrer');
   };
 
   const descriptions = [

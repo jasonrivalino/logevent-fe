@@ -135,7 +135,7 @@ export function ProductList({ products }: { products: Product[] }) {
 
   const handleAddressClick = (address: string) => {
     const googleMapsUrl = generateGoogleMapsUrl(address);
-    window.open(googleMapsUrl, '_blank');
+    window.open(googleMapsUrl, '_blank', 'noopener,noreferrer');
   };
 
   return (

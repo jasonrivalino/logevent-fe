@@ -23,6 +23,24 @@ export const readTopProducts = async () => {
   }
 };
 
+export const readEventOrganizerProduct = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/products/read/event-organizer`);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Failed to fetch event organizer product');
+  }
+};
+
+export const readProductsByVendorId = async (vendorId: number) => {
+  try {
+    const response = await axios.get(`${API_URL}/products/read/vendor/${vendorId}`);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Failed to fetch products');
+  }
+};
+
 export const readProductById = async (id: number) => {
   try {
     const response = await axios.get(`${API_URL}/products/read/${id}`);

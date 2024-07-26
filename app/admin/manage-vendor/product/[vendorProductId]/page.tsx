@@ -1,142 +1,39 @@
+// app/admin/manage-vendor/product/[id]/page.tsx
 'use client';
-import React, { useState } from 'react';
-import { ContactBox, Navbar } from '../../../page';
-import { useRouter, usePathname } from 'next/navigation';
-import { CommandLeft } from '../../commandLeft';
+
+// dependency modules
 import Image from 'next/image';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
-
-interface Vendor {
-  id: number;
-  name: string;
-  type: string;
-  location: string;
-  price: number;
-  rate: number;
-  image: string;
-}
-
-const dummyVendors: Vendor[] = [
-    {
-      id: 1,
-      name: 'Gedung Sabuga ITB',
-      type: 'Multifunctional Hall',
-      location: 'Dago, Bandung',
-      price: 25000000,
-      rate: 5.0,
-      image: '/Image/planetarium.jpg',
-    },
-    {
-      id: 2,
-      name: 'Institut Francais Indonesia',
-      type: 'Multifunctional Hall',
-      location: 'Dago, Bandung',
-      price: 25000000,
-      rate: 4.5,
-      image: '/Image/planetarium.jpg',
-    },
-    {
-      id: 3,
-      name: 'Balai Sartika',
-      type: 'Multifunctional Hall',
-      location: 'Dago, Bandung',
-      price: 25000000,
-      rate: 4.5,
-      image: '/Image/planetarium.jpg',
-    },
-    {
-      id: 4,
-      name: 'Gedung Merdeka',
-      type: 'Multifunctional Hall',
-      location: 'Dago, Bandung',
-      price: 25000000,
-      rate: 4.5,
-      image: '/Image/planetarium.jpg',
-    },
-    {
-      id: 5,
-      name: 'Gedung Sate',
-      type: 'Multifunctional Hall',
-      location: 'Dago, Bandung',
-      price: 25000000,
-      rate: 4.5,
-      image: '/Image/planetarium.jpg',
-    },
-    {
-      id: 6,
-      name: 'Gedung Merah Putih',
-      type: 'Multifunctional Hall',
-      location: 'Dago, Bandung',
-      price: 25000000,
-      rate: 4.5,
-      image: '/Image/planetarium.jpg',
-    },
-    {
-      id: 7,
-      name: 'Gedung Indonesia Menggugat',
-      type: 'Multifunctional Hall',
-      location: 'Dago, Bandung',
-      price: 25000000,
-      rate: 4.5,
-      image: '/Image/planetarium.jpg',
-    },
-    {
-      id: 8,
-      name: 'Asia Africa Museum',
-      type: 'Multifunctional Hall',
-      location: 'Dago, Bandung',
-      price: 25000000,
-      rate: 4.5,
-      image: '/Image/planetarium.jpg',
-    },
-    {
-      id: 9,
-      name: 'Geology Museum',
-      type: 'Multifunctional Hall',
-      location: 'Dago, Bandung',
-      price: 25000000,
-      rate: 4.5,
-      image: '/Image/planetarium.jpg',
-    },
-    {
-      id: 10,
-      name: 'Museum Konferensi Asia Afrika',
-      type: 'Multifunctional Hall',
-      location: 'Dago, Bandung',
-      price: 25000000,
-      rate: 4.5,
-      image: '/Image/planetarium.jpg',
-    },
-    {
-      id: 11,
-      name: 'Museum Konferensi Asia Afrika',
-      type: 'Multifunctional Hall',
-      location: 'Dago, Bandung',
-      price: 25000000,
-      rate: 4.5,
-      image: '/Image/planetarium.jpg',
-    },
-    {
-      id: 12,
-      name: 'Museum Konferensi Asia Afrika',
-      type: 'Multifunctional Hall',
-      location: 'Dago, Bandung',
-      price: 25000000,
-      rate: 4.5,
-      image: '/Image/planetarium.jpg',
-    },
-    {
-      id: 13,
-      name: 'Museum Konferensi Asia Afrika',
-      type: 'Multifunctional Hall',
-      location: 'Dago, Bandung',
-      price: 25000000,
-      rate: 4.5,
-      image: '/Image/planetarium.jpg',
-    }
-  ];
+// self-defined modules
+import { ContactBox, Navbar } from '@/app/page';
+import { CommandLeft } from '@/app/admin/commandLeft';
+import { generateGoogleMapsUrl } from '@/app/utils/helpers';
+import { readEventOrganizerProduct, readProductsByVendorId } from '@/app/utils/productApi';
+import { readVendorById } from '@/app/utils/vendorApi';
+import { Product, Vendor } from '@/app/utils/types';
 
 export default function AdminEventPackage() {
+    const pathname = usePathname();
+    const [vendor, setVendor] = useState<Vendor | null>(null);
+
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const id = pathname.split('/').pop();
+          if (id) {
+            const vendor = await readVendorById(parseInt(id));
+            setVendor(vendor);
+          }
+        } catch (error) {
+          console.error('Failed to fetch vendor:', error);
+        }
+      };
+  
+      fetchData();
+    }, [pathname]);
+
     return (
       <div>
         <div className="min-h-screen flex flex-col p-10 mt-16">
@@ -144,7 +41,7 @@ export default function AdminEventPackage() {
             <div className="flex flex-col md:flex-row flex-grow">
                 <CommandLeft />
                 <div className="flex-grow ml-0 md:ml-7 py-[0.15rem]">
-                    <ManageVendorProduct vendors={dummyVendors} />
+                    {vendor && <ManageVendorProduct vendor={vendor} />}
                 </div>
             </div>
         </div>
@@ -153,39 +50,63 @@ export default function AdminEventPackage() {
     );
 }
 
-function ManageVendorProduct({ vendors }: { vendors: Vendor[] }) {
+function ManageVendorProduct({ vendor }: { vendor: Vendor }) {
   const router = useRouter();
   const itemsPerPage = 12;
   const [currentPage, setCurrentPage] = useState(1);
   const [showPopup, setShowPopup] = useState(false);
-  const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
-  const [vendorList, setVendorList] = useState(vendors); // Add state to manage vendors list
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [productList, setProductList] = useState<Product[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        let products: Product[] = [];
+        if (vendor.id === 1) {
+          const eventOrganizerProduct = await readEventOrganizerProduct();
+          products.push(eventOrganizerProduct);
+        } else {
+          products = await readProductsByVendorId(vendor.id);
+        }
+        setProductList(products);
+      } catch (error) {
+        console.error('Failed to fetch vendor products:', error);
+      }
+    };
+
+    fetchData();
+  }, [vendor]);
+
+  const handleAddressClick = (address: string) => {
+    const googleMapsUrl = generateGoogleMapsUrl(address);
+    window.open(googleMapsUrl, '_blank', 'noopener,noreferrer');
+  };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleDeleteClick = (vendor: Vendor) => {
-    setSelectedVendor(vendor);
+  const handleDeleteClick = (product: Product) => {
+    setSelectedProduct(product);
     setShowPopup(true);
   };
 
   const handleDelete = () => {
-    if (selectedVendor) {
-      console.log(`Delete vendor ${selectedVendor.id}`);
-      setVendorList(vendorList.filter(vendor => vendor.id !== selectedVendor.id)); // Update the vendor list
+    if (selectedProduct) {
+      console.log(`Delete product ${selectedProduct.id}`);
+      setProductList(productList.filter(product => product.id !== selectedProduct.id));
     }
     setShowPopup(false);
-    setSelectedVendor(null);
+    setSelectedProduct(null);
   };
 
-  const paginatedVendors = vendorList.slice(
+  const paginatedProducts = productList.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  const totalPages = Math.ceil(vendorList.length / itemsPerPage);
+  const totalPages = Math.ceil(productList.length / itemsPerPage);
 
   return (
     <div className="px-8 pt-6 pb-10 bg-white rounded-xl shadow-md">
@@ -215,29 +136,29 @@ function ManageVendorProduct({ vendors }: { vendors: Vendor[] }) {
       </div>
       <div className="flex items-center justify-between bg-white rounded-xl p-3 mb-6 shadow-md border-pink-600 border-2 font-sofia">
         <div className="flex items-center ml-5">
-          <span className="text-lg md:text-xl text-pink-900 font-bold mr-4">Vendor B</span>
+          <span className="text-lg md:text-xl text-pink-900 font-bold mr-4">{vendor.name}</span>
         </div>
         <div className="flex items-center">
-          <span className="text-sm md:text-base text-gray-700 px-5">Jumlah Produk: 17</span>
-          <button className="bg-pink-500 text-white px-3 py-1 rounded-full font-bold text-xs md:text-base mr-4" onClick={() => router.push('/admin/manage-vendor/product/add')}>
+          <span className="text-sm md:text-base text-gray-700 px-5">Jumlah Produk: {vendor.productCount}</span>
+          <button className="bg-pink-500 text-white px-3 py-1 rounded-full font-bold text-xs md:text-base mr-4" onClick={() => router.push(`/admin/manage-vendor/product/${vendor.id}/add`)}>
             + Tambah Produk
           </button>
         </div>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {paginatedVendors.map((vendor) => (
-          <div key={vendor.id} className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col justify-between">
+        {paginatedProducts.map((product) => (
+          <div key={product.id} className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col justify-between">
             <Image
-              src={vendor.image}
-              alt={`${vendor.name} Image`}
+              src={product.productImage || "/Image/planetarium.jpg"}
+              alt={`${product.name} Image`}
               width={245}
               height={50}
               className="object-cover"
             />
             <div className="p-3 md:p-3 font-sofia flex flex-col justify-between flex-grow">
               <div>
-                <h3 className="text-sm md:text-base text-pink-900 font-bold mb-2">{vendor.name}</h3>
-                <p className="text-xs md:text-sm text-gray-700">{vendor.type}</p>
+                <h3 className="text-sm md:text-base text-pink-900 font-bold mb-2">{product.name}</h3>
+                <p className="text-xs md:text-sm text-gray-700">{product.specification}</p>
                 <p className="text-xs md:text-sm text-gray-500 flex flex-row">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -246,26 +167,31 @@ function ManageVendorProduct({ vendors }: { vendors: Vendor[] }) {
                     viewBox="0 0 20 20"
                   >
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.14 3.51a1 1 0 00.95.69h3.7c.967 0 1.372 1.24.588 1.81l-2.992 2.179a1 1 0 00-.364 1.118l1.14 3.51c.3.921-.755 1.688-1.54 1.118l-2.992-2.178a1 1 0 00-1.175 0l-2.992 2.178c-.785.57-1.84-.197-1.54-1.118l1.14-3.51a1 1 0 00-.364-1.118L2.93 8.937c-.784-.57-.38-1.81.588-1.81h3.7a1 1 0 00.95-.69l1.14-3.51z" />
-                  </svg> {vendor.rate}
+                  </svg> {product.rating && product.rating.toFixed(2) !== "0.00" ? product.rating.toFixed(2) : "N/A"}
                 </p>
-                <p className="text-xs md:text-sm text-gray-500">{vendor.location}</p>
-                <p className="text-xs md:text-sm text-pink-500 font-bold mt-2">Rp {vendor.price.toLocaleString('id-ID')}</p>
+                <p
+                  className="text-gray-500 cursor-pointer"
+                  onClick={() => handleAddressClick(product.vendorAddress)}
+                >
+                  {product.vendorAddress}
+                </p>
+                <p className="text-xs md:text-sm text-pink-500 font-bold mt-2">Rp {product.price.toLocaleString('id-ID')}</p>
               </div>
               <div className="flex justify-between items-center mt-4">
                 <button
                   className="text-xs md:text-base text-pink-500 hover:text-pink-700 font-bold"
-                  onClick={() => router.push(`/logistik-vendor/info-detail`)}
+                  onClick={() => router.push(`/logistik-vendor/info-detail/${product.id}`)}
                 >
                   Lihat Detail
                 </button>
                 <div className="flex space-x-2">
                   <FaEdit
                     className="text-pink-500 cursor-pointer hover:text-pink-700"
-                    onClick={() => router.push('/admin/manage-vendor/product/edit')}
+                    onClick={() => router.push(`/admin/manage-vendor/product/${vendor.id}/edit/${product.id}`)}
                   />
                   <FaTrashAlt
                     className="text-pink-500 cursor-pointer hover:text-pink-700"
-                    onClick={() => handleDeleteClick(vendor)}
+                    onClick={() => handleDeleteClick(product)}
                   />
                 </div>
               </div>

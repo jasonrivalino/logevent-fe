@@ -8,6 +8,7 @@ import * as XLSX from 'xlsx';
 // self-defined modules
 import { ContactBox, Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
+import { convertDate, generateEmailUrl, generateGoogleMapsUrl, generateInstagramUrl, generateWhatsAppUrl } from '@/app/utils/helpers';
 import { readAllVendors, deleteVendor } from '@/app/utils/vendorApi';
 import { Vendor } from '@/app/utils/types';
 
@@ -137,7 +138,7 @@ function ManageVendor({ vendors, triggerFetch, onExport }: { vendors: Vendor[], 
                         </div>
                         <div className="flex items-center">
                             <span className="mr-5">Jumlah Produk: {vendor.productCount}</span>
-                            <button className="bg-white hover:bg-pink-100 border border-pink-500 text-pink-500 px-3 py-[0.35rem] rounded-md mr-2" onClick={() => router.push('/admin/manage-vendor/product')}>Kelola Produk</button>
+                            <button className="bg-white hover:bg-pink-100 border border-pink-500 text-pink-500 px-3 py-[0.35rem] rounded-md mr-2" onClick={() => router.push(`/admin/manage-vendor/product/${vendor.id}`)}>Kelola Produk</button>
                             <button className="bg-white hover:bg-pink-100 border border-pink-500 text-pink-500 px-3 py-[0.35rem] rounded-md mr-2" onClick={() => router.push(`/admin/manage-vendor/edit/${vendor.id}`)}>Edit</button>
                             <button className="bg-red-500 text-white p-2 rounded-md" onClick={() => confirmDelete(vendor.id)}>
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -150,12 +151,40 @@ function ManageVendor({ vendors, triggerFetch, onExport }: { vendors: Vendor[], 
                         <div className="mt-2">
                             {[
                                 { label: "Nama Lengkap", value: vendor.name },
-                                { label: "Nomor Telepon", value: vendor.phone },
-                                { label: "Email", value: vendor.email },
-                                { label: "Alamat", value: vendor.address },
-                                { label: "Tanggal bergabung", value: vendor.joinDate },
-                                { label: "Instagram", value: vendor.instagram },
+                                { 
+                                    label: "Nomor Telepon", 
+                                    value: (
+                                        <a href={generateWhatsAppUrl(vendor.phone)} target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:underline">
+                                            {vendor.phone}
+                                        </a>
+                                    ) 
+                                },
+                                { 
+                                    label: "Email", 
+                                    value: (
+                                        <a href={generateEmailUrl(vendor.email)} className="text-gray-900 hover:underline">
+                                            {vendor.email}
+                                        </a>
+                                    ) 
+                                },
+                                { 
+                                    label: "Alamat", 
+                                    value: (
+                                        <a href={generateGoogleMapsUrl(vendor.address)} target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:underline">
+                                            {vendor.address}
+                                        </a>
+                                    ) 
+                                },
+                                { 
+                                    label: "Instagram", 
+                                    value: (
+                                        <a href={generateInstagramUrl(vendor.instagram || "#")} target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:underline">
+                                            {vendor.instagram}
+                                        </a>
+                                    ) 
+                                },
                                 { label: "Sosial Media Lainnya", value: vendor.socialMedia },
+                                { label: "Tanggal bergabung", value: convertDate(vendor.joinDate) },
                             ].map((item, index) => (
                                 <div key={index} className="flex justify-between">
                                     <div className="w-1/6">{item.label}:</div>
@@ -164,7 +193,7 @@ function ManageVendor({ vendors, triggerFetch, onExport }: { vendors: Vendor[], 
                             ))}
                             <div className="flex justify-between">
                                 <div className="flex-grow">
-                                    <a href="#" className="text-blue-600 hover:underline">Lihat MoU Kerjasama disini</a>
+                                    <a href={vendor.documentUrl || "#"} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Lihat MoU Kerjasama disini</a>
                                 </div>
                                 <div className="w-1/6"></div>
                             </div>

@@ -11,9 +11,22 @@ export const convertDate = (date: string) => {
   });
 };
 
+export const generateEmailUrl = (email: string) => {
+  return `mailto:${email}`;
+};
+
 export const generateGoogleMapsUrl = (address: string) => {
   const encodedAddress = encodeURIComponent(address);
   return `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+};
+
+export const generateInstagramUrl = (username: string) => {
+  return `https://www.instagram.com/${username}`;
+};
+
+export const generateWhatsAppUrl = (phone: string) => {
+  const encodedPhone = phone.replace(/\D/g, '');
+  return `https://wa.me/${encodedPhone}`;
 };
 
 export const getStars = (rating: number) => {

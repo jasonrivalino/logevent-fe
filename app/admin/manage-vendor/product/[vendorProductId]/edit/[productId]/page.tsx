@@ -1,10 +1,43 @@
+// app/admin/manage-vendor/product/[id]/edit/[id]/page.tsx
 'use client';
-import React, { useState } from 'react';
-import { ContactBox, Navbar } from '../../../../page';
-import { useRouter, usePathname } from 'next/navigation';
-import { CommandLeft } from '../../../commandLeft';
+
+// dependency modules
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+// self-defined modules
+import { Navbar } from '@/app/page';
+import { CommandLeft } from '@/app/admin/commandLeft';
+import { readAlbumsByProductId } from '@/app/utils/albumApi';
+import { readProductCategories } from '@/app/utils/categoryApi';
+import { readProductById } from '@/app/utils/productApi';
+import type { Album, Category, Product } from '@/app/utils/types';
 
 export default function AdminEventPackage() {
+    const pathname = usePathname();
+    const [product, setProduct] = useState<Product | null>(null);
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [albums, setAlbums] = useState<Album[]>([]);
+
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const id = pathname.split('/').pop();
+          if (id) {
+            const product = await readProductById(parseInt(id));
+            const categories = await readProductCategories();
+            const albums = await readAlbumsByProductId(parseInt(id));
+            setProduct(product);
+            setCategories(categories);
+            setAlbums(albums);
+          }
+        } catch (error) {
+          console.error('Failed to fetch product:', error);
+        }
+      };
+  
+      fetchData();
+    }, [pathname]);
+
     return (
       <div className="overflow-hidden">
         <div className="min-h-screen flex flex-col px-10 pt-10 mt-16">
@@ -12,7 +45,7 @@ export default function AdminEventPackage() {
             <div className="flex flex-col md:flex-row flex-grow">
                 <CommandLeft />
                 <div className="flex-grow ml-0 md:ml-7 pt-[0.15rem]">
-                    <AddVendorProduct />
+                    {product && <EditVendorProduct product={product} categories={categories} albums={albums} />}
                 </div>
             </div>
         </div>
@@ -20,8 +53,8 @@ export default function AdminEventPackage() {
     );
 }
 
-function AddVendorProduct() {
-    const router = useRouter(); // Initialize useRouter for navigation
+function EditVendorProduct({ product, categories, albums }: { product: Product, categories: Category[], albums: Album[] }) {
+    const router = useRouter();
     const [selectedCategory, setSelectedCategory] = useState('');
     const [selectedPriceUnit, setSelectedPriceUnit] = useState('');
   
@@ -29,7 +62,6 @@ function AddVendorProduct() {
       const category = event.target.value;
       setSelectedCategory(category);
   
-      // Automatically select /pcs for "katering"
       if (category === 'katering') {
         setSelectedPriceUnit('/pcs');
       } else {
@@ -83,24 +115,45 @@ function AddVendorProduct() {
             <div className="w-2/5">
               <label className="block text-gray-700 font-sofia">Nama Produk *</label>
               <p className="text-gray-500 text-sm font-sofia mb-2">Nama maksimal 40 karakter dengan memasukkan nama barang</p>
-              <input className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600" type="text" placeholder="Contoh: Gedung Sabuga ITB" maxLength={40} />
+              <input
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
+                type="text"
+                placeholder="Contoh: Gedung Sabuga ITB"
+                value={product.name}
+                maxLength={40} 
+              />
             </div>
             <div className="w-[30%]">
               <label className="block text-gray-700 font-sofia">Spesifikasi Produk *</label>
               <p className="text-gray-500 text-sm font-sofia mb-2">Spesifikasi produk yang dijual oleh vendor</p>
-              <input className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600" type="text" placeholder="Multifunction Hall" />
+              <input
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
+                type="text"
+                placeholder="Multifunction Hall"
+                value={product.specification}
+              />
             </div>
             <div className="w-[30%]">
               <label className="block text-gray-700 font-sofia">Kapasitas Produk</label>
               <p className="text-gray-500 text-sm font-sofia mb-2">Kosongkan jika produk tidak memiliki kapasitas</p>
-              <input className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600" type="text" placeholder="Masukkan Kapasitas" />
+              <input
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
+                type="text"
+                placeholder="Masukkan Kapasitas"
+                value={product.capacity || 'Produk tidak memiliki kapasitas'}
+              />
             </div>
           </div>
           <div className="flex space-x-6">
             <div className="w-full">
               <label className="block text-gray-700 font-sofia">Deskripsi Produk *</label>
               <p className="text-gray-500 text-sm font-sofia mb-2">Pastikan deskripsi produk memuat penjelasan detail terkait produkmu agar pembeli mudah mengerti dan menemukan produkmu</p>
-              <textarea rows={3} className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600" placeholder="Gedung Sabuga ITB adalah gedung Sasana Budaya Ganesha"></textarea>
+              <textarea
+                rows={3}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
+                placeholder="Gedung Sabuga ITB adalah gedung Sasana Budaya Ganesha"
+                value={product.description || 'Produk tidak memiliki deskripsi'}
+              ></textarea>
             </div>
           </div>
           <div className="flex space-x-6">
@@ -111,10 +164,12 @@ function AddVendorProduct() {
                 value={selectedCategory}
                 onChange={handleCategoryChange}
               >
-                <option value="">Pilih Kategori</option>
-                <option value="katering">Katering</option>
-                <option value="sound_system">Sound System</option>
-                <option value="gedung">Gedung</option>
+                <option value={product.categoryName}>{product.categoryName}</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
                 <option value="tambah_kategori">+ Tambah Kategori</option>
               </select>
             </div>
@@ -122,7 +177,12 @@ function AddVendorProduct() {
               <label className="block text-gray-700 font-sofia mb-2">Harga Produk *</label>
               <div className="flex">
                 <span className="flex items-center px-3 text-gray-500 border border-r-0 rounded-l-lg border-gray-300">Rp</span>
-                <input className="w-full px-4 py-2 border rounded-r-lg focus:outline-none focus:ring-2 focus:ring-pink-600" type="text" placeholder="Masukkan Harga" />
+                <input
+                  className="w-full px-4 py-2 border rounded-r-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
+                  type="text"
+                  placeholder="Masukkan Harga"
+                  value={product.price}
+                />
               </div>
               <div className="flex mt-1 space-x-4">
                 <label className="flex items-center text-gray-700 font-sofia">
