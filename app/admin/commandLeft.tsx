@@ -34,7 +34,7 @@ export function CommandLeft() {
                         <FaUserPlus className="mr-5 text-pink-900" /> Kelola Vendor
                     </button>
                     <button 
-                        className={`flex items-center mb-4 text-lg p-3 w-full rounded-lg ${pathname === '/admin/manage-event-package' ? 'border-pink-400 border-2 shadow-lg' : 'bg-white'}`}
+                        className={`flex items-center mb-4 text-lg p-3 w-full rounded-lg ${/^\/admin\/manage-event-package/.test(pathname) ? 'border-pink-400 border-2 shadow-lg' : 'bg-white'}`}
                         onClick={() => router.push('/admin/manage-event-package')}
                     >
                         <FaCalendarAlt className="mr-5 text-pink-900" /> Kelola Paket Event
