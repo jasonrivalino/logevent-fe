@@ -52,11 +52,14 @@ export const readProductById = async (id: number) => {
 
 export const createProduct = async (productData: {
   vendorId: number;
+  categoryId: number;
   name: string;
   specification: string;
-  category: string;
+  rate: string;
   price: number;
-  description: string;
+  capacity: number | null;
+  description: string | null;
+  productImage: string | null;
 }) => {
   try {
     const response = await axios.post(`${API_URL}/products/create`, productData, {

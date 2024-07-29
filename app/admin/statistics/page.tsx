@@ -5,6 +5,8 @@
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 // self-defined modules
 import { ContactBox, Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
@@ -12,8 +14,6 @@ import { getVisitToday, getVisitYesterday, getVisitDaily, getOrderPastMonth, get
 import { readPastWeekVisits } from '@/app/utils/visitApi';
 import { readPastTwoMonthOrders } from '@/app/utils/orderApi';
 import { Order, Visit } from '@/app/utils/types';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -24,9 +24,8 @@ export default function AdminStatistics() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const chosenDate = new Date();
-                const visits = await readPastWeekVisits(chosenDate);
-                const orders = await readPastTwoMonthOrders(chosenDate);
+                const visits = await readPastWeekVisits(new Date());
+                const orders = await readPastTwoMonthOrders(new Date());
                 setVisits(visits);
                 setOrders(orders);
             } catch (error: any) {
@@ -54,19 +53,18 @@ export default function AdminStatistics() {
 }
 
 function Statistics({ orders, visits }: { orders: Order[], visits: Visit[] }) {
-    const [startPengunjungDate, setStartPengunjungDate] = useState(new Date());
-    const [startStatistikDate, setStartStatistikDate] = useState(new Date());
-    const chosenDate = new Date();
+    const [pengunjungDate, setPengunjungDate] = useState(new Date());
+    const [pemesananDate, setPemesananDate] = useState(new Date());
 
-    const visitToday = getVisitToday(visits, chosenDate);
-    const visitYesterday = getVisitYesterday(visits, chosenDate);
+    const visitToday = getVisitToday(visits, pengunjungDate);
+    const visitYesterday = getVisitYesterday(visits, pengunjungDate);
     const visitImprovement = visitYesterday === 0 ? 0 : Math.round(((visitToday - visitYesterday) / visitYesterday) * 100);
-    const visitStats = getVisitDaily(visits, chosenDate);
+    const visitStats = getVisitDaily(visits, pengunjungDate);
 
-    const orderPastMonth = getOrderPastMonth(orders, chosenDate);
-    const orderPastTwoMonths = getOrderPastTwoMonths(orders, chosenDate);
+    const orderPastMonth = getOrderPastMonth(orders, pemesananDate);
+    const orderPastTwoMonths = getOrderPastTwoMonths(orders, pemesananDate);
     const orderImprovement = orderPastTwoMonths === 0 ? 0 : Math.round(((orderPastMonth - orderPastTwoMonths) / orderPastTwoMonths) * 100);
-    const orderStats = getOrderWeekly(orders, chosenDate);
+    const orderStats = getOrderWeekly(orders, pemesananDate);
 
     const visitData = {
         labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'],
@@ -116,14 +114,14 @@ function Statistics({ orders, visits }: { orders: Order[], visits: Visit[] }) {
 
     return (
         <div className="px-8 pt-6 pb-10 bg-white rounded-xl shadow-md">
-            <h1 className="text-3xl font-bold mb-6 text-pink-900 font-sofia">Welcome Admin LogEvent !</h1>
+            <h1 className="text-3xl font-bold mb-6 text-pink-900 font-sofia">Welcome Admin LogEvent!</h1>
             <div className="grid grid-cols-1 gap-6 font-sofia">
                 <div className="bg-gray-100 shadow-md rounded-lg p-4 relative">
                     <h2 className="text-xl font-bold text-black">Statistik Pengunjung</h2>
                     <div className="absolute top-4 right-4 flex space-x-2">
                         <DatePicker
-                            selected={startPengunjungDate}
-                            onChange={(date) => setStartPengunjungDate(date ?? new Date())}
+                            selected={pengunjungDate}
+                            onChange={(date) => setPengunjungDate(date ?? new Date())}
                             className="border p-1 rounded text-black"
                         />
                     </div>
@@ -137,8 +135,8 @@ function Statistics({ orders, visits }: { orders: Order[], visits: Visit[] }) {
                     <h2 className="text-xl font-bold">Statistik Pemesanan</h2>
                     <div className="absolute top-4 right-4 flex space-x-2">
                         <DatePicker
-                            selected={startStatistikDate}
-                            onChange={(date) => setStartStatistikDate(date ?? new Date())}
+                            selected={pemesananDate}
+                            onChange={(date) => setPemesananDate(date ?? new Date())}
                             className="border p-1 rounded"
                         />
                     </div>

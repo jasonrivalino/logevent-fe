@@ -5,8 +5,9 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 // self-defined modules
-import { ContactBox, Navbar } from '@/app/page';
+import { Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
+import { createProduct } from '@/app/utils/productApi';
 
 export default function AdminEventPackage() {
     return (
@@ -25,24 +26,31 @@ export default function AdminEventPackage() {
 }
 
 function AddVendorProduct() {
-    const router = useRouter(); // Initialize useRouter for navigation
-    const [selectedCategory, setSelectedCategory] = useState('');
-    const [selectedPriceUnit, setSelectedPriceUnit] = useState('');
+    const router = useRouter();
+    const [vendorId, setVendorId] = useState(7);
+    const [selectedCategoryId, setSelectedCategoryId] = useState(1);
+    const [name, setName] = useState('');
+    const [specification, setSpecification] = useState('');
+    const [selectedRate, setSelectedRate] = useState('');
+    const [price, setPrice] = useState(0);
+    const [capacity, setCapacity] = useState<number | null>(null);
+    const [description, setDescription] = useState('');
+    const [productImages, setProductImages] = useState<File[]>([]);
   
     const handleCategoryChange = (event: { target: { value: any; }; }) => {
-      const category = event.target.value;
-      setSelectedCategory(category);
+      // const categoryId = parseInt(event.target.value)
+      // setSelectedCategoryId(categoryId);
   
       // Automatically select /pcs for "katering"
-      if (category === 'katering') {
-        setSelectedPriceUnit('/pcs');
-      } else {
-        setSelectedPriceUnit('');
-      }
+      // if (categoryId === 2) {
+      //   setSelectedRate('/pcs');
+      // } else {
+      //   setSelectedRate('');
+      // }
     };
   
     const handlePriceUnitChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
-      setSelectedPriceUnit(event.target.value);
+      setSelectedRate(event.target.value);
     };
 
     const [photos, setPhotos] = useState<File[]>([]);
@@ -60,6 +68,29 @@ function AddVendorProduct() {
       const newPhotos = photos.filter((_, i) => i !== index);
       setPhotos(newPhotos);
     };
+
+    const handleSubmit = async (event: React.FormEvent) => {
+      event.preventDefault();
+
+      const productData = {
+        vendorId,
+        categoryId: selectedCategoryId,
+        name,
+        specification,
+        rate: selectedRate,
+        price,
+        capacity,
+        description,
+        productImage: photos.length > 0 ? photos[0].name : null,
+      };
+
+      try {
+        await createProduct(productData);
+        router.push('/admin/manage-vendor');
+      } catch (error) {
+        console.error('Failed to create product:', error);
+      }
+    };
   
     return (
       <div className="px-6 pt-4 pb-6 bg-white rounded-xl shadow-md">
@@ -70,35 +101,60 @@ function AddVendorProduct() {
           <div className="flex items-center">
             <a onClick={() => router.push('/admin/manage-vendor')} className="text-pink-600 font-semibold font-sofia cursor-pointer">Kelola Vendor</a>
             <span className="mx-2 text-gray-600 font-sofia font-semibold"> {'>'} </span>
-            <a onClick={() => router.push('/admin/manage-vendor/product')} className="text-pink-600 font-semibold font-sofia cursor-pointer">Kelola Produk</a>
+            <a onClick={() => router.push('/admin/manage-vendor')} className="text-pink-600 font-semibold font-sofia cursor-pointer">Kelola Produk</a>
             <span className="mx-2 text-gray-600 font-sofia font-semibold"> {'>'} </span>
             <p className="text-gray-600 font-sofia font-semibold">Tambah Produk</p>
           </div>
         </div>
         {/* Form */}
-        <form className="grid grid-cols-1 gap-4 font-sofia text-black">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 font-sofia text-black">
           <div className="flex space-x-6">
             <div className="w-2/5">
               <label className="block text-gray-700 font-sofia">Nama Produk *</label>
               <p className="text-gray-500 text-sm font-sofia mb-2">Nama maksimal 40 karakter dengan memasukkan nama barang</p>
-              <input className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600" type="text" placeholder="Contoh: Gedung Sabuga ITB" maxLength={40} />
+              <input
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
+                type="text"
+                placeholder="Contoh: Gedung Sabuga ITB"
+                maxLength={40}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
             </div>
             <div className="w-[30%]">
               <label className="block text-gray-700 font-sofia">Spesifikasi Produk *</label>
               <p className="text-gray-500 text-sm font-sofia mb-2">Spesifikasi produk yang dijual oleh vendor</p>
-              <input className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600" type="text" placeholder="Multifunction Hall" />
+              <input
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
+                type="text"
+                placeholder="Multifunction Hall"
+                value={specification}
+                onChange={(e) => setSpecification(e.target.value)}
+              />
             </div>
             <div className="w-[30%]">
               <label className="block text-gray-700 font-sofia">Kapasitas Produk</label>
               <p className="text-gray-500 text-sm font-sofia mb-2">Kosongkan jika produk tidak memiliki kapasitas</p>
-              <input className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600" type="text" placeholder="Masukkan Kapasitas" />
+              <input
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
+                type="text"
+                placeholder="Masukkan Kapasitas"
+                value={capacity || ''}
+                onChange={(e) => setCapacity(e.target.value ? parseInt(e.target.value) : null)}
+              />
             </div>
           </div>
           <div className="flex space-x-6">
             <div className="w-full">
               <label className="block text-gray-700 font-sofia">Deskripsi Produk *</label>
               <p className="text-gray-500 text-sm font-sofia mb-2">Pastikan deskripsi produk memuat penjelasan detail terkait produkmu agar pembeli mudah mengerti dan menemukan produkmu</p>
-              <textarea rows={3} className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600" placeholder="Gedung Sabuga ITB adalah gedung Sasana Budaya Ganesha"></textarea>
+              <textarea
+                rows={3}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
+                placeholder="Gedung Sabuga ITB adalah gedung Sasana Budaya Ganesha"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              ></textarea>
             </div>
           </div>
           <div className="flex space-x-6">
@@ -106,14 +162,14 @@ function AddVendorProduct() {
               <label className="block text-gray-700 font-sofia mb-2">Kategori Produk *</label>
               <select
                 className="w-full px-4 py-[0.65rem] border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 bg-white"
-                value={selectedCategory}
+                value={selectedCategoryId}
                 onChange={handleCategoryChange}
               >
-                <option value="">Pilih Kategori</option>
-                <option value="katering">Katering</option>
-                <option value="sound_system">Sound System</option>
-                <option value="gedung">Gedung</option>
-                <option value="tambah_kategori">+ Tambah Kategori</option>
+                <option value={1}>Pilih Kategori</option>
+                <option value={2}>Katering</option>
+                <option value={3}>Sound System</option>
+                <option value={4}>Gedung</option>
+                <option value={5}>+ Tambah Kategori</option>
               </select>
             </div>
             <div className="w-[30%]">
@@ -129,9 +185,9 @@ function AddVendorProduct() {
                     name="harga"
                     value="/jam"
                     className="mr-2"
-                    checked={selectedPriceUnit === '/jam'}
+                    checked={selectedRate === '/jam'}
                     onChange={handlePriceUnitChange}
-                    disabled={selectedCategory === 'katering'}
+                    disabled={selectedCategoryId === 2}
                   />
                   / Jam
                 </label>
@@ -141,9 +197,9 @@ function AddVendorProduct() {
                     name="harga"
                     value="/hari"
                     className="mr-2"
-                    checked={selectedPriceUnit === '/hari'}
+                    checked={selectedRate === '/hari'}
                     onChange={handlePriceUnitChange}
-                    disabled={selectedCategory === 'katering'}
+                    disabled={selectedCategoryId === 2}
                   />
                   / Hari
                 </label>
@@ -153,9 +209,9 @@ function AddVendorProduct() {
                     name="harga"
                     value="/pcs"
                     className="mr-2"
-                    checked={selectedPriceUnit === '/pcs'}
+                    checked={selectedRate === '/pcs'}
                     onChange={handlePriceUnitChange}
-                    disabled={selectedCategory !== 'katering'}
+                    disabled={selectedCategoryId !== 2}
                   />
                   / Pcs
                 </label>
@@ -199,7 +255,7 @@ function AddVendorProduct() {
             </div>
             </div>
             <div className="w-full">
-                <button type="submit" className="w-full py-2 mt-2 bg-pink-600 text-white font-semibold rounded-lg hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-600" onClick={() => router.push('/admin/manage-vendor/product')}>
+                <button type="submit" className="w-full py-2 mt-2 bg-pink-600 text-white font-semibold rounded-lg hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-600" onClick={handleSubmit}>
                     Tambah Produk
                 </button>
             </div>

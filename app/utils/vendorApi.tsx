@@ -28,6 +28,9 @@ export const createVendor = async (vendorData: {
   name: string;
   phone: string;
   address: string;
+  instagram: string | null;
+  socialMedia: string | null;
+  documentUrl: string | null;
 }) => {
   try {
     const response = await axios.post(`${API_URL}/vendors/create`, vendorData, {
@@ -46,7 +49,9 @@ export const updateVendor = async (id: number, vendorData: {
   name?: string;
   phone?: string;
   address?: string;
-  picture?: string;
+  instagram?: string | null;
+  socialMedia?: string | null;
+  documentUrl?: string | null;
 }) => {
   try {
     const response = await axios.put(`${API_URL}/vendors/update/${id}`, vendorData, {

@@ -59,7 +59,7 @@ function EditVendor({ vendor }: { vendor: Vendor }) {
         address: vendor.address,
         instagram: vendor.instagram || '',
         socialMedia: vendor.socialMedia || '',
-        MoU: vendor.documentUrl || ''
+        documentUrl: vendor.documentUrl || ''
     });
 
     const handleChange = (e: { target: { name: any; value: any; }; }) => {
@@ -179,7 +179,7 @@ function EditVendor({ vendor }: { vendor: Vendor }) {
                     <input
                         type="text"
                         name="MoU"
-                        value={vendorData.MoU}
+                        value={vendorData.documentUrl}
                         onChange={handleChange}
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         placeholder="Link MoU"

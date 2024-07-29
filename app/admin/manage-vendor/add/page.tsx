@@ -39,7 +39,7 @@ function AddVendor() {
         address: '',
         instagram: '',
         socialMedia: '',
-        MoU: ''
+        documentUrl: ''
     });
 
     const handleChange = (e: { target: { name: any; value: any; }; }) => {
@@ -153,13 +153,13 @@ function AddVendor() {
                     </div>
                 </div>
                 <div className="mb-7">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="MoU">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="documentUrl">
                         Link MoU Kerjasama *
                     </label>
                     <input
                         type="text"
-                        name="MoU"
-                        value={vendorData.MoU}
+                        name="documentUrl"
+                        value={vendorData.documentUrl}
                         onChange={handleChange}
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         placeholder="Link MoU"

@@ -51,6 +51,7 @@ export function Navbar() {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [userName, setUserName] = useState<string | null>(null);
 
   useEffect(() => {
@@ -60,6 +61,10 @@ export function Navbar() {
         try {
           const user = await readUserProfile(token);
           setUserName(user.name || user.email);
+
+          if (user.isAdmin) {
+            setIsAdmin(true);
+          }
         } catch (error: any) {
           console.error('Failed to fetch user data:', error.message);
           localStorage.removeItem('token');

@@ -173,7 +173,7 @@ function ProductImage({ product, albums }: { product: Product, albums: Album[] }
               <h1 className="text-2xl md:text-3xl text-pink-900 font-bold mt-4">{product.name}</h1>
               <p className="text-sm md:text-base text-gray-600">{product.specification}</p>
               {/* TODO: INTEGRATE CAPACITY */}
-              <p className="text-sm md:text-base text-gray-600">Kapasitas: 1000 Orang</p>
+              <p className="text-sm md:text-base text-gray-600">Kapasitas: {product.capacity + ' Orang' || "Produk ini tidak memiliki kapasitas"}</p>
               <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp {product.price} / hari</p>
               <div className="text-sm md:text-base flex items-center space-x-2 text-gray-600">
                 <span>{product.vendorAddress}</span>
