@@ -1,8 +1,14 @@
+// app/admin/manage-faq/page.tsx
 'use client';
-import React, { useState } from 'react';
-import { ContactBox, Navbar } from '../../page';
-import { CommandLeft } from '../commandLeft';
+
+// dependency modules
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+// self-defined modules
+import { ContactBox, Navbar } from '@/app/page';
+import { CommandLeft } from '@/app/admin/commandLeft';
+import { readAllFaqs, createFaq, updateFaq, deleteFaq } from '@/app/utils/faqApi';
+import { Faq } from '@/app/utils/types';
 
 export default function Adminquestion() {
     return (
@@ -28,18 +34,20 @@ function Managequestion() {
     const [showAddPopup, setShowAddPopup] = useState(false);
     const [questionToDelete, setQuestionToDelete] = useState<number | null>(null);
     const [showLimitPopup, setShowLimitPopup] = useState<string | null>(null);
-    const [questions, setQuestions] = useState([
-        { id: 1, question: 'Bagaimana cara menjadi mitra vendor LogEvent ?', answer: 'Lakukan pendaftaran dengan melakukan klik pada tombol Menjadi Vendor, lalu Anda akan diarahkan ke Admin kami untuk kesepakatan kerjasama' },
-        { id: 2, question: 'Bagaimana cara menjadi mitra vendor LogEvent ?', answer: 'Lakukan pendaftaran dengan melakukan klik pada tombol Menjadi Vendor, lalu Anda akan diarahkan ke Admin kami untuk kesepakatan kerjasama' },
-        { id: 3, question: 'Bagaimana cara menjadi mitra vendor LogEvent ?', answer: 'Lakukan pendaftaran dengan melakukan klik pada tombol Menjadi Vendor, lalu Anda akan diarahkan ke Admin kami untuk kesepakatan kerjasama' },
-        { id: 4, question: 'Bagaimana cara menjadi mitra vendor LogEvent ?', answer: 'Lakukan pendaftaran dengan melakukan klik pada tombol Menjadi Vendor, lalu Anda akan diarahkan ke Admin kami untuk kesepakatan kerjasama' },
-        { id: 5, question: 'Bagaimana cara menjadi mitra vendor LogEvent ?', answer: 'Lakukan pendaftaran dengan melakukan klik pada tombol Menjadi Vendor, lalu Anda akan diarahkan ke Admin kami untuk kesepakatan kerjasama' },
-        { id: 6, question: 'Bagaimana cara menjadi mitra vendor LogEvent ?', answer: 'Lakukan pendaftaran dengan melakukan klik pada tombol Menjadi Vendor, lalu Anda akan diarahkan ke Admin kami untuk kesepakatan kerjasama' },
-        { id: 7, question: 'Bagaimana cara menjadi mitra vendor LogEvent ?', answer: 'Lakukan pendaftaran dengan melakukan klik pada tombol Menjadi Vendor, lalu Anda akan diarahkan ke Admin kami untuk kesepakatan kerjasama' },
-        { id: 8, question: 'Bagaimana cara menjadi mitra vendor LogEvent ?', answer: 'Lakukan pendaftaran dengan melakukan klik pada tombol Menjadi Vendor, lalu Anda akan diarahkan ke Admin kami untuk kesepakatan kerjasama' },
-        // { id: 9, question: 'Bagaimana cara menjadi mitra vendor LogEvent ?', answer: 'Lakukan pendaftaran dengan melakukan klik pada tombol Menjadi Vendor, lalu Anda akan diarahkan ke Admin kami untuk kesepakatan kerjasama' },
-        // { id: 10, question: 'Bagaimana cara menjadi mitra vendor LogEvent ?', answer: 'Lakukan pendaftaran dengan melakukan klik pada tombol Menjadi Vendor, lalu Anda akan diarahkan ke Admin kami untuk kesepakatan kerjasama' },
-    ]);
+    const [faqs, setFaqs] = useState<Faq[]>([]);
+
+    useEffect(() => {
+        const fetchFaqs = async () => {
+            try {
+                const faqs = await readAllFaqs();
+                setFaqs(faqs);
+            } catch (error: any) {
+                console.error(error.message);
+            }
+        };
+        fetchFaqs();
+    }, []);
+
     const [editingQuestionId, setEditingQuestionId] = useState<number | null>(null);
     const [editedQuestion, setEditedQuestion] = useState({ question: '', answer: '' });
     const [newQuestion, setNewQuestion] = useState({ question: '', answer: '' });
@@ -49,11 +57,16 @@ function Managequestion() {
         setShowPopup(true);
     };
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         if (questionToDelete !== null) {
-            setQuestions(questions.filter(question => question.id !== questionToDelete));
-            setShowPopup(false);
-            setQuestionToDelete(null);
+            try {
+                await deleteFaq(questionToDelete);
+                setFaqs(faqs.filter(question => question.id !== questionToDelete));
+                setShowPopup(false);
+                setQuestionToDelete(null);
+            } catch (error: any) {
+                console.error('Failed to delete FAQ:', error.message);
+            }
         }
     };
 
@@ -66,14 +79,14 @@ function Managequestion() {
     };
 
     const handleAddClick = () => {
-        if (questions.length >= 10) {
+        if (faqs.length >= 10) {
             setShowLimitPopup('Tidak dapat menambah FAQ lagi. Jumlah maksimum adalah 10.');
         } else {
             setShowAddPopup(true);        }
     };
 
     const handleDeleteClick = (id: number) => {
-        if (questions.length <= 5) {
+        if (faqs.length <= 5) {
             setShowLimitPopup('Tidak dapat menghapus FAQ lagi. Jumlah minimum adalah 5.');
         } else {
             confirmDelete(id);
@@ -81,7 +94,7 @@ function Managequestion() {
     };
 
     const handleEditClick = (id: number) => {
-        const questionToEdit = questions.find(question => question.id === id);
+        const questionToEdit = faqs.find(question => question.id === id);
         if (questionToEdit) {
             setEditingQuestionId(id);
             setEditedQuestion({ question: questionToEdit.question, answer: questionToEdit.answer });
@@ -93,9 +106,16 @@ function Managequestion() {
         setEditedQuestion(prevState => ({ ...prevState, [name]: value }));
     };
 
-    const handleSave = (id: number) => {
-        setQuestions(questions.map(question => question.id === id ? { ...question, ...editedQuestion } : question));
-        setEditingQuestionId(null);
+    const handleSave = async (id: number) => {
+        if (editingQuestionId !== null) {
+            try {
+                await updateFaq(id, editedQuestion);
+                setFaqs(faqs.map(question => question.id === id ? { ...question, ...editedQuestion } : question));
+                setEditingQuestionId(null);
+            } catch (error: any) {
+                console.error('Failed to update FAQ:', error.message);
+            }
+        }
     };
 
     const handleAddInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -103,11 +123,20 @@ function Managequestion() {
         setNewQuestion(prevState => ({ ...prevState, [name]: value }));
     };
 
-    const handleAddSubmit = () => {
-        const newId = questions.length > 0 ? questions[questions.length - 1].id + 1 : 1;
-        setQuestions([...questions, { id: newId, ...newQuestion }]);
-        setShowAddPopup(false);
-        setNewQuestion({ question: '', answer: '' });
+    const handleAddSubmit = async () => {
+        if (faqs.length < 10) {
+            const newId = faqs.length > 0 ? faqs[faqs.length - 1].id + 1 : 1;
+            try {
+                await createFaq(newQuestion);
+                setFaqs([...faqs, { id: newId, ...newQuestion }]);
+                setShowAddPopup(false);
+                setNewQuestion({ question: '', answer: '' });
+            } catch (error: any) {
+                console.error('Failed to add FAQ:', error.message);
+            }
+        } else {
+            setShowLimitPopup('Tidak dapat menambah FAQ lagi. Jumlah maksimum adalah 10.');
+        }
     };
 
     return (
@@ -115,7 +144,7 @@ function Managequestion() {
             <h1 className="text-3xl font-bold mb-3 text-pink-900">Welcome Admin LogEvent!</h1>
             <div className="flex items-center text-black mb-4 w-full">
                 <span className="mr-2 text-lg">Total FAQ</span>
-                <span className="text-2xl font-bold border-pink-900 border-2 px-3 py-1">{questions.length}</span>
+                <span className="text-2xl font-bold border-pink-900 border-2 px-3 py-1">{faqs.length}</span>
                 <div className="flex justify-end items-center space-x-4 ml-auto">
                     <button
                         className="bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-md"
@@ -125,7 +154,7 @@ function Managequestion() {
                     </button>
                 </div>
             </div>
-            {questions.map(question => (
+            {faqs.map(question => (
                 <div key={question.id} className="bg-white p-4 rounded-md mb-2 text-black shadow-md">
                     <div className="flex justify-between items-center">
                         <div className="flex items-center">

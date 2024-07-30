@@ -28,6 +28,12 @@ export interface Event {
   reviewCount: number;
 }
 
+export interface Faq {
+  id: number;
+  question: string;
+  answer: string;
+}
+
 export interface Order {
   id: number;
   cartId: number;
