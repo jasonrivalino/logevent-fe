@@ -162,36 +162,38 @@ export function Navbar() {
                   >
                     {userName}
                   </span>
-                  <div className={`absolute top-full right-0 mt-[1.125rem] w-[13rem] bg-pink-900 shadow-lg max-h-44 overflow-y-auto transition-all duration-300 ease-in-out ${isDropdownOpen ? 'opacity-100 max-h-40' : 'opacity-0 max-h-0'}`}>
-                    <button
-                      onClick={handleProfileClick}
-                      className="pl-[1.2rem] py-[0.6rem] text-white w-full justify-start flex items-center font-sofia text-base hover:bg-pink-800"
-                    >
-                      <Image src="/Image/IconButton/profile.png" alt="User Profile" width={18} height={18} className='mr-[0.8rem]'/>
-                      Profile
-                    </button>
-                    <button
-                      onClick={handleProfileClick}
-                      className="pl-[1.2rem] py-[0.6rem] text-white w-full justify-start flex items-center font-sofia text-base hover:bg-pink-800"
-                    >
-                      <Image src="/Image/IconButton/shopping.png" alt="User Profile" width={18} height={18} className='mr-[0.8rem]'/>
-                      Keranjang
-                    </button>
-                    <button
-                      onClick={handleProfileClick}
-                      className="pl-[1.2rem] py-[0.6rem] text-white w-full justify-start flex items-center font-sofia text-base hover:bg-pink-800"
-                    >
-                      <Image src="/Image/IconButton/history.png" alt="User Profile" width={18} height={18} className='mr-[0.8rem]'/>
-                      History Pemesanan
-                    </button>
-                    <button
-                      onClick={handleSignOutClick}
-                      className="pl-[1.3rem] py-[0.6rem] text-white w-full justify-start flex items-center font-sofia text-base hover:bg-pink-800"
-                    >
-                      <Image src="/Image/IconButton/logout.png" alt="User Profile" width={16} height={16} className='mr-[0.7rem] mb-[0.15rem]'/>
-                      Sign Out
-                    </button>
-                  </div>
+                  {isDropdownOpen && (
+                    <div className={`absolute top-full right-0 mt-[1.125rem] w-[13rem] bg-pink-900 shadow-lg max-h-44 overflow-y-auto z-50`}>
+                      <button
+                        onClick={handleProfileClick}
+                        className="pl-[1.2rem] py-[0.6rem] text-white w-full justify-start flex items-center font-sofia text-base hover:bg-pink-800"
+                      >
+                        <Image src="/Image/IconButton/profile.png" alt="User Profile" width={18} height={18} className='mr-[0.8rem]'/>
+                        Profile
+                      </button>
+                      <button
+                        onClick={handleProfileClick}
+                        className="pl-[1.2rem] py-[0.6rem] text-white w-full justify-start flex items-center font-sofia text-base hover:bg-pink-800"
+                      >
+                        <Image src="/Image/IconButton/shopping.png" alt="User Profile" width={18} height={18} className='mr-[0.8rem]'/>
+                        Keranjang
+                      </button>
+                      <button
+                        onClick={handleProfileClick}
+                        className="pl-[1.2rem] py-[0.6rem] text-white w-full justify-start flex items-center font-sofia text-base hover:bg-pink-800"
+                      >
+                        <Image src="/Image/IconButton/history.png" alt="User Profile" width={18} height={18} className='mr-[0.8rem]'/>
+                        History Pemesanan
+                      </button>
+                      <button
+                        onClick={handleSignOutClick}
+                        className="pl-[1.3rem] py-[0.6rem] text-white w-full justify-start flex items-center font-sofia text-base hover:bg-pink-800"
+                      >
+                        <Image src="/Image/IconButton/logout.png" alt="User Profile" width={16} height={16} className='mr-[0.7rem] mb-[0.15rem]'/>
+                        Sign Out
+                      </button>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <button onClick={handleSignInClick} className='font-sofia text-white'>
