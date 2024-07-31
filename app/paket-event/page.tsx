@@ -227,8 +227,8 @@ export function EventList({ events }: { events: Event[] }) {
               className="object-cover w-80 h-28 md:h-auto"
             />
             <div className="p-3 md:p-4 md:ml-3 flex-grow font-sofia">
-              <h3 className="text-base md:text-xl text-pink-900 font-bold">{event.name}</h3>
-              <p className="text-xs md:text-sm text-gray-700">{event.type}</p>
+              <h3 className="text-base md:text-xl text-pink-900 font-bold">{vendor.name}</h3>
+              {/* <p className="text-xs md:text-sm text-gray-700">{vendor.type}</p> */}
               <p className="text-xs md:text-sm text-gray-700 flex flex-row">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
