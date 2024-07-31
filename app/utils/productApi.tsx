@@ -75,11 +75,14 @@ export const createProduct = async (productData: {
 
 export const updateProduct = async (id: number, productData: {
   vendorId?: number;
+  categoryId?: number;
   name?: string;
   specification?: string;
-  category?: string;
+  rate?: string;
   price?: number;
-  description?: string;
+  capacity?: number | null;
+  description?: string | null;
+  productImage?: string | null;
 }) => {
   try {
     const response = await axios.put(`${API_URL}/products/update/${id}`, productData, {

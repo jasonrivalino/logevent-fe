@@ -86,12 +86,12 @@ function ManageVendor({ vendors, triggerFetch, onExport }: { vendors: Vendor[], 
 
     const handleDelete = async () => {
         try {
-            if (vendorToDelete !== null) {
+            if (vendorToDelete) {
                 await deleteVendor(vendorToDelete);
+                setVendorToDelete(null);
+                setShowPopup(false);
                 triggerFetch();
             }
-            setShowPopup(false);
-            setVendorToDelete(null);
         } catch (error: any) {
             console.error('Failed to delete vendor:', error.message);
         }
