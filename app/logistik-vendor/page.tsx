@@ -167,7 +167,7 @@ export function ProductList({ products }: { products: Product[] }) {
         {paginatedProducts.map((product) => (
           <div key={product.id} className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col justify-between">
             <Image
-              src={'/Image/planetarium.jpg'}
+              src={product.productImage || "/Image/planetarium.jpg"}
               alt={`${product.name} Image`}
               width={400}
               height={200}

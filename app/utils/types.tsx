@@ -6,6 +6,12 @@ export interface Album {
   albumImage?: string;
 }
 
+export interface Bundle {
+  id: number;
+  eventId: number;
+  productId: number;
+}
+
 export interface Category {
   id: number;
   name: string;

@@ -73,19 +73,19 @@ function EditVendorProduct({ product, categories, albums, triggerFetch }: { prod
     const [productImages, setProductImages] = useState<File[]>([]);
 
     useEffect(() => {
-      if (product && !initialized) {
-          setProductId(product.id);
-          setVendorId(product.vendorId);
-          setSelectedCategoryId(product.categoryId);
-          setSelectedRate(product.rate);
-          setName(product.name);
-          setSpecification(product.specification);
-          setPrice(product.price.toString());
-          setCapacity(product.capacity ? product.capacity.toString() : '');
-          setDescription(product.description || '');
-          setInitialized(true);
-      }
-  }, [product, initialized]);
+        if (product && !initialized) {
+            setProductId(product.id);
+            setVendorId(product.vendorId);
+            setSelectedCategoryId(product.categoryId);
+            setSelectedRate(product.rate);
+            setName(product.name);
+            setSpecification(product.specification);
+            setPrice(product.price.toString());
+            setCapacity(product.capacity ? product.capacity.toString() : '');
+            setDescription(product.description || '');
+            setInitialized(true);
+        }
+    }, [product, initialized]);
   
     const handleCategoryChange = (event: { target: { value: any; }; }) => {
       setSelectedCategoryId(parseInt(event.target.value));
@@ -96,11 +96,11 @@ function EditVendorProduct({ product, categories, albums, triggerFetch }: { prod
     };
 
     const [photos, setPhotos] = useState<File[]>([
-        new File([''], 'https://via.placeholder.com/150', { type: 'image/png' }),
-        new File([''], 'https://via.placeholder.com/150', { type: 'image/png' }),
-        new File([''], 'https://via.placeholder.com/150', { type: 'image/png' }),
-        new File([''], 'https://via.placeholder.com/150', { type: 'image/png' }),
-        new File([''], 'https://via.placeholder.com/150', { type: 'image/png' }),
+      new File([''], 'https://via.placeholder.com/150', { type: 'image/png' }),
+      new File([''], 'https://via.placeholder.com/150', { type: 'image/png' }),
+      new File([''], 'https://via.placeholder.com/150', { type: 'image/png' }),
+      new File([''], 'https://via.placeholder.com/150', { type: 'image/png' }),
+      new File([''], 'https://via.placeholder.com/150', { type: 'image/png' }),
     ]);
 
     const handlePhotoUpload: React.ChangeEventHandler<HTMLInputElement> = (event) => {
