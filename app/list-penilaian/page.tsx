@@ -1,57 +1,79 @@
-import React from 'react';
+"use client";
+import React, { useState } from 'react';
 import { Navbar } from '../page';
 
 const reviews = [
   {
-    user: "User2",
+    user: "User1",
     category: "Kualitas Barang",
     rating: 5,
-    date: "3 Maret 2024",
+    date: "1 Maret 2024",
     comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae. Vestibulum feugiat ultrices euismod. Proin mollis ligula id hendrerit rutrum."
   },
   {
-    user: "User1",
+    user: "User2",
     category: "Pelayanan Admin/Vendor",
     rating: 4,
-    date: "3 Maret 2024",
+    date: "5 Maret 2024",
     comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae. Vestibulum feugiat ultrices euismod. Proin mollis ligula id hendrerit rutrum."
   },
   {
-    user: "User1",
+    user: "User3",
     category: "Harga Barang",
     rating: 5,
     date: "3 Maret 2024",
     comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae. Vestibulum feugiat ultrices euismod. Proin mollis ligula id hendrerit rutrum."
   },
   {
-    user: "User1",
+    user: "User4",
     category: "Sesuai Deskripsi",
     rating: 4,
-    date: "3 Maret 2024",
+    date: "2 Maret 2024",
     comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae. Vestibulum feugiat ultrices euismod. Proin mollis ligula id hendrerit rutrum."
-  }
+  },
+  {
+    user: "User5",
+    category: "Kualitas Barang",
+    rating: 5,
+    date: "4 Maret 2024",
+    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae. Vestibulum feugiat ultrices euismod. Proin mollis ligula id hendrerit rutrum."
+  },
 ];
 
 export default function ReviewPage() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const reviewsPerPage = 10;
+  const totalPages = Math.ceil(reviews.length / reviewsPerPage);
+
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
+  const indexOfLastReview = currentPage * reviewsPerPage;
+  const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
+  const currentReviews = reviews.slice(indexOfFirstReview, indexOfLastReview);
+
   return (
     <div className="max-w-8xl mx-auto p-16">
       <Navbar />
       <div className='text-black font-sofia bg-white rounded-lg mt-14 p-8'>
-        <h1 className="text-3xl font-bold text-pink-900">Penilaian & Ulasan</h1>
-        <div className="mb-4">
+        <h1 className="text-3xl font-bold text-pink-900 mb-5">Penilaian & Ulasan</h1>
+        <div className="mb-12">
           <h2 className="text-xl font-semibold">Gedung Sabuga ITB</h2>
           <p>Vendor A</p>
           <p>Dago, Bandung</p>
           <div className="flex mt-2">
-            <div className="flex items-center">
+            <div className="flex items-center border-2 border-pink-600 p-2 mt-4">
               <span className="text-4xl font-bold">4.5</span>
               <span className="text-xl">/5.0</span>
             </div>
-            <span className="ml-2">13 rating diberikan</span>
+            <span className="ml-5 mt-8">13 rating diberikan</span>
           </div>
         </div>
-        {reviews.map((review, index) => (
-          <div key={index} className="flex items-start mb-6 max-w-8xl">
+        {currentReviews.map((review, index) => (
+          <div key={index} className="flex items-start mb-10 max-w-8xl">
             <div className="w-12 h-12 bg-gray-200 rounded-full mr-4"></div>
             <div className="flex-1">
               <h3 className="font-bold">{review.user}</h3>
@@ -72,7 +94,66 @@ export default function ReviewPage() {
             </div>
           </div>
         ))}
+        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
       </div>
     </div>
   );
-};
+}
+
+function Pagination({ currentPage, totalPages, onPageChange }: { currentPage: number, totalPages: number, onPageChange: (page: number) => void }) {
+  const getPages = () => {
+    const pages = [];
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (currentPage <= 3) {
+        pages.push(1, 2, 3, '...', totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1, '...', totalPages - 2, totalPages - 1, totalPages);
+      } else {
+        pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
+      }
+    }
+    return pages;
+  };
+
+  return (
+    <div className="flex justify-center mt-8">
+      <button
+        className="px-1 md:px-2 py-1 md:py-2 mx-1 bg-black text-gray-300 rounded-full"
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      {getPages().map((page, index) =>
+        typeof page === 'number' ? (
+          <button
+            key={index}
+            className={`px-2 md:px-4 py-1 md:py-2 mx-1 ${page === currentPage ? 'bg-pink-600 text-white' : 'bg-white text-black'} rounded-full`}
+            onClick={() => onPageChange(page)}
+          >
+            {page}
+          </button>
+        ) : (
+          <span key={index} className="px-4 py-2 mx-1 text-black">
+            {page}
+          </span>
+        )
+      )}
+      <button
+        className="px-1 md:px-2 py-1 md:py-2 mx-1 bg-black text-gray-300 rounded-full"
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+  );
+}

@@ -98,6 +98,11 @@ export function Navbar() {
     router.push('/keranjang');
   }
 
+  const handleHistoryClick = () => {
+    setIsDropdownOpen(false);
+    router.push('/histori-pemesanan');
+  }
+
   const handleScrollToSection1 = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault();
     const element = document.getElementById(sectionId);
@@ -184,7 +189,7 @@ export function Navbar() {
                         Keranjang
                       </button>
                       <button
-                        onClick={handleProfileClick}
+                        onClick={handleHistoryClick}
                         className="pl-[1.2rem] py-[0.6rem] text-white w-full justify-start flex items-center font-sofia text-base hover:bg-pink-800"
                       >
                         <Image src="/Image/IconButton/history.png" alt="User Profile" width={18} height={18} className='mr-[0.8rem]'/>
