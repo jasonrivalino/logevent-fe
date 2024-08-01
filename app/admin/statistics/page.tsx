@@ -37,18 +37,23 @@ const dataStatistik = {
 
 export default function AdminStatistics() {
     return (
-      <div>
-        <div className="min-h-screen flex flex-col p-10 mt-16">
-            <Navbar />
-            <div className="flex flex-col md:flex-row flex-grow">
-                <CommandLeft />
-                <div className="flex-grow ml-0 md:ml-7 py-[0.15rem]">
-                    <Statistics />
+        <div>
+            <div className="min-h-screen flex flex-col p-10 mt-16">
+                <Navbar />
+                <div className="flex flex-col md:flex-row flex-grow">
+                    <div className="md:hidden flex justify-center items-center">
+                        <h1 className="text-4xl font-bold text-pink-900 font-sofia mb-8">Statistics</h1>
+                    </div>
+                    <div className="hidden md:block">
+                        <CommandLeft />
+                    </div>
+                    <div className="flex-grow ml-0 md:ml-7 py-[0.15rem]">
+                        <Statistics />
+                    </div>
                 </div>
             </div>
+            <ContactBox />
         </div>
-        <ContactBox />
-      </div>
     );
 }
 
@@ -58,7 +63,7 @@ function Statistics() {
 
     return (
         <div className="px-8 pt-6 pb-10 bg-white rounded-xl shadow-md">
-            <h1 className="text-3xl font-bold mb-6 text-pink-900 font-sofia">Welcome Admin LogEvent !</h1>
+            <h1 className="text-lg md:text-3xl font-bold mb-6 text-pink-900 font-sofia">Welcome Admin LogEvent !</h1>
             <div className="grid grid-cols-1 gap-6 font-sofia">
                 <div className="bg-gray-100 shadow-md rounded-lg p-4 relative">
                     <h2 className="text-xl font-bold text-black">Pengunjung Harian</h2>
