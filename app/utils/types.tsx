@@ -56,6 +56,7 @@ export interface Order {
 export interface Product {
   id: number;
   vendorId: number;
+  vendorName: string;
   vendorPhone: string;
   vendorAddress: string;
   categoryId: number;

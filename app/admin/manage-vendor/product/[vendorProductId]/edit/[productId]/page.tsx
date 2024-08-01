@@ -9,7 +9,7 @@ import { Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
 import { readAlbumsByProductId } from '@/app/utils/albumApi';
 import { readProductCategories } from '@/app/utils/categoryApi';
-import { readProductById } from '@/app/utils/productApi';
+import { readProductById, updateProduct } from '@/app/utils/productApi';
 import type { Album, Category, Product } from '@/app/utils/types';
 
 export default function AdminEventPackage() {
@@ -17,6 +17,7 @@ export default function AdminEventPackage() {
     const [product, setProduct] = useState<Product | null>(null);
     const [categories, setCategories] = useState<Category[]>([]);
     const [albums, setAlbums] = useState<Album[]>([]);
+    const [refresh, setRefresh] = useState(false);
 
     useEffect(() => {
       const fetchData = async () => {
@@ -36,7 +37,11 @@ export default function AdminEventPackage() {
       };
   
       fetchData();
-    }, [pathname]);
+    }, [pathname, refresh]);
+
+    const triggerFetch = () => {
+      setRefresh(!refresh);
+    };
 
     return (
       <div className="overflow-hidden">
@@ -45,7 +50,7 @@ export default function AdminEventPackage() {
             <div className="flex flex-col md:flex-row flex-grow">
                 <CommandLeft />
                 <div className="flex-grow ml-0 md:ml-7 pt-[0.15rem]">
-                    {product && <EditVendorProduct product={product} categories={categories} albums={albums} />}
+                    {product && <EditVendorProduct product={product} categories={categories} albums={albums} triggerFetch={triggerFetch} />}
                 </div>
             </div>
         </div>
@@ -53,24 +58,41 @@ export default function AdminEventPackage() {
     );
 }
 
-function EditVendorProduct({ product, categories, albums }: { product: Product, categories: Category[], albums: Album[] }) {
+function EditVendorProduct({ product, categories, albums, triggerFetch }: { product: Product, categories: Category[], albums: Album[], triggerFetch: () => void }) {
     const router = useRouter();
-    const [selectedCategory, setSelectedCategory] = useState('');
-    const [selectedPriceUnit, setSelectedPriceUnit] = useState('');
+    const [initialized, setInitialized] = useState(false);
+    const [productId, setProductId] = useState<number | null>(null);
+    const [vendorId, setVendorId] = useState<number | null>(null);
+    const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+    const [name, setName] = useState('');
+    const [specification, setSpecification] = useState('');
+    const [selectedRate, setSelectedRate] = useState<string | null>(null);
+    const [price, setPrice] = useState('');
+    const [capacity, setCapacity] = useState('');
+    const [description, setDescription] = useState('');
+    const [productImages, setProductImages] = useState<File[]>([]);
+
+    useEffect(() => {
+      if (product && !initialized) {
+          setProductId(product.id);
+          setVendorId(product.vendorId);
+          setSelectedCategoryId(product.categoryId);
+          setSelectedRate(product.rate);
+          setName(product.name);
+          setSpecification(product.specification);
+          setPrice(product.price.toString());
+          setCapacity(product.capacity ? product.capacity.toString() : '');
+          setDescription(product.description || '');
+          setInitialized(true);
+      }
+  }, [product, initialized]);
   
     const handleCategoryChange = (event: { target: { value: any; }; }) => {
-      const category = event.target.value;
-      setSelectedCategory(category);
-  
-      if (category === 'katering') {
-        setSelectedPriceUnit('/pcs');
-      } else {
-        setSelectedPriceUnit('');
-      }
+      setSelectedCategoryId(parseInt(event.target.value));
     };
   
-    const handlePriceUnitChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
-      setSelectedPriceUnit(event.target.value);
+    const handleRateChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+      setSelectedRate(event.target.value as string);
     };
 
     const [photos, setPhotos] = useState<File[]>([
@@ -94,11 +116,62 @@ function EditVendorProduct({ product, categories, albums }: { product: Product, 
       const newPhotos = photos.filter((_, i) => i !== index);
       setPhotos(newPhotos);
     };
+
+    const handleSubmit = async (event: React.FormEvent) => {
+      event.preventDefault();
+
+      if (!productId) {
+        throw new Error('Product ID is not set');
+      }
+
+      if (!vendorId) {
+        throw new Error('Vendor ID is not set');
+      }
+
+      if (!selectedCategoryId) {
+        throw new Error('Category ID is not set');
+      }
+
+      if (!name) {
+        throw new Error('Name is not set');
+      }
+
+      if (!specification) {
+        throw new Error('Specification is not set');
+      }
+
+      if (!selectedRate) {
+        throw new Error('Rate is not set');
+      }
+
+      if (!price) {
+        throw new Error('Price is not set');
+      }
+
+      const productData = {
+        vendorId,
+        categoryId: selectedCategoryId,
+        name,
+        specification,
+        rate: selectedRate,
+        price: parseInt(price),
+        capacity: capacity ? parseInt(capacity) : null,
+        description: description || null,
+        productImage: photos.length > 0 ? photos[0].name : null,
+      };
+
+      try {
+        await updateProduct(productId, productData);
+        triggerFetch();
+      } catch (error) {
+        console.error('Failed to create product:', error);
+      }
+    };
   
     return (
       <div className="px-6 pt-4 pb-6 bg-white rounded-xl shadow-md">
         {/* Text in center */}
-        <h1 className="text-3xl font-bold mb-3 text-pink-900 font-sofia text-center">Edit Produk A</h1>
+        <h1 className="text-3xl font-bold mb-3 text-pink-900 font-sofia text-center">Edit Produk {product.name}</h1>
         {/* Breadcrumb Navigation */}
         <div className="hidden md:flex items-center mb-4">
           <div className="flex items-center">
@@ -119,8 +192,9 @@ function EditVendorProduct({ product, categories, albums }: { product: Product, 
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
                 type="text"
                 placeholder="Contoh: Gedung Sabuga ITB"
-                value={product.name}
                 maxLength={40} 
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
             <div className="w-[30%]">
@@ -129,8 +203,9 @@ function EditVendorProduct({ product, categories, albums }: { product: Product, 
               <input
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
                 type="text"
-                placeholder="Multifunction Hall"
-                value={product.specification}
+                placeholder="Contoh: Multifunction Hall"
+                value={specification}
+                onChange={(e) => setSpecification(e.target.value)}
               />
             </div>
             <div className="w-[30%]">
@@ -140,7 +215,8 @@ function EditVendorProduct({ product, categories, albums }: { product: Product, 
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
                 type="text"
                 placeholder="Masukkan Kapasitas"
-                value={product.capacity || 'Produk tidak memiliki kapasitas'}
+                value={capacity || ''}
+                onChange={(e) => setCapacity(e.target.value ? e.target.value : '')}
               />
             </div>
           </div>
@@ -151,8 +227,9 @@ function EditVendorProduct({ product, categories, albums }: { product: Product, 
               <textarea
                 rows={3}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
-                placeholder="Gedung Sabuga ITB adalah gedung Sasana Budaya Ganesha"
-                value={product.description || 'Produk tidak memiliki deskripsi'}
+                placeholder="Contoh: Gedung Sabuga ITB adalah gedung Sasana Budaya Ganesha"
+                value={description || ''}
+                onChange={(e) => setDescription(e.target.value)}
               ></textarea>
             </div>
           </div>
@@ -161,10 +238,9 @@ function EditVendorProduct({ product, categories, albums }: { product: Product, 
               <label className="block text-gray-700 font-sofia mb-2">Kategori Produk *</label>
               <select
                 className="w-full px-4 py-[0.65rem] border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 bg-white"
-                value={selectedCategory}
+                value={selectedCategoryId ?? 0}
                 onChange={handleCategoryChange}
               >
-                <option value={product.categoryName}>{product.categoryName}</option>
                 {categories.map((category) => (
                   <option key={category.id} value={category.id}>
                     {category.name}
@@ -181,7 +257,8 @@ function EditVendorProduct({ product, categories, albums }: { product: Product, 
                   className="w-full px-4 py-2 border rounded-r-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
                   type="text"
                   placeholder="Masukkan Harga"
-                  value={product.price}
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
                 />
               </div>
               <div className="flex mt-1 space-x-4">
@@ -189,11 +266,10 @@ function EditVendorProduct({ product, categories, albums }: { product: Product, 
                   <input
                     type="radio"
                     name="harga"
-                    value="/jam"
+                    value="Hourly"
                     className="mr-2"
-                    checked={selectedPriceUnit === '/jam'}
-                    onChange={handlePriceUnitChange}
-                    disabled={selectedCategory === 'katering'}
+                    checked={selectedRate === 'Hourly'}
+                    onChange={handleRateChange}
                   />
                   / Jam
                 </label>
@@ -201,11 +277,10 @@ function EditVendorProduct({ product, categories, albums }: { product: Product, 
                   <input
                     type="radio"
                     name="harga"
-                    value="/hari"
+                    value="Daily"
                     className="mr-2"
-                    checked={selectedPriceUnit === '/hari'}
-                    onChange={handlePriceUnitChange}
-                    disabled={selectedCategory === 'katering'}
+                    checked={selectedRate === 'Daily'}
+                    onChange={handleRateChange}
                   />
                   / Hari
                 </label>
@@ -213,11 +288,10 @@ function EditVendorProduct({ product, categories, albums }: { product: Product, 
                   <input
                     type="radio"
                     name="harga"
-                    value="/pcs"
+                    value="Quantity"
                     className="mr-2"
-                    checked={selectedPriceUnit === '/pcs'}
-                    onChange={handlePriceUnitChange}
-                    disabled={selectedCategory !== 'katering'}
+                    checked={selectedRate === 'Quantity'}
+                    onChange={handleRateChange}
                   />
                   / Pcs
                 </label>
@@ -261,7 +335,7 @@ function EditVendorProduct({ product, categories, albums }: { product: Product, 
             </div>
             </div>
             <div className="w-full">
-                <button type="submit" className="w-full py-2 mt-2 bg-pink-600 text-white font-semibold rounded-lg hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-600" onClick={() => router.push('/admin/manage-vendor/product')}>
+                <button type="submit" className="w-full py-2 mt-2 bg-pink-600 text-white font-semibold rounded-lg hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-600" onClick={handleSubmit}>
                     Edit Produk
                 </button>
             </div>

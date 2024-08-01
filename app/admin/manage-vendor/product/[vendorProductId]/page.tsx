@@ -10,7 +10,7 @@ import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import { ContactBox, Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
 import { generateGoogleMapsUrl } from '@/app/utils/helpers';
-import { readEventOrganizerProduct, readProductsByVendorId } from '@/app/utils/productApi';
+import { readEventOrganizerProduct, readProductsByVendorId, deleteProduct } from '@/app/utils/productApi';
 import { readVendorById } from '@/app/utils/vendorApi';
 import { Product, Vendor } from '@/app/utils/types';
 
@@ -57,6 +57,7 @@ function ManageVendorProduct({ vendor }: { vendor: Vendor }) {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [productList, setProductList] = useState<Product[]>([]);
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -75,7 +76,7 @@ function ManageVendorProduct({ vendor }: { vendor: Vendor }) {
     };
 
     fetchData();
-  }, [vendor]);
+  }, [vendor, refresh]);
 
   const handleAddressClick = (address: string) => {
     const googleMapsUrl = generateGoogleMapsUrl(address);
@@ -92,13 +93,17 @@ function ManageVendorProduct({ vendor }: { vendor: Vendor }) {
     setShowPopup(true);
   };
 
-  const handleDelete = () => {
-    if (selectedProduct) {
-      console.log(`Delete product ${selectedProduct.id}`);
-      setProductList(productList.filter(product => product.id !== selectedProduct.id));
+  const handleDelete = async () => {
+    try {
+      if (selectedProduct) {
+        await deleteProduct(selectedProduct.id);
+        setSelectedProduct(null);
+        setShowPopup(false);
+        setRefresh(!refresh);
+      }
+    } catch (error) {
+      console.error('Failed to delete product:', error);
     }
-    setShowPopup(false);
-    setSelectedProduct(null);
   };
 
   const paginatedProducts = productList.slice(
@@ -139,7 +144,7 @@ function ManageVendorProduct({ vendor }: { vendor: Vendor }) {
           <span className="text-lg md:text-xl text-pink-900 font-bold mr-4">{vendor.name}</span>
         </div>
         <div className="flex items-center">
-          <span className="text-sm md:text-base text-gray-700 px-5">Jumlah Produk: {vendor.productCount}</span>
+          <span className="text-sm md:text-base text-gray-700 px-5">Jumlah Produk: {productList.length}</span>
           <button className="bg-pink-500 text-white px-3 py-1 rounded-full font-bold text-xs md:text-base mr-4" onClick={() => router.push(`/admin/manage-vendor/product/${vendor.id}/add`)}>
             + Tambah Produk
           </button>
