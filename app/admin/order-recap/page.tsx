@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { ContactBox, Navbar } from '../../page';
 import { CommandLeft } from '../commandLeft';
+import { useRouter } from 'next/navigation';
 
 export default function AdminOrderRecap() {
     const [data, setData] = useState([
@@ -22,23 +23,70 @@ export default function AdminOrderRecap() {
         { id: 15, name: 'Michael Green', phone: '456789123', email: 'michael@example.com', address: '1212 Walnut St', startDate: '2024-09-15', endDate: '2024-09-18' },
     ]);
 
+    const router = useRouter();
+  
+    const handlePrev = () => {
+      // Add your routing logic for the previous button
+      router.push('/admin/statistics'); // Update with the actual route
+    };
+  
+    const handleNext = () => {
+      // Add your routing logic for the next button
+      router.push('/admin/manage-vendor'); // Update with the actual route
+    };
+
     return (
         <div>
-            <div className="min-h-screen flex flex-col p-10 mt-16">
-                <Navbar />
+            <Navbar />
+            <div className="min-h-screen flex flex-col px-6 mt-24">
                 <div className="flex flex-col md:flex-row flex-grow">
-                    <CommandLeft />
+                    <div className="md:hidden flex justify-center items-center">
+                        <h1 className="text-4xl font-bold text-pink-900 font-sofia mt-4 mb-8">Order Recap</h1>
+                    </div>
+                    <div className="hidden md:block">
+                        <CommandLeft />
+                    </div>
                     <div className="flex-grow ml-0 md:ml-7 py-[0.15rem]">
                         <Table data={data} />
                     </div>
                 </div>
             </div>
             <ContactBox />
+            <button 
+                className="md:hidden fixed top-[25rem] left-2 px-1 py-1 bg-pink-600 text-white rounded-full shadow-lg hover:shadow-2xl focus:outline-none"
+                onClick={handlePrev}
+                >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+                </button>
+                <button 
+                className="md:hidden fixed top-[25rem] right-2 px-1 md:px-3 py-1 md:py-2 bg-pink-600 text-white rounded-full shadow-lg hover:shadow-2xl focus:outline-none"
+                onClick={handleNext}
+                >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
         </div>
     );
 };
 
-function Table({ data }: { data: any[] }) {
+interface DataItem {
+    id: number;
+    name: string;
+    phone: string;
+    email: string;
+    address: string;
+    startDate: string;
+    endDate: string;
+}
+
+interface TableProps {
+    data: DataItem[];
+}
+
+function Table({ data }: TableProps) {    
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
     const totalPages = Math.ceil(data.length / itemsPerPage);
@@ -47,35 +95,41 @@ function Table({ data }: { data: any[] }) {
     const paginatedData = data.slice(startIndex, startIndex + itemsPerPage);
 
     return (
-        <div className="bg-white border-2 rounded-xl w-full mb-4 md:mb-0 px-8 pt-6 pb-10 overflow-x-auto">
-            <h1 className="text-3xl font-bold mb-6 text-pink-900 font-sofia">Welcome Admin LogEvent !</h1>
-            <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                    <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Lengkap</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nomor Telepon</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alamat</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Mulai Acara</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Berakhir Acara</th>
-                    </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                    {paginatedData.map((data, index) => (
-                        <tr key={index}>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{data.id}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{data.name}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{data.phone}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{data.email}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{data.address}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{data.startDate}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{data.endDate}</td>
+        <div className="bg-white border-2 rounded-xl w-full mb-4 md:mb-0 px-6 md:px-8 pt-6 pb-10">
+            <div className="flex justify-center md:justify-start md:sticky md:top-0 bg-white z-10">
+                <h1 className="text-lg md:text-3xl font-bold mb-4 md:mb-6 text-pink-900 font-sofia">Welcome Admin LogEvent!</h1>
+            </div>
+            <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200 mb-6">
+                    <thead className="bg-gray-50">
+                        <tr>
+                            <th className="px-4 md:px-6 py-1 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                            <th className="px-4 md:px-6 py-1 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Lengkap</th>
+                            <th className="px-4 md:px-6 py-1 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nomor Telepon</th>
+                            <th className="px-4 md:px-6 py-1 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                            <th className="px-4 md:px-6 py-1 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alamat</th>
+                            <th className="px-4 md:px-6 py-1 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Mulai Acara</th>
+                            <th className="px-4 md:px-6 py-1 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Berakhir Acara</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                        {paginatedData.map((data: { id: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; name: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; phone: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; email: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; address: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; startDate: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; endDate: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; }, index: React.Key | null | undefined) => (
+                            <tr key={index}>
+                                <td className="px-4 md:px-6 py-[0.4rem] md:py-3 whitespace-nowrap text-sm font-medium text-gray-900">{data.id}</td>
+                                <td className="px-4 md:px-6 py-[0.4rem] md:py-3 whitespace-nowrap text-sm text-gray-900">{data.name}</td>
+                                <td className="px-4 md:px-6 py-[0.4rem] md:py-3 whitespace-nowrap text-sm text-gray-900">{data.phone}</td>
+                                <td className="px-4 md:px-6 py-[0.4rem] md:py-3 whitespace-nowrap text-sm text-gray-900">{data.email}</td>
+                                <td className="px-4 md:px-6 py-[0.4rem] md:py-3 whitespace-nowrap text-sm text-gray-900">{data.address}</td>
+                                <td className="px-4 md:px-6 py-[0.4rem] md:py-3 whitespace-nowrap text-sm text-gray-900">{data.startDate}</td>
+                                <td className="px-4 md:px-6 py-[0.4rem] md:py-3 whitespace-nowrap text-sm text-gray-900">{data.endDate}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+            <div className="flex justify-center bg-white z-10">
+                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+            </div>
         </div>
     );
 }
