@@ -8,12 +8,10 @@ import { useState, useEffect, useRef } from 'react';
 // self-defined modules
 import { Navbar, ContactBox } from '@/app/page';
 import { readAlbumsByProductId } from '@/app/utils/albumApi';
-import { readUserProfile } from '@/app/utils/authApi';
 import { convertDate, generateWhatsAppUrl, getStars } from '@/app/utils/helpers';
 import { readReviewsByProductId } from '@/app/utils/reviewApi';
 import { readProductById } from '@/app/utils/productApi';
 import type { Album, Product, Review } from '@/app/utils/types';
-import { createVisit } from '@/app/utils/visitApi';
 
 export default function Product() {
   const descriptionRef = useRef(null);
@@ -43,19 +41,6 @@ export default function Product() {
       try {
         const id = pathname.split('/').pop();
         if (id) {
-          const token = localStorage.getItem('token');
-          
-          try {
-            if (token) {
-              const user = await readUserProfile(token);
-              await createVisit({ userId: user.id, productId: parseInt(id) });
-            } else {
-              await createVisit({ userId: null, productId: parseInt(id) });
-            }
-          } catch (visitError) {
-            console.error('Failed to create visit:', visitError);
-          }
-  
           const product = await readProductById(parseInt(id));
           const albums = await readAlbumsByProductId(parseInt(id));
           const reviews = await readReviewsByProductId(parseInt(id));

@@ -11,6 +11,7 @@ import { useEffect, useRef, useState } from 'react';
 import { readUserProfile } from '@/app/utils/authApi';
 import { generateWhatsAppUrl } from '@/app/utils/helpers';
 import { readTopProducts } from '@/app/utils/productApi';
+import { createVisit } from '@/app/utils/visitApi';
 import { Product } from '@/app/utils/types';
 
 export default function Home() {
@@ -19,6 +20,7 @@ export default function Home() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        await createVisit();
         const data = await readTopProducts();
         setProducts(data);
       } catch (error) {

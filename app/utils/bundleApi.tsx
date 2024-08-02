@@ -13,3 +13,19 @@ export const readBundlesByEventId = async (id: number) => {
     throw new Error(error.response?.data?.message || 'Failed to fetch event bundles');
   }
 };
+
+export const createBundle = async (bundleData: {
+  eventId: number;
+  productId: number;
+}) => {
+  try {
+    const response = await axios.post(`${API_URL}/bundles/create`, bundleData, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Failed to create bundle');
+  }
+};
