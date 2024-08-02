@@ -162,7 +162,7 @@ function EditVendorProduct({ product, categories, albums, triggerFetch }: { prod
 
       try {
         await updateProduct(productId, productData);
-        triggerFetch();
+        router.push(`/admin/manage-vendor/product/${vendorId}`);
       } catch (error) {
         console.error('Failed to create product:', error);
       }

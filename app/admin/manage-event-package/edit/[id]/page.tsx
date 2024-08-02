@@ -1,11 +1,10 @@
-
 // app/admin/manage-event-package/edit/[id]/page.tsx
 'use client';
 
 // dependency modules
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 // self-defined modules
 import { Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
@@ -121,11 +120,11 @@ function EditPackageProduct() {
     };
 
     const [photos, setPhotos] = useState<File[]>([
-    new File([''], 'https://via.placeholder.com/150', { type: 'image/png' }),
-    new File([''], 'https://via.placeholder.com/150', { type: 'image/png' }),
-    new File([''], 'https://via.placeholder.com/150', { type: 'image/png' }),
-    new File([''], 'https://via.placeholder.com/150', { type: 'image/png' }),
-    new File([''], 'https://via.placeholder.com/150', { type: 'image/png' })
+      new File([''], 'https://via.placeholder.com/150', { type: 'image/png' }),
+      new File([''], 'https://via.placeholder.com/150', { type: 'image/png' }),
+      new File([''], 'https://via.placeholder.com/150', { type: 'image/png' }),
+      new File([''], 'https://via.placeholder.com/150', { type: 'image/png' }),
+      new File([''], 'https://via.placeholder.com/150', { type: 'image/png' })
     ]);
 
     const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -306,13 +305,13 @@ function EditPackageProduct() {
                   photos.map((photo, index) => (
                     <div key={index} className="relative m-2">
                       <img src={URL.createObjectURL(photo)} alt={`upload-${index}`} className="w-10 h-10 object-cover rounded" />
-                      <button
-                        type="button"
-                        onClick={() => handleRemovePhoto(index)}
-                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex justify-center items-center"
-                      >
-                        &times;
-                      </button>
+                        <button
+                          type="button"
+                          onClick={() => handleRemovePhoto(index)}
+                          className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex justify-center items-center"
+                        >
+                          &times;
+                        </button>
                     </div>
                   ))
                 )}
@@ -427,59 +426,59 @@ function EditPackageProduct() {
 };
 
 function Pagination({ currentPage, totalPages, onPageChange }: any) {
-    const getPages = () => {
-      const pages = [];
-      if (totalPages <= 5) {
-        for (let i = 1; i <= totalPages; i++) {
-          pages.push(i);
-        }
-      } else {
-        if (currentPage <= 3) {
-          pages.push(1, 2, 3, '...', totalPages);
-        } else if (currentPage >= totalPages - 2) {
-          pages.push(1, '...', totalPages - 2, totalPages - 1, totalPages);
-        } else {
-          pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
-        }
+  const getPages = () => {
+    const pages = [];
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
       }
-      return pages;
-    };
-  
-    return (
-      <div className="flex justify-center mt-8">
-        <button
-          className="px-1 md:px-2 py-1 md:py-2 mx-1 bg-black text-gray-300 rounded-full"
-          onClick={() => onPageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-        {getPages().map((page, index) =>
-          typeof page === 'number' ? (
-            <button
-              key={index}
-              className={`px-2 md:px-4 py-1 md:py-2 mx-1 ${page === currentPage ? 'bg-pink-600 text-white' : 'bg-white text-black'} rounded-full`}
-              onClick={() => onPageChange(page)}
-            >
-              {page}
-            </button>
-          ) : (
-            <span key={index} className="px-4 py-2 mx-1 text-black">
-              {page}
-            </span>
-          )
-        )}
-        <button
-          className="px-1 md:px-2 py-1 md:py-2 mx-1 bg-black text-gray-300 rounded-full"
-          onClick={() => onPageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-      </div>
-    );
-  }
+    } else {
+      if (currentPage <= 3) {
+        pages.push(1, 2, 3, '...', totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1, '...', totalPages - 2, totalPages - 1, totalPages);
+      } else {
+        pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
+      }
+    }
+    return pages;
+  };
+
+  return (
+    <div className="flex justify-center mt-8">
+      <button
+        className="px-1 md:px-2 py-1 md:py-2 mx-1 bg-black text-gray-300 rounded-full"
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      {getPages().map((page, index) =>
+        typeof page === 'number' ? (
+          <button
+            key={index}
+            className={`px-2 md:px-4 py-1 md:py-2 mx-1 ${page === currentPage ? 'bg-pink-600 text-white' : 'bg-white text-black'} rounded-full`}
+            onClick={() => onPageChange(page)}
+          >
+            {page}
+          </button>
+        ) : (
+          <span key={index} className="px-4 py-2 mx-1 text-black">
+            {page}
+          </span>
+        )
+      )}
+      <button
+        className="px-1 md:px-2 py-1 md:py-2 mx-1 bg-black text-gray-300 rounded-full"
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+  );
+}

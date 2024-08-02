@@ -8,9 +8,10 @@ import { useEffect, useState } from 'react';
 import { Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
 import { createProduct } from '@/app/utils/productApi';
+import { createAlbum } from '@/app/utils/albumApi';
 import { readProductCategories } from '@/app/utils/categoryApi';
 import { readVendorById } from '@/app/utils/vendorApi';
-import { Category } from '@/app/utils/types';
+import { Category, Product } from '@/app/utils/types';
 
 export default function AdminEventPackage() {
     return (
@@ -40,7 +41,7 @@ function AddVendorProduct() {
     const [price, setPrice] = useState('');
     const [capacity, setCapacity] = useState('');
     const [description, setDescription] = useState('');
-    const [productImages, setProductImages] = useState<File[]>([]);
+    const [productImages, setProductImages] = useState<string[]>([]);
 
     useEffect(() => {
       const { pathname } = window.location;
@@ -81,20 +82,26 @@ function AddVendorProduct() {
       setSelectedRate(event.target.value as string);
     };
 
-    const [photos, setPhotos] = useState<File[]>([]);
-
-    const handlePhotoUpload: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+    const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
       const files = event.target.files ? Array.from(event.target.files) : [];
-      if (photos.length + files.length <= 5) {
-        setPhotos([...photos, ...files]);
-      } else {
-        alert("You can only upload a maximum of 5 photos.");
+      if (files.length > 0) {
+        if (productImages.length + files.length > 5) {
+          alert("You can only upload a maximum of 5 photos.");
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setProductImages([...productImages, reader.result as string]);
+        };
+
+        reader.readAsDataURL(files[0]);
       }
     };
-  
-    const handleRemovePhoto = (index: number) => {
-      const newPhotos = photos.filter((_, i) => i !== index);
-      setPhotos(newPhotos);
+
+    const handleRemoveImage = (index: number) => {
+      const newImages = productImages.filter((_, i) => i !== index);
+      setProductImages(newImages);
     };
 
     const handleSubmit = async (event: React.FormEvent) => {
@@ -133,11 +140,19 @@ function AddVendorProduct() {
         price: parseInt(price),
         capacity: capacity ? parseInt(capacity) : null,
         description: description || null,
-        productImage: photos.length > 0 ? photos[0].name : null,
+        productImage: productImages.length > 0 ? productImages[0] : null
       };
 
+      const albumImages = productImages.slice(1);    
       try {
-        await createProduct(productData);
+        // const product = await createProduct(productData);
+        if (albumImages.length > 0) {
+          const productId = 110
+          for (const image of albumImages) {
+            await createAlbum(productId, image);
+          }
+        }
+
         router.push(`/admin/manage-vendor/product/${vendorId}`);
       } catch (error) {
         console.error('Failed to create product:', error);
@@ -287,20 +302,20 @@ function AddVendorProduct() {
                             accept="image/*"
                             multiple
                             className="hidden"
-                            onChange={handlePhotoUpload}
+                            onChange={handleImageUpload}
                         />
                     </label>
                 </div>
                 <div className="border border-dashed border-gray-400 rounded-lg flex justify-center items-center flex-wrap min-h-[50px]">
-                    {photos.length === 0 ? (
+                    {productImages.length === 0 ? (
                         <span className="text-gray-500">Upload a photo</span>
                     ) : (
-                        photos.map((photo, index) => (
+                        productImages.map((image, index) => (
                             <div key={index} className="relative m-2">
-                                <img src={URL.createObjectURL(photo)} alt={`upload-${index}`} className="w-10 h-10 object-cover rounded" />
+                                <img src={image} alt={`upload-${index}`} className="w-10 h-10 object-cover rounded" />
                                 <button
                                     type="button"
-                                    onClick={() => handleRemovePhoto(index)}
+                                    onClick={() => handleRemoveImage(index)}
                                     className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex justify-center items-center"
                                 >
                                     &times;

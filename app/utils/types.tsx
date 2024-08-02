@@ -12,6 +12,14 @@ export interface Bundle {
   productId: number;
 }
 
+export interface Cart {
+  id: number;
+  userId: number;
+  type: string;
+  cartDate: string;
+  cartStatus: string;
+}
+
 export interface Category {
   id: number;
   name: string;
@@ -40,6 +48,17 @@ export interface Faq {
   answer: string;
 }
 
+export interface Item {
+  id: number;
+  eventId: number | null;
+  productId: number | null;
+  cartId: number;
+  duration: number | null;
+  quantity: number | null;
+  orderRange: number;
+  subtotal: number;
+}
+
 export interface Order {
   id: number;
   cartId: number;
@@ -60,6 +79,7 @@ export interface Order {
 }
 
 export interface Product {
+  date: any;
   id: number;
   vendorId: number;
   vendorName: string;

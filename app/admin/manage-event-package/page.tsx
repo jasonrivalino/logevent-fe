@@ -132,10 +132,12 @@ function ManagePackage() {
                             <h3 className="text-base md:text-xl text-pink-900 font-bold">{event.name}</h3>
                             {/* <p className="text-xs md:text-sm text-gray-700">{pkg.type}</p> */}
                             <p className="text-xs md:text-sm text-gray-700 flex flex-row">
-                                <svg xmlns="http://www.w3.org/2000/svg"
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
                                     className= "h-3 md:h-4 w-3 md:w-4 text-yellow-500 mr-[0.3rem] mt-[0.075rem] md:mt-[0.05rem]"
                                     fill="currentColor"
-                                    viewBox="0 0 20 20">
+                                    viewBox="0 0 20 20"
+                                >
                                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.14 3.51a1 1 0 00.95.69h3.7c.967 0 1.372 1.24.588 1.81l-2.992 2.179a1 1 0 00-.364 1.118l1.14 3.51c.3.921-.755 1.688-1.54 1.118l-2.992-2.178a1 1 0 00-1.175 0l-2.992 2.178c-.785.57-1.84-.197-1.54-1.118l1.14-3.51a1 1 0 00-.364-1.118L2.93 8.937c-.784-.57-.38-1.81.588-1.81h3.7a1 1 0 00.95-.69l1.14-3.51z" />
                                 </svg> {event.rating && event.rating.toFixed(2) !== "0.00" ? event.rating.toFixed(2) : "N/A"}
                             </p>

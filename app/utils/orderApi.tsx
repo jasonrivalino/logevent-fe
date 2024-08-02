@@ -23,6 +23,15 @@ export const readPastTwoMonthOrders = async (chosenDate: Date) => {
   }
 };
 
+export const readOrdersByUserId = async (userId: number) => {
+  try {
+    const response = await axios.get(`${API_URL}/orders/read/user/${userId}`);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Failed to fetch orders');
+  }
+};
+
 export const readOrderById = async (id: number) => {
   try {
     const response = await axios.get(`${API_URL}/orders/read/${id}`);

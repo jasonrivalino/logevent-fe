@@ -13,3 +13,16 @@ export const readAlbumsByProductId = async (id: number) => {
     throw new Error(error.response?.data?.message || 'Failed to fetch product albums');
   }
 };
+
+export const createAlbum = async (productId: number, albumImage: string) => {
+  try {
+    const response = await axios.post(`${API_URL}/albums/create`, { productId, albumImage }, {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Failed to create album');
+  }
+};
