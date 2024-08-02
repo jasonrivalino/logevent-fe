@@ -9,22 +9,27 @@ import { useState, useEffect } from 'react';
 import { Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
 import { createBundle } from '@/app/utils/bundleApi';
+import { createAlbum } from '@/app/utils/albumApi';
 import { readEventCategories } from '@/app/utils/categoryApi';
 import { createEvent } from '@/app/utils/eventApi';
 import { readAllProducts } from '@/app/utils/productApi';
-import { Category, Product } from '@/app/utils/types';
+import { readAllVendors } from '@/app/utils/vendorApi';
+import { Category, Product, Vendor } from '@/app/utils/types';
 
 export default function AdminEventPackage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const [vendors, setVendors] = useState<Vendor[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const categories = await readEventCategories();
         const products = await readAllProducts();
+        const vendors = await readAllVendors();
         setCategories(categories);
         setProducts(products);
+        setVendors(vendors);
       } catch (error: any) {
         console.error(error.message);
       }
@@ -39,7 +44,7 @@ export default function AdminEventPackage() {
           <div className="flex flex-col md:flex-row flex-grow">
               <CommandLeft />
               <div className="flex-grow ml-0 md:ml-7 pt-[0.15rem]">
-                  <AddPackageProduct categories={categories} products={products} />
+                  <AddPackageProduct categories={categories} products={products} vendors={vendors} />
               </div>
           </div>
       </div>
@@ -47,12 +52,13 @@ export default function AdminEventPackage() {
   );
 }
 
-function AddPackageProduct({ categories, products }: { categories: Category[], products: Product[] }) {
+function AddPackageProduct({ categories, products, vendors }: { categories: Category[], products: Product[], vendors: Vendor[] }) {
   const router = useRouter();
   
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [name, setName] = useState('');
-  const [selectedRate, setSelectedRate] = useState<string | null>(null);
+  // TODO: Add rate state
+  const [selectedRate, setSelectedRate] = useState<string | null>("Daily");
   const [price, setPrice] = useState('');
   const [capacity, setCapacity] = useState('');
   const [description, setDescription] = useState('');
@@ -142,7 +148,54 @@ function AddPackageProduct({ categories, products }: { categories: Category[], p
   const selectedProductDetails = products.filter(product => selectedProductIds.includes(product.id));
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
+    event.preventDefault();
 
+    if (!selectedCategoryId) {
+      throw new Error('Category ID is not set');
+    }
+
+    if (!name) {
+      throw new Error('Name is not set');
+    }
+
+    if (!selectedRate) {
+      throw new Error('Rate is not set');
+    }
+
+    if (!price) {
+      throw new Error('Price is not set');
+    }
+
+    const eventData = {
+      categoryId: selectedCategoryId,
+      name,
+      rate: selectedRate,
+      price: parseInt(price),
+      capacity: capacity ? parseInt(capacity) : null,
+      description: description || null,
+      eventImage: eventImages.length > 0 ? eventImages[0] : null
+    };
+
+    const albumImages = eventImages.slice(1);    
+    try {
+      const event = await createEvent(eventData);
+      if (albumImages.length > 0) {
+        const eventId = event.id;
+        for (const image of albumImages) {
+          await createAlbum(eventId, image);
+        }
+      }
+
+      if (selectedProductIds.length > 0) {
+        for (const productId of selectedProductIds) {
+          await createBundle({ eventId: event.id, productId: productId });
+        }
+      }
+
+      router.push('/admin/manage-event-package');
+    } catch (error) {
+      console.error('Failed to create event:', error);
+    }
   };
 
   return (
@@ -338,8 +391,11 @@ function AddPackageProduct({ categories, products }: { categories: Category[], p
                     <div className="relative">
                       <select className="w-48 text-sm md:text-base p-1 md:p-[0.67rem] pl-3 md:pl-4 border rounded bg-white text-black font-sofia">
                         <option value="sort">Select Vendors</option>
-                        <option value="price">Vendor A</option>
-                        <option value="rating">Vendor B</option>
+                        {vendors.map((vendor) => (
+                          <option key={vendor.id} value={vendor.id}>
+                            {vendor.name}
+                          </option>
+                        ))}
                       </select>
                     </div>
                   </div>

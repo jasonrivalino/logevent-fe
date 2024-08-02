@@ -29,3 +29,12 @@ export const createBundle = async (bundleData: {
     throw new Error(error.response?.data?.message || 'Failed to create bundle');
   }
 };
+
+export const deleteBundle = async (id: number) => {
+  try {
+    const response = await axios.delete(`${API_URL}/bundles/delete/${id}`);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Failed to delete bundle');
+  }
+};

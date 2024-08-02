@@ -186,7 +186,7 @@ function EditVendorProduct({ product, categories, albums }: { product: Product, 
 
         router.push(`/admin/manage-vendor/product/${vendorId}`);
       } catch (error) {
-        console.error('Failed to create product:', error);
+        console.error('Failed to edit product:', error);
       }
     };
   

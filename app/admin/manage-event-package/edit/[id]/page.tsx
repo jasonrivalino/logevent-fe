@@ -8,11 +8,13 @@ import { useState, useEffect } from 'react';
 // self-defined modules
 import { Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
-import { readBundlesByEventId } from '@/app/utils/bundleApi';
+import { readAlbumsByProductId, createAlbum, updateAlbum, deleteAlbum } from '@/app/utils/albumApi';
+import { readBundlesByEventId, createBundle, deleteBundle } from '@/app/utils/bundleApi';
 import { readEventCategories } from '@/app/utils/categoryApi';
-import { readEventById } from '@/app/utils/eventApi';
+import { readEventById, updateEvent } from '@/app/utils/eventApi';
 import { readAllProducts } from '@/app/utils/productApi';
-import { Bundle, Category, Product } from '@/app/utils/types';
+import { readAllVendors } from '@/app/utils/vendorApi';
+import { Album, Bundle, Category, Product, Vendor } from '@/app/utils/types';
 
 export default function AdminEventPackage() {
   return (
@@ -34,15 +36,18 @@ function EditPackageProduct() {
   const router = useRouter();
   const pathname = usePathname();
 
+  const [albums, setAlbums] = useState<Album[]>([]);
   const [bundles, setBundles] = useState<Bundle[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const [vendors, setVendors] = useState<Vendor[]>([]);
 
   const [initialized, setInitialized] = useState(false);
   const [eventId, setEventId] = useState<number | null>(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [name, setName] = useState('');
-  const [selectedRate, setSelectedRate] = useState<string | null>(null);
+  // TODO: Add rate state
+  const [selectedRate, setSelectedRate] = useState<string | null>("Daily");
   const [price, setPrice] = useState('');
   const [capacity, setCapacity] = useState('');
   const [description, setDescription] = useState('');
@@ -52,7 +57,7 @@ function EditPackageProduct() {
   const [searchQuery, setSearchQuery] = useState('');
 
   const [paginatedProducts, setPaginatedProducts] = useState<Product[]>([]);
-  const [selectedProductId, setSelectedProductId] = useState<Number[]>([])
+  const [selectedProductId, setSelectedProductId] = useState<number[]>([])
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -75,12 +80,16 @@ function EditPackageProduct() {
             setInitialized(true);
           }
 
+          const albums = await readAlbumsByProductId(parseInt(id));
           const bundles = await readBundlesByEventId(parseInt(id));
           const categories = await readEventCategories();
           const products = await readAllProducts();
+          const vendors = await readAllVendors();
+          setAlbums(albums);
           setBundles(bundles);
           setCategories(categories);
           setProducts(products);
+          setVendors(vendors);
         }
       } catch (error) {
         console.error('Failed to fetch products:', error);
@@ -92,7 +101,17 @@ function EditPackageProduct() {
 
   useEffect(() => {
     setPaginatedProducts(products);
-  }, [products]);
+
+    const selectedProductId: number[] = [];
+    for (const bundle of bundles) {
+      const product = products.find((product) => product.id === bundle.productId);
+      if (product) {
+        selectedProductId.push(product.id);
+      }
+    }
+
+    setSelectedProductId(selectedProductId);
+  }, [bundles, products]);
 
   const handleSearch = (event: { target: { value: string; }; }) => {
     const query = event.target.value.toLowerCase();
@@ -165,7 +184,70 @@ function EditPackageProduct() {
   const selectedProductDetails = products.filter(product => selectedProductId.includes(product.id));
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
-  
+    event.preventDefault();
+
+    if (!selectedCategoryId) {
+      throw new Error('Category ID is not set');
+    }
+
+    if (!name) {
+      throw new Error('Name is not set');
+    }
+
+    if (!selectedRate) {
+      throw new Error('Rate is not set');
+    }
+
+    if (!price) {
+      throw new Error('Price is not set');
+    }
+
+    const eventData = {
+      categoryId: selectedCategoryId,
+      name,
+      rate: selectedRate,
+      price: parseInt(price),
+      capacity: capacity ? parseInt(capacity) : null,
+      description: description || null,
+      eventImage: eventImages.length > 0 ? eventImages[0] : null
+    };
+
+    const albumImages = eventImages.slice(1);
+    try {
+      if (!eventId) {
+        throw new Error('Event ID is not set');
+      }
+
+      const event = await updateEvent(eventId, eventData);
+
+      for (let i = 0; i < albums.length; i++) {
+        if (i < albumImages.length) {
+          await updateAlbum(albums[i].id, albumImages[i]);
+        } else {
+          await deleteAlbum(albums[i].id);
+        }
+      }
+
+      for (let i = albums.length; i < albumImages.length; i++) {
+        await createAlbum(eventId, albumImages[i]);
+      }
+
+      for (const bundle of bundles) {
+        if (!selectedProductId.includes(bundle.productId)) {
+          await deleteBundle(bundle.id);
+        }
+      }
+
+      for (const productId of selectedProductId) {
+        if (!bundles.some(bundle => bundle.productId === productId)) {
+          await createBundle({ eventId: event.id, productId: productId });
+        }
+      }
+
+      router.push('/admin/manage-event-package');
+    } catch (error) {
+      console.error('Failed to edit vendor:', error);
+    }
   };
 
   return (
@@ -360,8 +442,11 @@ function EditPackageProduct() {
                     <div className="relative">
                       <select className="w-48 text-sm md:text-base p-1 md:p-[0.67rem] pl-3 md:pl-4 border rounded bg-white text-black font-sofia">
                         <option value="sort">Select Vendors</option>
-                        <option value="price">Vendor A</option>
-                        <option value="rating">Vendor B</option>
+                        {vendors.map((vendor) => (
+                          <option key={vendor.id} value={vendor.id}>
+                            {vendor.name}
+                          </option>
+                        ))}
                       </select>
                     </div>
                   </div>
