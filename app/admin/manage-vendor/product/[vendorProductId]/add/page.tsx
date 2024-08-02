@@ -145,9 +145,9 @@ function AddVendorProduct() {
 
       const albumImages = productImages.slice(1);    
       try {
-        // const product = await createProduct(productData);
+        const product = await createProduct(productData);
         if (albumImages.length > 0) {
-          const productId = 110
+          const productId = product.id;
           for (const image of albumImages) {
             await createAlbum(productId, image);
           }

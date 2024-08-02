@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 // self-defined modules
 import { Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
-import { readAlbumsByProductId } from '@/app/utils/albumApi';
+import { readAlbumsByProductId, createAlbum, updateAlbum, deleteAlbum } from '@/app/utils/albumApi';
 import { readProductCategories } from '@/app/utils/categoryApi';
 import { readProductById, updateProduct } from '@/app/utils/productApi';
 import type { Album, Category, Product } from '@/app/utils/types';
@@ -17,7 +17,6 @@ export default function AdminEventPackage() {
     const [product, setProduct] = useState<Product | null>(null);
     const [categories, setCategories] = useState<Category[]>([]);
     const [albums, setAlbums] = useState<Album[]>([]);
-    const [refresh, setRefresh] = useState(false);
 
     useEffect(() => {
       const fetchData = async () => {
@@ -37,11 +36,7 @@ export default function AdminEventPackage() {
       };
   
       fetchData();
-    }, [pathname, refresh]);
-
-    const triggerFetch = () => {
-      setRefresh(!refresh);
-    };
+    }, [pathname]);
 
     return (
       <div className="overflow-hidden">
@@ -50,7 +45,7 @@ export default function AdminEventPackage() {
             <div className="flex flex-col md:flex-row flex-grow">
                 <CommandLeft />
                 <div className="flex-grow ml-0 md:ml-7 pt-[0.15rem]">
-                    {product && <EditVendorProduct product={product} categories={categories} albums={albums} triggerFetch={triggerFetch} />}
+                    {product && <EditVendorProduct product={product} categories={categories} albums={albums} />}
                 </div>
             </div>
         </div>
@@ -58,7 +53,7 @@ export default function AdminEventPackage() {
     );
 }
 
-function EditVendorProduct({ product, categories, albums, triggerFetch }: { product: Product, categories: Category[], albums: Album[], triggerFetch: () => void }) {
+function EditVendorProduct({ product, categories, albums }: { product: Product, categories: Category[], albums: Album[] }) {
     const router = useRouter();
     const [initialized, setInitialized] = useState(false);
     const [productId, setProductId] = useState<number | null>(null);
@@ -70,7 +65,7 @@ function EditVendorProduct({ product, categories, albums, triggerFetch }: { prod
     const [price, setPrice] = useState('');
     const [capacity, setCapacity] = useState('');
     const [description, setDescription] = useState('');
-    const [productImages, setProductImages] = useState<File[]>([]);
+    const [productImages, setProductImages] = useState<string[]>([]);
 
     useEffect(() => {
         if (product && !initialized) {
@@ -83,6 +78,19 @@ function EditVendorProduct({ product, categories, albums, triggerFetch }: { prod
             setPrice(product.price.toString());
             setCapacity(product.capacity ? product.capacity.toString() : '');
             setDescription(product.description || '');
+
+            const images = [];
+            if (product.productImage) {
+                images.push(product.productImage);
+            }
+
+            for (const album of albums) {
+                if (album.albumImage) {
+                    images.push(album.albumImage);
+                }
+            }
+
+            setProductImages(images);
             setInitialized(true);
         }
     }, [product, initialized]);
@@ -95,26 +103,26 @@ function EditVendorProduct({ product, categories, albums, triggerFetch }: { prod
       setSelectedRate(event.target.value as string);
     };
 
-    const [photos, setPhotos] = useState<File[]>([
-      new File([''], 'https://via.placeholder.com/150', { type: 'image/png' }),
-      new File([''], 'https://via.placeholder.com/150', { type: 'image/png' }),
-      new File([''], 'https://via.placeholder.com/150', { type: 'image/png' }),
-      new File([''], 'https://via.placeholder.com/150', { type: 'image/png' }),
-      new File([''], 'https://via.placeholder.com/150', { type: 'image/png' }),
-    ]);
-
-    const handlePhotoUpload: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+    const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
       const files = event.target.files ? Array.from(event.target.files) : [];
-      if (photos.length + files.length <= 5) {
-        setPhotos([...photos, ...files]);
-      } else {
-        alert("You can only upload a maximum of 5 photos.");
+      if (files.length > 0) {
+        if (productImages.length + files.length > 5) {
+          alert("You can only upload a maximum of 5 photos.");
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setProductImages([...productImages, reader.result as string]);
+        };
+
+        reader.readAsDataURL(files[0]);
       }
     };
   
-    const handleRemovePhoto = (index: number) => {
-      const newPhotos = photos.filter((_, i) => i !== index);
-      setPhotos(newPhotos);
+    const handleRemoveImage = (index: number) => {
+      const newImages = productImages.filter((_, i) => i !== index);
+      setProductImages(newImages);
     };
 
     const handleSubmit = async (event: React.FormEvent) => {
@@ -157,11 +165,25 @@ function EditVendorProduct({ product, categories, albums, triggerFetch }: { prod
         price: parseInt(price),
         capacity: capacity ? parseInt(capacity) : null,
         description: description || null,
-        productImage: photos.length > 0 ? photos[0].name : null,
+        productImage: productImages.length > 0 ? productImages[0] : null
       };
 
+      const albumImages = productImages.slice(1);
       try {
         await updateProduct(productId, productData);
+
+        for (let i = 0; i < albums.length; i++) {
+          if (i < albumImages.length) {
+            await updateAlbum(albums[i].id, albumImages[i]);
+          } else {
+            await deleteAlbum(albums[i].id);
+          }
+        }
+
+        for (let i = albums.length; i < albumImages.length; i++) {
+          await createAlbum(productId, albumImages[i]);
+        }
+
         router.push(`/admin/manage-vendor/product/${vendorId}`);
       } catch (error) {
         console.error('Failed to create product:', error);
@@ -310,20 +332,20 @@ function EditVendorProduct({ product, categories, albums, triggerFetch }: { prod
                             accept="image/*"
                             multiple
                             className="hidden"
-                            onChange={handlePhotoUpload}
+                            onChange={handleImageUpload}
                         />
                     </label>
                 </div>
                 <div className="border border-dashed border-gray-400 rounded-lg flex justify-center items-center flex-wrap min-h-[50px]">
-                    {photos.length === 0 ? (
+                    {productImages.length === 0 ? (
                         <span className="text-gray-500">Upload a photo</span>
                     ) : (
-                        photos.map((photo, index) => (
+                        productImages.map((image, index) => (
                             <div key={index} className="relative m-2">
-                                <img src={URL.createObjectURL(photo)} alt={`upload-${index}`} className="w-10 h-10 object-cover rounded" />
+                                <img src={image} alt={`upload-${index}`} className="w-10 h-10 object-cover rounded" />
                                 <button
                                     type="button"
-                                    onClick={() => handleRemovePhoto(index)}
+                                    onClick={() => handleRemoveImage(index)}
                                     className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex justify-center items-center"
                                 >
                                     &times;
