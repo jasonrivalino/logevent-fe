@@ -140,8 +140,8 @@ function ManageVendor() {
                     <div className="flex flex-col md:flex-row md:justify-between md:items-center">
                         <div className="flex md:items-center mb-1 md:mb-0">
                             <button onClick={() => toggleExpand(vendor.id)} className="text-xl font-bold">
-                                <span className="mr-2 text-sm md:text-base">{expandedVendorId === vendor.id ? 'V' : '>'}</span> 
-                                <span className="ml-2 text-sm md:text-base">{vendor.id}. {vendor.name}</span>
+                                <span className="mr-2 text-base md:text-xl">{expandedVendorId === vendor.id ? 'V' : '>'}</span> 
+                                <span className="ml-2 text-base md:text-xl">{vendor.id}. {vendor.name}</span>
                             </button>
                         </div>
                         <div className="flex flex-col md:flex-row md:items-center">

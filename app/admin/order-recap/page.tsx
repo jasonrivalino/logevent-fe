@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { ContactBox, Navbar } from '../../page';
 import { CommandLeft } from '../commandLeft';
 import { useRouter } from 'next/navigation';
+import { FaCheck, FaTimes } from 'react-icons/fa';
 
 export default function AdminOrderRecap() {
     const [data, setData] = useState([
@@ -86,42 +87,60 @@ interface TableProps {
     data: DataItem[];
 }
 
-function Table({ data }: TableProps) {    
+function Table({ data }: TableProps) {
     const [currentPage, setCurrentPage] = useState(1);
+    const [showModal, setShowModal] = useState(false);
+    const [modalContent, setModalContent] = useState("");
     const itemsPerPage = 10;
     const totalPages = Math.ceil(data.length / itemsPerPage);
 
     const startIndex = (currentPage - 1) * itemsPerPage;
     const paginatedData = data.slice(startIndex, startIndex + itemsPerPage);
 
+    const handleConfirmation = (action: string) => {
+        setModalContent(action === "approve" ? "Apakah kamu yakin ingin menyetujui pemesanan ini?" : "Apakah kamu yakin ingin menolak pemesanan ini?");
+        setShowModal(true);
+    };
+
     return (
-        <div className="bg-white rounded-xl w-full mb-4 md:mb-0 px-6 md:px-8 pt-6 pb-10 shadow-md">
+        <div className="bg-white rounded-xl w-full mb-4 md:mb-0 px-6 md:px-8 py-6 shadow-md">
             <div className="flex justify-center md:justify-start md:sticky md:top-0 bg-white z-10">
                 <h1 className="text-lg md:text-3xl font-bold mb-4 md:mb-6 text-pink-900 font-sofia">Welcome Admin LogEvent!</h1>
             </div>
             <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200 mb-6">
+                <table className="min-w-full divide-y divide-gray-200 mb-6 md:mb-3">
                     <thead className="bg-gray-50">
                         <tr>
-                            <th className="px-4 md:px-6 py-1 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                            <th className="px-4 md:px-6 py-1 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Lengkap</th>
-                            <th className="px-4 md:px-6 py-1 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nomor Telepon</th>
-                            <th className="px-4 md:px-6 py-1 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                            <th className="px-4 md:px-6 py-1 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alamat</th>
-                            <th className="px-4 md:px-6 py-1 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Mulai Acara</th>
-                            <th className="px-4 md:px-6 py-1 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Berakhir Acara</th>
+                            <th className="px-4 py-1 md:py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                            <th className="px-4 py-1 md:py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Lengkap</th>
+                            <th className="px-4 py-1 md:py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nomor Telepon</th>
+                            <th className="px-4 py-1 md:py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                            <th className="px-4 py-1 md:py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alamat</th>
+                            <th className="px-4 py-1 md:py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mulai Acara</th>
+                            <th className="px-4 py-1 md:py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Selesai Acara</th>
+                            <th className="px-4 py-1 md:py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kategori Layanan</th>
+                            <th className="px-4 py-1 md:py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Konfirmasi</th>
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {paginatedData.map((data: { id: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; name: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; phone: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; email: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; address: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; startDate: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; endDate: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; }, index: React.Key | null | undefined) => (
+                        {paginatedData.map((data, index) => (
                             <tr key={index}>
-                                <td className="px-4 md:px-6 py-[0.4rem] md:py-3 whitespace-nowrap text-sm font-medium text-gray-900">{data.id}</td>
-                                <td className="px-4 md:px-6 py-[0.4rem] md:py-3 whitespace-nowrap text-sm text-gray-900">{data.name}</td>
-                                <td className="px-4 md:px-6 py-[0.4rem] md:py-3 whitespace-nowrap text-sm text-gray-900">{data.phone}</td>
-                                <td className="px-4 md:px-6 py-[0.4rem] md:py-3 whitespace-nowrap text-sm text-gray-900">{data.email}</td>
-                                <td className="px-4 md:px-6 py-[0.4rem] md:py-3 whitespace-nowrap text-sm text-gray-900">{data.address}</td>
-                                <td className="px-4 md:px-6 py-[0.4rem] md:py-3 whitespace-nowrap text-sm text-gray-900">{data.startDate}</td>
-                                <td className="px-4 md:px-6 py-[0.4rem] md:py-3 whitespace-nowrap text-sm text-gray-900">{data.endDate}</td>
+                                <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm font-medium text-gray-900">{data.id}</td>
+                                <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900">{data.name}</td>
+                                <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900">{data.phone}</td>
+                                <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900">{data.email}</td>
+                                <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900">{data.address}</td>
+                                <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900">{data.startDate}</td>
+                                <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900">{data.endDate}</td>
+                                <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900">Wedding</td>
+                                <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900 flex justify-center items-center">
+                                    <button onClick={() => handleConfirmation("approve")} className="mr-2">
+                                        <FaCheck className="text-green-500" />
+                                    </button>
+                                    <button onClick={() => handleConfirmation("reject")}>
+                                        <FaTimes className="text-red-500" />
+                                    </button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
@@ -130,6 +149,17 @@ function Table({ data }: TableProps) {
             <div className="flex justify-center bg-white z-10">
                 <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
             </div>
+            {showModal && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 font-sofia">
+                    <div className="bg-white p-8 rounded shadow-lg z-60">
+                        <p className="text-lg text-black">{modalContent}</p>
+                        <div className="mt-4 flex justify-end">
+                            <button onClick={() => setShowModal(false)} className="px-4 py-2 bg-gray-300 rounded mr-2">Cancel</button>
+                            <button onClick={() => setShowModal(false)} className="px-4 py-2 bg-pink-500 text-white rounded">Confirm</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
@@ -154,7 +184,7 @@ function Pagination({ currentPage, totalPages, onPageChange }: { currentPage: nu
     };
 
     return (
-        <div className="flex justify-center mt-8">
+        <div className="flex justify-center mt-8 md:mt-0">
             <button
                 className="px-1 md:px-2 py-1 md:py-2 mx-1 bg-black text-gray-300 rounded-full"
                 onClick={() => onPageChange(currentPage - 1)}

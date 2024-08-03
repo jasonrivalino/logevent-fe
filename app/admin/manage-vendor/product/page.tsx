@@ -279,7 +279,7 @@ function ManageVendorProduct({ vendors }: { vendors: Vendor[] }) {
               <div className="flex justify-between items-center mt-4">
                 <button
                   className="text-xs md:text-base text-pink-500 hover:text-pink-700 font-bold"
-                  onClick={() => router.push(`/logistik-vendor/info-detail`)}
+                  onClick={() => router.push(`/admin/manage-vendor/product/detail`)}
                 >
                   Lihat Detail
                 </button>

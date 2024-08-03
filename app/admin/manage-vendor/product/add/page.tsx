@@ -33,7 +33,7 @@ export default function AdminEventPackage() {
                       </button>
                 </div>
                 <div className="hidden md:block">
-                      <CommandLeft />
+                  <CommandLeft />
                 </div>
                 <div className="flex-grow ml-0 md:ml-7 pt-[0.15rem]">
                     <AddVendorProduct />
