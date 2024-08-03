@@ -22,7 +22,7 @@ export default function AdminVendor() {
     return (
         <div>
             <Navbar />
-            <div className="min-h-screen flex flex-col px-6 md:p-10 mt-24">
+            <div className="min-h-screen flex flex-col px-6 md:px-6 md:py-8 mt-24 md:mt-16">
                 <div className="flex flex-col md:flex-row flex-grow">
                     <div className="md:hidden flex justify-center items-center">
                         <h1 className="text-3xl md:text-4xl font-bold text-pink-900 font-sofia mt-4 mb-8">Manage Paket Event</h1>
@@ -176,7 +176,7 @@ function ManagePackage() {
     };
 
     return (
-        <div className="px-6 md:px-8 pt-6 pb-10 bg-white rounded-xl font-sofia shadow-md">
+        <div className="px-10 md:px-8 pt-6 pb-10 bg-white rounded-xl font-sofia shadow-md">
             <div className="flex justify-center md:justify-start">
                 <h1 className="text-lg md:text-3xl font-bold mb-4 md:mb-6 text-pink-900 font-sofia">Welcome Admin LogEvent!</h1>
             </div>
@@ -201,7 +201,7 @@ function ManagePackage() {
                     <button className="bg-pink-500 hover:bg-pink-600 text-white p-1 md:p-2 rounded-md text-sm md:text-base" onClick={() => router.push('/admin/manage-event-package/add')}>+ Tambah Paket</button>
                 </div>
             </div>
-            <div className="flex flex-col gap-4 w-full md:w-[65rem]">
+            <div className="flex flex-col gap-4 w-full md:w-[67rem]">
                 {currentPackages.map(pkg => (
                     <div key={pkg.id} className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col md:flex-row justify-between relative">
                         <Image

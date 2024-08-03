@@ -95,7 +95,7 @@ function Table({ data }: TableProps) {
     const paginatedData = data.slice(startIndex, startIndex + itemsPerPage);
 
     return (
-        <div className="bg-white border-2 rounded-xl w-full mb-4 md:mb-0 px-6 md:px-8 pt-6 pb-10">
+        <div className="bg-white rounded-xl w-full mb-4 md:mb-0 px-6 md:px-8 pt-6 pb-10 shadow-md">
             <div className="flex justify-center md:justify-start md:sticky md:top-0 bg-white z-10">
                 <h1 className="text-lg md:text-3xl font-bold mb-4 md:mb-6 text-pink-900 font-sofia">Welcome Admin LogEvent!</h1>
             </div>
