@@ -149,10 +149,6 @@ function ManagePackage() {
         setCurrentPage(page);
     };
 
-    const toggleExpand = (id: number | null) => {
-        setExpandedPackageId(expandedPackageId === id ? null : id);
-    };
-
     const confirmDelete = (id: number) => {
         setPackageToDelete(id);
         setShowPopup(true);
@@ -171,8 +167,8 @@ function ManagePackage() {
     const indexOfFirstPackage = indexOfLastPackage - packagesPerPage;
     const currentPackages = packages.slice(indexOfFirstPackage, indexOfLastPackage);
 
-    const handleDetailClick = (id: number) => {
-        toggleExpand(id);
+    const handleDetailClick = () => {
+        router.push(`/admin/manage-event-package/detail`);
     };
 
     return (
@@ -252,7 +248,7 @@ function ManagePackage() {
                                 </div>
                                 <button
                                     className="absolute bottom-4 right-4 text-sm md:text-base bg-pink-600 hover:bg-pink-800 text-white font-semibold px-3 py-1 md:py-2 rounded"
-                                    onClick={() => handleDetailClick(pkg.id)}
+                                    onClick={() => handleDetailClick()}
                                 >
                                     Lihat Detail
                                 </button>
