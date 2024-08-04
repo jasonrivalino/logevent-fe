@@ -141,9 +141,11 @@ function ManagePackage() {
         }
     ]);
 
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filteredPackages, setFilteredPackages] = useState(packages);
     const [currentPage, setCurrentPage] = useState(1);
     const packagesPerPage = 5;
-    const totalPages = Math.ceil(packages.length / packagesPerPage);
+    const totalPages = Math.ceil(filteredPackages.length / packagesPerPage);
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
@@ -157,15 +159,28 @@ function ManagePackage() {
     const handleDeleteClick = () => {
         if (packageToDelete !== null) {
             setPackages(packages.filter(pkg => pkg.id !== packageToDelete));
+            setFilteredPackages(filteredPackages.filter(pkg => pkg.id !== packageToDelete));
             setShowPopup(false);
             setPackageToDelete(null);
         }
     };
 
+    const handleSearch = (event: { target: { value: string; }; }) => {
+        const query = event.target.value.toLowerCase();
+        setSearchQuery(query);
+        const filtered = packages.filter((pkg) =>
+            pkg.name.toLowerCase().includes(query) ||
+            pkg.type.toLowerCase().includes(query) ||
+            pkg.location.toLowerCase().includes(query)
+        );
+        setFilteredPackages(filtered);
+        setCurrentPage(1);
+    };
+
     // Get current packages
     const indexOfLastPackage = currentPage * packagesPerPage;
     const indexOfFirstPackage = indexOfLastPackage - packagesPerPage;
-    const currentPackages = packages.slice(indexOfFirstPackage, indexOfLastPackage);
+    const currentPackages = filteredPackages.slice(indexOfFirstPackage, indexOfLastPackage);
 
     const handleDetailClick = () => {
         router.push(`/admin/manage-event-package/detail`);
@@ -190,6 +205,8 @@ function ManagePackage() {
                     <input
                         type="text"
                         placeholder="Cari kebutuhan paketmu"
+                        value={searchQuery}
+                        onChange={handleSearch}
                         className="w-full text-sm md:text-base p-1 md:p-2 pl-9 md:pl-12 border rounded bg-white text-black font-sofia"
                     />
                 </div>
@@ -243,39 +260,47 @@ function ManagePackage() {
                                     <p className={`text-xs md:text-sm text-gray-700 mb-14 md:mb-0 ${expandedPackageId === pkg.id ? 'w-full' : 'w-full md:w-[35rem]'}`}>
                                         {expandedPackageId === pkg.id
                                             ? pkg.listPackage.join(', ')
-                                            : pkg.listPackage.join(', ')}
+                                            : pkg.listPackage.slice(0, 3).join(', ')}
                                     </p>
                                 </div>
                                 <button
-                                    className="absolute bottom-4 right-4 text-sm md:text-base bg-pink-600 hover:bg-pink-800 text-white font-semibold px-3 py-1 md:py-2 rounded"
-                                    onClick={() => handleDetailClick()}
+                                    className="text-pink-600 hover:underline mt-2 md:mt-0"
+                                    onClick={() => setExpandedPackageId(expandedPackageId === pkg.id ? null : pkg.id)}
                                 >
-                                    Lihat Detail
+                                    {expandedPackageId === pkg.id ? 'Tutup' : 'Lihat Detail'}
                                 </button>
                             </div>
                         </div>
                     </div>
                 ))}
             </div>
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+            {totalPages > 1 && (
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                />
+            )}
             {showPopup && (
-                <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                <div className="bg-white p-4 md:p-6 rounded-md shadow-lg text-center w-10/12 md:w-3/4 lg:w-1/2">
-                  <div className="flex items-center justify-center mb-4">
-                    <div className="bg-red-500 text-white p-2 rounded-full">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M12 8v4m0 4h.01m0-4h-.01m-.01 0h.01M11 8v4m0 4h.01m0-4h-.01m-.01 0h.01" />
-                      </svg>
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white p-6 rounded-md shadow-lg">
+                        <p className="mb-4">Are you sure you want to delete this package?</p>
+                        <div className="flex justify-end">
+                            <button
+                                className="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded mr-2"
+                                onClick={() => setShowPopup(false)}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="bg-pink-500 hover:bg-pink-600 text-white py-2 px-4 rounded"
+                                onClick={handleDeleteClick}
+                            >
+                                Delete
+                            </button>
+                        </div>
                     </div>
-                  </div>
-                  <p className="mb-4 text-black font-sofia text-sm md:text-base">Apakah Anda yakin ingin menghapus paket ini?</p>
-                  <p className="mb-6 text-black font-sofia text-sm md:text-base">Dengan menekan tombol ya maka paket yang dipilih akan terhapus dan pengunjung tidak akan dapat melihatnya lagi </p>
-                  <div className="flex justify-center space-x-4 font-sofia">
-                    <button className="bg-gray-500 text-white px-4 py-2 rounded-md text-sm md:text-base" onClick={() => setShowPopup(false)}>Tidak</button>
-                    <button className="bg-red-500 text-white px-4 py-2 rounded-md text-sm md:text-base" onClick={handleDeleteClick}>Ya</button>
-                  </div>
                 </div>
-              </div>
             )}
         </div>
     );

@@ -61,6 +61,8 @@ function AddVendor() {
         MoU: ''
     });
 
+    const [formSubmitted, setFormSubmitted] = useState(false);
+
     const handleChange = (e: { target: { name: any; value: any; }; }) => {
         const { name, value } = e.target;
         setVendorData(prevState => ({
@@ -69,10 +71,19 @@ function AddVendor() {
         }));
     };
 
+    const validateForm = () => {
+        const { name, phone, email, address, instagram, MoU } = vendorData;
+        return name && phone && email && address && instagram && MoU;
+    };
+
     const handleSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
-        // TODO: Add your form submission logic here
-        console.log(vendorData);
+        setFormSubmitted(true);
+        if (validateForm()) {
+            // Form submission logic here
+            console.log(vendorData);
+            router.push('/admin/manage-vendor');
+        }
     };
 
     return (
@@ -95,8 +106,9 @@ function AddVendor() {
                             name="name"
                             value={vendorData.name}
                             onChange={handleChange}
-                            className="shadow appearance-none border rounded w-full mb-3 md:mb-0 py-1 md:py-2 px-3 text-sm md:text-base text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            className={`shadow appearance-none border rounded w-full mb-3 md:mb-0 py-1 md:py-2 px-3 text-sm md:text-base text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${formSubmitted && !vendorData.name ? 'border-red-500' : ''}`}
                             placeholder="Nama Lengkap"
+                            required
                         />
                     </div>
                     <div className="flex-1 md:mx-2">
@@ -108,8 +120,9 @@ function AddVendor() {
                             name="phone"
                             value={vendorData.phone}
                             onChange={handleChange}
-                            className="shadow appearance-none border rounded w-full mb-3 md:mb-0 py-1 md:py-2 px-3 text-sm md:text-base text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            className={`shadow appearance-none border rounded w-full mb-3 md:mb-0 py-1 md:py-2 px-3 text-sm md:text-base text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${formSubmitted && !vendorData.phone ? 'border-red-500' : ''}`}
                             placeholder="ex: 089732579"
+                            required
                         />
                     </div>
                     <div className="flex-1 md:ml-2">
@@ -121,8 +134,9 @@ function AddVendor() {
                             name="email"
                             value={vendorData.email}
                             onChange={handleChange}
-                            className="shadow appearance-none border rounded w-full mb-3 md:mb-0 py-1 md:py-2 px-3 text-sm md:text-base text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            className={`shadow appearance-none border rounded w-full mb-3 md:mb-0 py-1 md:py-2 px-3 text-sm md:text-base text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${formSubmitted && !vendorData.email ? 'border-red-500' : ''}`}
                             placeholder="ex: LogEvent@gmail.com"
+                            required
                         />
                     </div>
                 </div>
@@ -135,8 +149,9 @@ function AddVendor() {
                         name="address"
                         value={vendorData.address}
                         onChange={handleChange}
-                        className="shadow appearance-none border rounded w-full mb-3 md:mb-0 py-1 md:py-2 px-3 text-sm md:text-base text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className={`shadow appearance-none border rounded w-full mb-3 md:mb-0 py-1 md:py-2 px-3 text-sm md:text-base text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${formSubmitted && !vendorData.address ? 'border-red-500' : ''}`}
                         placeholder="Alamat"
+                        required
                     />
                 </div>
                 <div className="flex flex-col md:flex-row flex-wrap md:mb-3">
@@ -149,8 +164,9 @@ function AddVendor() {
                             name="instagram"
                             value={vendorData.instagram}
                             onChange={handleChange}
-                            className="shadow appearance-none border rounded w-full mb-3 md:mb-0 py-1 md:py-2 px-3 text-sm md:text-base text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            className={`shadow appearance-none border rounded w-full mb-3 md:mb-0 py-1 md:py-2 px-3 text-sm md:text-base text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${formSubmitted && !vendorData.instagram ? 'border-red-500' : ''}`}
                             placeholder="Instagram"
+                            required
                         />
                     </div>
                     <div className="flex-1">
@@ -176,15 +192,15 @@ function AddVendor() {
                         name="MoU"
                         value={vendorData.MoU}
                         onChange={handleChange}
-                        className="shadow appearance-none border rounded w-full mb-3 md:mb-0 py-1 md:py-2 px-3 text-sm md:text-base text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className={`shadow appearance-none border rounded w-full mb-3 md:mb-0 py-1 md:py-2 px-3 text-sm md:text-base text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${formSubmitted && !vendorData.MoU ? 'border-red-500' : ''}`}
                         placeholder="Link MoU"
+                        required
                     />
                 </div>
                 <div className="flex items-center justify-center md:justify-end -mb-2">
                     <button
                         type="submit"
                         className="bg-pink-800 hover:bg-pink-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                        onClick={() => router.push('/admin/manage-vendor')}
                     >
                         Tambah Vendor
                     </button>

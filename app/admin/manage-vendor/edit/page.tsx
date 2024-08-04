@@ -88,7 +88,7 @@ function EditVendor() {
                 <div className="flex flex-col md:flex-row flex-wrap md:mb-3">
                     <div className="flex-1 md:mr-2">
                         <label className="block text-gray-700 text-sm font-bold mb-1 md:mb-2" htmlFor="name">
-                            Nama *
+                            Nama
                         </label>
                         <input
                             type="text"
@@ -101,7 +101,7 @@ function EditVendor() {
                     </div>
                     <div className="flex-1 md:mx-2">
                         <label className="block text-gray-700 text-sm font-bold mb-1 md:mb-2" htmlFor="phone">
-                            Nomor Telepon / Hp *
+                            Nomor Telepon / Hp
                         </label>
                         <input
                             type="text"
@@ -114,7 +114,7 @@ function EditVendor() {
                     </div>
                     <div className="flex-1 md:ml-2">
                         <label className="block text-gray-700 text-sm font-bold mb-1 md:mb-2" htmlFor="email">
-                            Email *
+                            Email
                         </label>
                         <input
                             type="email"
@@ -128,7 +128,7 @@ function EditVendor() {
                 </div>
                 <div className="md:mb-3">
                     <label className="block text-gray-700 text-sm font-bold mb-1 md:mb-2" htmlFor="address">
-                        Alamat *
+                        Alamat
                     </label>
                     <input
                         type="text"
@@ -142,7 +142,7 @@ function EditVendor() {
                 <div className="flex flex-col md:flex-row flex-wrap md:mb-3">
                     <div className="flex-1 md:mr-4">
                         <label className="block text-gray-700 text-sm font-bold mb-1 md:mb-2" htmlFor="instagram">
-                            Instagram *
+                            Instagram
                         </label>
                         <input
                             type="text"
@@ -169,7 +169,7 @@ function EditVendor() {
                 </div>
                 <div className="mb-5">
                     <label className="block text-gray-700 text-sm font-bold mb-1 md:mb-2" htmlFor="MoU">
-                        Link MoU Kerjasama *
+                        Link MoU Kerjasama
                     </label>
                     <input
                         type="text"

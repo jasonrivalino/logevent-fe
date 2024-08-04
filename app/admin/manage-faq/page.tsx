@@ -137,6 +137,10 @@ function Managequestion() {
     };
 
     const handleAddSubmit = () => {
+        if (newQuestion.question.trim() === '' || newQuestion.answer.trim() === '') {
+            alert('Both Pertanyaan and Jawaban must be filled.');
+            return;
+        }
         const newId = questions.length > 0 ? questions[questions.length - 1].id + 1 : 1;
         setQuestions([...questions, { id: newId, ...newQuestion }]);
         setShowAddPopup(false);
@@ -246,21 +250,23 @@ function Managequestion() {
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-10 font-sofia">
                     <div className="bg-white p-4 rounded-md text-black w-10/12 md:w-1/3">
                         <h2 className="text-lg md:text-xl text-center font-bold mb-4 text-cen">Tambah FAQ Baru</h2>
-                        <p className="text-sm md:text-base">Pertanyaan:</p>
+                        <p className="text-sm md:text-base">Pertanyaan*</p>
                         <textarea
                             name="question"
                             value={newQuestion.question}
                             onChange={handleAddInputChange}
                             placeholder="Enter question"
                             className="bg-gray-100 p-2 rounded-md w-full mb-2 text-sm md:text-base"
+                            required
                         />
-                        <p className="text-sm md:text-base">Jawaban:</p>
+                        <p className="text-sm md:text-base">Jawaban*</p>
                         <textarea
                             name="answer"
                             value={newQuestion.answer}
                             onChange={handleAddInputChange}
                             placeholder="Enter answer"
                             className="bg-gray-100 p-2 rounded-md w-full mb-2 text-sm md:text-base"
+                            required
                         />
                         <div className="flex justify-end mt-2 md:mt-0">
                             <button

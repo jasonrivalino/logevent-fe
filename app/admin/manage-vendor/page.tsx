@@ -77,10 +77,13 @@ function ManageVendor() {
         { id: 15, name: 'Vendor O', phone: '083456478981', email: 'vendorO@example.com', address: '1212 Hickory St, City O, Country O', joined: '2023-03-15', instagram: 'https://instagram.com/vendorO', facebook: 'https://facebook.com/vendorO', other: 'Lorem Ipsum', productCount: 23 }
     ]);
 
+    const [searchQuery, setSearchQuery] = useState('');
+    const [paginatedVendors, setPaginatedVendors] = useState(vendors);
+
     const [currentPage, setCurrentPage] = useState(1);
     const vendorsPerPage = 10;
 
-    const totalPages = Math.ceil(vendors.length / vendorsPerPage);
+    const totalPages = Math.ceil(paginatedVendors.length / vendorsPerPage);
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
@@ -98,15 +101,26 @@ function ManageVendor() {
     const handleDelete = () => {
         if (vendorToDelete !== null) {
             setVendors(vendors.filter(vendor => vendor.id !== vendorToDelete));
+            setPaginatedVendors(paginatedVendors.filter(vendor => vendor.id !== vendorToDelete));
             setShowPopup(false);
             setVendorToDelete(null);
         }
     };
 
+    const handleSearch = (event: { target: { value: string; }; }) => {
+        const query = event.target.value.toLowerCase();
+        setSearchQuery(query);
+        const filteredVendors = vendors.filter((vendor) =>
+            vendor.name.toLowerCase().includes(query)
+        );
+        setPaginatedVendors(filteredVendors);
+        setCurrentPage(1);
+    };
+
     // Get current vendors
     const indexOfLastVendor = currentPage * vendorsPerPage;
     const indexOfFirstVendor = indexOfLastVendor - vendorsPerPage;
-    const currentVendors = vendors.slice(indexOfFirstVendor, indexOfLastVendor);
+    const currentVendors = paginatedVendors.slice(indexOfFirstVendor, indexOfLastVendor);
 
     return (
         <div className="px-6 md:px-8 pt-6 pb-10 bg-white rounded-xl font-sofia shadow-md">
@@ -127,6 +141,8 @@ function ManageVendor() {
                     <input
                         type="text"
                         placeholder="Cari kebutuhan vendormu"
+                        value={searchQuery}
+                        onChange={handleSearch}
                         className="w-full text-sm md:text-base p-1 md:p-2 pl-9 md:pl-12 border rounded bg-white text-black font-sofia"
                     />
                 </div>
@@ -174,34 +190,38 @@ function ManageVendor() {
                                     <div className="w-1/2 flex-grow">{item.value}</div>
                                 </div>
                             ))}
-                            <div className="flex justify-between">
-                                <div className="flex-grow -mt-1 md-mt-0">
-                                    <a href="#" className="text-blue-600 hover:underline text-xs md:text-base">Lihat MoU Kerjasama disini</a>
+                            <div className="flex justify-between text-xs md:text-base">
+                                <div className="w-1/2 md:w-1/6">Paket Event:</div>
+                                <div className="w-1/2 flex-grow">
+                                    {vendor.packages && vendor.packages.map((pkg: string, index: number) => (
+                                        <div key={index}>{pkg}</div>
+                                    ))}
                                 </div>
-                                <div className="w-1/6"></div>
                             </div>
                         </div>
                     )}
                 </div>
             ))}
-            {vendors.length > vendorsPerPage && (
-                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-            )}
+            <div className="flex justify-center space-x-1 mt-4">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <button
+                        key={page}
+                        onClick={() => handlePageChange(page)}
+                        className={`px-3 py-1 rounded ${page === currentPage ? 'bg-pink-500 text-white' : 'bg-white border border-pink-500 text-pink-500'}`}
+                    >
+                        {page}
+                    </button>
+                ))}
+            </div>
+
             {showPopup && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                    <div className="bg-white p-4 md:p-6 rounded-md shadow-lg text-center w-10/12 md:w-3/4 lg:w-1/2">
-                        <div className="flex items-center justify-center mb-4">
-                            <div className="bg-red-500 text-white p-2 rounded-full">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M12 8v4m0 4h.01m0-4h-.01m-.01 0h.01M11 8v4m0 4h.01m0-4h-.01m-.01 0h.01" />
-                                </svg>
-                            </div>
-                        </div>
-                        <p className="mb-4 text-black text-sm md:text-base">Apakah Anda yakin ingin menghapus vendor ini?</p>
-                        <p className="mb-6 text-black text-sm md:text-base">Dengan menekan tombol YA maka vendor dan seluruh produk yang dimilikinya akan terhapus dan pengunjung tidak akan dapat melihatnya lagi</p>
-                        <div className="flex justify-center space-x-4">
-                            <button className="bg-gray-500 text-white px-4 py-2 rounded-md text-sm md:text-base" onClick={() => setShowPopup(false)}>Tidak</button>
-                            <button className="bg-red-500 text-white px-4 py-2 rounded-md text-sm md:text-base" onClick={handleDelete}>Ya</button>
+                    <div className="bg-white p-6 rounded-md shadow-md text-center">
+                        <h2 className="text-lg mb-4">Konfirmasi Hapus</h2>
+                        <p className="mb-4">Apakah Anda yakin ingin menghapus vendor ini?</p>
+                        <div className="flex justify-center">
+                            <button className="bg-red-500 text-white px-4 py-2 rounded-md mr-2" onClick={handleDelete}>Hapus</button>
+                            <button className="bg-gray-500 text-white px-4 py-2 rounded-md" onClick={() => setShowPopup(false)}>Batal</button>
                         </div>
                     </div>
                 </div>
