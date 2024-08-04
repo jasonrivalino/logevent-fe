@@ -22,3 +22,17 @@ export const readReviewsByProductId = async (id: number) => {
     throw new Error(error.response?.data?.message || 'Failed to fetch product reviews');
   }
 };
+
+export const createReview = async (reviewData: {
+  itemId: number;
+  rating: number;
+  comment: string | null;
+  tag: string | null;
+}) => {
+  try {
+    const response = await axios.post(`${API_URL}/reviews/create`, reviewData);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Failed to create review');
+  }
+};

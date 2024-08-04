@@ -22,3 +22,12 @@ export const readProductItemsByCartId = async (cartId: number) => {
     throw new Error(error.response?.data?.message || 'Failed to fetch product items');
   }
 }
+
+export const readItemById = async (id: number) => {
+  try {
+    const response = await axios.get(`${API_URL}/items/read/${id}`);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Failed to fetch item');
+  }
+};

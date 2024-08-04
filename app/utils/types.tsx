@@ -61,6 +61,15 @@ export interface Faq {
   answer: string;
 }
 
+export interface Item {
+  id: number;
+  cartId: number;
+  eventId: number | null;
+  productId: number | null;
+  duration: number | null;
+  quantity: number | null;
+}
+
 export interface Order {
   id: number;
   cartId: number;
@@ -127,7 +136,7 @@ export interface Review {
   userName: string;
   userPicture: string | null;
   rating: number;
-  comment: string;
+  comment: string | null;
   tag: string | null;
   reviewDate: string;
 }
