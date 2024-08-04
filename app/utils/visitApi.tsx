@@ -14,12 +14,9 @@ export const readPastWeekVisits = async (chosenDate: Date) => {
   }
 };
 
-export const createVisit = async (visitData: {
-  userId: number | null;
-  productId: number | null;
-}) => {
+export const createVisit = async () => {
   try {
-    const response = await axios.post(`${API_URL}/visits/create`, visitData, {
+    const response = await axios.post(`${API_URL}/visits/create`, {
       headers: {
         'Content-Type': 'application/json'
       }

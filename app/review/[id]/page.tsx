@@ -1,15 +1,24 @@
-// app/signin/page.tsx
+// app/review/[id]/page.tsx
 'use client';
 
 // dependency modules
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 // self-defined modules
-import { ContactBoxShort } from '../signin/page';
+import { ContactBoxShort } from '@/app/signin/page';
+import { readUserProfile } from '@/app/utils/authApi';
+import { readCartsByUserId } from '@/app/utils/cartApi';
+import { readItemById } from '@/app/utils/itemApi';
+import { createReview } from '@/app/utils/reviewApi';
+import { Cart } from '@/app/utils/types';
 
 export default function Review() {
   const router = useRouter();
+  const pathname = usePathname();
+  const [itemId, setItemId] = useState<number | null>(null);
   const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
+  const [tag, setTag] = useState('');
 
   // Effect to adjust placeholder size based on screen width
   useEffect(() => {
@@ -36,9 +45,75 @@ export default function Review() {
     };
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const id = pathname.split('/').pop();
+        const token = localStorage.getItem('token');
+
+        if (!id) {
+          throw new Error('Item ID not found');
+        }
+
+        if (!token) {
+          throw new Error('User token not found');
+        }
+
+        const item = await readItemById(parseInt(id));
+        const user = await readUserProfile(token);
+        const carts = await readCartsByUserId(user.id);
+
+        if (!item) {
+          throw new Error('Item not found');
+        }
+        console.log('item:', item);
+
+        if (!carts) {
+          throw new Error('Cart not found');
+        }
+        console.log('carts:', carts);
+
+        const cart = carts.find((cart: Cart) => cart.cartStatus === 'Checked Out');
+        if (!cart) {
+          throw new Error('Checkout cart not found');
+        }
+        console.log('cart:', cart);
+        
+        setItemId(item.id);
+      } catch (error) {
+        console.error('Failed to fetch item:', error);
+        router.push('/histori-pemesanan');
+      }
+    };
+  
+    fetchData();
+  }, [pathname]);
+
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle form submission logic here
+    
+    try {
+      if (!itemId) {
+        throw new Error('Item ID not found');
+      }
+
+      if (!rating) {
+        throw new Error('Rating is required');
+      }
+
+      const reviewData = {
+        itemId,
+        rating,
+        comment: comment || null,
+        tag: tag || null
+      };
+
+      await createReview(reviewData);
+      router.push('/histori-pemesanan');
+    } catch (error) {
+      console.error('Failed to create review:', error);
+    }
   };
 
   const handleBackClick = () => {
@@ -99,12 +174,14 @@ export default function Review() {
             <select
               id="topic"
               className="mt-1 block w-full pl-3 pr-10 py-2 text-base bg-white text-black border-gray-300 border-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+              value={tag}
+              onChange={e => setTag(e.target.value)}
             >
-              <option>Pilih topik</option>
-              <option>Pelayanan</option>
-              <option>Kualitas Produk</option>
-              <option>Harga</option>
-              <option>Lainnya</option>
+              <option value="">Pilih topik</option>
+              <option value="Pelayanan">Pelayanan</option>
+              <option value="Kualitas Produk">Kualitas Produk</option>
+              <option value="Harga">Harga</option>
+              <option value="Lainnya">Lainnya</option>
             </select>
           </div>
           <div className="mb-6">
@@ -114,6 +191,8 @@ export default function Review() {
               rows={4}
               className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 border-2 rounded-md p-2 text-black"
               placeholder="Ceritakan ulasanmu disini"
+              value={comment}
+              onChange={e => setComment(e.target.value)}
             ></textarea>
           </div>
           <button

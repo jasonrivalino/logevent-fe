@@ -8,12 +8,10 @@ import { useState, useEffect, useRef } from 'react';
 // self-defined modules
 import { Navbar, ContactBox } from '@/app/page';
 import { readAlbumsByProductId } from '@/app/utils/albumApi';
-import { readUserProfile } from '@/app/utils/authApi';
-import { convertDate, generateWhatsAppUrl, getStars } from '@/app/utils/helpers';
+import { convertDate, generateWhatsAppUrl, getRateText, getStars } from '@/app/utils/helpers';
 import { readReviewsByProductId } from '@/app/utils/reviewApi';
 import { readProductById } from '@/app/utils/productApi';
 import type { Album, Product, Review } from '@/app/utils/types';
-import { createVisit } from '@/app/utils/visitApi';
 
 export default function Product() {
   const descriptionRef = useRef(null);
@@ -43,22 +41,13 @@ export default function Product() {
       try {
         const id = pathname.split('/').pop();
         if (id) {
-          const token = localStorage.getItem('token');
-          
-          try {
-            if (token) {
-              const user = await readUserProfile(token);
-              await createVisit({ userId: user.id, productId: parseInt(id) });
-            } else {
-              await createVisit({ userId: null, productId: parseInt(id) });
-            }
-          } catch (visitError) {
-            console.error('Failed to create visit:', visitError);
-          }
-  
           const product = await readProductById(parseInt(id));
           const albums = await readAlbumsByProductId(parseInt(id));
           const reviews = await readReviewsByProductId(parseInt(id));
+
+          reviews.sort((a: Review, b: Review) => new Date(b.reviewDate).getTime() - new Date(a.reviewDate).getTime());
+          reviews.splice(3);
+
           setProduct(product);
           setAlbums(albums);
           setReviews(reviews);
@@ -79,7 +68,7 @@ export default function Product() {
         <Tabs scrollToSection={scrollToSection} refs={{ descriptionRef, albumRef, reviewsRef }} />
         {product && <div ref={descriptionRef}><Description product={product} /></div>}
         {product && <div ref={albumRef}><ImageGallery albums={albums} /></div>}
-        {product && <div ref={reviewsRef}><Reviews reviews={reviews} /></div>}
+        {product && <div ref={reviewsRef}><Reviews product={product} reviews={reviews} /></div>}
       </div>
       <ContactBox />
     </div>
@@ -172,9 +161,8 @@ function ProductImage({ product, albums }: { product: Product, albums: Album[] }
             <div className="w-full md:w-1/2">
               <h1 className="text-2xl md:text-3xl text-pink-900 font-bold mt-4">{product.name}</h1>
               <p className="text-sm md:text-base text-gray-600">{product.specification}</p>
-              {/* TODO: INTEGRATE CAPACITY */}
               <p className="text-sm md:text-base text-gray-600">Kapasitas: {product.capacity + ' Orang' || "Produk ini tidak memiliki kapasitas"}</p>
-              <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp {product.price} / hari</p>
+              <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp {product.price} {getRateText(product.rate)}</p>
               <div className="text-sm md:text-base flex items-center space-x-2 text-gray-600">
                 <span>{product.vendorAddress}</span>
                 <span>|</span>
@@ -224,9 +212,8 @@ function ProductImage({ product, albums }: { product: Product, albums: Album[] }
             <div className="w-full md:w-1/2">
               <h1 className="text-2xl md:text-3xl text-pink-900 font-bold mt-4">{product.name}</h1>
               <p className="text-sm md:text-base text-gray-600">{product.specification}</p>
-              {/* TODO: INTEGRATE CAPACITY */}
-              <p className="text-sm md:text-base text-gray-600">Kapasitas: 1000 Orang</p>
-              <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp {product.price} / hari</p>
+              <p className="text-sm md:text-base text-gray-600">Kapasitas: {product.capacity + ' Orang' || "Produk ini tidak memiliki kapasitas"}</p>
+              <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp {product.price} {getRateText(product.rate)}</p>
               <div className="text-sm md:text-base flex items-center space-x-2 text-gray-600">
                 <span>{product.vendorAddress}</span>
                 <span>|</span>
@@ -245,13 +232,13 @@ function ProductImage({ product, albums }: { product: Product, albums: Album[] }
                 <button className="bg-white text-pink-500 border-pink-500 border-2 rounded-lg md:px-4 py-1 md:py-2 -ml-4 md:ml-0 md:mr-0 text-sm md:text-base mt-2">+ Keranjang</button>
               </div>
               <div className="flex flex-row space-x-4 mt-3">
-                <button onClick={handleShare} className="text-pink-500 flex flex-col items-center text-sm md:text-base">
+                <button onClick={handleChat} className="text-pink-500 flex flex-col items-center text-sm md:text-base">
                   <img src="/Image/IconButton/chat_button.png" alt="Whatsapp" className="w-5 md:w-6 h-5 md:h-6" />
-                  {copied ? 'Link Copied!' : 'Share'}
+                  Chat
                 </button>
-                <button className="text-pink-500 flex flex-col items-center text-sm md:text-base">
+                <button onClick={handleShare} className="text-pink-500 flex flex-col items-center text-sm md:text-base">
                   <img src="/Image/IconButton/share_button.png" alt="Whatsapp" className="w-5 md:w-6 h-5 md:h-6" />
-                  Save
+                  {copied ? 'Link Copied!' : 'Share'}
                 </button>
               </div>
             </div>
@@ -379,7 +366,9 @@ function ImageGallery({ albums }: { albums: Album[] }) {
   );
 }
 
-function Reviews({ reviews }: { reviews: Review[] }) {
+function Reviews({ product, reviews }: { product: Product, reviews: Review[] }) {
+  const router = useRouter();
+
   if (reviews.length === 0) {
     return (
       <div className="px-8 py-14 border-b">
@@ -393,7 +382,12 @@ function Reviews({ reviews }: { reviews: Review[] }) {
     <div className="mt-4 px-8 pb-8 md:py-14">
       <div className="flex items-center justify-between space-x-4">
         <h2 className="text-2xl md:text-3xl font-bold text-pink-900 pt-10">Reviews</h2>
-        <button className="text-sm md:text-base bg-pink-600 text-white px-2 md:px-4 py-1 md:py-2 rounded-lg -mb-10 md:-mb-8">Lihat Review lengkap</button>
+        <button
+          className="text-sm md:text-base bg-pink-600 text-white px-2 md:px-4 py-1 md:py-2 rounded-lg -mb-10 md:-mb-8"
+          onClick={() => router.push(`/list-penilaian/logistik-vendor/${product.id}`)}
+        >
+          Lihat Review lengkap
+        </button>
       </div>
       <div className="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-8 mt-6">
         {reviews.map((review, index) => (

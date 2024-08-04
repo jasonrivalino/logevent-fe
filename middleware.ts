@@ -9,7 +9,13 @@ export async function middleware(request: NextRequest) {
   const token = request.cookies.get('token')?.value;
 
   if (!token) {
-    if (request.nextUrl.pathname.startsWith('/admin') || request.nextUrl.pathname.startsWith('/profile') || request.nextUrl.pathname.startsWith('/isi-pemesanan')) {
+    if (request.nextUrl.pathname.startsWith('/admin') ||
+        request.nextUrl.pathname.startsWith('/histori-pemesanan') ||
+        request.nextUrl.pathname.startsWith('/isi-pemesanan') ||
+        request.nextUrl.pathname.startsWith('/keranjang') ||
+        request.nextUrl.pathname.startsWith('/profile') ||
+        request.nextUrl.pathname.startsWith('/review')
+    ) {
       return NextResponse.redirect(new URL('/signin', request.url));
     }
   } else {
@@ -28,5 +34,12 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/profile/:path*', '/isi-pemesanan/:path*'],
+  matcher: [
+    '/admin/:path*',
+    '/histori-pemesanan/:path*',
+    '/isi-pemesanan/:path*',
+    '/keranjang/:path*',
+    '/profile/:path*',
+    '/review/:path*'
+  ],
 };
