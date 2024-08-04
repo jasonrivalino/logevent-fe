@@ -11,19 +11,16 @@ import { FaHistory } from 'react-icons/fa';
 import { ContactBox, Navbar } from '@/app/page';
 import { readUserProfile } from '@/app/utils/authApi';
 import { readCartsByUserId } from '@/app/utils/cartApi';
-import { readEventById } from '@/app/utils/eventApi';
-import { readItemsByCartId } from '@/app/utils/itemApi';
+import { readEventItemsByCartId, readProductItemsByCartId } from '@/app/utils/itemApi';
 import { readOrdersByUserId } from '@/app/utils/orderApi';
-import { readProductById } from '@/app/utils/productApi';
-import { Cart, Event, Item, Order, Product } from '@/app/utils/types';
+import { EventItem, ProductItem, Order } from '@/app/utils/types';
 
 export default function HomePage() {
   const [activeOption, setActiveOption] = useState('Logistik Vendor');
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [carts, setCarts] = useState<Cart[]>([]);
-  const [items, setItems] = useState<Item[]>([]);
-  const [events, setEvents] = useState<Event[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [eventOrders, setEventOrders] = useState<Order[]>([]);
+  const [productOrders, setProductOrders] = useState<Order[]>([]);
+  const [eventItems, setEventItems] = useState<EventItem[][]>([]);
+  const [productItems, setProductItems] = useState<ProductItem[][]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,25 +30,45 @@ export default function HomePage() {
           const user = await readUserProfile(token);
           const orders = await readOrdersByUserId(user.id);
           const carts = await readCartsByUserId(user.id);
-          const items = await Promise.all(carts.map((cart: { id: number; }) => readItemsByCartId(cart.id)));
-          const eventIds = items.filter(item => item.eventId !== null);
-          const productIds = items.filter(item => item.productId !== null);
-          const events = await Promise.all(eventIds.map((item: { eventId: number; }) => readEventById(item.eventId)));
-          const products = await Promise.all(productIds.map((item: { productId: number; }) => readProductById(item.productId)));
-          setOrders(orders);
-          setCarts(carts);
-          setItems(items);
-          setEvents(events);
-          setProducts(products);
 
-          console.log('User data fetched successfully:', user);
-          console.log('Orders data fetched successfully:', orders);
-          console.log('Carts data fetched successfully:', carts);
-          console.log('Items data fetched successfully:', items);
-          console.log('Events data fetched successfully:', events);
-          console.log('Products data fetched successfully:', products);
+          const eventOrders = orders.filter((order: { cartType: string; }) => order.cartType === 'Event');
+          eventOrders.sort((a: Order, b: Order) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime());
+
+          const productOrders = orders.filter((order: { cartType: string; }) => order.cartType === 'Product');
+          productOrders.sort((a: Order, b: Order) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime());
+
+          const eventCarts = carts.filter((cart: { type: string; }) => cart.type === 'Event');
+          eventCarts.sort((a: { id: number; }, b: { id: number; }) => {
+            const aIndex = eventOrders.findIndex((order: Order) => order.cartId === a.id);
+            const bIndex = eventOrders.findIndex((order: Order) => order.cartId === b.id);
+            return aIndex - bIndex;
+          });
+
+          const productCarts = carts.filter((cart: { type: string; }) => cart.type === 'Product');
+          productCarts.sort((a: { id: number; }, b: { id: number; }) => {
+            const aIndex = productOrders.findIndex((order: Order) => order.cartId === a.id);
+            const bIndex = productOrders.findIndex((order: Order) => order.cartId === b.id);
+            return aIndex - bIndex;
+          });
+
+          const eventItems: EventItem[][] = [];
+          for (const cart of eventCarts) {
+            const item = await readEventItemsByCartId(cart.id);
+            eventItems.push(item);
+          }
+
+          const productItems: ProductItem[][] = [];
+          for (const cart of productCarts) {
+            const item = await readProductItemsByCartId(cart.id);
+            productItems.push(item);
+          }
+
+          setEventOrders(eventOrders);
+          setProductOrders(productOrders);
+          setEventItems(eventItems);
+          setProductItems(productItems);
         } catch (error: any) {
-          console.error('Failed to fetch user data:', error.message);
+          console.error('Failed to fetch data:', error.message);
           localStorage.removeItem('token');
           Cookies.remove('token');
         }
@@ -94,9 +111,9 @@ export default function HomePage() {
             </div>
           </div>
           {activeOption === 'Paket Event' ? (
-            <HistoriPaketEvent events={events} />
+            <HistoriPaketEvent eventOrders={eventOrders} eventItems={eventItems} />
           ) : (
-            <HistoriLogistikVendor products={products} />
+            <HistoriLogistikVendor productOrders={productOrders} productItems={productItems} />
           )}
         </div>
       </div>
@@ -105,77 +122,77 @@ export default function HomePage() {
   );
 }
 
-const HistoriPaketEvent = ({ events }: { events: Event[] }) => {
-  events.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-  const [expandedProducts, setExpandedProducts] = useState<{ [key: number]: boolean }>({});
+const HistoriPaketEvent = ({ eventOrders, eventItems }: { eventOrders: Order[]; eventItems: EventItem[][] }) => {
+  const [expandedEventId, setExpandedEventId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 5;
 
+  const toggleExpand = (id: number | null) => {
+    setExpandedEventId(expandedEventId === id ? null : id);
+  };
+
   const handleDetailClick = (id: number) => {
-    setExpandedProducts((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
+    toggleExpand(id);
   };
 
   const handlePageChange = (page: SetStateAction<number>) => {
     setCurrentPage(page);
   };
 
-  const paginatedEvents = events.slice((currentPage - 1) * eventsPerPage, currentPage * eventsPerPage);
-  const totalPages = Math.ceil(events.length / eventsPerPage);
+  const paginatedOrders = eventOrders.slice((currentPage - 1) * eventsPerPage, currentPage * eventsPerPage);
+  const totalPages = Math.ceil(eventOrders.length / eventsPerPage);
 
   return (
     <div className="flex flex-col gap-4">
-      {paginatedEvents.map((event) => (
-        <div
-          key={event.id}
-          className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col md:flex-row justify-between relative"
-        >
-          <Image
-            src={event.eventImage || '/Image/planetarium.jpg'}
-            alt={`${event.name} Image`}
-            width={400}
-            height={200}
-            className="object-cover w-80 h-28 md:h-auto"
-          />
-          <div className="p-3 md:p-4 md:ml-3 flex-grow font-sofia">
-            <h3 className="text-base md:text-xl text-pink-900 font-bold">{event.name}</h3>
-            <p className="text-xs md:text-sm text-gray-700">{event.categoryName}</p>
-            <p className="text-xs md:text-sm text-gray-700 flex flex-row">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-3 md:h-4 w-3 md:w-4 text-yellow-500 mr-[0.3rem] mt-[0.075rem] md:mt-[0.05rem]"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.14 3.51a1 1 0 00.95.69h3.7c.967 0 1.372 1.24.588 1.81l-2.992 2.179a1 1 0 00-.364 1.118l1.14 3.51c.3.921-.755 1.688-1.54 1.118l-2.992-2.178a1 1 0 00-1.175 0l-2.992 2.178c-.785.57-1.84-.197-1.54-1.118l1.14-3.51a1 1 0 00-.364-1.118L2.93 8.937c-.784-.57-.38-1.81.588-1.81h3.7a1 1 0 00.95-.69l1.14-3.51z" />
-              </svg>
-              {event.rate}
-            </p>
-            <p className="line-clamp-3 text-xs md:text-sm text-gray-700 font-sofia">{event.description}</p>
-            <div className="mt-1 mb-2 flex justify-between items-center">
-              <span className="text-base md:text-lg font-bold text-pink-600">Rp{event.price.toLocaleString('id-ID')}</span>
-            </div>
-            <div className="mt-2 flex justify-between items-center">
-              <div className="flex flex-col">
-                <p className="text-xs md:text-sm text-gray-700 font-sofia">Rincian Paket:</p>
-                <p className="text-xs md:text-sm text-gray-700 w-full md:w-[36rem] mb-14 md:mb-0">
-                  {event.bundles}
-                </p>
-              </div>
-              <div className="flex flex-col absolute bottom-4 right-4">
-                <p className="text-xs md:text-sm text-gray-700 font-sofia mb-2">Ulas layanan kami yuk !</p>
-                <button
-                  className="text-sm md:text-sm bg-pink-600 hover:bg-pink-800 text-white font-semibold px-3 md:py-2 rounded"
-                  onClick={() => handleDetailClick(event.id)}
-                >
-                  Review
-                </button>
-              </div>
-            </div>
-            <p className="text-xs md:text-sm text-pink-700 font-sofia mt-4">Tanggal Pesan: {event.date}</p>
+      {paginatedOrders.map((order, index) => (
+        <div key={order.id} className="bg-white shadow-lg rounded-xl p-4 md:p-8">
+          <h2 className="text-lg md:text-xl font-bold text-pink-900">{order.orderDate}</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {eventItems[index]
+              .filter((item) => item.cartId === order.cartId)
+              .map((item) => (
+                <div key={item.id} className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col justify-between">
+                  <Image
+                    src={item.eventImage || '/Image/planetarium.jpg'}
+                    alt={`${item.eventName} Image`}
+                    width={400}
+                    height={200}
+                    className="object-cover"
+                  />
+                  <div className="p-3 md:p-3 font-sofia flex flex-col justify-between flex-grow">
+                    <div>
+                      <h3 className="text-sm md:text-base text-pink-900 font-bold mb-2">{item.eventName}</h3>
+                      <p className="text-xs md:text-sm text-gray-500 flex flex-row">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-3 md:h-4 w-3 md:w-4 text-yellow-500 mr-[0.3rem] mt-[0.075rem] md:mt-[0.05rem]"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.14 3.51a1 1 0 00.95.69h3.7c.967 0 1.372 1.24.588 1.81l-2.992 2.179a1 1 0 00-.364 1.118l1.14 3.51c.3.921-.755 1.688-1.54 1.118l-2.992-2.178a1 1 0 00-1.175 0l-2.992 2.178c-.785.57-1.84-.197-1.54-1.118l1.14-3.51a1 1 0 00-.364-1.118L2.93 8.937c-.784-.57-.38-1.81.588-1.81h3.7a1 1 0 00.95-.69l1.14-3.51z" />
+                        </svg>
+                        {item.eventRating && item.eventRating.toFixed(2) !== "0.00" ? item.eventRating.toFixed(2) : "N/A"}
+                      </p>
+                      <p className="text-xs md:text-sm text-gray-500">{item.eventDescription}</p>
+                      <p className="text-xs md:text-sm text-pink-500 font-bold mt-2">Rp {item.eventPrice.toLocaleString('id-ID')}</p>
+                    </div>
+                    <div className="flex justify-center items-center mt-2">
+                      <div className="flex flex-col">
+                        <p className="text-xs md:text-sm text-gray-700 font-sofia">Rincian Paket:</p>
+                        <p className={`text-xs md:text-sm text-gray-700 mb-14 md:mb-0 ${expandedEventId === item.id ? 'w-full' : 'w-[35rem]'}`}>
+                          {item.eventBundles}
+                        </p>
+                      </div>
+                      <button
+                        className="bg-pink-600 hover:bg-pink-800 px-2 py-1 rounded-lg text-white self-start text-xs md:text-base font-bold mt-4"
+                        onClick={() => handleDetailClick(item.id)}
+                      >
+                        Review
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
           </div>
         </div>
       ))}
@@ -183,7 +200,61 @@ const HistoriPaketEvent = ({ events }: { events: Event[] }) => {
     </div>
   );
 };
-  
+
+function HistoriLogistikVendor({ productOrders, productItems }: { productOrders: Order[]; productItems: ProductItem[][] }) {
+  const router = useRouter();
+  const itemsPerPage = 5;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const paginatedOrders = productOrders.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const totalPages = Math.ceil(productOrders.length / itemsPerPage);
+
+  const handlePageChange = (page: SetStateAction<number>) => {
+    setCurrentPage(page);
+  };
+
+  return (
+    <div className="relative py-4">
+      {paginatedOrders.map((order, index) => (
+        <div key={order.id} className="bg-white shadow-lg rounded-xl p-4 md:p-8 mb-4">
+          <h2 className="text-lg md:text-xl font-bold text-pink-900">{new Date(order.orderDate).toLocaleDateString()}</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {productItems[index]
+              .filter((item) => item.cartId === order.cartId)
+              .map((item) => (
+                <div key={item.id} className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col justify-between">
+                  <Image
+                    src={item.productImage || '/Image/planetarium.jpg'}
+                    alt={`${item.productName} Image`}
+                    width={400}
+                    height={200}
+                    className="object-cover"
+                  />
+                  <div className="p-3 md:p-3 font-sofia flex flex-col justify-between flex-grow">
+                    <div>
+                      <h3 className="text-sm md:text-base text-pink-900 font-bold mb-2">{item.productName}</h3>
+                      <p className="text-xs md:text-sm text-gray-500">{item.productSpecification}</p>
+                      <p className="text-xs md:text-sm text-pink-500 font-bold mt-2">Rp {item.productPrice.toLocaleString('id-ID')}</p>
+                    </div>
+                    <div className="flex justify-center items-center mt-2">
+                      <button
+                        className="bg-pink-600 hover:bg-pink-800 px-2 py-1 rounded-lg text-white self-start text-xs md:text-base font-bold mt-4"
+                        onClick={() => router.push('/')}
+                      >
+                        Review
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+          </div>
+        </div>
+      ))}
+      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+    </div>
+  );
+}
+
 function Pagination({ currentPage, totalPages, onPageChange }: any) {
   const getPages = () => {
     const pages = [];
@@ -238,83 +309,6 @@ function Pagination({ currentPage, totalPages, onPageChange }: any) {
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
         </svg>
       </button>
-    </div>
-  );
-}
-
-const itemsPerPage = 5;
-
-function HistoriLogistikVendor({ products }: { products: Product[] }) {
-  const router = useRouter();
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const uniqueDates = [...new Set(products.map(product => product.date))].sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
-  const totalPages = Math.ceil(uniqueDates.length / itemsPerPage);
-
-  const handlePageChange = (page: SetStateAction<number>) => {
-    setCurrentPage(page);
-  };
-
-  const startIdx = (currentPage - 1) * itemsPerPage;
-  const endIdx = currentPage * itemsPerPage;
-  const currentDates = uniqueDates.slice(startIdx, endIdx);
-
-  const groupedProducts = currentDates.reduce((groups, date) => {
-    groups[date] = products.filter(product => product.date === date);
-    return groups;
-  }, {});
-
-  return (
-    <div className="relative py-4">
-      {Object.entries(groupedProducts).map(([date, products]) => (
-        <div key={date} className="mb-8 font-sofia">
-          <h2 className="text-lg md:text-xl font-bold mb-4 text-pink-800">{date}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-            {products.map((product: Product) => (
-              <div key={product.id} className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col justify-between">
-                <Image
-                  src={product.productImage || '/Image/planetarium.jpg'}
-                  alt={`${product.name} Image`}
-                  width={400}
-                  height={200}
-                  className="object-cover"
-                />
-                <div className="p-3 md:p-3 font-sofia flex flex-col justify-between flex-grow">
-                  <div>
-                    <h3 className="text-sm md:text-base text-pink-900 font-bold mb-2">{product.name}</h3>
-                    <p className="text-xs md:text-sm text-gray-700">{product.specification}</p>
-                    <p className="text-xs md:text-sm text-gray-500 flex flex-row">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className= "h-3 md:h-4 w-3 md:w-4 text-yellow-500 mr-[0.3rem] mt-[0.075rem] md:mt-[0.05rem]"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.14 3.51a1 1 0 00.95.69h3.7c.967 0 1.372 1.24.588 1.81l-2.992 2.179a1 1 0 00-.364 1.118l1.14 3.51c.3.921-.755 1.688-1.54 1.118l-2.992-2.178a1 1 0 00-1.175 0l-2.992 2.178c-.785.57-1.84-.197-1.54-1.118l1.14-3.51a1 1 0 00-.364-1.118L2.93 8.937c-.784-.57-.38-1.81.588-1.81h3.7a1 1 0 00.95-.69l1.14-3.51z" />
-                      </svg> {product.rating && product.rating.toFixed(2) !== "0.00" ? product.rating.toFixed(2) : "N/A"}
-                    </p>
-                    <p className="text-xs md:text-sm text-gray-500">{product.vendorAddress}</p>
-                    <p className="text-xs md:text-sm text-pink-500 font-bold mt-2">Rp {product.price.toLocaleString('id-ID')}</p>
-                  </div>
-                  <div className="flex justify-center items-center mt-2">
-                    <button className="bg-pink-600 hover:bg-pink-800 px-2 py-1 rounded-lg text-white self-start text-xs md:text-base font-bold mt-4"
-                      onClick={() => router.push(`/logistik-vendor/info-detail`)}
-                    >
-                      Review
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      ))}
-
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />  
     </div>
   );
 }

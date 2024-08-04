@@ -42,21 +42,23 @@ export interface Event {
   reviewCount: number;
 }
 
+export interface EventItem {
+  id: number;
+  cartId: number;
+  eventId: number;
+  eventName: string;
+  eventPrice: number;
+  eventDescription: string | null;
+  eventImage: string | null;
+  eventBundles: string | null;
+  eventRating: number;
+  isReviewed: boolean;
+};
+
 export interface Faq {
   id: number;
   question: string;
   answer: string;
-}
-
-export interface Item {
-  id: number;
-  eventId: number | null;
-  productId: number | null;
-  cartId: number;
-  duration: number | null;
-  quantity: number | null;
-  orderRange: number;
-  subtotal: number;
 }
 
 export interface Order {
@@ -98,6 +100,22 @@ export interface Product {
   rating: number;
   reviewCount: number;
 }
+
+export interface ProductItem {
+  id: number;
+  cartId: number;
+  productId: number;
+  productName: string;
+  productSpecification: string;
+  productPrice: number;
+  productImage: string | null;
+  productRating: number;
+  vendorId: number;
+  vendorAddress: string;
+  duration: number | null;
+  quantity: number | null;
+  isReviewed: boolean;
+};
 
 export interface Review {
   id: number;
