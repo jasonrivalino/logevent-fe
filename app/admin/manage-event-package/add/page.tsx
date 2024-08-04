@@ -193,7 +193,6 @@ export default function AdminEventPackage() {
 function AddPackageProduct() {
     const router = useRouter();
     const [selectedCategory, setSelectedCategory] = useState('');
-    const [selectedPriceUnit, setSelectedPriceUnit] = useState('');
     const [photos, setPhotos] = useState<File[]>([]);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');

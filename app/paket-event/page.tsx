@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -52,7 +52,6 @@ export default function PaketEvent() {
         </Head>
         <Navbar />
         <div className="flex flex-col md:flex-row py-14 md:py-20">
-          <Filter handleFilter={handleFilter} handleReset={handleReset} setMinPrice={setMinPrice} setMaxPrice={setMaxPrice} />
           <VendorList vendors={filteredVendors} />
         </div>
       </div>
@@ -61,13 +60,13 @@ export default function PaketEvent() {
   );
 }
 
-export function Filter({ handleFilter, handleReset, setMinPrice, setMaxPrice }: any) {
+function Filter({ handleFilter, handleReset, setCategory, setLocation, setPriceRange }: any) {
   return (
-    <div className="w-full md:w-1/4 md:pl-4 md:pr-8 py-4 -mb-2 md:mb-0">
+    <div className="w-full md:w-96 md:pl-4 md:pr-8 py-4 -mb-2 md:mb-0">
       <h2 className="text-xl md:text-2xl font-semibold font-sofia text-black mb-4">Filter by</h2>
       <div className="mb-2 md:mb-4">
         <label htmlFor="category" className="block mb-1 md:mb-2 text-gray-700 font-sofia text-sm md:text-base">Kategori Event</label>
-        <select id="category" className="w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia">
+        <select id="category" className="w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia" onChange={(e) => setCategory(e.target.value)}>
           <option value="" className="font-sofia">Pilih kategori event</option>
           <option value="Multifunctional Hall" className="font-sofia">Multifunctional Hall</option>
         </select>
@@ -75,7 +74,7 @@ export function Filter({ handleFilter, handleReset, setMinPrice, setMaxPrice }: 
       <div className="flex md:flex-col flex-row">
         <div className="mb-2 md:mb-4 mr-4 md:mr-0">
           <label htmlFor="location" className="block mb-1 md:mb-2 text-gray-700 font-sofia text-sm md:text-base">Lokasi Event</label>
-          <select id="location" className="w-32 md:w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia">
+          <select id="location" className="w-32 md:w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia" onChange={(e) => setLocation(e.target.value)}>
             <option value="" className="font-sofia">Pilih lokasi event</option>
             <option value="Jakarta" className="font-sofia">Jakarta</option>
             <option value="Jawa Barat" className="font-sofia">Jawa Barat</option>
@@ -84,13 +83,13 @@ export function Filter({ handleFilter, handleReset, setMinPrice, setMaxPrice }: 
           </select>
         </div>
         <div className="mb-4 md:mb-8">
-          <label htmlFor="location" className="block mb-1 md:mb-2 text-gray-700 font-sofia text-sm md:text-base">Harga</label>
-          <select id="location" className="w-[11.5rem] md:w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia">
+          <label htmlFor="priceRange" className="block mb-1 md:mb-2 text-gray-700 font-sofia text-sm md:text-base">Harga</label>
+          <select id="priceRange" className="w-[11.5rem] md:w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia" onChange={(e) => setPriceRange(e.target.value)}>
             <option value="" className="font-sofia">Pilih range harga</option>
-            <option value="Jakarta" className="font-sofia">{`> 25.000.000`}</option>
-            <option value="Jawa Barat" className="font-sofia">15.000.000 - 25.000.000</option>
-            <option value="Jawa Tengah" className="font-sofia">5.000.000 - 15.000.000</option>
-            <option value="Jawa Timur" className="font-sofia">{`< 5.000.000`}</option>
+            <option value="> 25.000.000" className="font-sofia">{`> 25.000.000`}</option>
+            <option value="15.000.000 - 25.000.000" className="font-sofia">15.000.000 - 25.000.000</option>
+            <option value="5.000.000 - 15.000.000" className="font-sofia">5.000.000 - 15.000.000</option>
+            <option value="< 5.000.000" className="font-sofia">{`< 5.000.000`}</option>
           </select>
         </div>
       </div>
@@ -112,102 +111,187 @@ export function Filter({ handleFilter, handleReset, setMinPrice, setMaxPrice }: 
   );
 }
 
-export function VendorList({ vendors }: VendorListProps) {
+function VendorList({ vendors }: { vendors: Vendor[] }) {
   const router = useRouter();
   const itemsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
   const [expandedPackages, setExpandedPackages] = useState<{ [key: number]: boolean }>({});
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredVendors, setFilteredVendors] = useState<Vendor[]>(vendors);
 
-  const handlePageChange = (page: number) => {
+  const [tempCategory, setTempCategory] = useState('');
+  const [tempLocation, setTempLocation] = useState('');
+  const [tempPriceRange, setTempPriceRange] = useState('');
+
+  useEffect(() => {
+    let result = vendors;
+    
+    if (searchQuery) {
+      result = result.filter((vendor) =>
+        vendor.name.toLowerCase().includes(searchQuery) ||
+        vendor.type.toLowerCase().includes(searchQuery) ||
+        vendor.location.toLowerCase().includes(searchQuery)
+      );
+    }
+  
+    setFilteredVendors(result);
+  }, [searchQuery, vendors]);
+
+  const handlePageChange = (page: SetStateAction<number>) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleDetailClick = (id: number) => {
+  const handleSearch = (event: { target: { value: string; }; }) => {
+    const query = event.target.value.toLowerCase();
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
+  const handleFilter = () => {
+    let result = vendors;
+    
+    if (searchQuery) {
+      result = result.filter((vendor) =>
+        vendor.name.toLowerCase().includes(searchQuery) ||
+        vendor.type.toLowerCase().includes(searchQuery) ||
+        vendor.location.toLowerCase().includes(searchQuery)
+      );
+    }
+    
+    if (tempCategory) {
+      result = result.filter(vendor => vendor.type === tempCategory);
+    }
+  
+    if (tempLocation) {
+      result = result.filter(vendor => vendor.location === tempLocation);
+    }
+  
+    if (tempPriceRange) {
+      result = result.filter(vendor => {
+        switch (tempPriceRange) {
+          case '> 25.000.000':
+            return vendor.price > 25000000;
+          case '15.000.000 - 25.000.000':
+            return vendor.price >= 15000000 && vendor.price <= 25000000;
+          case '5.000.000 - 15.000.000':
+            return vendor.price >= 5000000 && vendor.price <= 15000000;
+          case '< 5.000.000':
+            return vendor.price < 5000000;
+          default:
+            return true;
+        }
+      });
+    }
+  
+    setFilteredVendors(result);
+    setCurrentPage(1);
+  };
+
+  const handleReset = () => {
+    setTempCategory('');
+    setTempLocation('');
+    setTempPriceRange('');
+    setFilteredVendors(vendors);
+    setCurrentPage(1);
+  };
+
+  const handleDetailClick = () => {
     router.push(`/paket-event/info-detail`);
   };
 
-  const paginatedVendors = vendors.slice(
+  const paginatedItems = filteredVendors.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  const totalPages = Math.ceil(vendors.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredVendors.length / itemsPerPage);
 
   return (
-    <div className="w-full md:w-3/4 p-5 md:p-6 mr-4 bg-white rounded-2xl">
-      {/* Breadcrumb Navigation */}
-      <div className="hidden md:flex items-center mb-4">
-        <a onClick={() => router.push('/')} className="text-pink-600 font-semibold font-sofia cursor-pointer">Home</a>
-        <span className="mx-2 text-gray-600 font-sofia font-semibold"> {'>'} </span>
-        <span className="text-gray-600 font-sofia font-semibold">Paket Event</span>
-      </div>
-
-      {/* Search Bar */}
-      <div className="mb-4">
-        <div className="relative">
-          <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-            <svg className="w-3 md:w-4 h-3 md:h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M12.9 14.32a8 8 0 111.414-1.414l4.287 4.287a1 1 0 01-1.414 1.414l-4.287-4.287zM8 14a6 6 0 100-12 6 6 0 000 12z" clipRule="evenodd" />
-            </svg>
-          </span>
-          <input
-            type="text"
-            placeholder="Cari kebutuhan vendormu"
-            className="w-full text-sm md:text-base p-1 md:p-2 pl-9 md:pl-12 border rounded bg-white text-black font-sofia"
-          />
+    <div className="flex flex-col md:flex-row">
+      <Filter
+        handleFilter={handleFilter}
+        handleReset={handleReset}
+        setCategory={setTempCategory}
+        setLocation={setTempLocation}
+        setPriceRange={setTempPriceRange}
+      />
+      <div className="w-full md:w-[69rem] p-5 md:p-6 mr-4 bg-white rounded-2xl">
+        {/* Breadcrumb Navigation */}
+        <div className="hidden md:flex items-center mb-4">
+          <a onClick={() => router.push('/')} className="text-pink-600 font-semibold font-sofia cursor-pointer">Home</a>
+          <span className="mx-2 text-gray-600 font-sofia font-semibold"> {'>'} </span>
+          <span className="text-gray-600 font-sofia font-semibold">Paket Event</span>
         </div>
-      </div>
-      <h2 className="text-xl md:text-2xl font-semibold mb-4 text-pink-900 font-sofia">Semua Paket</h2>
-      <div className="flex flex-col gap-4">
-        {paginatedVendors.map((vendor) => (
-          <div key={vendor.id} className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col md:flex-row justify-between relative">
-            <Image
-              src={vendor.image}
-              alt={`${vendor.name} Image`}
-              width={400}
-              height={200}
-              className="object-cover w-80 h-28 md:h-auto"
+
+        {/* Search Bar */}
+        <div className="mb-4">
+          <div className="relative">
+            <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+              <svg className="w-3 md:w-4 h-3 md:h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M12.9 14.32a8 8 0 111.414-1.414l4.287 4.287a1 1 0 01-1.414 1.414l-4.287-4.287zM8 14a6 6 0 100-12 6 6 0 000 12z" clipRule="evenodd" />
+              </svg>
+            </span>
+            <input
+              type="text"
+              placeholder="Cari kebutuhan vendormu"
+              className="w-full text-sm md:text-base p-1 md:p-2 pl-9 md:pl-12 border rounded bg-white text-black font-sofia"
+              value={searchQuery}
+              onChange={handleSearch}
             />
-            <div className="p-3 md:p-4 md:ml-3 flex-grow font-sofia">
-              <h3 className="text-base md:text-xl text-pink-900 font-bold">{vendor.name}</h3>
-              {/* <p className="text-xs md:text-sm text-gray-700">{vendor.type}</p> */}
-              <p className="text-xs md:text-sm text-gray-700 flex flex-row">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-3 md:h-4 w-3 md:w-4 text-yellow-500 mr-[0.3rem] mt-[0.075rem] md:mt-[0.05rem]"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.14 3.51a1 1 0 00.95.69h3.7c.967 0 1.372 1.24.588 1.81l-2.992 2.179a1 1 0 00-.364 1.118l1.14 3.51c.3.921-.755 1.688-1.54 1.118l-2.992-2.178a1 1 0 00-1.175 0l-2.992 2.178c-.785.57-1.84-.197-1.54-1.118l1.14-3.51a1 1 0 00-.364-1.118L2.93 8.937c-.784-.57-.38-1.81.588-1.81h3.7a1 1 0 00.95-.69l1.14-3.51z" />
-                </svg> {vendor.rate}
-              </p>
-              <p className="text-xs md:text-sm text-gray-700 mb-3">{vendor.location}</p>
-              <p className="line-clamp-3 text-xs md:text-sm text-gray-700 font-sofia">{vendor.description}</p>
-              <div className="mt-1 mb-2 flex justify-between items-center">
-                <span className="text-base md:text-lg font-bold text-pink-600">Rp{vendor.price.toLocaleString('id-ID')}</span>
-              </div>
-              <div className="mt-2 flex justify-between items-center">
-                <div className="flex flex-col">
-                  <p className="text-xs md:text-sm text-gray-700 font-sofia">Rincian Paket:</p>
-                  <p className="text-xs md:text-sm text-gray-700 w-full md:w-[36rem] mb-14 md:mb-0">
-                    {expandedPackages[vendor.id]
-                      ? vendor.listPackage.join(', ')
-                      : vendor.listPackage.join(', ')}
-                  </p>
+          </div>
+        </div>
+        <h2 className="text-xl md:text-2xl font-semibold mb-4 text-pink-900 font-sofia">Semua Paket</h2>
+        <div className="flex flex-col gap-4">
+          {paginatedItems.map((vendor) => (
+            <div key={vendor.id} className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col md:flex-row justify-between relative">
+              <Image
+                src={vendor.image}
+                alt={`${vendor.name} Image`}
+                width={400}
+                height={200}
+                className="object-cover w-80 h-28 md:h-auto"
+              />
+              <div className="p-3 md:p-4 md:ml-3 flex-grow font-sofia">
+                <h3 className="text-base md:text-xl text-pink-900 font-bold">{vendor.name}</h3>
+                <p className="text-xs md:text-sm text-gray-700">{vendor.type}</p>
+                <p className="text-xs md:text-sm text-gray-700 flex flex-row">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-3 md:h-4 w-3 md:w-4 text-yellow-500 mr-[0.3rem] mt-[0.075rem] md:mt-[0.05rem]"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.14 3.51a1 1 0 00.95.69h3.7c.967 0 1.372 1.24.588 1.81l-2.992 2.179a1 1 0 00-.364 1.118l1.14 3.51c.3.921-.755 1.688-1.54 1.118l-2.992-2.178a1 1 0 00-1.175 0l-2.992 2.178c-.785.57-1.84-.197-1.54-1.118l1.14-3.51a1 1 0 00-.364-1.118L2.93 8.937c-.784-.57-.38-1.81.588-1.81h3.7a1 1 0 00.95-.69l1.14-3.51z" />
+                  </svg> {vendor.rate}
+                </p>
+                <p className="text-xs md:text-sm text-gray-700 mb-3">{vendor.location}</p>
+                <p className="line-clamp-3 text-xs md:text-sm text-gray-700 font-sofia">{vendor.description}</p>
+                <div className="mt-1 mb-2 flex justify-between items-center">
+                  <span className="text-base md:text-lg font-bold text-pink-600">Rp{vendor.price.toLocaleString('id-ID')}</span>
                 </div>
-                <button
-                  className="absolute bottom-4 right-4 text-sm md:text-base bg-pink-600 hover:bg-pink-800 text-white font-semibold px-3 py-1 md:py-2 rounded"
-                  onClick={() => handleDetailClick(vendor.id)}
-                >
-                  Lihat Detail
-                </button>
+                <div className="mt-2 flex justify-between items-center">
+                  <div className="flex flex-col">
+                    <p className="text-xs md:text-sm text-gray-700 font-sofia">Rincian Paket:</p>
+                    <p className="text-xs md:text-sm text-gray-700 w-full md:w-[36rem] mb-14 md:mb-0">
+                      {expandedPackages[vendor.id]
+                        ? vendor.listPackage.join(', ')
+                        : vendor.listPackage.join(', ')}
+                    </p>
+                  </div>
+                  <button
+                    className="absolute bottom-4 right-4 text-sm md:text-base bg-pink-600 hover:bg-pink-800 text-white font-semibold px-3 py-1 md:py-2 rounded"
+                    onClick={() => handleDetailClick()}
+                  >
+                    Lihat Detail
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
+        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
       </div>
-      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
     </div>
   );
 }
