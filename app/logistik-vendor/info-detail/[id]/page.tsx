@@ -8,7 +8,7 @@ import { useState, useEffect, useRef } from 'react';
 // self-defined modules
 import { Navbar, ContactBox } from '@/app/page';
 import { readAlbumsByProductId } from '@/app/utils/albumApi';
-import { convertDate, generateWhatsAppUrl, getStars } from '@/app/utils/helpers';
+import { convertDate, generateWhatsAppUrl, getRateText, getStars } from '@/app/utils/helpers';
 import { readReviewsByProductId } from '@/app/utils/reviewApi';
 import { readProductById } from '@/app/utils/productApi';
 import type { Album, Product, Review } from '@/app/utils/types';
@@ -157,9 +157,8 @@ function ProductImage({ product, albums }: { product: Product, albums: Album[] }
             <div className="w-full md:w-1/2">
               <h1 className="text-2xl md:text-3xl text-pink-900 font-bold mt-4">{product.name}</h1>
               <p className="text-sm md:text-base text-gray-600">{product.specification}</p>
-              {/* TODO: INTEGRATE CAPACITY */}
               <p className="text-sm md:text-base text-gray-600">Kapasitas: {product.capacity + ' Orang' || "Produk ini tidak memiliki kapasitas"}</p>
-              <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp {product.price} / hari</p>
+              <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp {product.price} {getRateText(product.rate)}</p>
               <div className="text-sm md:text-base flex items-center space-x-2 text-gray-600">
                 <span>{product.vendorAddress}</span>
                 <span>|</span>
@@ -209,9 +208,8 @@ function ProductImage({ product, albums }: { product: Product, albums: Album[] }
             <div className="w-full md:w-1/2">
               <h1 className="text-2xl md:text-3xl text-pink-900 font-bold mt-4">{product.name}</h1>
               <p className="text-sm md:text-base text-gray-600">{product.specification}</p>
-              {/* TODO: INTEGRATE CAPACITY */}
-              <p className="text-sm md:text-base text-gray-600">Kapasitas: 1000 Orang</p>
-              <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp {product.price} / hari</p>
+              <p className="text-sm md:text-base text-gray-600">Kapasitas: {product.capacity + ' Orang' || "Produk ini tidak memiliki kapasitas"}</p>
+              <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp {product.price} {getRateText(product.rate)}</p>
               <div className="text-sm md:text-base flex items-center space-x-2 text-gray-600">
                 <span>{product.vendorAddress}</span>
                 <span>|</span>
@@ -230,13 +228,13 @@ function ProductImage({ product, albums }: { product: Product, albums: Album[] }
                 <button className="bg-white text-pink-500 border-pink-500 border-2 rounded-lg md:px-4 py-1 md:py-2 -ml-4 md:ml-0 md:mr-0 text-sm md:text-base mt-2">+ Keranjang</button>
               </div>
               <div className="flex flex-row space-x-4 mt-3">
-                <button onClick={handleShare} className="text-pink-500 flex flex-col items-center text-sm md:text-base">
+                <button onClick={handleChat} className="text-pink-500 flex flex-col items-center text-sm md:text-base">
                   <img src="/Image/IconButton/chat_button.png" alt="Whatsapp" className="w-5 md:w-6 h-5 md:h-6" />
-                  {copied ? 'Link Copied!' : 'Share'}
+                  Chat
                 </button>
-                <button className="text-pink-500 flex flex-col items-center text-sm md:text-base">
+                <button onClick={handleShare} className="text-pink-500 flex flex-col items-center text-sm md:text-base">
                   <img src="/Image/IconButton/share_button.png" alt="Whatsapp" className="w-5 md:w-6 h-5 md:h-6" />
-                  Save
+                  {copied ? 'Link Copied!' : 'Share'}
                 </button>
               </div>
             </div>

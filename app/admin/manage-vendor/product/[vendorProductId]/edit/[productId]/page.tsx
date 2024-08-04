@@ -181,7 +181,7 @@ function EditVendorProduct({ product, categories, albums }: { product: Product, 
         }
 
         for (let i = albums.length; i < albumImages.length; i++) {
-          await createAlbum(productId, albumImages[i]);
+          await createAlbum(albumImages[i], null, productId);
         }
 
         router.push(`/admin/manage-vendor/product/${vendorId}`);

@@ -46,8 +46,6 @@ function EditPackageProduct() {
   const [eventId, setEventId] = useState<number | null>(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [name, setName] = useState('');
-  // TODO: Add rate state
-  const [selectedRate, setSelectedRate] = useState<string | null>("Daily");
   const [price, setPrice] = useState('');
   const [capacity, setCapacity] = useState('');
   const [description, setDescription] = useState('');
@@ -73,7 +71,6 @@ function EditPackageProduct() {
           if (!initialized) {
             setSelectedCategoryId(event.categoryId);
             setName(event.name);
-            setSelectedRate(event.rate);
             setPrice(event.price.toString());
             setCapacity(event.capacity ? event.capacity.toString() : '');
             setDescription(event.description || '');
@@ -194,10 +191,6 @@ function EditPackageProduct() {
       throw new Error('Name is not set');
     }
 
-    if (!selectedRate) {
-      throw new Error('Rate is not set');
-    }
-
     if (!price) {
       throw new Error('Price is not set');
     }
@@ -205,7 +198,6 @@ function EditPackageProduct() {
     const eventData = {
       categoryId: selectedCategoryId,
       name,
-      rate: selectedRate,
       price: parseInt(price),
       capacity: capacity ? parseInt(capacity) : null,
       description: description || null,
@@ -229,7 +221,7 @@ function EditPackageProduct() {
       }
 
       for (let i = albums.length; i < albumImages.length; i++) {
-        await createAlbum(eventId, albumImages[i]);
+        await createAlbum(albumImages[i], eventId, null);
       }
 
       for (const bundle of bundles) {

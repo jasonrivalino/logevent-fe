@@ -26,7 +26,6 @@ export const readEventById = async (id: number) => {
 export const createEvent = async (eventData: {
   categoryId: number;
   name: string;
-  rate: string;
   price: number;
   capacity: number | null;
   description: string | null;
@@ -47,7 +46,6 @@ export const createEvent = async (eventData: {
 export const updateEvent = async (id: number, eventData: {
   categoryId?: number;
   name?: string;
-  rate?: string;
   price?: number;
   capacity?: number | null;
   description?: string | null;

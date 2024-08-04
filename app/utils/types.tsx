@@ -2,8 +2,9 @@
 
 export interface Album {
   id: number;
-  productId: number;
-  albumImage?: string;
+  eventId: number | null;
+  productId: number | null;
+  albumImage: string | null;
 }
 
 export interface Bundle {

@@ -149,7 +149,7 @@ function AddVendorProduct() {
       if (albumImages.length > 0) {
         const productId = product.id;
         for (const image of albumImages) {
-          await createAlbum(productId, image);
+          await createAlbum(image, null, productId);
         }
       }
 

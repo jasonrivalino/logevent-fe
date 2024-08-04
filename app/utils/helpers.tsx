@@ -29,6 +29,19 @@ export const generateWhatsAppUrl = (phone: string) => {
   return `https://wa.me/${encodedPhone}`;
 };
 
+export const getRateText = (rate: string) => {
+  switch (rate) {
+    case "Daily":
+      return "/ hari";
+    case "Quantity":
+      return "/ pcs";
+    case "Hourly":
+      return "/ jam";
+    default:
+      return "";
+  }
+};
+
 export const getStars = (rating: number) => {
   const fullStars = Math.floor(rating);
   const halfStars = rating % 1 >= 0.5 ? 1 : 0;

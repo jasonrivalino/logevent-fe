@@ -3,16 +3,29 @@
 
 // dependency modules
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 // self-defined modules
 import { Navbar, ContactBox } from '@/app/page';
+import { readAlbumsByEventId } from '@/app/utils/albumApi';
+import { readBundlesByEventId } from '@/app/utils/bundleApi';
+import { readEventById } from '@/app/utils/eventApi';
+import { convertDate, generateWhatsAppUrl, getStars } from '@/app/utils/helpers';
+import { readProductById } from '@/app/utils/productApi';
+import { readReviewsByEventId } from '@/app/utils/reviewApi';
+import type { Album, Bundle, Event, Product, Review } from '@/app/utils/types';
 
-export default function Product() {
+export default function Event() {
   const descriptionRef = useRef(null);
   const vendorListRef = useRef(null);
   const albumRef = useRef(null);
   const reviewsRef = useRef(null);
+  const pathname = usePathname();
+  const [event, setEvent] = useState<Event | null>(null);
+  const [albums, setAlbums] = useState<Album[]>([]);
+  const [bundles, setBundles] = useState<Bundle[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
 
   const scrollToSection = (ref: { current: { offsetTop: number; }; }) => {
     var offset = 20; // Adjust this value for the desired offset
@@ -28,29 +41,50 @@ export default function Product() {
     });
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const id = pathname.split('/').pop();
+        if (id) {
+          const event = await readEventById(parseInt(id));
+          const albums = await readAlbumsByEventId(parseInt(id));
+          const bundles = await readBundlesByEventId(parseInt(id));
+          const reviews = await readReviewsByEventId(parseInt(id));
+          setEvent(event);
+          setBundles(bundles);
+          setAlbums(albums);
+          setReviews(reviews);
+
+          const products: Product[] = [];
+          for (const bundle of bundles) {
+            const product = await readProductById(bundle.productId);
+            products.push(product);
+          }
+          setProducts(products);
+        }
+      } catch (error) {
+        console.error('Failed to fetch product:', error);
+      }
+    };
+  
+    fetchData();
+  }, [pathname]);
+
   return (
     <div className="font-sofia">
       <Navbar />
       <div className="container mx-auto mt-24 md:px-20 -mb-6 md:mb-0">
-        <ProductImage />
+        {event && <EventImage event={event} albums={albums} />}
         <Tabs scrollToSection={scrollToSection} refs={{ descriptionRef, vendorListRef, albumRef, reviewsRef }} />
-        <div ref={descriptionRef}><Description/></div>
-        <div ref={vendorListRef}><VendorList/></div>
-        <div ref={albumRef}><ImageGallery /></div>
-        <div ref={reviewsRef}><Reviews /></div>
+        {event && <div ref={descriptionRef}><Description event={event} /></div>}
+        {event && <div ref={vendorListRef}><ProductList products={products} /></div>}
+        {event && <div ref={albumRef}><ImageGallery albums={albums} /></div>}
+        {event && <div ref={reviewsRef}><Reviews reviews={reviews} /></div>}
       </div>
       <ContactBox />
     </div>
   );
 }
-
-const images = [
-  "/Image/landingpage1.jpg",
-  "/Image/landingpage2.jpg",
-  "/Image/landingpage3.jpg",
-  "/Image/planetarium.jpg",
-  "/Image/partyevent.jpg"
-];
 
 const useWindowWidth = () => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -67,10 +101,12 @@ const useWindowWidth = () => {
   return windowWidth;
 };
 
-const ProductImage = () => {
+const EventImage = ({ event, albums }: { event: Event; albums: Album[]; }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const timeoutRef = useRef<null | NodeJS.Timeout>(null);
   const windowWidth = useWindowWidth();
+  const eventUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const [copied, setCopied] = useState(false);
   const router = useRouter();
 
   const resetTimeout = () => {
@@ -84,7 +120,7 @@ const ProductImage = () => {
     timeoutRef.current = setTimeout(
       () =>
         setCurrentImageIndex((prevIndex) =>
-          prevIndex === images.length - 1 ? 0 : prevIndex + 1
+          prevIndex === albums.length - 1 ? 0 : prevIndex + 1
         ),
       2000
     );
@@ -94,41 +130,69 @@ const ProductImage = () => {
     };
   }, [currentImageIndex]);
 
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: document.title,
+          url: eventUrl,
+        });
+      } catch (error) {
+        console.error('Error sharing:', error);
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(eventUrl);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch (error) {
+        console.error('Failed to copy the text to clipboard:', error);
+      }
+    }
+  };
+
+  const handleChat = () => {
+    const adminNumber = process.env.NEXT_PUBLIC_ADMIN_NUMBER;
+    window.open(generateWhatsAppUrl(adminNumber || ""), '_blank', 'noopener,noreferrer');
+  };
+
   return (
     <div className="px-8 py-4">
       {windowWidth >= 768 ? (
         <div className="py-4">
           <div className="flex md:space-x-4">
-            <img src={images[0]} alt="Main Hall" className="w-full md:w-1/2 h-auto md:h-[21rem] rounded-md" />
+            <img src={event.eventImage || "/Image/planetarium.jpg"} alt="Main Hall" className="w-full md:w-1/2 h-auto md:h-[21rem] rounded-md" />
             <div className="grid grid-cols-2 gap-4 w-0 md:w-1/2">
-              {images.slice(1).map((image, index) => (
-                <img key={index} src={image} alt={`Hall Image ${index + 1}`} className="w-0 md:w-full h-auto md:h-40 rounded-md" />
+              {albums.map((album, index) => (
+                <img key={index} src={album.albumImage || "/Image/planetarium.jpg"} alt={`Hall Image ${index + 1}`} className="w-0 md:w-full h-auto md:h-40 rounded-md" />
               ))}
             </div>
           </div>
           <div className="flex flex-col md:flex-row space-x-4">
             <div className="w-full md:w-1/2">
-              <h1 className="text-2xl md:text-3xl text-pink-900 font-bold mt-4">Paket Event A</h1>
-              <p className="text-sm md:text-base text-gray-600">Birthday Party</p>
-              <p className="text-sm md:text-base text-gray-600">Kapasitas: 100 Orang</p>
-              <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp 3.000.000 / hari</p>
+              <h1 className="text-2xl md:text-3xl text-pink-900 font-bold mt-4">{event.name}</h1>
+              <p className="text-sm md:text-base text-gray-600">Kapasitas: {event.capacity + ' Orang' || "Paket Event ini tidak memiliki kapasitas"}</p>
+              <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp {event.price} / hari</p>
               <div className="text-sm md:text-base flex items-center space-x-2 text-gray-600">
-                <span>Dago, Bandung</span>
+                <div className="flex items-center">
+                  {getStars(event.rating)}
+                  <span> ({event.rating && event.rating.toFixed(2) !== "0.00" ? event.rating.toFixed(2) : "N/A"})</span>
+                </div>
                 <span>|</span>
-                <span>⭐ 4.2 (190 reviews)</span>
+                <span>{event.reviewCount} reviews</span>
               </div>
             </div>
             <div className="flex space-x-4 w-full md:w-1/2 md:justify-end items-center mt-3 md:mt-0">
               <button className="bg-white hover:bg-pink-100 text-pink-500 border-pink-500 border-2 rounded-lg px-3 md:px-4 py-2 -ml-4 md:ml-0 mr-[6.5rem] md:mr-0 text-sm md:text-base">+ Keranjang</button>
               {/* TODO: Go to cart before isi-pemesanan */}
               <button className="bg-pink-500 hover:bg-pink-600 text-white rounded-lg px-3 md:px-4 py-2 -ml-4 md:ml-0 mr-[6.5rem] md:mr-0 text-sm md:text-base" onClick={() => router.push('/isi-pemesanan')}>Pesan Langsung</button>
-              <button className="text-pink-500 hover:text-pink-700 flex flex-col items-center text-sm md:text-base">
+              <button onClick={handleChat} className="text-pink-500 flex flex-col items-center text-sm md:text-base">
                 <img src="/Image/IconButton/chat_button.png" alt="Whatsapp" className="w-5 md:w-6 h-5 md:h-6" />
                 Chat
               </button>
-              <button className="text-pink-500 hover:text-pink-700 flex flex-col items-center text-sm md:text-base">
+              <button onClick={handleShare} className="text-pink-500 flex flex-col items-center text-sm md:text-base">
                 <img src="/Image/IconButton/share_button.png" alt="Whatsapp" className="w-5 md:w-6 h-5 md:h-6" />
-                Share
+                {copied ? 'Link Copied!' : 'Share'}
               </button>
             </div>
           </div>
@@ -137,15 +201,15 @@ const ProductImage = () => {
         <div className="md:px-8 pb-4">
           <div className="flex md:space-x-4">
             <img
-              src={images[currentImageIndex]}
+              src={albums[currentImageIndex].albumImage || "/Image/planetarium.jpg"}
               alt="Main Hall"
               className="w-full md:w-1/2 h-44 rounded-md"
             />
             <div className="grid grid-cols-2 gap-4 w-0 md:w-1/2">
-              {images.map((image, index) => (
+              {albums.map((album, index) => (
                 <img
                   key={index}
-                  src={image}
+                  src={album.albumImage || "/Image/planetarium.jpg"}
                   alt={`Hall Image ${index + 1}`}
                   className="w-0 md:w-full h-auto rounded-md"
                 />
@@ -154,14 +218,16 @@ const ProductImage = () => {
           </div>
           <div className="flex flex-col md:flex-row space-x-4">
             <div className="w-full md:w-1/2">
-              <h1 className="text-2xl md:text-3xl text-pink-900 font-bold mt-4">Gedung Sabuga ITB</h1>
-              <p className="text-sm md:text-base text-gray-600">Multifunctional Hall</p>
-              <p className="text-sm md:text-base text-gray-600">Kapasitas: 1000 Orang</p>
-              <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp 5.000.000 / hari</p>
+              <h1 className="text-2xl md:text-3xl text-pink-900 font-bold mt-4">{event.name}</h1>
+              <p className="text-sm md:text-base text-gray-600">Kapasitas: {event.capacity + ' Orang' || "Paket Event ini tidak memiliki kapasitas"}</p>
+              <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp {event.price} / hari</p>
               <div className="text-sm md:text-base flex items-center space-x-2 text-gray-600">
-                <span>Dago, Bandung</span>
+                <div className="flex items-center">
+                  {getStars(event.rating)}
+                  <span> ({event.rating && event.rating.toFixed(2) !== "0.00" ? event.rating.toFixed(2) : "N/A"})</span>
+                </div>
                 <span>|</span>
-                <span>⭐ 4.2 (190 reviews)</span>
+                <span>{event.reviewCount} reviews</span>
               </div>
             </div>
             <div className="flex space-x-4 w-full md:w-1/2 md:justify-end items-center mt-1 md:mt-0">
@@ -171,13 +237,13 @@ const ProductImage = () => {
                 <button className="bg-white text-pink-500 border-pink-500 border-2 rounded-lg md:px-4 py-1 md:py-2 -ml-4 md:ml-0 md:mr-0 text-sm md:text-base mt-2">+ Keranjang</button>
               </div>
               <div className="flex flex-row space-x-4 mt-3">
-                <button className="text-pink-500 flex flex-col items-center text-sm md:text-base">
+                <button onClick={handleChat} className="text-pink-500 flex flex-col items-center text-sm md:text-base">
                   <img src="/Image/IconButton/chat_button.png" alt="Whatsapp" className="w-5 md:w-6 h-5 md:h-6" />
-                  Share
+                  Chat
                 </button>
-                <button className="text-pink-500 flex flex-col items-center text-sm md:text-base">
+                <button onClick={handleShare} className="text-pink-500 flex flex-col items-center text-sm md:text-base">
                   <img src="/Image/IconButton/share_button.png" alt="Whatsapp" className="w-5 md:w-6 h-5 md:h-6" />
-                  Save
+                  {copied ? 'Link Copied!' : 'Share'}
                 </button>
               </div>
             </div>
@@ -199,35 +265,25 @@ function Tabs({ scrollToSection, refs }: { scrollToSection: (ref: React.RefObjec
   );
 }
 
-function Description() {
+function Description({ event }: { event: Event; }) {
   return (
     <div className="px-8 pb-8 md:py-14 border-b">
       <h2 className="text-2xl md:text-3xl font-bold text-pink-900 pt-10">Description</h2>
       <p className="text-gray-600 mt-4 text-sm md:text-base">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus odio nisi, pellentesque eu molestie eget, lobortis non nisl. Fusce sit amet massa porta, condimentum elit eu, finibus ipsum. Sed sed arcu eu turpis lacinia scelerisque. Vestibulum lacinia mauris vitae nunc tempus, sed laoreet eros gravida. Nullam rhoncus scelerisque odio, eu lobortis urna viverra sed. Quisque feugiat, eros at sagittis commodo, risus lectus viverra odio, a fringilla elit lectus eget purus. Suspendisse tortor mi, pulvinar at vulputate et, cursus ac odio. Integer faucibus quam non nulla lacinia, vel dignissim tellus pulvinar.
-        <br></br><br></br>
-        Suspendisse molestie dictum egestas. Proin vehicula nunc in volutpat cursus. Etiam eu ullamcorper metus. Integer commodo orci eu nisi gravida, a lacinia libero molestie. Nulla luctus rhoncus erat, eget blandit nunc maximus vel. Maecenas convallis vulputate orci, varius venenatis nunc lacinia non. Donec ac vestibulum sapien, eget ullamcorper metus. Donec dolor justo, accumsan ut est eu, maximus sollicitudin dui. Nullam dictum ex dui. Integer justo risus, tincidunt nec mattis lobortis, commodo non magna. Cras non ex eget magna euismod efficitur. Fusce in ullamcorper justo.
-        <br></br><br></br>
-        Phasellus id lorem non massa molestie iaculis. Ut porttitor varius purus, quis feugiat sem commodo et. Donec laoreet nulla sed dui bibendum accumsan. Nullam dignissim massa et commodo accumsan. Mauris suscipit tristique quam, vitae ullamcorper sapien molestie non. Nunc accumsan in felis sit amet posuere. Etiam sodales accumsan tempus. Aliquam nec velit commodo, suscipit ante ac, pulvinar libero. Praesent nunc lectus, venenatis vel libero sed, sollicitudin pellentesque tellus. Vivamus accumsan erat in turpis tincidunt, commodo pulvinar nisl pellentesque. Maecenas at dolor rhoncus, varius elit nec, facilisis nisl. 
+        {event.description || 'Product Description'}
       </p>
     </div>
   );
 }
 
-function VendorList() {
+function ProductList({ products }: { products: Product[]; }) {
   const router = useRouter();
   const windowWidth = useWindowWidth();
-
-  const places = [
-    { image: "/Image/planetarium.jpg", name: "Sunset Beach", type: "Beach", rate: "4.5", location: "California, USA" },
-    { image: "/Image/planetarium.jpg", name: "Mountain View", type: "Mountain", rate: "4.7", location: "Alps, Switzerland" },
-    { image: "/Image/planetarium.jpg", name: "City Park", type: "Park", rate: "4.3", location: "New York, USA" },
-  ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(2);
 
-  const totalItems = places.length;
+  const totalItems = products.length;
 
   useEffect(() => {
     const handleResize = () => {
@@ -256,11 +312,11 @@ function VendorList() {
     setCurrentIndex((prevIndex) => (prevIndex - itemsPerPage + totalItems) % totalItems);
   };
 
-  const displayedPlaces = () => {
+  const displayedProducts = () => {
     const display = [];
     for (let i = 0; i < itemsPerPage; i++) {
       const index = (currentIndex + i) % totalItems;
-      display.push(places[index]);
+      display.push(products[index]);
     }
     return display;
   };
@@ -270,19 +326,19 @@ function VendorList() {
       <h2 className="text-2xl md:text-3xl font-bold text-pink-900 md:pt-5 mb-6">Bundle Logistik</h2>
       {windowWidth >= 768 ? (
         <div className="grid grid-cols-2 md:grid-cols-7 gap-4">
-          {places.map((place, index) => (
+          {products.map((product, index) => (
             <div key={index} className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col justify-between">
               <Image
-                src={place.image}
-                alt={`${place.name} Image`}
+                src={product.productImage || "/Image/planetarium.jpg"}
+                alt={`${product.name} Image`}
                 width={400}
                 height={200}
                 className="object-cover"
               />
               <div className="p-3 md:p-3 font-sofia flex flex-col justify-between flex-grow">
                 <div>
-                  <h3 className="text-sm md:text-base text-pink-900 font-bold mb-2">{place.name}</h3>
-                  <p className="text-xs md:text-sm text-gray-700">{place.type}</p>
+                  <h3 className="text-sm md:text-base text-pink-900 font-bold mb-2">{product.name}</h3>
+                  <p className="text-xs md:text-sm text-gray-700">{product.specification}</p>
                   <p className="text-xs md:text-sm text-gray-500 flex flex-row">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -291,12 +347,12 @@ function VendorList() {
                       viewBox="0 0 20 20"
                     >
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.14 3.51a1 1 0 00.95.69h3.7c.967 0 1.372 1.24.588 1.81l-2.992 2.179a1 1 0 00-.364 1.118l1.14 3.51c.3.921-.755 1.688-1.54 1.118l-2.992-2.178a1 1 0 00-1.175 0l-2.992 2.178c-.785.57-1.84-.197-1.54-1.118l1.14-3.51a1 1 0 00-.364-1.118L2.93 8.937c-.784-.57-.38-1.81.588-1.81h3.7a1 1 0 00.95-.69l1.14-3.51z" />
-                    </svg> {place.rate}
+                    </svg> {product.rating && product.rating.toFixed(2) !== "0.00" ? product.rating.toFixed(2) : "N/A"}
                   </p>
-                  <p className="text-xs md:text-sm text-gray-500">{place.location}</p>
+                  <p className="text-xs md:text-sm text-gray-500">{product.vendorAddress}</p>
                 </div>
                 <button className="self-start text-xs md:text-base text-pink-500 hover:text-pink-700 font-bold mt-4"
-                  onClick={() => router.push(`/logistik-vendor/info-detail`)}
+                  onClick={() => router.push(`/logistik-vendor/info-detail/${product.id}`)}
                 >
                   Lihat Detail
                 </button>
@@ -307,19 +363,19 @@ function VendorList() {
       ) : (
         <div className="relative">
           <div className="grid grid-cols-2 gap-4 px-4">
-            {displayedPlaces().map((place, index) => (
+            {displayedProducts().map((product, index) => (
               <div key={index} className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col justify-between">
                 <Image
-                  src={place.image}
-                  alt={`${place.name} Image`}
+                  src={product.productImage || "/Image/planetarium.jpg"}
+                  alt={`${product.name} Image`}
                   width={400}
                   height={200}
                   className="object-cover"
                 />
                 <div className="p-3 md:p-3 font-sofia flex flex-col justify-between flex-grow">
                   <div>
-                    <h3 className="text-sm md:text-base text-pink-900 font-bold md:mb-2">{place.name}</h3>
-                    <p className="text-xs md:text-sm text-gray-700">{place.type}</p>
+                    <h3 className="text-sm md:text-base text-pink-900 font-bold md:mb-2">{product.name}</h3>
+                    <p className="text-xs md:text-sm text-gray-700">{product.specification}</p>
                     <p className="text-xs md:text-sm text-gray-500 flex flex-row">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -328,12 +384,12 @@ function VendorList() {
                         viewBox="0 0 20 20"
                       >
                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.14 3.51a1 1 0 00.95.69h3.7c.967 0 1.372 1.24.588 1.81l-2.992 2.179a1 1 0 00-.364 1.118l1.14 3.51c.3.921-.755 1.688-1.54 1.118l-2.992-2.178a1 1 0 00-1.175 0l-2.992 2.178c-.785.57-1.84-.197-1.54-1.118l1.14-3.51a1 1 0 00-.364-1.118L2.93 8.937c-.784-.57-.38-1.81.588-1.81h3.7a1 1 0 00.95-.69l1.14-3.51z" />
-                      </svg> {place.rate}
+                      </svg> {product.rating && product.rating.toFixed(2) !== "0.00" ? product.rating.toFixed(2) : "N/A"}
                     </p>
-                    <p className="text-xs md:text-sm text-gray-500">{place.location}</p>
+                    <p className="text-xs md:text-sm text-gray-500">{product.vendorAddress}</p>
                   </div>
                   <button className="self-start text-xs md:text-base text-pink-500 hover:text-pink-700 font-bold mt-4"
-                    onClick={() => router.push(`/logistik-vendor/info-detail`)}
+                    onClick={() => router.push(`/logistik-vendor/info-detail/${product.id}`)}
                   >
                     Lihat Detail
                   </button>
@@ -363,20 +419,14 @@ function VendorList() {
   );
 }
 
-function ImageGallery() {
-  const places = [
-    { image: "/Image/planetarium.jpg" },
-    { image: "/Image/planetarium.jpg" },
-    { image: "/Image/planetarium.jpg" },
-    { image: "/Image/planetarium.jpg" },
-    { image: "/Image/planetarium.jpg" },
-    { image: "/Image/planetarium.jpg" },
-  ];
-
+function ImageGallery({ albums }: { albums: Album[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(4);
 
-  const totalItems = places.length;
+  const totalItems = albums.length;
+  if (totalItems < itemsPerPage) {
+    setItemsPerPage(totalItems);
+  }
 
   useEffect(() => {
     const handleResize = () => {
@@ -398,31 +448,44 @@ function ImageGallery() {
   }, []);
 
   const handleNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + itemsPerPage) % totalItems);
+    if (totalItems > 0) {
+      setCurrentIndex((prevIndex) => (prevIndex + itemsPerPage) % totalItems);
+    }
   };
 
   const handlePrev = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - itemsPerPage + totalItems) % totalItems);
+    if (totalItems > 0) {
+      setCurrentIndex((prevIndex) => (prevIndex - itemsPerPage + totalItems) % totalItems);
+    }
   };
 
-  const displayedPlaces = () => {
+  const displayedImages = () => {
     const display = [];
     for (let i = 0; i < itemsPerPage; i++) {
       const index = (currentIndex + i) % totalItems;
-      display.push(places[index]);
+      display.push(albums[index]);
     }
     return display;
   };
+
+  if (totalItems === 0) {
+    return (
+      <section className="px-8 py-14 border-b">
+        <h2 className="text-3xl font-bold text-pink-900 pt-10">Album</h2>
+        <p className="text-gray-700 mt-6">Tidak ada album yang tersedia</p>
+      </section>
+    );
+  }
 
   return (
     <section className="px-8 pb-8 md:py-14 border-b">
       <h2 className="text-2xl md:text-3xl font-bold text-pink-900 pt-10">Album</h2>
       <div className="relative flex items-center justify-center mt-6 mb-2">
         <div className="flex flex-wrap gap-10 justify-center mx-4">
-          {displayedPlaces().map((place, index) => (
+          {displayedImages().map((album, index) => (
             <div key={index} className="w-[16.75rem] md:w-[17.5rem] bg-white shadow-lg rounded-3xl overflow-hidden relative">
               <Image
-                src={place.image}
+                src={album.albumImage || "/Image/planetarium.jpg"}
                 alt={`Image`}
                 width={400}
                 height={200}
@@ -452,30 +515,15 @@ function ImageGallery() {
   );
 }
 
-function Reviews() {
-  const reviews = [
-    {
-      user: "User1",
-      category: "Venue & Decoration",
-      date: "3 Maret 2024",
-      review: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae.",
-      imageUrl: "https://via.placeholder.com/50" // Replace with actual image URLs
-    },
-    {
-      user: "User2",
-      category: "Food & Service",
-      date: "5 April 2024",
-      review: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae.",
-      imageUrl: "https://via.placeholder.com/50" // Replace with actual image URLs
-    },
-    {
-      user: "User3",
-      category: "Overall Experience",
-      date: "10 Mei 2024",
-      review: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae.",
-      imageUrl: "https://via.placeholder.com/50" // Replace with actual image URLs
-    },
-  ];
+function Reviews({ reviews }: { reviews: Review[] }) {
+  if (reviews.length === 0) {
+    return (
+      <div className="px-8 py-14 border-b">
+        <h2 className="text-3xl font-bold text-pink-900 pt-10">Reviews</h2>
+        <p className="text-gray-700 mt-6">Tidak ada review yang tersedia</p>
+      </div>
+    );
+  }
 
   return (
     <div className="mt-4 px-8 pb-8 md:py-14">
@@ -487,15 +535,18 @@ function Reviews() {
         {reviews.map((review, index) => (
           <div key={index} className="border border-gray-400 rounded-lg p-4 w-full md:w-1/3">
             <div className="flex items-center space-x-4">
-              <img src={review.imageUrl} alt="User profile" className="w-12 h-12 rounded-full" />
+              <img src={review.userPicture || "https://via.placeholder.com/50"} alt="User profile" className="w-12 h-12 rounded-full" />
               <div>
-                <h3 className="text-lg md:text-xl text-gray-600 font-bold">{review.user}</h3>
-                <p className="text-gray-600 text-sm md:text-base">{review.category}</p>
-                <p className="text-gray-600 text-sm md:text-base">{review.date}</p>
+                <h3 className="text-lg md:text-xl text-gray-600 font-bold">{review.userName}</h3>
+                <div className="flex items-center">
+                  {getStars(review.rating)}
+                  <span> ({review.rating})</span>
+                </div>
+                <p className="text-gray-600 text-sm md:text-base">{convertDate(review.reviewDate)}</p>
               </div>
             </div>
             <p className="text-gray-600 mt-2 text-xs md:text-base">
-              {review.review}
+              {review.comment}
             </p>
           </div>
         ))}

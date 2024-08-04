@@ -57,8 +57,6 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
   
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [name, setName] = useState('');
-  // TODO: Add rate state
-  const [selectedRate, setSelectedRate] = useState<string | null>("Daily");
   const [price, setPrice] = useState('');
   const [capacity, setCapacity] = useState('');
   const [description, setDescription] = useState('');
@@ -158,10 +156,6 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
       throw new Error('Name is not set');
     }
 
-    if (!selectedRate) {
-      throw new Error('Rate is not set');
-    }
-
     if (!price) {
       throw new Error('Price is not set');
     }
@@ -169,7 +163,6 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
     const eventData = {
       categoryId: selectedCategoryId,
       name,
-      rate: selectedRate,
       price: parseInt(price),
       capacity: capacity ? parseInt(capacity) : null,
       description: description || null,
@@ -182,7 +175,7 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
       if (albumImages.length > 0) {
         const eventId = event.id;
         for (const image of albumImages) {
-          await createAlbum(eventId, image);
+          await createAlbum(image, eventId, null);
         }
       }
 
