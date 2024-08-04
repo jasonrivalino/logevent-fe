@@ -36,7 +36,7 @@ export default function ProductDetail() {
         <Navbar />
             <div className="min-h-screen flex flex-col px-6 mt-24">
                 <div className="flex flex-col md:flex-row flex-grow">
-                <div className="md:hidden flex justify-center items-center">
+                  <div className="md:hidden flex justify-center items-center">
                         {/* Back button with SVG arrow */}
                         <button 
                             onClick={handleBackClick} 
@@ -56,12 +56,19 @@ export default function ProductDetail() {
                 <div className="hidden md:block">
                     <CommandLeft />
                 </div>
-                <div className="flex-grow ml-0 md:ml-7 md:-mt-7 font-sofia">
+                <div className="flex-grow ml-0 md:ml-7 mt-1 font-sofia bg-white rounded-xl p-5">
+                    {/* Breadcrumb Navigation */}
+                    <div className="hidden md:flex items-center mb-4">
+                      <div className="flex items-center">
+                        <a onClick={() => router.push('/admin/manage-event-package')} className="text-pink-600 font-semibold font-sofia cursor-pointer">Kelola Paket</a>
+                        <span className="mx-2 text-gray-600 font-sofia font-semibold"> {'>'} </span>
+                        <p className="text-gray-600 font-sofia font-semibold">Info Detail Paket</p>
+                      </div>
+                    </div>
                     <ProductImage />
                     <Tabs scrollToSection={scrollToSection} refs={{ descriptionRef, vendorListRef, albumRef, reviewsRef }} />
                     <div ref={descriptionRef}><Description/></div>
                     <div ref={vendorListRef}><VendorList/></div>
-                    <div ref={albumRef}><ImageGallery /></div>
                     <div ref={reviewsRef}><Reviews /></div>
                 </div>
             </div>
@@ -122,7 +129,7 @@ const images = [
     }, [currentImageIndex]);
   
     return (
-      <div className="px-2 py-4">
+      <div className="mt-2 md:-mt-4">
         {windowWidth >= 768 ? (
           <div className="py-4">
             <div className="flex md:space-x-4">
@@ -187,10 +194,9 @@ const images = [
   
   function Tabs({ scrollToSection, refs }: { scrollToSection: (ref: React.RefObject<any>) => void; refs: { descriptionRef: React.RefObject<any>; vendorListRef: React.RefObject<any>; albumRef: React.RefObject<any>; reviewsRef: React.RefObject<any>; }; }) {
     return (
-      <nav className="flex justify-center space-x-4 md:space-x-8 mt-2 md:mt-0 py-2 md:py-10 border-b text-sm md:text-base">
+      <nav className="flex justify-center space-x-4 md:space-x-8 mt-2 md:mt-0 py-2 md:pb-5 border-b text-sm md:text-base">
         <button onClick={() => scrollToSection(refs.descriptionRef)} className="text-gray-600 hover:text-pink-500">Description</button>
         <button onClick={() => scrollToSection(refs.vendorListRef)} className="text-gray-600 hover:text-pink-500">Bundle Logistik</button>
-        <button onClick={() => scrollToSection(refs.albumRef)} className="text-gray-600 hover:text-pink-500">Album</button>
         <button onClick={() => scrollToSection(refs.reviewsRef)} className="text-gray-600 hover:text-pink-500">Reviews</button>
       </nav>
     );
@@ -198,7 +204,7 @@ const images = [
   
   function Description() {
     return (
-      <div className="px-2 pb-8 md:py-14 border-b">
+      <div className="px-0 md:px-2 pb-8 md:py-14 border-b">
         <h2 className="text-2xl md:text-3xl font-bold text-pink-900 pt-10">Description</h2>
         <p className="text-gray-600 mt-4 text-sm md:text-base">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus odio nisi, pellentesque eu molestie eget, lobortis non nisl. Fusce sit amet massa porta, condimentum elit eu, finibus ipsum. Sed sed arcu eu turpis lacinia scelerisque. Vestibulum lacinia mauris vitae nunc tempus, sed laoreet eros gravida. Nullam rhoncus scelerisque odio, eu lobortis urna viverra sed. Quisque feugiat, eros at sagittis commodo, risus lectus viverra odio, a fringilla elit lectus eget purus. Suspendisse tortor mi, pulvinar at vulputate et, cursus ac odio. Integer faucibus quam non nulla lacinia, vel dignissim tellus pulvinar.
@@ -263,7 +269,7 @@ const images = [
     };
   
     return (
-      <section className="px-2 py-12 md:pb-16 border-b">
+      <section className="px-0 md:px-2 py-12 md:pb-16 border-b">
         <h2 className="text-2xl md:text-3xl font-bold text-pink-900 md:pt-5 mb-6">Bundle Logistik</h2>
         {windowWidth >= 768 ? (
           <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
@@ -360,95 +366,6 @@ const images = [
     );
   }
   
-  function ImageGallery() {
-    const places = [
-      { image: "/Image/planetarium.jpg" },
-      { image: "/Image/planetarium.jpg" },
-      { image: "/Image/planetarium.jpg" },
-      { image: "/Image/planetarium.jpg" },
-      { image: "/Image/planetarium.jpg" },
-      { image: "/Image/planetarium.jpg" },
-    ];
-  
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [itemsPerPage, setItemsPerPage] = useState(4);
-  
-    const totalItems = places.length;
-  
-    useEffect(() => {
-      const handleResize = () => {
-        if (window.innerWidth < 768) {
-          setItemsPerPage(1);
-        } else {
-          setItemsPerPage(4);
-        }
-      };
-  
-      window.addEventListener('resize', handleResize);
-  
-      // Set the initial value
-      handleResize();
-  
-      return () => {
-        window.removeEventListener('resize', handleResize);
-      };
-    }, []);
-  
-    const handleNext = () => {
-      setCurrentIndex((prevIndex) => (prevIndex + itemsPerPage) % totalItems);
-    };
-  
-    const handlePrev = () => {
-      setCurrentIndex((prevIndex) => (prevIndex - itemsPerPage + totalItems) % totalItems);
-    };
-  
-    const displayedPlaces = () => {
-      const display = [];
-      for (let i = 0; i < itemsPerPage; i++) {
-        const index = (currentIndex + i) % totalItems;
-        display.push(places[index]);
-      }
-      return display;
-    };
-  
-    return (
-      <section className="px-8 pb-8 md:py-14 border-b">
-        <h2 className="text-2xl md:text-3xl font-bold text-pink-900 pt-10">Album</h2>
-        <div className="relative flex items-center justify-center mt-6 mb-2">
-          <div className="flex flex-wrap gap-10 justify-center mx-4">
-            {displayedPlaces().slice(0, 3).map((place, index) => (
-              <div key={index} className="w-[16.75rem] md:w-[17.5rem] bg-white shadow-lg rounded-3xl overflow-hidden relative">
-                <Image
-                  src={place.image}
-                  alt={`Image`}
-                  width={400}
-                  height={200}
-                  className="object-cover"
-                />
-              </div>
-            ))}
-          </div>
-          <button 
-            className="absolute left-0 px-1 md:px-3 py-1 md:py-2 bg-pink-600 text-white rounded-full shadow-lg hover:shadow-2xl focus:outline-none"
-            onClick={handlePrev}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <button 
-            className="absolute right-0 px-1 md:px-3 py-1 md:py-2 bg-pink-600 text-white rounded-full shadow-lg hover:shadow-2xl focus:outline-none"
-            onClick={handleNext}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
-      </section>
-    );
-  }
-  
   function Reviews() {
     const reviews = [
       {
@@ -475,7 +392,7 @@ const images = [
     ];
   
     return (
-      <div className="mt-4 px-8 pb-8 md:py-14">
+      <div className="mt-4 px-0 md:px-2 pb-8 md:py-14">
         <div className="flex items-center justify-between space-x-4">
           <h2 className="text-2xl md:text-3xl font-bold text-pink-900 pt-10">Reviews</h2>
           <button className="text-sm md:text-base bg-pink-600 text-white px-2 md:px-4 py-1 md:py-2 rounded-lg -mb-10 md:-mb-8">Lihat Review lengkap</button>

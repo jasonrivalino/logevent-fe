@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import Image from 'next/image';
 import { Navbar, ContactBox } from '../../../../page';
 import { useRouter } from 'next/navigation';
 import { CommandLeft } from '@/app/admin/commandLeft';
@@ -10,6 +9,7 @@ export default function ProductDetail() {
   const descriptionRef = useRef(null);
   const albumRef = useRef(null);
   const reviewsRef = useRef(null);
+  const router = useRouter();
 
   const scrollToSection = (ref: { current: { offsetTop: number; }; }) => {
     var offset = 20; // Adjust this value for the desired offset
@@ -25,6 +25,10 @@ export default function ProductDetail() {
     });
   };
 
+  const handleBackClick = () => {
+    router.push('/admin/manage-vendor/product');
+  }
+
   return (
     <div>
         <Navbar />
@@ -33,11 +37,37 @@ export default function ProductDetail() {
                 <div className="hidden md:block">
                     <CommandLeft />
                 </div>
-                <div className="flex-grow ml-0 md:ml-7 md:-mt-7 font-sofia">
+                <div className="flex-grow ml-0 md:ml-7 mt-1 font-sofia bg-white rounded-xl p-5">
+                  <div className="md:hidden flex justify-center items-center">
+                        {/* Back button with SVG arrow */}
+                        <button 
+                          onClick={handleBackClick} 
+                          className="absolute top-20 left-4 p-2 rounded-full bg-white text-black shadow-lg flex items-center justify-center w-10 h-10 md:w-12 md:h-12 hover:bg-gray-100"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            className="w-6 h-6 text-gray-700"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                          </svg>
+                        </button>
+                  </div>
+                  {/* Breadcrumb Navigation */}
+                  <div className="hidden md:flex items-center mb-4">
+                    <div className="flex items-center">
+                      <a onClick={() => router.push('/admin/manage-vendor')} className="text-pink-600 font-semibold font-sofia cursor-pointer">Kelola Vendor</a>
+                      <span className="mx-2 text-gray-600 font-sofia font-semibold"> {'>'} </span>
+                      <a onClick={() => router.push('/admin/manage-vendor/product')} className="text-pink-600 font-semibold font-sofia cursor-pointer">Kelola Produk</a>
+                      <span className="mx-2 text-gray-600 font-sofia font-semibold"> {'>'} </span>
+                      <p className="text-gray-600 font-sofia font-semibold">Info Detail Produk</p>
+                    </div>
+                  </div>
                   <ProductImage />
                   <Tabs scrollToSection={scrollToSection} refs={{ descriptionRef, albumRef, reviewsRef }} />
                   <div ref={descriptionRef}><Description/></div>
-                  <div ref={albumRef}><ImageGallery /></div>
                   <div ref={reviewsRef}><Reviews /></div>
                 </div>
             </div>
@@ -98,7 +128,7 @@ const ProductImage = () => {
   }, [currentImageIndex]);
 
   return (
-    <div className="pr-2 py-4">
+    <div className="mr-2 md:mr-0 mt-2 md:-mt-4">
       {windowWidth >= 768 ? (
         <div className="py-4">
           <div className="flex md:space-x-4">
@@ -163,9 +193,8 @@ const ProductImage = () => {
 
 function Tabs({ scrollToSection, refs }: { scrollToSection: (ref: React.RefObject<any>) => void; refs: { descriptionRef: React.RefObject<any>; albumRef: React.RefObject<any>; reviewsRef: React.RefObject<any> } }) {
   return (
-    <nav className="flex justify-center space-x-8 mt-2 md:mt-0 py-2 md:py-10 border-b">
+    <nav className="flex justify-center space-x-8 mt-2 md:mt-0 py-2 md:pb-5 border-b">
       <button onClick={() => scrollToSection(refs.descriptionRef)} className="text-gray-600 hover:text-pink-500">Description</button>
-      <button onClick={() => scrollToSection(refs.albumRef)} className="text-gray-600 hover:text-pink-500">Album</button>
       <button onClick={() => scrollToSection(refs.reviewsRef)} className="text-gray-600 hover:text-pink-500">Reviews</button>
     </nav>
   );
@@ -183,95 +212,6 @@ function Description() {
         Phasellus id lorem non massa molestie iaculis. Ut porttitor varius purus, quis feugiat sem commodo et. Donec laoreet nulla sed dui bibendum accumsan. Nullam dignissim massa et commodo accumsan. Mauris suscipit tristique quam, vitae ullamcorper sapien molestie non. Nunc accumsan in felis sit amet posuere. Etiam sodales accumsan tempus. Aliquam nec velit commodo, suscipit ante ac, pulvinar libero. Praesent nunc lectus, venenatis vel libero sed, sollicitudin pellentesque tellus. Vivamus accumsan erat in turpis tincidunt, commodo pulvinar nisl pellentesque. Maecenas at dolor rhoncus, varius elit nec, facilisis nisl. 
       </p>
     </div>
-  );
-}
-
-function ImageGallery() {
-  const places = [
-    { image: "/Image/planetarium.jpg" },
-    { image: "/Image/planetarium.jpg" },
-    { image: "/Image/planetarium.jpg" },
-    { image: "/Image/planetarium.jpg" },
-    { image: "/Image/planetarium.jpg" },
-    { image: "/Image/planetarium.jpg" },
-  ];
-
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(4);
-
-  const totalItems = places.length;
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setItemsPerPage(1);
-      } else {
-        setItemsPerPage(4);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    // Set the initial value
-    handleResize();
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
-  const handleNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + itemsPerPage) % totalItems);
-  };
-
-  const handlePrev = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - itemsPerPage + totalItems) % totalItems);
-  };
-
-  const displayedPlaces = () => {
-    const display = [];
-    for (let i = 0; i < itemsPerPage; i++) {
-      const index = (currentIndex + i) % totalItems;
-      display.push(places[index]);
-    }
-    return display;
-  };
-
-  return (
-    <section className="px-2 pb-8 md:py-14 border-b">
-      <h2 className="text-2xl md:text-3xl font-bold text-pink-900 pt-10">Album</h2>
-      <div className="relative flex items-center justify-center mt-6 mb-2">
-        <div className="flex flex-wrap gap-10 justify-center mx-4">
-          {displayedPlaces().slice(0, 3).map((place, index) => (
-            <div key={index} className="w-[16.75rem] md:w-[17.5rem] bg-white shadow-lg rounded-3xl overflow-hidden relative">
-              <Image
-                src={place.image}
-                alt={`Image`}
-                width={400}
-                height={200}
-                className="object-cover"
-              />
-            </div>
-          ))}
-        </div>
-        <button 
-          className="absolute left-0 px-1 md:px-3 py-1 md:py-2 bg-pink-600 text-white rounded-full shadow-lg hover:shadow-2xl focus:outline-none"
-          onClick={handlePrev}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-        <button 
-          className="absolute right-0 px-1 md:px-3 py-1 md:py-2 bg-pink-600 text-white rounded-full shadow-lg hover:shadow-2xl focus:outline-none"
-          onClick={handleNext}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-      </div>
-    </section>
   );
 }
 
