@@ -1,49 +1,44 @@
-"use client";
-import React, { useState } from 'react';
-import { Navbar } from '../page';
+// app\list-penilaian\logistik-vendor\[id]\page.tsx
+'use client';
 
-const reviews = [
-  {
-    user: "User1",
-    category: "Kualitas Barang",
-    rating: 5,
-    date: "1 Maret 2024",
-    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae. Vestibulum feugiat ultrices euismod. Proin mollis ligula id hendrerit rutrum."
-  },
-  {
-    user: "User2",
-    category: "Pelayanan Admin/Vendor",
-    rating: 4,
-    date: "5 Maret 2024",
-    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae. Vestibulum feugiat ultrices euismod. Proin mollis ligula id hendrerit rutrum."
-  },
-  {
-    user: "User3",
-    category: "Harga Barang",
-    rating: 5,
-    date: "3 Maret 2024",
-    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae. Vestibulum feugiat ultrices euismod. Proin mollis ligula id hendrerit rutrum."
-  },
-  {
-    user: "User4",
-    category: "Sesuai Deskripsi",
-    rating: 4,
-    date: "2 Maret 2024",
-    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae. Vestibulum feugiat ultrices euismod. Proin mollis ligula id hendrerit rutrum."
-  },
-  {
-    user: "User5",
-    category: "Kualitas Barang",
-    rating: 5,
-    date: "4 Maret 2024",
-    comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae. Vestibulum feugiat ultrices euismod. Proin mollis ligula id hendrerit rutrum."
-  },
-];
+// dependency modules
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
+// self-defined modules
+import { Navbar } from '@/app/page';
+import { convertDate } from '@/app/utils/helpers';
+import { readProductById } from '@/app/utils/productApi';
+import { readReviewsByProductId } from '@/app/utils/reviewApi';
+import { Product, Review } from '@/app/utils/types';
 
 export default function ReviewPage() {
+  const pathname = usePathname();
   const [currentPage, setCurrentPage] = useState(1);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const reviewsPerPage = 10;
   const totalPages = Math.ceil(reviews.length / reviewsPerPage);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const id = pathname.split('/').pop();
+        if (id) {
+          const product = await readProductById(parseInt(id));
+          const reviews = await readReviewsByProductId(parseInt(id));
+
+          reviews.sort((a: Review, b: Review) => new Date(b.reviewDate).getTime() - new Date(a.reviewDate).getTime());
+
+          setProduct(product);
+          setReviews(reviews);
+        }
+      } catch (error) {
+        console.error('Failed to fetch reviews:', error);
+      }
+    };
+    
+    fetchData();
+  }, [pathname]);
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -55,29 +50,33 @@ export default function ReviewPage() {
   const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
   const currentReviews = reviews.slice(indexOfFirstReview, indexOfLastReview);
 
+  if (!product) {
+    return null;
+  }
+
   return (
     <div className="max-w-8xl mx-auto p-16">
       <Navbar />
       <div className='text-black font-sofia bg-white rounded-lg mt-14 p-8'>
         <h1 className="text-3xl font-bold text-pink-900 mb-5">Penilaian & Ulasan</h1>
         <div className="mb-12">
-          <h2 className="text-xl font-semibold">Gedung Sabuga ITB</h2>
-          <p>Vendor A</p>
-          <p>Dago, Bandung</p>
+          <h2 className="text-xl font-semibold">{product.name}</h2>
+          <p>{product.vendorName}</p>
+          <p>{product.vendorAddress}</p>
           <div className="flex mt-2">
             <div className="flex items-center border-2 border-pink-600 p-2 mt-4">
-              <span className="text-4xl font-bold">4.5</span>
+              <span className="text-4xl font-bold">{product.rating && product.rating.toFixed(2) !== "0.00" ? product.rating.toFixed(2) : "N/A"}</span>
               <span className="text-xl">/5.0</span>
             </div>
-            <span className="ml-5 mt-8">13 rating diberikan</span>
+            <span className="ml-5 mt-8">{product.reviewCount} rating diberikan</span>
           </div>
         </div>
         {currentReviews.map((review, index) => (
           <div key={index} className="flex items-start mb-10 max-w-8xl">
-            <div className="w-12 h-12 bg-gray-200 rounded-full mr-4"></div>
+            <img src={review.userPicture || "https://via.placeholder.com/50"} alt="User profile" className="w-12 h-12 bg-gray-200 rounded-full mr-4" />
             <div className="flex-1">
-              <h3 className="font-bold">{review.user}</h3>
-              <p className="text-sm text-gray-600">{review.category}</p>
+              <h3 className="font-bold">{review.userName}</h3>
+              <p className="text-sm text-gray-600">{review.tag}</p>
               <div className="flex items-center mb-1">
                 {[...Array(5)].map((_, i) => (
                   <svg
@@ -89,7 +88,7 @@ export default function ReviewPage() {
                   </svg>
                 ))}
               </div>
-              <p className="text-sm text-gray-600">{review.date}</p>
+              <p className="text-sm text-gray-600">{convertDate(review.reviewDate)}</p>
               <p className="text-sm mt-2">{review.comment}</p>
             </div>
           </div>

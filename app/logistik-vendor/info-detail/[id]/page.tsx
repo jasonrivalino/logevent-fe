@@ -44,6 +44,10 @@ export default function Product() {
           const product = await readProductById(parseInt(id));
           const albums = await readAlbumsByProductId(parseInt(id));
           const reviews = await readReviewsByProductId(parseInt(id));
+
+          reviews.sort((a: Review, b: Review) => new Date(b.reviewDate).getTime() - new Date(a.reviewDate).getTime());
+          reviews.splice(3);
+
           setProduct(product);
           setAlbums(albums);
           setReviews(reviews);
@@ -64,7 +68,7 @@ export default function Product() {
         <Tabs scrollToSection={scrollToSection} refs={{ descriptionRef, albumRef, reviewsRef }} />
         {product && <div ref={descriptionRef}><Description product={product} /></div>}
         {product && <div ref={albumRef}><ImageGallery albums={albums} /></div>}
-        {product && <div ref={reviewsRef}><Reviews reviews={reviews} /></div>}
+        {product && <div ref={reviewsRef}><Reviews product={product} reviews={reviews} /></div>}
       </div>
       <ContactBox />
     </div>
@@ -362,7 +366,9 @@ function ImageGallery({ albums }: { albums: Album[] }) {
   );
 }
 
-function Reviews({ reviews }: { reviews: Review[] }) {
+function Reviews({ product, reviews }: { product: Product, reviews: Review[] }) {
+  const router = useRouter();
+
   if (reviews.length === 0) {
     return (
       <div className="px-8 py-14 border-b">
@@ -376,7 +382,12 @@ function Reviews({ reviews }: { reviews: Review[] }) {
     <div className="mt-4 px-8 pb-8 md:py-14">
       <div className="flex items-center justify-between space-x-4">
         <h2 className="text-2xl md:text-3xl font-bold text-pink-900 pt-10">Reviews</h2>
-        <button className="text-sm md:text-base bg-pink-600 text-white px-2 md:px-4 py-1 md:py-2 rounded-lg -mb-10 md:-mb-8">Lihat Review lengkap</button>
+        <button
+          className="text-sm md:text-base bg-pink-600 text-white px-2 md:px-4 py-1 md:py-2 rounded-lg -mb-10 md:-mb-8"
+          onClick={() => router.push(`/list-penilaian/logistik-vendor/${product.id}`)}
+        >
+          Lihat Review lengkap
+        </button>
       </div>
       <div className="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-8 mt-6">
         {reviews.map((review, index) => (
