@@ -104,8 +104,9 @@ function Table({ data }: TableProps) {
 
     return (
         <div className="bg-white rounded-xl w-full mb-4 md:mb-0 px-6 md:px-8 py-6 shadow-md">
-            <div className="flex justify-center md:justify-start md:sticky md:top-0 bg-white z-10">
-                <h1 className="text-lg md:text-3xl font-bold mb-4 md:mb-6 text-pink-900 font-sofia">Welcome Admin LogEvent!</h1>
+            <div className="flex flex-col justify-center md:justify-start md:sticky md:top-0 bg-white z-10">
+                <h1 className="text-lg md:text-3xl font-bold mb-2 md:mb-6 text-pink-900 font-sofia">Welcome Admin LogEvent!</h1>
+                <button className="font-sofia text-sm md:text-base bg-pink-500 hover:bg-pink-600 px-2 py-1 md:-mt-10 mb-4 rounded-md md:ml-auto w-28 md:w-auto">Export to Excel</button>
             </div>
             <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200 mb-6 md:mb-3">
@@ -151,11 +152,11 @@ function Table({ data }: TableProps) {
             </div>
             {showModal && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 font-sofia">
-                    <div className="bg-white p-8 rounded shadow-lg z-60 w-9/12 md-w:auto">
-                        <p className="text-lg text-black">{modalContent}</p>
+                    <div className="bg-white p-4 md:p-8 rounded shadow-lg z-60 max-w-xs md:max-w-md w-full">
+                        <p className="text-black text-sm md:text-lg">{modalContent}</p>
                         <div className="mt-4 flex justify-end">
-                            <button onClick={() => setShowModal(false)} className="px-4 py-2 bg-gray-300 rounded mr-2">Cancel</button>
-                            <button onClick={() => setShowModal(false)} className="px-4 py-2 bg-pink-500 text-white rounded">Confirm</button>
+                            <button onClick={() => setShowModal(false)} className="px-4 py-2 bg-gray-300 rounded mr-2 text-sm md:text-base">Cancel</button>
+                            <button onClick={() => setShowModal(false)} className="px-4 py-2 bg-pink-500 text-white rounded text-sm md:text-base">Confirm</button>
                         </div>
                     </div>
                 </div>
