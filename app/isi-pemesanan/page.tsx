@@ -211,6 +211,19 @@ export default function ReservationFill() {
                 {errors.endDate && <p className="text-red-500 text-xs md:text-sm mt-1">{errors.endDate}</p>}
               </div>
             </div>
+            <div className="flex flex-col mb-1 md:mb-4">
+              <label htmlFor="address" className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Catatan untuk Vendor:</label>
+              <textarea
+                id="address"
+                name="address"
+                className="input-placeholder border border-gray-300 rounded-md p-2 md:p-3 text-black text-xs md:text-sm"
+                rows={2}
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="Enter your address"
+              />
+              {errors.address && <p className="text-red-500 text-xs md:text-sm mt-1">{errors.address}</p>}
+            </div>
             <button type="submit" className="mt-2 p-2 md:p-2 rounded bg-pink-800 hover:bg-pink-900 text-white">Submit</button>
           </form>
         </div>

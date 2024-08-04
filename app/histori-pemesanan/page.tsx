@@ -361,7 +361,7 @@ const HistoriPaketEvent = ({ events }) => {
                     </div>
                     <div className="flex justify-center items-center mt-2">
                       <button className="bg-pink-600 hover:bg-pink-800 px-2 py-1 rounded-lg text-white self-start text-xs md:text-base font-bold mt-4"
-                        onClick={() => router.push(`/logistik-vendor/info-detail`)}
+                        onClick={() => router.push(`/review`)}
                       >
                         Review
                       </button>
