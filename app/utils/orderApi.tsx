@@ -42,8 +42,11 @@ export const readOrderById = async (id: number) => {
 };
 
 export const createOrder = async (orderData: {
-  userId: number;
+  cartId: number;
+  name: string;
+  phone: string;  
   address: string;
+  notes: string | null;
   startDate: Date;
   endDate: Date;
 }) => {

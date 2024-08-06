@@ -4,27 +4,28 @@
 // dependency modules
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 // self-defined modules
 import { Navbar } from '@/app/page';
 import { ContactBoxShort } from '@/app/signin/page';
 import { readUserProfile } from '@/app/utils/authApi';
+import { readActiveEventCartByUserId, updateCart } from '@/app/utils/cartApi';
 import { createOrder } from '@/app/utils/orderApi';
 
 export default function ReservationFill() {
   const router = useRouter();
-  const [userId, setUserId] = useState<number | null>(null);
-  const [name, setName] = useState<string | null>(null);
-  const [phone, setPhone] = useState<string | null>(null);
+  const [cartId, setCartId] = useState<number | null>(null);
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
+  const [notes, setNotes] = useState('');
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [address, setAddress] = useState<string>('');
-  const [errors, setErrors] = useState<{ address?: string; startDate?: string; endDate?: string }>({});
+  const [errors, setErrors] = useState<{ name?: string, phone?: string; address?: string, startDate?: string; endDate?: string }>({});
 
   const handleBackClick = () => {
-    {/* TODO: Go To Wishlist */}
     router.push('/wishlist');
   };
 
@@ -39,8 +40,14 @@ export default function ReservationFill() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const newErrors: { address?: string; startDate?: string; endDate?: string } = {};
+    const newErrors: { name?: string, phone?: string, address?: string, startDate?: string, endDate?: string } = {};
 
+    if (!name) {
+      newErrors.name = 'Nama tidak boleh kosong';
+    }
+    if (!phone) {
+      newErrors.phone = 'Nomor telepon tidak boleh kosong';
+    }
     if (!address) {
       newErrors.address = 'Alamat tidak boleh kosong';
     }
@@ -59,8 +66,17 @@ export default function ReservationFill() {
     }
 
     try {
-      if (!userId) {
+      if (!cartId) {
         throw new Error('User ID is missing');
+      }
+      if (!name) {
+        throw new Error('Name is missing');
+      }
+      if (!phone) {
+        throw new Error('Phone number is missing');
+      }
+      if (!address) {
+        throw new Error('Address is missing');
       }
       if (!startDate) {
         throw new Error('Start date is missing');
@@ -69,13 +85,21 @@ export default function ReservationFill() {
         throw new Error('End date is missing');
       }
 
-      await createOrder({
-        userId,
+      const orderData = {
+        cartId,
+        name,
+        phone,
         address,
-        startDate: startDate,
-        endDate: endDate,
-      });
+        notes: notes || null,
+        startDate,
+        endDate
+      };
+      const cartData = {
+        cartStatus: 'Checked Out'
+      };
 
+      await createOrder(orderData);
+      await updateCart(cartId, cartData);
       router.push('/isi-pemesanan/complete');
     } catch (error: any) {
       console.error('Failed to create order:', error.message);
@@ -83,21 +107,30 @@ export default function ReservationFill() {
   };
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        try {
-          const user = await readUserProfile(token);
-          setUserId(user.id);
-        } catch (error: any) {
-          console.error('Failed to fetch user data:', error.message);
-          localStorage.removeItem('token');
-          Cookies.remove('token');
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          router.push('/signin');
+          return;
         }
-      }
-    };
 
-    fetchUserProfile();
+        const user = await readUserProfile(token);
+        const cart = await readActiveEventCartByUserId(user.id);
+        if (!cart) {
+          router.push('/wishlist');
+          return;
+        }
+
+        setCartId(cart.id);
+      } catch (error: any) {
+        console.error('Failed to fetch user data:', error.message);
+        localStorage.removeItem('token');
+        Cookies.remove('token');
+      }
+    }
+
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -124,9 +157,6 @@ export default function ReservationFill() {
     };
   }, []);
 
-  const isMediumScreen = typeof window !== 'undefined' && window.matchMedia('(min-width: 768px)').matches;
-  console.log('isMediumScreen', isMediumScreen);
-
   return (
     <div className="flex flex-col min-h-screen relative overflow-hidden">
       <Navbar />
@@ -150,28 +180,34 @@ export default function ReservationFill() {
             <h2 className="mb-4 md:mb-8 text-2xl md:text-3xl text-center text-gray-800">Isi Data Pemesanan</h2>
               <div className="flex flex-col md:flex-row gap-4 md:gap-6 mb-3 md:mb-4">
                 <div className="flex flex-1 flex-row -mb-2 md:mb-0">
-                  <label htmlFor="name" className="mt-1 text-sm md:text-base text-gray-800 mr-[4.42rem] md:mr-2">Nama:</label>
-                  <input
-                    id="name"
-                    name="name"
-                    type="text"
-                    className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] text-black text-xs md:text-sm md:mr-[3rem] w-[8.1rem] md:w-auto"
-                    placeholder="Isi nama pemesan"
-                    value={name || ''}
-                    onChange={(e) => setName(e.target.value)}
-                  />
+                  <div className="flex flex-col">
+                    <label htmlFor="name" className="mt-1 text-sm md:text-base text-gray-800 mr-[4.42rem] md:mr-2">Nama:</label>
+                    <input
+                      id="name"
+                      name="name"
+                      type="text"
+                      className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] text-black text-xs md:text-sm md:mr-[3rem] w-[8.1rem] md:w-auto"
+                      placeholder="Isi nama pemesan"
+                      value={name || ''}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                    {errors.name && <p className="text-red-500 text-xs md:text-sm mt-1">{errors.name}</p>}
+                  </div>    
                 </div>
                 <div className="flex flex-1 flex-row">
-                  <label htmlFor="phone" className="mt-1 text-sm md:text-base text-gray-800 mr-9 md:mr-5">No. Telepon:</label>
-                  <input
-                    id="phone"
-                    name="phone"
-                    type="tel"
-                    className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] text-black text-xs md:text-sm w-[8.1rem] md:w-[8.8rem]"
-                    placeholder="Isi nomor telepon"
-                    value={phone || ''}
-                    onChange={(e) => setPhone(e.target.value)}
-                  />
+                  <div className="flex flex-col">
+                    <label htmlFor="phone" className="mt-1 text-sm md:text-base text-gray-800 mr-9 md:mr-5">No. Telepon:</label>
+                    <input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] text-black text-xs md:text-sm w-[8.1rem] md:w-[8.8rem]"
+                      placeholder="Isi nomor telepon"
+                      value={phone || ''}
+                      onChange={(e) => setPhone(e.target.value)}
+                    />
+                    {errors.phone && <p className="text-red-500 text-xs md:text-sm mt-1">{errors.phone}</p>}
+                  </div>
                 </div>
               </div>
             <div className="flex flex-col mb-1 md:mb-4">
@@ -212,17 +248,16 @@ export default function ReservationFill() {
               </div>
             </div>
             <div className="flex flex-col mb-1 md:mb-4">
-              <label htmlFor="address" className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Catatan untuk Vendor:</label>
+              <label htmlFor="notes" className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Catatan untuk Vendor:</label>
               <textarea
-                id="address"
-                name="address"
+                id="notes"
+                name="notes"
                 className="input-placeholder border border-gray-300 rounded-md p-2 md:p-3 text-black text-xs md:text-sm"
                 rows={2}
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                placeholder="Enter your address"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Enter your notes"
               />
-              {errors.address && <p className="text-red-500 text-xs md:text-sm mt-1">{errors.address}</p>}
             </div>
             <button type="submit" className="mt-2 p-2 md:p-2 rounded bg-pink-800 hover:bg-pink-900 text-white">Submit</button>
           </form>

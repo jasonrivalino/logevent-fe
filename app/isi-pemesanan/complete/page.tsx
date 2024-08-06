@@ -36,7 +36,6 @@ export default function EmailRequest() {
   }, []);
 
   const handleOrderClick = () => {
-    {/* TODO: Go To Wishlist */}
     router.push('/wishlist')
   }
 

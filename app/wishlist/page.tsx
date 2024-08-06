@@ -9,6 +9,8 @@ import { FaHeart } from 'react-icons/fa';
 // self-defined modules
 import { ContactBox, Navbar } from '@/app/page';
 import { readUserProfile } from '@/app/utils/authApi';
+import { readActiveEventCartByUserId, readActiveProductCartByUserId, createCart } from '@/app/utils/cartApi';
+import { createItem, deleteItemsByCartId } from '@/app/utils/itemApi';
 import { readEventWishlistsByUserId, readProductWishlistsByUserId } from '@/app/utils/wishlistApi';
 import { EventWishlist, ProductWishlist } from '@/app/utils/types';
 
@@ -20,8 +22,6 @@ export default function HomePage() {
 
   const handleToggle = (option: string) => {
     setActiveOption(option);
-    // Dummy function for toggling action
-    console.log(`Switched to ${option}`);
   };
 
   useEffect(() => {
@@ -102,8 +102,35 @@ const WishlistPaketEvent = ({ eventWishlists }: { eventWishlists: EventWishlist[
   const paginatedEvents = eventWishlists.slice((currentPage - 1) * eventsPerPage, currentPage * eventsPerPage);
   const totalPages = Math.ceil(eventWishlists.length / eventsPerPage);
 
-  const handleEventOrder = (event: EventWishlist) => {
-    // TODO: Implement Event Order Submission
+  const handleEventOrder = async (e: { preventDefault: () => void; }, event: EventWishlist) => {
+    e.preventDefault();
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('User token not found');
+      }
+
+      const user = await readUserProfile(token);
+      let cart = await readActiveEventCartByUserId(user.id);
+      if (!cart) {
+        cart = await createCart(user.id, 'Event');
+      }
+
+      await deleteItemsByCartId(cart.id);
+      const itemData = {
+        cartId: cart.id,
+        eventId: event.eventId,
+        productId: null,
+        duration: null,
+        quantity: null,
+      };
+
+      await createItem(itemData);
+      router.push('/isi-pemesanan/paket-event');
+    } catch (error: any) {
+      console.error(error.message);
+    }
   };
 
   return (
@@ -152,7 +179,7 @@ const WishlistPaketEvent = ({ eventWishlists }: { eventWishlists: EventWishlist[
               </button>
               <button
                 className="text-sm md:text-sm bg-pink-600 hover:bg-pink-800 text-white font-semibold px-3 md:py-3 rounded"
-                onClick={() => router.push(`/isi-pemesanan`)}
+                onClick={(e) => handleEventOrder(e, event)}
               >
                 Lanjut Pemesanan
               </button>
@@ -206,13 +233,40 @@ function WishlistLogistikVendor({ productWishlists }: { productWishlists: Produc
   const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
 
-    console.log('Selected Items:', selectedItems);
-    console.log('Total Price:', totalPrice);
     if (selectedItems.length < 1) {
       alert('Please select at least one item');
     } else {
-      // TODO: Implement Product Order Submission
-      
+      console.log('Selected Items:', selectedItems);
+      console.log('Total Price:', totalPrice);
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          throw new Error('User token not found');
+        }
+
+        const user = await readUserProfile(token);
+        let cart = await readActiveProductCartByUserId(user.id);
+        if (!cart) {
+          cart = await createCart(user.id, 'Product');
+        }
+
+        await deleteItemsByCartId(cart.id);
+        for (const item of selectedItems) {
+          const itemData = {
+            cartId: cart.id,
+            eventId: null,
+            productId: item.productId,
+            duration: null,
+            quantity: null,
+          };
+
+          await createItem(itemData);
+        }
+
+        router.push('/isi-pemesanan/logistik-vendor');
+      } catch (error: any) {
+        console.error(error.message);
+      }
     }
   };
 

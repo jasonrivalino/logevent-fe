@@ -31,3 +31,27 @@ export const readItemById = async (id: number) => {
     throw new Error(error.response?.data?.message || 'Failed to fetch item');
   }
 };
+
+export const createItem = async (itemData: {
+  cartId: number;
+  eventId: number | null;
+  productId: number | null;
+  duration: number | null;
+  quantity: number | null;
+}) => {
+  try {
+    const response = await axios.post(`${API_URL}/items/create`, itemData);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Failed to create item');
+  }
+};
+
+export const deleteItemsByCartId = async (cartId: number) => {
+  try {
+    const response = await axios.delete(`${API_URL}/items/delete/cart/${cartId}`);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Failed to delete cart items');
+  }
+};

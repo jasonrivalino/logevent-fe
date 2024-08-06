@@ -19,6 +19,10 @@ export const readActiveEventCartByUserId = async (userId: number) => {
     const response = await axios.get(`${API_URL}/carts/read/event/${userId}`);
     return response.data;
   } catch (error: any) {
+    if (error.response && error.response.status === 404) {
+      return null;
+    }
+
     throw new Error(error.response?.data?.message || `Failed to fetch active event cart for user ${userId}`);
   }
 };
@@ -28,6 +32,10 @@ export const readActiveProductCartByUserId = async (userId: number) => {
     const response = await axios.get(`${API_URL}/carts/read/product/${userId}`);
     return response.data;
   } catch (error: any) {
+    if (error.response && error.response.status === 404) {
+      return null;
+    }
+
     throw new Error(error.response?.data?.message || `Failed to fetch active product cart for user ${userId}`);
   }
 };
@@ -38,5 +46,19 @@ export const createCart = async (userId: number, type: string) => {
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || `Failed to create cart for user ${userId}`);
+  }
+};
+
+export const updateCart = async (cartId: number, cartData: {
+  userId?: number,
+  type?: string,
+  cartDate?: Date,
+  cartStatus?: string
+}) => {
+  try {
+    const response = await axios.put(`${API_URL}/carts/update/${cartId}`, cartData);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || `Failed to update cart ${cartId}`);
   }
 };
