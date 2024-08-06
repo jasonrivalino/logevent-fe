@@ -180,8 +180,8 @@ function EditPackageProduct() {
 
   const selectedProductDetails = products.filter(product => selectedProductId.includes(product.id));
 
-  const handleSubmit = async (event: { preventDefault: () => void; }) => {
-    event.preventDefault();
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
 
     if (!selectedCategoryId) {
       throw new Error('Category ID is not set');

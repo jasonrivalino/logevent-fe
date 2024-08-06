@@ -187,7 +187,9 @@ const HistoriPaketEvent = ({ eventOrders, eventItems }: { eventOrders: Order[]; 
           </div>
         </div>
       ))}
-      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+      {totalPages > 1 && (
+        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+      )}
     </div>
   );
 };
@@ -269,7 +271,9 @@ function HistoriLogistikVendor({ productOrders, productItems }: { productOrders:
           </div>
         </div>
       ))}
-      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+      {totalPages > 1 && (
+        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+      )}
     </div>
   );
 }

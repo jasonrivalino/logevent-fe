@@ -104,8 +104,8 @@ function AddVendorProduct() {
     setProductImages(newImages);
   };
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
     if (!vendorId) {
       throw new Error('Vendor ID is not set');

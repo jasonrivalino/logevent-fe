@@ -91,7 +91,9 @@ function Table({ orders }: { orders: Order[] }) {
                     ))}
                 </tbody>
             </table>
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+            {totalPages > 1 && (
+              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+            )}
         </div>
     );
 }

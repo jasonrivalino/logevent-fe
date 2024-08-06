@@ -125,8 +125,8 @@ function EditVendorProduct({ product, categories, albums }: { product: Product, 
       setProductImages(newImages);
     };
 
-    const handleSubmit = async (event: React.FormEvent) => {
-      event.preventDefault();
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
 
       if (!productId) {
         throw new Error('Product ID is not set');

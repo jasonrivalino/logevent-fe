@@ -8,9 +8,11 @@ import { useState, useEffect, useRef } from 'react';
 // self-defined modules
 import { Navbar, ContactBox } from '@/app/page';
 import { readAlbumsByProductId } from '@/app/utils/albumApi';
+import { readUserProfile } from '@/app/utils/authApi';
 import { convertDate, generateWhatsAppUrl, getRateText, getStars } from '@/app/utils/helpers';
 import { readReviewsByProductId } from '@/app/utils/reviewApi';
 import { readProductById } from '@/app/utils/productApi';
+import { readProductWishlistsByUserId, createWishlist, deleteWishlist } from '@/app/utils/wishlistApi';
 import type { Album, Product, Review } from '@/app/utils/types';
 
 export default function Product() {
@@ -21,6 +23,7 @@ export default function Product() {
   const [product, setProduct] = useState<Product | null>(null);
   const [albums, setAlbums] = useState<Album[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [isWishlist, setIsWishlist] = useState(false);
 
   const scrollToSection = (ref: { current: { offsetTop: number; }; }) => {
     var offset = 20; // Adjust this value for the desired offset
@@ -51,6 +54,18 @@ export default function Product() {
           setProduct(product);
           setAlbums(albums);
           setReviews(reviews);
+
+          const token = localStorage.getItem('token');
+          if (!token) {
+            return;
+          }
+
+          const user = await readUserProfile(token);
+          const userId = user.id;
+          const wishlists = await readProductWishlistsByUserId(userId);
+          const isWishlist = wishlists.some((wishlist: { productId: number; }) => wishlist.productId === product.id);
+
+          setIsWishlist(isWishlist);
         }
       } catch (error) {
         console.error('Failed to fetch product:', error);
@@ -64,7 +79,7 @@ export default function Product() {
     <div className="font-sofia">
       <Navbar />
       <div className="container mx-auto mt-24 px-20">
-        {product && <ProductImage product={product} albums={albums} />}
+        {product && <ProductImage product={product} albums={albums} isWishlist={isWishlist} setIsWishlist={setIsWishlist} />}
         <Tabs scrollToSection={scrollToSection} refs={{ descriptionRef, albumRef, reviewsRef }} />
         {product && <div ref={descriptionRef}><Description product={product} /></div>}
         {product && <div ref={albumRef}><ImageGallery albums={albums} /></div>}
@@ -90,7 +105,7 @@ const useWindowWidth = () => {
   return windowWidth;
 };
 
-function ProductImage({ product, albums }: { product: Product, albums: Album[] }) {
+function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product: Product, albums: Album[], isWishlist: boolean, setIsWishlist: (isWishlist: boolean) => void }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const timeoutRef = useRef<null | NodeJS.Timeout>(null);
   const windowWidth = useWindowWidth();
@@ -145,6 +160,33 @@ function ProductImage({ product, albums }: { product: Product, albums: Album[] }
     window.open(generateWhatsAppUrl(vendorNumber || ""), '_blank', 'noopener,noreferrer');
   };
 
+  const handleClickWishlist = async (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/signin');
+        return;
+      }
+
+      const user = await readUserProfile(token);
+      const userId = user.id;
+      const wishlists = await readProductWishlistsByUserId(userId);
+      const wishlist = wishlists.find((wishlist: { productId: number; }) => wishlist.productId === product.id);
+
+      if (isWishlist) {
+        await deleteWishlist(wishlist.id);
+      } else if (!isWishlist) {
+        await createWishlist(userId, null, product.id);
+      }
+
+      setIsWishlist(!isWishlist);
+    } catch (error) {
+      console.error('Failed to edit wishlist:', error);
+    }
+  };
+
   return (
     <div className="px-8 py-4">
       {windowWidth >= 768 ? (
@@ -177,8 +219,9 @@ function ProductImage({ product, albums }: { product: Product, albums: Album[] }
             <div className="flex space-x-4 w-full md:w-1/2 md:justify-end items-center mt-3 md:mt-0">
               <button 
                 className="bg-white text-pink-500 border-pink-500 border-2 rounded-lg px-3 md:px-4 py-2 -ml-4 md:ml-0 mr-[6.5rem] md:mr-0 text-sm md:text-base"
+                onClick={handleClickWishlist}
               >
-                + Keranjang
+                {isWishlist ? "Hapus dari Wishlist" : "Tambah ke Wishlist"}
               </button>
               {/* TODO: Order Popup */}
               <button
@@ -245,8 +288,9 @@ function ProductImage({ product, albums }: { product: Product, albums: Album[] }
                 </button>
                 <button
                   className="bg-white text-pink-500 border-pink-500 border-2 rounded-lg md:px-4 py-1 md:py-2 -ml-4 md:ml-0 md:mr-0 text-sm md:text-base mt-2"
+                  onClick={handleClickWishlist}
                 >
-                  + Keranjang
+                  {isWishlist ? "Hapus dari Wishlist" : "Tambah ke Wishlist"}
                 </button>
               </div>
               <div className="flex flex-row space-x-4 mt-3">

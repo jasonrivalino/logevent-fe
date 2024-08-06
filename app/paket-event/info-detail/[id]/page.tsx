@@ -8,12 +8,14 @@ import { useState, useEffect, useRef } from 'react';
 // self-defined modules
 import { Navbar, ContactBox } from '@/app/page';
 import { readAlbumsByEventId } from '@/app/utils/albumApi';
+import { readUserProfile } from '@/app/utils/authApi';
 import { readBundlesByEventId } from '@/app/utils/bundleApi';
 import { readEventById } from '@/app/utils/eventApi';
 import { convertDate, generateWhatsAppUrl, getStars } from '@/app/utils/helpers';
 import { readProductById } from '@/app/utils/productApi';
 import { readReviewsByEventId } from '@/app/utils/reviewApi';
-import type { Album, Bundle, Event, Product, Review } from '@/app/utils/types';
+import { readEventWishlistsByUserId, createWishlist, deleteWishlist } from '@/app/utils/wishlistApi';
+import type { Album, Event, Product, Review } from '@/app/utils/types';
 
 export default function Event() {
   const descriptionRef = useRef(null);
@@ -23,9 +25,9 @@ export default function Event() {
   const pathname = usePathname();
   const [event, setEvent] = useState<Event | null>(null);
   const [albums, setAlbums] = useState<Album[]>([]);
-  const [bundles, setBundles] = useState<Bundle[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [isWishlist, setIsWishlist] = useState(false);
 
   const scrollToSection = (ref: { current: { offsetTop: number; }; }) => {
     var offset = 20; // Adjust this value for the desired offset
@@ -55,7 +57,6 @@ export default function Event() {
           reviews.splice(3);
           
           setEvent(event);
-          setBundles(bundles);
           setAlbums(albums);
           setReviews(reviews);
 
@@ -65,6 +66,18 @@ export default function Event() {
             products.push(product);
           }
           setProducts(products);
+
+          const token = localStorage.getItem('token');
+          if (!token) {
+            return;
+          }
+
+          const user = await readUserProfile(token);
+          const userId = user.id;
+          const wishlists = await readEventWishlistsByUserId(userId);
+          const isWishlist = wishlists.some((wishlist: { eventId: number; }) => wishlist.eventId === event.id);
+
+          setIsWishlist(isWishlist);
         }
       } catch (error) {
         console.error('Failed to fetch product:', error);
@@ -78,7 +91,7 @@ export default function Event() {
     <div className="font-sofia">
       <Navbar />
       <div className="container mx-auto mt-24 md:px-20 -mb-6 md:mb-0">
-        {event && <EventImage event={event} albums={albums} />}
+        {event && <EventImage event={event} albums={albums} isWishlist={isWishlist} setIsWishlist={setIsWishlist} />}
         <Tabs scrollToSection={scrollToSection} refs={{ descriptionRef, vendorListRef, albumRef, reviewsRef }} />
         {event && <div ref={descriptionRef}><Description event={event} /></div>}
         {event && <div ref={vendorListRef}><ProductList products={products} /></div>}
@@ -105,7 +118,7 @@ const useWindowWidth = () => {
   return windowWidth;
 };
 
-const EventImage = ({ event, albums }: { event: Event; albums: Album[]; }) => {
+const EventImage = ({ event, albums, isWishlist, setIsWishlist }: { event: Event, albums: Album[], isWishlist: boolean, setIsWishlist: (isWishlist: boolean) => void }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const timeoutRef = useRef<null | NodeJS.Timeout>(null);
   const windowWidth = useWindowWidth();
@@ -160,6 +173,33 @@ const EventImage = ({ event, albums }: { event: Event; albums: Album[]; }) => {
     window.open(generateWhatsAppUrl(adminNumber || ""), '_blank', 'noopener,noreferrer');
   };
 
+  const handleClickWishlist = async (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/signin');
+        return;
+      }
+
+      const user = await readUserProfile(token);
+      const userId = user.id;
+      const wishlists = await readEventWishlistsByUserId(userId);
+      const wishlist = wishlists.find((wishlist: { eventId: number; }) => wishlist.eventId === event.id);
+
+      if (isWishlist) {
+        await deleteWishlist(wishlist.id);
+      } else if (!isWishlist) {
+        await createWishlist(userId, event.id, null);
+      }
+
+      setIsWishlist(!isWishlist);
+    } catch (error) {
+      console.error('Failed to edit wishlist:', error);
+    }
+  };
+
   return (
     <div className="px-8 py-4">
       {windowWidth >= 768 ? (
@@ -189,8 +229,9 @@ const EventImage = ({ event, albums }: { event: Event; albums: Album[]; }) => {
             <div className="flex space-x-4 w-full md:w-1/2 md:justify-end items-center mt-3 md:mt-0">
               <button
                 className="bg-white hover:bg-pink-100 text-pink-500 border-pink-500 border-2 rounded-lg px-3 md:px-4 py-2 -ml-4 md:ml-0 mr-[6.5rem] md:mr-0 text-sm md:text-base"
+                onClick={handleClickWishlist}
               >
-                + Keranjang
+                {isWishlist ? "Hapus dari Wishlist" : "Tambah ke Wishlist"}
               </button>
               {/* TODO: Order Popup */}
               <button
@@ -254,8 +295,9 @@ const EventImage = ({ event, albums }: { event: Event; albums: Album[]; }) => {
                 </button>
                 <button 
                   className="bg-white text-pink-500 border-pink-500 border-2 rounded-lg md:px-4 py-1 md:py-2 -ml-4 md:ml-0 md:mr-0 text-sm md:text-base mt-2"
+                  onClick={handleClickWishlist}
                 >
-                  + Keranjang
+                  {isWishlist ? "Hapus dari Wishlist" : "Tambah ke Wishlist"}
                 </button>
               </div>
               <div className="flex flex-row space-x-4 mt-3">

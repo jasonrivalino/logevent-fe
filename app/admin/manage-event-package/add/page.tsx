@@ -145,8 +145,8 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
 
   const selectedProductDetails = products.filter(product => selectedProductIds.includes(product.id));
 
-  const handleSubmit = async (event: { preventDefault: () => void; }) => {
-    event.preventDefault();
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
 
     if (!selectedCategoryId) {
       throw new Error('Category ID is not set');

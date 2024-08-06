@@ -5,7 +5,7 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { SetStateAction, useEffect, useState } from 'react';
-import { FaShoppingCart, FaTrashAlt } from 'react-icons/fa';
+import { FaShoppingCart } from 'react-icons/fa';
 // self-defined modules
 import { ContactBox, Navbar } from '@/app/page';
 import { readUserProfile } from '@/app/utils/authApi';
@@ -56,7 +56,7 @@ export default function HomePage() {
             <div className='flex flex-row'>
               <FaShoppingCart className="text-4xl text-pink-900 mr-5 -mt-[0.15rem]" />
               <h1 className="text-3xl font-bold text-pink-900 font-sofia mb-5">
-                {activeOption === 'Paket Event' ? 'Keranjang Paket Event' : 'Keranjang Logistik Vendor'}
+                {activeOption === 'Paket Event' ? 'Wishlist Paket Event' : 'Wishlist Logistik Vendor'}
               </h1>
             </div>
             <div className="flex flex-row rounded-full border border-white transition-all duration-300">
@@ -88,15 +88,11 @@ export default function HomePage() {
 
 const KeranjangPaketEvent = ({ eventWishlists }: { eventWishlists: EventWishlist[] }) => {
   const router = useRouter();
-  const [expandedProducts, setExpandedProducts] = useState<{ [key: string]: boolean }>({});
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 5;
 
   const handleDetailClick = (id: string | number) => {
-    setExpandedProducts((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
+    router.push(`/paket-event/info-detail/${id}`);
   };
 
   const handlePageChange = (page: number) => {
@@ -146,7 +142,7 @@ const KeranjangPaketEvent = ({ eventWishlists }: { eventWishlists: EventWishlist
               <div className="flex flex-col absolute bottom-4 right-4">
               <button
                 className="text-sm md:text-sm bg-pink-400 hover:bg-pink-700 text-white font-semibold px-1 md:py-1 rounded mb-2"
-                onClick={() => handleDetailClick(event.id)}
+                onClick={() => handleDetailClick(event.eventId)}
               >
                 Lihat Detail
               </button>
@@ -161,7 +157,9 @@ const KeranjangPaketEvent = ({ eventWishlists }: { eventWishlists: EventWishlist
           </div>
         </div>
       ))}
-      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+      {totalPages > 1 && (
+        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+      )}
     </div>
   );
 };
@@ -170,7 +168,6 @@ function KeranjangLogistikVendor({ productWishlists }: { productWishlists: Produ
   const router = useRouter();
   const itemsPerPage = 12;
   const [currentPage, setCurrentPage] = useState(1);
-  const [showPopup, setShowPopup] = useState(false);
   const [selectedProductWishlist, setSelectedProductWishlist] = useState<ProductWishlist | null>(null);
   const [selectedItems, setSelectedItems] = useState<ProductWishlist[]>([]);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -185,22 +182,6 @@ function KeranjangLogistikVendor({ productWishlists }: { productWishlists: Produ
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-
-  const handleDeleteClick = (productWishlist: ProductWishlist) => {
-    setSelectedProductWishlist(productWishlist);
-    setShowPopup(true);
-  };
-
-  const handleDelete = async () => {
-    if (selectedProductWishlist) {
-      await deleteWishlist(selectedProductWishlist.id);
-      setShowPopup(false);
-      setSelectedProductWishlist(null);
-      productWishlists.splice(productWishlists.indexOf(selectedProductWishlist), 1);
-    } else {
-      console.error('No vendor selected for deletion.');
-    }
-  };
 
   const handleCheckboxChange = (productWishlist: ProductWishlist) => {
     const isSelected = selectedItems.includes(productWishlist);
@@ -262,16 +243,10 @@ function KeranjangLogistikVendor({ productWishlists }: { productWishlists: Produ
               </div>
               <div className="flex justify-between items-center">
                 <button className="self-start text-xs md:text-base text-pink-500 hover:text-pink-700 font-bold mt-4"
-                  onClick={() => router.push(`/logistik-vendor/info-detail`)}
+                  onClick={() => router.push(`/logistik-vendor/info-detail/${item.productId}`)}
                 >
                   Lihat Detail
                 </button>
-                <div className="flex space-x-2">
-                  <FaTrashAlt
-                    className="text-pink-500 cursor-pointer hover:text-pink-700 mt-4"
-                    onClick={() => handleDeleteClick(item)}
-                  />
-                </div>
               </div>
             </div>
           </div>
@@ -279,25 +254,6 @@ function KeranjangLogistikVendor({ productWishlists }: { productWishlists: Produ
       </div>
       {totalPages > 1 && (
         <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-      )}
-      {showPopup && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-md shadow-lg text-center">
-            <div className="flex items-center justify-center mb-4">
-              <div className="bg-red-500 text-white p-2 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M12 8v4m0 4h.01m0-4h-.01m-.01 0h.01M11 8v4m0 4h.01m0-4h-.01m-.01 0h.01" />
-                </svg>
-              </div>
-            </div>
-            <p className="mb-4 text-black font-sofia">Apakah Anda yakin ingin menghapus produk ini?</p>
-            <p className="mb-6 text-black font-sofia">Dengan menekan tombol ya maka produk yang dipilih akan terhapus dan pengunjung tidak akan dapat melihatnya lagi </p>
-            <div className="flex justify-center space-x-4 font-sofia">
-              <button className="bg-gray-500 text-white px-4 py-2 rounded-md" onClick={() => setShowPopup(false)}>Tidak</button>
-              <button className="bg-red-500 text-white px-4 py-2 rounded-md" onClick={handleDelete}>Ya</button>
-            </div>
-          </div>
-        </div>
       )}
       <footer className="fixed bottom-0 left-0 right-0 bg-gray-100 shadow-md p-4 z-50">
         <div className="flex justify-between items-center">

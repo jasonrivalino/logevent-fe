@@ -48,8 +48,8 @@ const ProfilePage = () => {
     }
   };
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     const token = localStorage.getItem('token');
     if (token) {
       try {
