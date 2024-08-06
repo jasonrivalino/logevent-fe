@@ -37,7 +37,7 @@ export default function EmailRequest() {
 
   const handleOrderClick = () => {
     {/* TODO: Go To Wishlist */}
-    router.push('/keranjang')
+    router.push('/wishlist')
   }
 
   const handleMenuClick = () => {

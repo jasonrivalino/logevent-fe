@@ -95,9 +95,9 @@ export function Navbar() {
     router.push('/profile');
   };
 
-  const handleKeranjangClick = () => {
+  const handleWishlistClick = () => {
     setIsDropdownOpen(false);
-    router.push('/keranjang');
+    router.push('/wishlist');
   }
 
   const handleHistoryClick = () => {
@@ -184,11 +184,12 @@ export function Navbar() {
                         Profile
                       </button>
                       <button
-                        onClick={handleKeranjangClick}
+                        onClick={handleWishlistClick}
                         className="pl-[1.2rem] py-[0.6rem] text-white w-full justify-start flex items-center font-sofia text-base hover:bg-pink-800"
                       >
+                        {/* TODO: Change To Wishlist Icon */}
                         <Image src="/Image/IconButton/shopping.png" alt="User Profile" width={18} height={18} className='mr-[0.8rem]'/>
-                        Keranjang
+                        Wishlist
                       </button>
                       <button
                         onClick={handleHistoryClick}
@@ -272,14 +273,15 @@ export function Navbar() {
                       Profile
                     </button>
                     <button
-                      onClick={handleProfileClick}
+                      onClick={handleWishlistClick}
                       className="w-full px-4 py-2 text-white text-center flex items-center justify-center font-sofia text-base hover:bg-pink-700"
                     >
+                      {/* TODO: Change To Wishlist Icon */}
                       <Image src="/Image/IconButton/shopping.png" alt="User Profile" width={18} height={18} className="mr-2" />
-                      Keranjang
+                      Wishlist
                     </button>
                     <button
-                      onClick={handleProfileClick}
+                      onClick={handleHistoryClick}
                       className="w-full px-4 py-2 text-white text-center flex items-center justify-center font-sofia text-base hover:bg-pink-700"
                     >
                       <Image src="/Image/IconButton/history.png" alt="User Profile" width={18} height={18} className="mr-2" />

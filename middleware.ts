@@ -12,7 +12,6 @@ export async function middleware(request: NextRequest) {
     if (request.nextUrl.pathname.startsWith('/admin') ||
         request.nextUrl.pathname.startsWith('/histori-pemesanan') ||
         request.nextUrl.pathname.startsWith('/isi-pemesanan') ||
-        request.nextUrl.pathname.startsWith('/keranjang') ||
         request.nextUrl.pathname.startsWith('/profile') ||
         request.nextUrl.pathname.startsWith('/review') ||
         request.nextUrl.pathname.startsWith('/wishlist')
@@ -39,8 +38,8 @@ export const config = {
     '/admin/:path*',
     '/histori-pemesanan/:path*',
     '/isi-pemesanan/:path*',
-    '/keranjang/:path*',
     '/profile/:path*',
-    '/review/:path*'
+    '/review/:path*',
+    '/wishlist/:path*',
   ],
 };

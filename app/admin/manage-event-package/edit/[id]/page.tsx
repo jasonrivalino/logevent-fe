@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react';
 // self-defined modules
 import { Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
-import { readAlbumsByProductId, createAlbum, updateAlbum, deleteAlbum } from '@/app/utils/albumApi';
+import { readAlbumsByEventId, createAlbum, updateAlbum, deleteAlbum } from '@/app/utils/albumApi';
 import { readBundlesByEventId, createBundle, deleteBundle } from '@/app/utils/bundleApi';
 import { readEventCategories } from '@/app/utils/categoryApi';
 import { readEventById, updateEvent } from '@/app/utils/eventApi';
@@ -77,7 +77,7 @@ function EditPackageProduct() {
             setInitialized(true);
           }
 
-          const albums = await readAlbumsByProductId(parseInt(id));
+          const albums = await readAlbumsByEventId(parseInt(id));
           const bundles = await readBundlesByEventId(parseInt(id));
           const categories = await readEventCategories();
           const products = await readAllProducts();
@@ -87,6 +87,17 @@ function EditPackageProduct() {
           setCategories(categories);
           setProducts(products);
           setVendors(vendors);
+
+          const images = []
+          if (event.eventImage) {
+            images.push(event.eventImage);
+          }
+
+          for (const album of albums) {
+            images.push(album.albumImage);
+          }
+
+          setEventImages(images);
         }
       } catch (error) {
         console.error('Failed to fetch products:', error);

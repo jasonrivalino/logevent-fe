@@ -25,7 +25,7 @@ export default function ReservationFill() {
 
   const handleBackClick = () => {
     {/* TODO: Go To Wishlist */}
-    router.push('/keranjang');
+    router.push('/wishlist');
   };
 
   const isDateBooked = (date: Date) => {

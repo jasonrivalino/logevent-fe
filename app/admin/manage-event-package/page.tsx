@@ -31,7 +31,6 @@ export default function AdminVendor() {
 
 function ManagePackage() {
     const router = useRouter();
-    const [expandedEventId, setExpandedEventId] = useState<number | null>(null);
     const [showPopup, setShowPopup] = useState(false);
     const [events, setEvents] = useState<Event[]>([]);
     const [eventToDelete, setEventToDelete] = useState<number | null>(null);
@@ -57,10 +56,6 @@ function ManagePackage() {
         setCurrentPage(page);
     };
 
-    const toggleExpand = (id: number | null) => {
-        setExpandedEventId(expandedEventId === id ? null : id);
-    };
-
     const confirmDelete = (id: number) => {
         setEventToDelete(id);
         setShowPopup(true);
@@ -80,7 +75,7 @@ function ManagePackage() {
     const currentEvents = events.slice(indexOfFirstEvent, indexOfLastEvent);
 
     const handleDetailClick = (id: number) => {
-        toggleExpand(id);
+        router.push(`/admin/manage-event-package/detail/${id}`);
     };
 
     return (
@@ -148,7 +143,7 @@ function ManagePackage() {
                             <div className="mt-2 flex justify-between items-center">
                                 <div className="flex flex-col">
                                     <p className="text-xs md:text-sm text-gray-700 font-sofia">Rincian Paket:</p>
-                                    <p className={`text-xs md:text-sm text-gray-700 mb-14 md:mb-0 ${expandedEventId === event.id ? 'w-full' : 'w-[35rem]'}`}>
+                                    <p className={'text-xs md:text-sm text-gray-700 mb-14 md:mb-0'}>
                                         {event.bundles}
                                     </p>
                                 </div>

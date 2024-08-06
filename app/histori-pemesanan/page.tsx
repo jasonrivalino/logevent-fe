@@ -114,7 +114,6 @@ export default function HomePage() {
 
 const HistoriPaketEvent = ({ eventOrders, eventItems }: { eventOrders: Order[]; eventItems: EventItem[][] }) => {
   const router = useRouter();
-  const [expandedEventId, setExpandedEventId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 5;
 
@@ -163,7 +162,7 @@ const HistoriPaketEvent = ({ eventOrders, eventItems }: { eventOrders: Order[]; 
                         <div className="mt-2 flex justify-between items-center">
                             <div className="flex flex-col">
                                 <p className="text-xs md:text-sm text-gray-700 font-sofia">Rincian Paket:</p>
-                                <p className={`text-xs md:text-sm text-gray-700 mb-14 md:mb-0 ${expandedEventId === item.eventId ? 'w-full' : 'w-[35rem]'}`}>
+                                <p className={'text-xs md:text-sm text-gray-700 mb-14 md:mb-0'}>
                                     {item.eventBundles}
                                 </p>
                             </div>

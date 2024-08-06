@@ -5,11 +5,11 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { SetStateAction, useEffect, useState } from 'react';
-import { FaShoppingCart } from 'react-icons/fa';
+import { FaHeart } from 'react-icons/fa';
 // self-defined modules
 import { ContactBox, Navbar } from '@/app/page';
 import { readUserProfile } from '@/app/utils/authApi';
-import { readEventWishlistsByUserId, readProductWishlistsByUserId, deleteWishlist } from '@/app/utils/wishlistApi';
+import { readEventWishlistsByUserId, readProductWishlistsByUserId } from '@/app/utils/wishlistApi';
 import { EventWishlist, ProductWishlist } from '@/app/utils/types';
 
 export default function HomePage() {
@@ -54,7 +54,7 @@ export default function HomePage() {
         <div className="flex flex-col gap-4 bg-white shadow-lg rounded-xl p-4 md:p-8 mt-6">
           <div className='flex justify-between'>
             <div className='flex flex-row'>
-              <FaShoppingCart className="text-4xl text-pink-900 mr-5 -mt-[0.15rem]" />
+              <FaHeart className="text-4xl text-pink-900 mr-5 -mt-[0.15rem]" />
               <h1 className="text-3xl font-bold text-pink-900 font-sofia mb-5">
                 {activeOption === 'Paket Event' ? 'Wishlist Paket Event' : 'Wishlist Logistik Vendor'}
               </h1>
@@ -75,9 +75,9 @@ export default function HomePage() {
             </div>
           </div>
           {activeOption === 'Paket Event' ? (
-            <KeranjangPaketEvent eventWishlists={eventWishlists} />
+            <WishlistPaketEvent eventWishlists={eventWishlists} />
           ) : (
-            <KeranjangLogistikVendor productWishlists={productWishlists} />
+            <WishlistLogistikVendor productWishlists={productWishlists} />
           )}
         </div>
       </div>
@@ -86,7 +86,7 @@ export default function HomePage() {
   );
 }
 
-const KeranjangPaketEvent = ({ eventWishlists }: { eventWishlists: EventWishlist[] }) => {
+const WishlistPaketEvent = ({ eventWishlists }: { eventWishlists: EventWishlist[] }) => {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 5;
@@ -101,6 +101,10 @@ const KeranjangPaketEvent = ({ eventWishlists }: { eventWishlists: EventWishlist
 
   const paginatedEvents = eventWishlists.slice((currentPage - 1) * eventsPerPage, currentPage * eventsPerPage);
   const totalPages = Math.ceil(eventWishlists.length / eventsPerPage);
+
+  const handleEventOrder = (event: EventWishlist) => {
+    // TODO: Implement Event Order Submission
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -164,11 +168,10 @@ const KeranjangPaketEvent = ({ eventWishlists }: { eventWishlists: EventWishlist
   );
 };
 
-function KeranjangLogistikVendor({ productWishlists }: { productWishlists: ProductWishlist[] }) {
+function WishlistLogistikVendor({ productWishlists }: { productWishlists: ProductWishlist[] }) {
   const router = useRouter();
   const itemsPerPage = 12;
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedProductWishlist, setSelectedProductWishlist] = useState<ProductWishlist | null>(null);
   const [selectedItems, setSelectedItems] = useState<ProductWishlist[]>([]);
   const [totalPrice, setTotalPrice] = useState(0);
 
@@ -200,9 +203,17 @@ function KeranjangLogistikVendor({ productWishlists }: { productWishlists: Produ
     setTotalPrice(updatedPrice);
   };
 
-  const handleSubmit = () => {
-    // Handle submit logic here
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
+
     console.log('Selected Items:', selectedItems);
+    console.log('Total Price:', totalPrice);
+    if (selectedItems.length < 1) {
+      alert('Please select at least one item');
+    } else {
+      // TODO: Implement Product Order Submission
+      
+    }
   };
 
   return (
@@ -258,11 +269,11 @@ function KeranjangLogistikVendor({ productWishlists }: { productWishlists: Produ
       <footer className="fixed bottom-0 left-0 right-0 bg-gray-100 shadow-md p-4 z-50">
         <div className="flex justify-between items-center">
           <div>
-            <p className="text-black font-sofia">Total Items: {selectedItems.length}</p>
-            <p className="text-black font-sofia">Total Price: Rp {totalPrice.toLocaleString('id-ID')}</p>
+            <p className="text-black font-sofia">Jumlah Barang: {selectedItems.length}</p>
+            <p className="text-black font-sofia">Total Harga: Rp {totalPrice.toLocaleString('id-ID')}</p>
           </div>
           <button className="bg-pink-500 text-white px-4 py-2 rounded-md font-sofia" onClick={handleSubmit}>
-            Submit
+            Lanjut Pemesanan
           </button>
         </div>
       </footer>

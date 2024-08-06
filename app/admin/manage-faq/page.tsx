@@ -2,7 +2,6 @@
 'use client';
 
 // dependency modules
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 // self-defined modules
 import { ContactBox, Navbar } from '@/app/page';
@@ -28,7 +27,6 @@ export default function Adminquestion() {
 }
 
 function Managequestion() {
-    const router = useRouter();
     const [expandedQuestionId, setExpandedQuestionId] = useState<number | null>(null);
     const [showPopup, setShowPopup] = useState(false);
     const [showAddPopup, setShowAddPopup] = useState(false);

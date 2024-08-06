@@ -110,7 +110,6 @@ export function EventList({ events }: { events: Event[] }) {
   const router = useRouter();
   const itemsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
-  const [expandedProducts, setExpandedPproducts] = useState<{ [key: number]: boolean }>({});
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
