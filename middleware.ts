@@ -14,7 +14,8 @@ export async function middleware(request: NextRequest) {
         request.nextUrl.pathname.startsWith('/isi-pemesanan') ||
         request.nextUrl.pathname.startsWith('/keranjang') ||
         request.nextUrl.pathname.startsWith('/profile') ||
-        request.nextUrl.pathname.startsWith('/review')
+        request.nextUrl.pathname.startsWith('/review') ||
+        request.nextUrl.pathname.startsWith('/wishlist')
     ) {
       return NextResponse.redirect(new URL('/signin', request.url));
     }

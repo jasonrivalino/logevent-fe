@@ -23,6 +23,15 @@ export const readReviewsByProductId = async (id: number) => {
   }
 };
 
+export const readReviewByItemId = async (id: number) => {
+  try {
+    const response = await axios.get(`${API_URL}/reviews/read/item/${id}`);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Failed to fetch item review');
+  }
+};
+
 export const createReview = async (reviewData: {
   itemId: number;
   rating: number;

@@ -167,14 +167,18 @@ const HistoriPaketEvent = ({ eventOrders, eventItems }: { eventOrders: Order[]; 
                                     {item.eventBundles}
                                 </p>
                             </div>
-                            {!item.isReviewed && (
-                              <button
-                                className="bg-pink-600 hover:bg-pink-800 px-2 py-1 rounded-lg text-white self-start text-xs md:text-base font-bold mt-4"
-                                onClick={() => router.push(`/review/${item.id}`)}
-                              >
-                                Review
-                              </button>
-                            )}
+                              {item.isReviewed ? (
+                                <div className="text-green-600 font-bold mt-4">
+                                  Reviewed
+                                </div>
+                              ) : (
+                                <button
+                                  className="bg-pink-600 hover:bg-pink-800 px-2 py-1 rounded-lg text-white self-start text-xs md:text-base font-bold mt-4"
+                                  onClick={() => router.push(`/review/${item.id}`)}
+                                >
+                                  Review
+                                </button>
+                              )}
                         </div>
                     </div>
                 </div>
@@ -246,7 +250,11 @@ function HistoriLogistikVendor({ productOrders, productItems }: { productOrders:
                       <p className="text-xs md:text-sm text-pink-500 font-bold mt-2">Rp {item.productPrice.toLocaleString('id-ID')}</p>
                     </div>
                     <div className="flex justify-between items-center mt-4">
-                      {!item.isReviewed && (
+                      {item.isReviewed ? (
+                        <div className="text-green-600 font-bold mt-4">
+                          Reviewed
+                        </div>
+                      ) : (
                         <button
                           className="bg-pink-600 hover:bg-pink-800 px-2 py-1 rounded-lg text-white self-start text-xs md:text-base font-bold mt-4"
                           onClick={() => router.push(`/review/${item.id}`)}

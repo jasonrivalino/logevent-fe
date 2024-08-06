@@ -161,3 +161,28 @@ export interface Visit {
   ipAddress: string | null;
   visitDate: string;
 }
+
+export interface EventWishlist {
+  id: number;
+  userId: number;
+  eventId: number;
+  eventName: string;
+  eventPrice: number;
+  eventDescription: string | null;
+  eventImage: string | null;
+  eventBundles: string | null;
+  eventRating: number;
+}
+
+export interface ProductWishlist {
+  id: number;
+  userId: number;
+  productId: number;
+  productName: string;
+  productSpecification: string;
+  productPrice: number;
+  productImage: string | null;
+  productRating: number;
+  vendorId: number;
+  vendorAddress: string;
+}

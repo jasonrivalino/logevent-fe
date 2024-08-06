@@ -24,8 +24,8 @@ export default function ReservationFill() {
   const [errors, setErrors] = useState<{ address?: string; startDate?: string; endDate?: string }>({});
 
   const handleBackClick = () => {
-    {/* TODO: Go to cart before isi-pemesanan */}
-    router.push('/logistik-vendor');
+    {/* TODO: Go To Wishlist */}
+    router.push('/keranjang');
   };
 
   const isDateBooked = (date: Date) => {

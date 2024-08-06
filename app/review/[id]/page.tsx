@@ -9,7 +9,7 @@ import { ContactBoxShort } from '@/app/signin/page';
 import { readUserProfile } from '@/app/utils/authApi';
 import { readCartsByUserId } from '@/app/utils/cartApi';
 import { readItemById } from '@/app/utils/itemApi';
-import { createReview } from '@/app/utils/reviewApi';
+import { readReviewByItemId, createReview } from '@/app/utils/reviewApi';
 import { Cart } from '@/app/utils/types';
 
 export default function Review() {
@@ -60,24 +60,26 @@ export default function Review() {
         }
 
         const item = await readItemById(parseInt(id));
+        const review = await readReviewByItemId(parseInt(id));
         const user = await readUserProfile(token);
         const carts = await readCartsByUserId(user.id);
 
         if (!item) {
           throw new Error('Item not found');
         }
-        console.log('item:', item);
+
+        if (review) {
+          throw new Error('Review already exists');
+        }
 
         if (!carts) {
           throw new Error('Cart not found');
         }
-        console.log('carts:', carts);
 
         const cart = carts.find((cart: Cart) => cart.cartStatus === 'Checked Out');
         if (!cart) {
           throw new Error('Checkout cart not found');
         }
-        console.log('cart:', cart);
         
         setItemId(item.id);
       } catch (error) {

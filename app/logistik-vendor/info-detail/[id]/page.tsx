@@ -175,9 +175,18 @@ function ProductImage({ product, albums }: { product: Product, albums: Album[] }
               </div>
             </div>
             <div className="flex space-x-4 w-full md:w-1/2 md:justify-end items-center mt-3 md:mt-0">
-              <button className="bg-white text-pink-500 border-pink-500 border-2 rounded-lg px-3 md:px-4 py-2 -ml-4 md:ml-0 mr-[6.5rem] md:mr-0 text-sm md:text-base">+ Keranjang</button>
-              {/* TODO: Go to cart before isi-pemesanan */}
-              <button className="bg-pink-500 text-white rounded-lg px-3 md:px-4 py-2 -ml-4 md:ml-0 mr-[6.5rem] md:mr-0 text-sm md:text-base" onClick={() => router.push('/isi-pemesanan')}>Pesan Langsung</button>
+              <button 
+                className="bg-white text-pink-500 border-pink-500 border-2 rounded-lg px-3 md:px-4 py-2 -ml-4 md:ml-0 mr-[6.5rem] md:mr-0 text-sm md:text-base"
+              >
+                + Keranjang
+              </button>
+              {/* TODO: Order Popup */}
+              <button
+                className="bg-pink-500 text-white rounded-lg px-3 md:px-4 py-2 -ml-4 md:ml-0 mr-[6.5rem] md:mr-0 text-sm md:text-base"
+                onClick={() => router.push('/isi-pemesanan')}
+              >
+                Pesan Langsung
+              </button>
               <button onClick={handleChat} className="text-pink-500 flex flex-col items-center text-sm md:text-base">
                 <img src="/Image/IconButton/chat_button.png" alt="Whatsapp" className="w-5 md:w-6 h-5 md:h-6" />
                 Chat
@@ -227,9 +236,18 @@ function ProductImage({ product, albums }: { product: Product, albums: Album[] }
             </div>
             <div className="flex space-x-4 w-full md:w-1/2 md:justify-end items-center mt-1 md:mt-0">
               <div className="flex flex-col md:flex-row md:space-x-0 md:space-y-4 md:items-center mr-[5.5rem]">
-                {/* TODO: Go to cart before isi-pemesanan */}
-                <button className="bg-pink-500 text-white rounded-lg px-2 md:px-4 py-[0.35rem] md:py-2 mt-2 text-sm md:text-base -ml-4" onClick={() => router.push('/isi-pemesanan')}>Pesan Langsung</button>
-                <button className="bg-white text-pink-500 border-pink-500 border-2 rounded-lg md:px-4 py-1 md:py-2 -ml-4 md:ml-0 md:mr-0 text-sm md:text-base mt-2">+ Keranjang</button>
+                {/* TODO: Order Popup */}
+                <button
+                  className="bg-pink-500 text-white rounded-lg px-2 md:px-4 py-[0.35rem] md:py-2 mt-2 text-sm md:text-base -ml-4"
+                  onClick={() => router.push('/isi-pemesanan')}
+                >
+                  Pesan Langsung
+                </button>
+                <button
+                  className="bg-white text-pink-500 border-pink-500 border-2 rounded-lg md:px-4 py-1 md:py-2 -ml-4 md:ml-0 md:mr-0 text-sm md:text-base mt-2"
+                >
+                  + Keranjang
+                </button>
               </div>
               <div className="flex flex-row space-x-4 mt-3">
                 <button onClick={handleChat} className="text-pink-500 flex flex-col items-center text-sm md:text-base">

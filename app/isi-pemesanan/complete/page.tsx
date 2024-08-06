@@ -36,8 +36,8 @@ export default function EmailRequest() {
   }, []);
 
   const handleOrderClick = () => {
-    {/* TODO: Go to cart before isi-pemesanan */}
-    router.push('/logistik-vendor')
+    {/* TODO: Go To Wishlist */}
+    router.push('/keranjang')
   }
 
   const handleMenuClick = () => {
