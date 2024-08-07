@@ -3,12 +3,30 @@
 // self-defined modules
 import { Order, Visit } from '@/app/utils/types';
 
+const isDateInRange = (date: Date, startDate: Date, endDate: Date) => {
+  return date >= startDate && date <= endDate;
+};
+
+const startOfDay = (date: Date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+export const areDatesOverlapping = (startDate: Date, endDate: Date, bookedDates: Date[]) => {
+  for (const date of bookedDates) {
+    if (isDateInRange(date, startDate, endDate)) {
+      return true;
+    }
+  }
+  return false;
+};
+
 export const convertDate = (date: string) => {
-  return new Date(date).toLocaleDateString('id-GB', {
+  const options: Intl.DateTimeFormatOptions = {
+    timeZone: 'Asia/Jakarta',
     day: '2-digit',
     month: 'long',
     year: 'numeric',
-  });
+  };
+
+  return new Date(date).toLocaleDateString('id-GB', options);
 };
 
 export const generateEmailUrl = (email: string) => {
@@ -27,6 +45,22 @@ export const generateInstagramUrl = (username: string) => {
 export const generateWhatsAppUrl = (phone: string) => {
   const encodedPhone = phone.replace(/\D/g, '');
   return `https://wa.me/${encodedPhone}`;
+};
+
+export const getExcludedDates = (bookedDates: string[]) => {
+  if (!Array.isArray(bookedDates)) {
+    return [];
+  }
+
+  const today = new Date();
+  const pastDates = Array.from({ length: 365 }, (_, i) => {
+    const date = new Date();
+    date.setDate(today.getDate() - i);
+    return date;
+  });
+
+  const bookedDateObjects = bookedDates.map(dateStr => new Date(dateStr));
+  return [...pastDates, ...bookedDateObjects];
 };
 
 export const getRateText = (rate: string) => {
@@ -77,8 +111,6 @@ export const getStars = (rating: number) => {
     </>
   );
 };
-
-const startOfDay = (date: Date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
 export const getVisitToday = (visits: Visit[], chosenDate: Date) => {
   const today = startOfDay(chosenDate);

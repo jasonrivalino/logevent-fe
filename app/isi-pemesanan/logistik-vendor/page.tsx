@@ -11,7 +11,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { Navbar } from '@/app/page';
 import { ContactBoxShort } from '@/app/signin/page';
 import { readUserProfile } from '@/app/utils/authApi';
-import { readActiveEventCartByUserId, updateCart } from '@/app/utils/cartApi';
+import { readActiveProductCartByUserId, updateCart } from '@/app/utils/cartApi';
 import { areDatesOverlapping, getExcludedDates } from '@/app/utils/helpers';
 import { readOrderAvailabilityByCartId, createOrder } from '@/app/utils/orderApi';
 
@@ -115,7 +115,7 @@ export default function ReservationFill() {
         }
 
         const user = await readUserProfile(token);
-        const cart = await readActiveEventCartByUserId(user.id);
+        const cart = await readActiveProductCartByUserId(user.id);
         if (!cart) {
           router.push('/wishlist');
           return;

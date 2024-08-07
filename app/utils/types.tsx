@@ -91,7 +91,6 @@ export interface Order {
 }
 
 export interface Product {
-  date: any;
   id: number;
   vendorId: number;
   vendorName: string;

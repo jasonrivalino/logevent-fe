@@ -32,6 +32,15 @@ export const readOrdersByUserId = async (userId: number) => {
   }
 };
 
+export const readOrderAvailabilityByCartId = async (cartId: number) => {
+  try {
+    const response = await axios.get(`${API_URL}/orders/read/availability/${cartId}`);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Failed to fetch order availability');
+  }
+};
+
 export const readOrderById = async (id: number) => {
   try {
     const response = await axios.get(`${API_URL}/orders/read/${id}`);

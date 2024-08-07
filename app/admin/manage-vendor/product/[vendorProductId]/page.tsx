@@ -10,7 +10,7 @@ import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import { ContactBox, Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
 import { generateGoogleMapsUrl } from '@/app/utils/helpers';
-import { readEventOrganizerProduct, readProductsByVendorId, deleteProduct } from '@/app/utils/productApi';
+import { readAdminProducts, readProductsByVendorId, deleteProduct } from '@/app/utils/productApi';
 import { readVendorById } from '@/app/utils/vendorApi';
 import { Product, Vendor } from '@/app/utils/types';
 
@@ -64,8 +64,7 @@ function ManageVendorProduct({ vendor }: { vendor: Vendor }) {
       try {
         let products: Product[] = [];
         if (vendor.id === 1) {
-          const eventOrganizerProduct = await readEventOrganizerProduct();
-          products.push(eventOrganizerProduct);
+          products = await readAdminProducts();
         } else {
           products = await readProductsByVendorId(vendor.id);
         }

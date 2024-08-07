@@ -236,8 +236,6 @@ function WishlistLogistikVendor({ productWishlists }: { productWishlists: Produc
     if (selectedItems.length < 1) {
       alert('Please select at least one item');
     } else {
-      console.log('Selected Items:', selectedItems);
-      console.log('Total Price:', totalPrice);
       try {
         const token = localStorage.getItem('token');
         if (!token) {

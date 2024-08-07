@@ -23,12 +23,12 @@ export const readTopProducts = async () => {
   }
 };
 
-export const readEventOrganizerProduct = async () => {
+export const readAdminProducts = async () => {
   try {
-    const response = await axios.get(`${API_URL}/products/read/event-organizer`);
+    const response = await axios.get(`${API_URL}/products/read/admin`);
     return response.data;
   } catch (error: any) {
-    throw new Error(error.response?.data?.message || 'Failed to fetch event organizer product');
+    throw new Error(error.response?.data?.message || 'Failed to fetch admin products');
   }
 };
 
