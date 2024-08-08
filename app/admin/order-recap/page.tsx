@@ -155,7 +155,7 @@ function Table({ data }: TableProps) {
                     <div className="bg-white p-4 md:p-8 rounded shadow-lg z-60 max-w-xs md:max-w-md w-full">
                         <p className="text-black text-sm md:text-lg">{modalContent}</p>
                         <div className="mt-4 flex justify-end">
-                            <button onClick={() => setShowModal(false)} className="px-4 py-2 bg-gray-300 rounded mr-2 text-sm md:text-base">Cancel</button>
+                            <button onClick={() => setShowModal(false)} className="px-4 py-2 bg-gray-300 text-black rounded mr-2 text-sm md:text-base">Cancel</button>
                             <button onClick={() => setShowModal(false)} className="px-4 py-2 bg-pink-500 text-white rounded text-sm md:text-base">Confirm</button>
                         </div>
                     </div>

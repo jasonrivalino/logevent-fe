@@ -202,26 +202,16 @@ function ManageVendor() {
                     )}
                 </div>
             ))}
-            <div className="flex justify-center space-x-1 mt-4">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <button
-                        key={page}
-                        onClick={() => handlePageChange(page)}
-                        className={`px-3 py-1 rounded ${page === currentPage ? 'bg-pink-500 text-white' : 'bg-white border border-pink-500 text-pink-500'}`}
-                    >
-                        {page}
-                    </button>
-                ))}
-            </div>
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
 
             {showPopup && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                    <div className="bg-white p-6 rounded-md shadow-md text-center">
+                    <div className="bg-white p-6 rounded-md shadow-md text-center text-black">
                         <h2 className="text-lg mb-4">Konfirmasi Hapus</h2>
                         <p className="mb-4">Apakah Anda yakin ingin menghapus vendor ini?</p>
                         <div className="flex justify-center">
-                            <button className="bg-red-500 text-white px-4 py-2 rounded-md mr-2" onClick={handleDelete}>Hapus</button>
-                            <button className="bg-gray-500 text-white px-4 py-2 rounded-md" onClick={() => setShowPopup(false)}>Batal</button>
+                            <button className="bg-gray-500 text-white px-4 py-2 rounded-md mr-2" onClick={() => setShowPopup(false)}>Batal</button>
+                            <button className="bg-red-500 text-white px-4 py-2 rounded-md" onClick={handleDelete}>Hapus</button>
                         </div>
                     </div>
                 </div>
