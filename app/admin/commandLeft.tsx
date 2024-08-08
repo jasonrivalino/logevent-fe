@@ -47,32 +47,32 @@ export function CommandLeft() {
                         className={`flex items-center mb-4 text-lg p-3 w-full rounded-lg ${pathname === '/admin/statistics' ? 'border-pink-400 border-2 shadow-lg' : 'bg-white'}`}
                         onClick={() => router.push('/admin/statistics')}
                     >
-                        <FaChartBar className="mr-5 text-pink-900" /> Statistik
+                        <FaChartBar className="ml-2 mr-5 text-pink-900" /> Statistik
                     </button>
                     <button 
                         className={`flex items-center mb-4 text-lg p-3 w-full rounded-lg ${pathname === '/admin/order-recap' ? 'border-pink-400 border-2 shadow-lg' : 'bg-white'}`}
                         onClick={() => router.push('/admin/order-recap')}
                     >
-                        <FaClipboardList className="mr-5 text-pink-900" /> Rekap Pesanan
+                        <FaClipboardList className="ml-2 mr-5 text-pink-900" /> Rekap Pesanan
                     </button>
                     <button 
                         className={`flex items-center mb-4 text-lg p-3 w-full rounded-lg ${/^\/admin\/manage-vendor/.test(pathname) ? 'border-pink-400 border-2 shadow-lg' : 'bg-white'}`}
                         onClick={() => router.push('/admin/manage-vendor')}
                     >
-                        <FaUserPlus className="mr-5 text-pink-900" /> Kelola Vendor
+                        <FaUserPlus className="ml-2 mr-5 text-pink-900" /> Kelola Vendor
                     </button>
                     <button 
                         className={`flex items-center mb-4 text-lg p-3 w-full rounded-lg ${/^\/admin\/manage-event-package/.test(pathname) ? 'border-pink-400 border-2 shadow-lg' : 'bg-white'}`}
                         onClick={() => router.push('/admin/manage-event-package')}
                     >
-                        <FaCalendarAlt className="mr-5 text-pink-900" /> Kelola Paket Event
+                        <FaCalendarAlt className="ml-2 mr-5 text-pink-900" /> Kelola Paket Event
                     </button>
                     <button 
                         className={`flex items-center text-lg p-3 w-full rounded-lg ${pathname === '/admin/manage-faq' ? 'border-pink-400 border-2 shadow-lg' : 'bg-white'}`}
                         onClick={() => router.push('/admin/manage-faq')}
                     >
                         {/* Import chatbox from react icons */}
-                        <FaComment className="mr-5 text-pink-900" /> Kelola FAQ
+                        <FaComment className="ml-2 mr-5 text-pink-900" /> Kelola FaQ
                     </button>
                 </div>
             </div>

@@ -17,39 +17,64 @@ import { readAllVendors } from '@/app/utils/vendorApi';
 import { Category, Product, Vendor } from '@/app/utils/types';
 
 export default function AdminEventPackage() {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [vendors, setVendors] = useState<Vendor[]>([]);
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [products, setProducts] = useState<Product[]>([]);
+    const [vendors, setVendors] = useState<Vendor[]>([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const categories = await readEventCategories();
-        const products = await readAllProducts();
-        const vendors = await readAllVendors();
-        setCategories(categories);
-        setProducts(products);
-        setVendors(vendors);
-      } catch (error: any) {
-        console.error(error.message);
-      }
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const categories = await readEventCategories();
+          const products = await readAllProducts();
+          const vendors = await readAllVendors();
+          setCategories(categories);
+          setProducts(products);
+          setVendors(vendors);
+        } catch (error: any) {
+          console.error(error.message);
+        }
+      };
+      fetchData();
+    }, []);
+    
+    const router = useRouter();
+
+    const handleBackClick = () => {
+      router.push('/admin/manage-event-package');
     };
-    fetchData();
-  }, []);
 
-  return (
-    <div className="overflow-hidden">
-      <div className="min-h-screen flex flex-col px-10 pt-10 mt-16">
-          <Navbar />
-          <div className="flex flex-col md:flex-row flex-grow">
-              <CommandLeft />
-              <div className="flex-grow ml-0 md:ml-7 pt-[0.15rem]">
-                  <AddPackageProduct categories={categories} products={products} vendors={vendors} />
-              </div>
-          </div>
+    return (
+      <div className="overflow-hidden">
+        <Navbar />
+          <div className="min-h-screen flex flex-col px-6 md:p-10 mt-16">
+                <div className="flex flex-col md:flex-row flex-grow">
+                    <div className="md:hidden flex justify-center items-center">
+                        {/* Back button with SVG arrow */}
+                        <button 
+                          onClick={handleBackClick} 
+                          className="absolute top-20 left-4 p-2 rounded-full bg-white text-black shadow-lg flex items-center justify-center w-10 h-10 md:w-12 md:h-12 hover:bg-gray-100"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            className="w-6 h-6 text-gray-700"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                          </svg>
+                        </button>
+                    </div>
+                    <div className="hidden md:block">
+                        <CommandLeft />
+                    </div>
+                <div className="flex-grow ml-0 md:ml-7 pt-10 md:pt-[0.15rem] pb-10 md:pb-0">
+                    <AddPackageProduct categories={categories} products={products} vendors={vendors} />
+                </div>
+            </div>
+        </div>
       </div>
-    </div>
-  );
+    );
 }
 
 function AddPackageProduct({ categories, products, vendors }: { categories: Category[], products: Product[], vendors: Vendor[] }) {
@@ -192,9 +217,9 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
   };
 
   return (
-    <div className="px-6 pt-4 pb-6 bg-white rounded-xl shadow-md">
+    <div className="px-5 md:px-6 pt-4 pb-6 bg-white rounded-xl shadow-md">
       {/* Text in center */}
-      <h1 className="text-3xl font-bold mb-3 text-pink-900 font-sofia text-center">Tambah Paket</h1>
+      <h1 className="text-2xl md:text-3xl font-bold mb-6 md:mb-3 text-pink-900 font-sofia text-center">Tambah Paket</h1>
       {/* Breadcrumb Navigation */}
       <div className="hidden md:flex items-center mb-4">
         <div className="flex items-center">
@@ -205,14 +230,14 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
       </div>
       {/* Form */}
       <form className="grid grid-cols-1 gap-4 font-sofia text-black">
-        <div className='flex flex-row'>
+        <div className='flex flex-col md:flex-row'>
           <div className="w-full">
-            <div className="flex space-x-6">
-              <div className="w-[66%]">
-                <label className="block text-gray-700 font-sofia">Nama Paket *</label>
-                <p className="text-gray-500 text-sm font-sofia mb-2">Nama maksimal 40 karakter dengan memasukkan nama barang</p>
+            <div className="flex flex-col md:flex-row md:space-x-6">
+              <div className="w-full md:w-[66%]">
+              <label className="block text-gray-700 font-sofia text-sm md:text-base">Nama Paket *</label>
+              <p className="text-gray-500 text-xs md:text-sm font-sofia mb-2">Nama maksimal 40 karakter dengan memasukkan nama barang</p>
                 <input
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
+                  className="w-full px-2 md:px-4 py-1 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 md:mb-0 mb-3"
                   type="text"
                   placeholder="Contoh: Gedung Sabuga ITB"
                   maxLength={40}
@@ -220,11 +245,11 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
-              <div className="w-[30%]">
-                <label className="block text-gray-700 font-sofia">Kapasitas Paket</label>
-                <p className="text-gray-500 text-sm font-sofia mb-2">Kosongkan jika paket tidak memiliki kapasitas</p>
+              <div className="w-full md:w-[30%]">
+                <label className="block text-gray-700 font-sofia text-sm md:text-base">Kapasitas Paket</label>
+                <p className="text-gray-500 text-xs md:text-sm font-sofia mb-2">Kosongkan jika paket tidak memiliki kapasitas</p>
                 <input
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
+                  className="w-full px-2 md:px-4 py-1 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
                   type="text"
                   placeholder="Kapasitas"
                   value={capacity || ''}
@@ -232,32 +257,29 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
                 />
               </div>  
             </div>
-            <div className="flex space-x-6">
-              <div className="w-full mt-4">
-                <label className="block text-gray-700 font-sofia">Deskripsi Paket *</label>
-                <p className="text-gray-500 text-sm font-sofia mb-2">Pastikan deskripsi paket memuat penjelasan detail terkait paketmu agar pembeli mudah mengerti dan menemukan paketmu</p>
+            <div className="md:flex space-x-6">
+              <div className="w-full mt-3 md:mt-4">
+                <label className="block text-gray-700 font-sofia text-sm md:text-base">Deskripsi Paket *</label>
+                <p className="text-gray-500 text-xs md:text-sm font-sofia mb-2">Pastikan deskripsi paket memuat penjelasan detail terkait paketmu agar pembeli mudah mengerti dan menemukan paketmu</p>
                 <textarea
                   rows={3}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
+                  className="w-full px-2 md:px-4 py-1 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
                   placeholder="Gedung Sabuga ITB adalah gedung Sasana Budaya Ganesha"
                   value={description || ''}
                   onChange={(e) => setDescription(e.target.value)}
                 ></textarea>
+            <div className="w-full mt-3 md:mt-0">
+              <div className='flex flex-row md:ml-5'>
+                <div className="flex flex-col">
+                  <label className="block text-gray-700 font-sofia text-sm md:text-base">Bundle Logistik *</label>
+                  <p className="text-gray-500 font-sofia mb-2 text-xs md:text-sm w-3/4 md:w-full">Pilih Bundle untuk dimasukkan dalam paket</p>
+                </div>
+                <label onClick={togglePopup} className="border bg-pink-600 px-1 md:px-2 py-1 md:-mt-1 mb-3 rounded-lg cursor-pointer flex justify-center items-center text-sm md:text-base ml-auto w-32 md:w-auto">
+                  <span className="text-white">Select Bundle</span>
+                </label>
               </div>
-            </div>
-          </div>
-          <div className="w-full">
-            <div className='flex flex-row ml-5'>
-              <div className="flex flex-col">
-                <label className="block text-gray-700 font-sofia">Bundle Logistik</label>
-                <p className="text-gray-500 text-sm font-sofia mb-2">Pilih Bundle untuk dimasukkan dalam paket</p>
-              </div>
-              <label onClick={togglePopup} className="border bg-pink-600 px-2 py-1 -mt-1 mb-3 rounded-lg cursor-pointer flex justify-center items-center ml-auto">
-                <span className="text-white">Select Bundle</span>
-              </label>
-            </div>
-            <div className="w-full pl-5">
-              <div className="border border-dashed border-gray-400 rounded-lg flex justify-start items-center overflow-x-auto whitespace-nowrap min-h-[238px] w-[33rem] px-5">
+              <div className="w-full md:pl-5">
+              <div className="border border-dashed border-gray-400 rounded-lg flex justify-start items-center overflow-x-auto whitespace-nowrap min-h-[10rem] md:min-h-[238px] w-full md:w-[33rem] px-5">
                 {selectedProductDetails.length === 0 ? (
                   <span className="text-gray-500">Select A Bundle</span>
                 ) : (
@@ -280,78 +302,77 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
                 )}
               </div>
             </div>
-          </div>
-        </div>
-        <div className="flex space-x-6">
-          <div className="w-1/5">
-            <label className="block text-gray-700 font-sofia mb-2">Kategori Paket *</label>
-            <select
-              className="w-full px-4 py-[0.65rem] border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 bg-white"
-              value={selectedCategoryId ?? 0}
-              onChange={handleCategoryChange}
-            >
-              <option value={0}>Pilih Kategori</option>
-              {categories.map(category => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-              <option value="add-new">+ Tambah Kategori</option>
-            </select>
-          </div>
-          <div className="w-[29%]">
-            <label className="block text-gray-700 font-sofia mb-2">Harga Paket *</label>
-            <div className="flex">
-              <span className="flex items-center px-3 text-gray-500 border border-r-0 rounded-l-lg border-gray-300">Rp</span>
-              <input
-                className="w-full px-4 py-2 border rounded-r-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
-                type="text"
-                placeholder="Masukkan Harga"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-              />
             </div>
           </div>
-          <div className="w-1/2">
-            <div className="flex flex-row">
-              <div className="flex flex-col w-1/2">
-                <label className="block text-gray-700 font-sofia">Foto Paket (masukkan 5 foto) *</label>
+          <div className="flex flex-col md:flex-row md:space-x-6">
+            <div className="flex flex-col md:flex-row">
+              <div className="w-full mb-2 md:mb-0">
+                <label className="block text-gray-700 font-sofia mb-1 md:mb-2 text-sm md:text-base">Kategori Paket *</label>
+                <select
+                  className="w-full md:w-11/12 px-2 md:px-4 py-1 md:py-[0.65rem] border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 bg-white text-sm md:text-base"
+                  value={selectedCategoryId ?? 0}
+                  onChange={handleCategoryChange}
+                >
+                  <option value="">Pilih Kategori</option>
+                  <option value="katering">Katering</option>
+                  <option value="sound_system">Sound System</option>
+                  <option value="gedung">Gedung</option>
+                  <option value="tambah_kategori">+ Tambah Kategori</option>
+                </select>
               </div>
-              <label className="border bg-pink-600 px-2 py-1 -mt-1 mb-3 rounded-lg cursor-pointer flex justify-center items-center ml-auto">
-                <span className="text-white">Upload Image</span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  className="hidden"
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleImageUpload(event)}
-                />
-              </label>
+              <div className="w-full md:w-[21rem]">
+                <label className="block text-gray-700 font-sofia mb-1 md:mb-2 text-sm md:text-base">Harga Paket *</label>
+                <div className="flex">
+                  <span className="flex items-center px-3 text-gray-500 border border-r-0 rounded-l-lg border-gray-300">Rp</span>
+                  <input className="w-full px-4 py-1 md:py-2 border rounded-r-lg focus:outline-none focus:ring-2 focus:ring-pink-600 text-sm md:text-base" type="text" placeholder="Masukkan Harga" />
+                </div>
+              </div>
             </div>
-            <div className="border border-dashed border-gray-400 rounded-lg flex justify-center items-center flex-wrap min-h-[50px]">
-              {eventImages.length === 0 ? (
-                <span className="text-gray-500">Upload a photo</span>
-              ) : (
-                eventImages.map((image, index) => (
-                  <div key={index} className="relative m-2">
-                    <img src={image} alt={`upload-${index}`} className="w-10 h-10 object-cover rounded" />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(index)}
-                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex justify-center items-center"
-                    >
-                      &times;
-                    </button>
+            <div className="w-full md:w-1/2">
+              <div className="flex flex-row mt-4">
+                <div className="flex flex-col w-1/2">
+                  <label className="block text-gray-700 font-sofia text-sm md:text-base -mt-2 md:mt-0">Foto Paket (masukkan 5 foto) *</label>
+                </div>
+                <label className="border bg-pink-600 px-2 md:py-1 -mt-1 mb-3 rounded-lg cursor-pointer flex justify-center items-center ml-auto">
+                  <span className="text-white text-sm md:text-base">Upload Image</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleImageUpload(event)}
+                  />
+                </label>
+              </div>
+              <div className="border border-dashed border-gray-400 rounded-lg flex justify-center items-center flex-wrap min-h-[50px] mt-2 md:mt-0">
+                {eventImages.length === 0 ? (
+                  <span className="text-gray-500">Upload a photo</span>
+                ) : (
+                  eventImages.map((image, index) => (
+                    <div key={index} className="relative m-2">
+                      <img src={image} alt={`upload-${index}`} className="w-10 h-10 object-cover rounded" />                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(index)}
+                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex justify-center items-center"
+                      >
+                        &times;
+                      </button>
+                      </div>
+                      ))
+                    )}
                   </div>
-                ))
-              )}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="w-full">
-          <button type="submit" className="w-full py-2 mt-2 bg-pink-600 text-white font-semibold rounded-lg hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-600" onClick={handleSubmit}>
-            Tambah Paket
-          </button>
+          <div className="flex justify-center mt-6">
+            <button
+              className="bg-pink-600 text-white px-4 py-2 rounded-lg font-sofia text-sm md:text-base"
+              onClick={handleSubmit}
+            >
+              Submit
+            </button>
+          </div>
         </div>
       </form>
       {isPopupOpen && (

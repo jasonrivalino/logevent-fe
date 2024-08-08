@@ -4,6 +4,7 @@
 // dependency modules
 import Head from 'next/head';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 // self-defined modules
@@ -55,8 +56,7 @@ export default function LogistikVendor() {
           <title>Vendor Logistik</title>
         </Head>
         <Navbar />
-        <div className="flex flex-col md:flex-row py-24">
-          <Filter handleFilter={handleFilter} handleReset={handleReset} setMinPrice={setMinPrice} setMaxPrice={setMaxPrice} />
+        <div className="flex flex-col md:flex-row py-14 md:py-20">
           <ProductList products={filteredProducts} />
         </div>
       </div>
@@ -65,13 +65,17 @@ export default function LogistikVendor() {
   );
 }
 
-export function Filter({ handleFilter, handleReset, setMinPrice, setMaxPrice }: any) {
+export function Filter({ handleFilter, handleReset, setCategory, setLocation, setPriceRange }: any) {
   return (
-    <div className="w-full md:w-1/4 md:pl-4 md:pr-8 py-4 -mb-2 md:mb-0">
+    <div className="w-full md:w-96 md:pl-4 md:pr-8 py-4 -mb-2 md:mb-0">
       <h2 className="text-xl md:text-2xl font-semibold font-sofia text-black mb-4">Filter by</h2>
       <div className="mb-2 md:mb-4">
         <label htmlFor="category" className="block mb-1 md:mb-2 text-gray-700 font-sofia text-sm md:text-base">Kategori Produk</label>
-        <select id="category" className="w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia">
+        <select
+          id="category"
+          className="w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia"
+          onChange={(e) => setCategory(e.target.value)}
+        >
           <option value="" className="font-sofia">Pilih kategori produk</option>
           <option value="Multifunctional Hall" className="font-sofia">Multifunctional Hall</option>
         </select>
@@ -79,7 +83,11 @@ export function Filter({ handleFilter, handleReset, setMinPrice, setMaxPrice }: 
       <div className="flex md:flex-col flex-row">
         <div className="mb-2 md:mb-4 mr-4 md:mr-0">
           <label htmlFor="location" className="block mb-1 md:mb-2 text-gray-700 font-sofia text-sm md:text-base">Lokasi Vendor</label>
-          <select id="location" className="w-32 md:w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia">
+          <select
+            id="location"
+            className="w-32 md:w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia"
+            onChange={(e) => setLocation(e.target.value)}
+          >
             <option value="" className="font-sofia">Pilih lokasi vendor</option>
             <option value="Jakarta" className="font-sofia">Jakarta</option>
             <option value="Jawa Barat" className="font-sofia">Jawa Barat</option>
@@ -88,13 +96,17 @@ export function Filter({ handleFilter, handleReset, setMinPrice, setMaxPrice }: 
           </select>
         </div>
         <div className="mb-4 md:mb-8">
-          <label htmlFor="location" className="block mb-1 md:mb-2 text-gray-700 font-sofia text-sm md:text-base">Harga</label>
-          <select id="location" className="w-[11.5rem] md:w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia">
+          <label htmlFor="price" className="block mb-1 md:mb-2 text-gray-700 font-sofia text-sm md:text-base">Harga</label>
+          <select
+            id="price"
+            className="w-[11.5rem] md:w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia"
+            onChange={(e) => setPriceRange(e.target.value)}
+          >
             <option value="" className="font-sofia">Pilih range harga</option>
-            <option value="Jakarta" className="font-sofia">{`> 25.000.000`}</option>
-            <option value="Jawa Barat" className="font-sofia">15.000.000 - 25.000.000</option>
-            <option value="Jawa Tengah" className="font-sofia">5.000.000 - 15.000.000</option>
-            <option value="Jawa Timur" className="font-sofia">{`< 5.000.000`}</option>
+            <option value="> 25.000.000" className="font-sofia">{`> 25.000.000`}</option>
+            <option value="15.000.000 - 25.000.000" className="font-sofia">15.000.000 - 25.000.000</option>
+            <option value="5.000.000 - 15.000.000" className="font-sofia">5.000.000 - 15.000.000</option>
+            <option value="< 5.000.000" className="font-sofia">{`< 5.000.000`}</option>
           </select>
         </div>
       </div>
@@ -120,10 +132,78 @@ export function ProductList({ products }: { products: Product[] }) {
   const router = useRouter();
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredVendors, setFilteredVendors] = useState(products);
+  const [category, setCategory] = useState('');
+  const [location, setLocation] = useState('');
+  const [priceRange, setPriceRange] = useState('');
+  const [tempCategory, setTempCategory] = useState('');
+  const [tempLocation, setTempLocation] = useState('');
+  const [tempPriceRange, setTempPriceRange] = useState('');
+
+  useEffect(() => {
+    let result = products;
+    
+    if (searchQuery) {
+      result = result.filter((product) =>
+        product.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    
+    if (category) {
+      result = result.filter(product => product.categoryName === category);
+    }
+
+    if (location) {
+      result = result.filter(product => product.vendorAddress.includes(location));
+    }
+
+    if (priceRange) {
+      result = result.filter((product) => {
+        switch (priceRange) {
+          case '> 25.000.000':
+            return product.price > 25000000;
+          case '15.000.000 - 25.000.000':
+            return product.price >= 15000000 && product.price <= 25000000;
+          case '5.000.000 - 15.000.000':
+            return product.price >= 5000000 && product.price <= 15000000;
+          case '< 5.000.000':
+            return product.price < 5000000;
+          default:
+            return true;
+        }
+      });
+    }
+
+    setFilteredVendors(result);
+  }, [searchQuery, category, location, priceRange, products]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSearch = (event: { target: { value: string; }; }) => {
+    const query = event.target.value.toLowerCase();
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
+  const handleFilter = () => {
+    setCategory(tempCategory);
+    setLocation(tempLocation);
+    setPriceRange(tempPriceRange);
+    setCurrentPage(1);
+  };
+
+  const handleReset = () => {
+    setTempCategory('');
+    setTempLocation('');
+    setTempPriceRange('');
+    setCategory('');
+    setLocation('');
+    setPriceRange('');
+    setCurrentPage(1);
   };
 
   const paginatedProducts = products.slice(
@@ -139,30 +219,39 @@ export function ProductList({ products }: { products: Product[] }) {
   };
 
   return (
-    <div className="w-full md:w-3/4 p-5 md:p-6 mr-4 bg-white rounded-2xl">
-      {/* Breadcrumb Navigation */}
-      <div className="hidden md:flex items-center mb-4">
-        <a onClick={() => router.push('/')} className="text-pink-600 font-semibold font-sofia cursor-pointer">Home</a>
-        <span className="mx-2 text-gray-600 font-sofia font-semibold"> {'>'} </span>
-        <span className="text-gray-600 font-sofia font-semibold">Logistik Vendor</span>
-      </div>
-
-      {/* Search Bar */}
-      <div className="mb-4">
-        <div className="relative">
-          <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-            <svg className="w-3 md:w-4 h-3 md:h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M12.9 14.32a8 8 0 111.414-1.414l4.287 4.287a1 1 0 01-1.414 1.414l-4.287-4.287zM8 14a6 6 0 100-12 6 6 0 000 12z" clipRule="evenodd" />
-            </svg>
-          </span>
-          <input
-            type="text"
-            placeholder="Cari kebutuhan vendormu"
-            className="w-full text-sm md:text-base p-1 md:p-2 pl-9 md:pl-12 border rounded bg-white text-black font-sofia"
-          />
+    <div className="flex flex-col md:flex-row">
+      <Filter
+        handleFilter={handleFilter}
+        handleReset={handleReset}
+        setCategory={setTempCategory}
+        setLocation={setTempLocation}
+        setPriceRange={setTempPriceRange}
+      />
+      <div className="w-full md:w-[69rem] h-full p-5 md:p-6 mr-4 bg-white rounded-2xl">
+        {/* Breadcrumb Navigation */}
+        <div className="hidden md:flex items-center mb-4">
+          <a onClick={() => router.push('/')} className="text-pink-600 font-semibold font-sofia cursor-pointer">Home</a>
+          <span className="mx-2 text-gray-600 font-sofia font-semibold"> {'>'} </span>
+          <span className="text-gray-600 font-sofia font-semibold">Logistik Vendor</span>
         </div>
-      </div>
-      <h2 className="text-xl md:text-2xl font-semibold mb-4 text-pink-900 font-sofia">Semua Venue</h2>
+        </div>
+        {/* Search Bar */}
+        <div className="mb-4">
+          <div className="relative">
+            <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+              <svg className="w-3 md:w-4 h-3 md:h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M12.9 14.32a8 8 0 111.414-1.414l4.287 4.287a1 1 0 01-1.414 1.414l-4.287-4.287zM8 14a6 6 0 100-12 6 6 0 000 12z" clipRule="evenodd" />
+              </svg>
+            </span>
+            <input
+              type="text"
+              placeholder="Cari kebutuhan vendormu"
+              className="w-full text-sm md:text-base p-1 md:p-2 pl-9 md:pl-12 border rounded bg-white text-black font-sofia"
+              onChange={handleSearch}
+            />
+          </div>
+        </div>
+        <h2 className="text-xl md:text-2xl font-semibold mb-4 text-pink-900 font-sofia">Semua Venue</h2>
       <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-4">
         {paginatedProducts.map((product) => (
           <div key={product.id} className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col justify-between">
@@ -201,12 +290,12 @@ export function ProductList({ products }: { products: Product[] }) {
                 Lihat Detail
               </button>
             </div>
+            {totalPages > 1 && (
+              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+            )}
           </div>
         ))}
       </div>
-      {totalPages > 1 && (
-        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-      )}
     </div>
   );
 }

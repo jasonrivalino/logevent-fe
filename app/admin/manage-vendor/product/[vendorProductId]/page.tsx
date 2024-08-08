@@ -33,16 +33,40 @@ export default function AdminEventPackage() {
   
       fetchData();
     }, [pathname]);
+    
+    const router = useRouter();
+    const handleBackClick = () => {
+        router.push('/admin/manage-vendor');
+    }
 
     return (
       <div>
-        <div className="min-h-screen flex flex-col p-10 mt-16">
-            <Navbar />
-            <div className="flex flex-col md:flex-row flex-grow">
-                <CommandLeft />
-                <div className="flex-grow ml-0 md:ml-7 py-[0.15rem]">
-                    {vendor && <ManageVendorProduct vendor={vendor} />}
-                </div>
+        <Navbar />
+            <div className="min-h-screen flex flex-col px-6 mt-24">
+                <div className="flex flex-col md:flex-row flex-grow">
+                  <div className="md:hidden flex justify-center items-center">
+                        {/* Back button with SVG arrow */}
+                        <button 
+                          onClick={handleBackClick} 
+                          className="absolute top-20 left-4 p-2 rounded-full bg-white text-black shadow-lg flex items-center justify-center w-10 h-10 md:w-12 md:h-12 hover:bg-gray-100"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            className="w-6 h-6 text-gray-700"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                          </svg>
+                        </button>
+                  </div>
+                  <div className="hidden md:block">
+                      <CommandLeft />
+                  </div>
+                  <div className="flex-grow ml-0 md:ml-7 py-[0.15rem]">
+                      {vendor && <ManageVendorProduct vendor={vendor} />}
+                  </div>
             </div>
         </div>
         <ContactBox />
@@ -113,17 +137,18 @@ function ManageVendorProduct({ vendor }: { vendor: Vendor }) {
   const totalPages = Math.ceil(productList.length / itemsPerPage);
 
   return (
-    <div className="px-8 pt-6 pb-10 bg-white rounded-xl shadow-md">
-      <h1 className="text-3xl font-bold mb-6 text-pink-900 font-sofia">Welcome Admin LogEvent!</h1>
+    <div className="px-4 md:px-8 pt-6 pb-10 bg-white rounded-xl shadow-md">
+      <h1 className="md:hidden text-2xl md:text-3xl font-bold mb-6 md:mb-3 text-pink-900 font-sofia text-center">Product List</h1>
+      <h1 className="hidden md:block text-3xl font-bold mb-6 text-pink-900 font-sofia">Welcome Admin LogEvent!</h1>
       {/* Breadcrumb Navigation */}
-      <div className="hidden md:flex items-center mb-6">
-        <div className="flex items-center">
+      <div className="md:flex items-center mb-6">
+        <div className="hidden md:flex items-center">
           <a onClick={() => router.push('/admin/manage-vendor')} className="text-pink-600 font-semibold font-sofia cursor-pointer">Kelola Vendor</a>
           <span className="mx-2 text-gray-600 font-sofia font-semibold"> {'>'} </span>
           <span className="text-gray-600 font-sofia font-semibold">Kelola Produk</span>
         </div>
         {/* Search Bar */}
-        <div className="flex items-center ml-auto">
+        <div className="flex items-center md:ml-auto">
           <div className="relative">
             <span className="absolute inset-y-0 left-0 flex items-center pl-3">
               <svg className="w-3 md:w-4 h-3 md:h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
@@ -133,18 +158,18 @@ function ManageVendorProduct({ vendor }: { vendor: Vendor }) {
             <input
               type="text"
               placeholder="Cari kebutuhan vendormu"
-              className="w-full text-sm md:text-base p-1 md:p-2 pl-9 md:pl-12 border rounded bg-white text-black font-sofia"
+              className="w-[17.5rem] md:w-full text-sm md:text-base p-1 md:p-2 pl-9 md:pl-12 border rounded bg-white text-black font-sofia"
             />
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-between bg-white rounded-xl p-3 mb-6 shadow-md border-pink-600 border-2 font-sofia">
-        <div className="flex items-center ml-5">
+      <div className="flex flex-col md:flex-row md:items-center justify-between bg-white rounded-xl p-1 md:p-3 mb-6 -mt-2 mb:mt-0 shadow-md border-pink-600 border-2 font-sofia">
+        <div className="flex md:items-center ml-3 md:ml-5">
           <span className="text-lg md:text-xl text-pink-900 font-bold mr-4">{vendor.name}</span>
         </div>
-        <div className="flex items-center">
-          <span className="text-sm md:text-base text-gray-700 px-5">Jumlah Produk: {productList.length}</span>
-          <button className="bg-pink-500 text-white px-3 py-1 rounded-full font-bold text-xs md:text-base mr-4" onClick={() => router.push(`/admin/manage-vendor/product/${vendor.id}/add`)}>
+        <div className="flex md:items-center">
+          <span className="text-xs md:text-base text-gray-700 px-3 md:px-5 mr-12 md:mr-0">Jumlah Produk: {productList.length}</span>
+          <button className="bg-pink-500 text-white px-1 md:px-3 py-1 rounded-full font-bold text-xs md:text-base -mt-1 md:mt-0 mb-1 md:mb-0 md:mr-4" onClick={() => router.push(`/admin/manage-vendor/product/${vendor.id}/add`)}>
             + Tambah Produk
           </button>
         </div>
@@ -188,13 +213,13 @@ function ManageVendorProduct({ vendor }: { vendor: Vendor }) {
                 >
                   Lihat Detail
                 </button>
-                <div className="flex space-x-2">
+                <div className="flex space-x-1 md:space-x-2">
                   <FaEdit
-                    className="text-pink-500 cursor-pointer hover:text-pink-700"
+                    className="text-pink-500 cursor-pointer hover:text-pink-700 w-3 md:w-4 h-3 md:h-4"
                     onClick={() => router.push(`/admin/manage-vendor/product/${vendor.id}/edit/${product.id}`)}
                   />
                   <FaTrashAlt
-                    className="text-pink-500 cursor-pointer hover:text-pink-700"
+                    className="text-pink-500 cursor-pointer hover:text-pink-700 w-3 md:w-4 h-3 md:h-4"
                     onClick={() => handleDeleteClick(product)}
                   />
                 </div>

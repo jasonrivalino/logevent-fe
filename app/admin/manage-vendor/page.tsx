@@ -44,18 +44,51 @@ export default function AdminVendor() {
         exportToExcel(vendors);
     };
         
+    const router = useRouter();
+  
+    const handlePrev = () => {
+      // Add your routing logic for the previous button
+      router.push('/admin/order-recap'); // Update with the actual route
+    };
+  
+    const handleNext = () => {
+      // Add your routing logic for the next button
+      router.push('/admin/manage-event-package'); // Update with the actual route
+    };
+
     return (
       <div>
-        <div className="min-h-screen flex flex-col p-10 mt-16">
-            <Navbar />
-            <div className="flex flex-col md:flex-row flex-grow">
-                <CommandLeft />
+        <Navbar />
+            <div className="min-h-screen flex flex-col px-6 mt-24">
+                <div className="flex flex-col md:flex-row flex-grow">
+                    <div className="md:hidden flex justify-center items-center">
+                        <h1 className="text-4xl font-bold text-pink-900 font-sofia mt-4 mb-8">Manage Vendor</h1>
+                    </div>
+                    <div className="hidden md:block">
+                        <CommandLeft />
+                    </div>
                 <div className="flex-grow ml-0 md:ml-7 py-[0.15rem]">
                     <ManageVendor vendors={vendors} triggerFetch={triggerFetch} onExport={handleExport} />
                 </div>
             </div>
         </div>
         <ContactBox />
+        <button 
+          className="md:hidden fixed top-[25rem] left-2 px-1 py-1 bg-pink-600 text-white rounded-full shadow-lg hover:shadow-2xl focus:outline-none"
+          onClick={handlePrev}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <button 
+          className="md:hidden fixed top-[25rem] right-2 px-1 md:px-3 py-1 md:py-2 bg-pink-600 text-white rounded-full shadow-lg hover:shadow-2xl focus:outline-none"
+          onClick={handleNext}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
       </div>
     );
 }
@@ -66,10 +99,13 @@ function ManageVendor({ vendors, triggerFetch, onExport }: { vendors: Vendor[], 
     const [showPopup, setShowPopup] = useState(false);
     const [vendorToDelete, setVendorToDelete] = useState<number | null>(null);
 
+    const [searchQuery, setSearchQuery] = useState('');
+    const [paginatedVendors, setPaginatedVendors] = useState(vendors);
+
     const [currentPage, setCurrentPage] = useState(1);
     const vendorsPerPage = 10;
 
-    const totalPages = Math.ceil(vendors.length / vendorsPerPage);
+    const totalPages = Math.ceil(paginatedVendors.length / vendorsPerPage);
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
@@ -97,19 +133,31 @@ function ManageVendor({ vendors, triggerFetch, onExport }: { vendors: Vendor[], 
         }
     };
 
+    const handleSearch = (event: { target: { value: string; }; }) => {
+        const query = event.target.value.toLowerCase();
+        setSearchQuery(query);
+        const filteredVendors = vendors.filter((vendor) =>
+            vendor.name.toLowerCase().includes(query)
+        );
+        setPaginatedVendors(filteredVendors);
+        setCurrentPage(1);
+    };
+
     // Get current vendors
     const indexOfLastVendor = currentPage * vendorsPerPage;
     const indexOfFirstVendor = indexOfLastVendor - vendorsPerPage;
-    const currentVendors = vendors.slice(indexOfFirstVendor, indexOfLastVendor);
+    const currentVendors = paginatedVendors.slice(indexOfFirstVendor, indexOfLastVendor);
 
     return (
-        <div className="px-8 pt-6 pb-10 bg-white rounded-xl font-sofia shadow-md">
-            <h1 className="text-3xl font-bold mb-3 text-pink-900">Welcome Admin LogEvent !</h1>
-            <div className="flex items-center text-black mb-4">
-                <span className="mr-2 text-lg">Total Vendor</span>
-                <span className="text-2xl font-bold border-pink-900 border-2 px-3 py-1">{vendors.length}</span>
+        <div className="px-6 md:px-8 pt-6 pb-10 bg-white rounded-xl font-sofia shadow-md">
+            <div className="flex justify-center md:justify-start">
+                <h1 className="text-lg md:text-3xl font-bold mb-4 md:mb-6 text-pink-900 font-sofia">Welcome Admin LogEvent!</h1>
             </div>
-            <div className="flex justify-between items-center w-full mb-4">
+            <div className="flex items-center text-black mb-4">
+                <span className="mr-2 text-base md:text-lg">Total Vendor</span>
+                <span className="text-2xl font-bold border-pink-900 border-2 px-2 md:px-3 md:py-1">{vendors.length}</span>
+            </div>
+            <div className="flex flex-col md:flex-row justify-between items-center w-full mb-4">
                 <div className="relative w-full md:w-5/6">
                     <span className="absolute inset-y-0 left-0 flex items-center pl-3">
                         <svg className="w-3 md:w-4 h-3 md:h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
@@ -119,28 +167,30 @@ function ManageVendor({ vendors, triggerFetch, onExport }: { vendors: Vendor[], 
                     <input
                         type="text"
                         placeholder="Cari kebutuhan vendormu"
+                        value={searchQuery}
+                        onChange={handleSearch}
                         className="w-full text-sm md:text-base p-1 md:p-2 pl-9 md:pl-12 border rounded bg-white text-black font-sofia"
                     />
                 </div>
-                <div className="flex w-full md:w-1/3 justify-end items-center space-x-4">
-                    <button className="bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-md" onClick={() => router.push('/admin/manage-vendor/add')}>+ Tambah Vendor</button>
-                    <button className="bg-pink-500 hover:bg-pink-600 p-2 rounded-md" onClick={onExport}>Export to Excel</button>
+                <div className="flex w-full md:w-1/3 justify-start md:justify-end items-center space-x-2 md:space-x-4 mt-3 md:mt-0">
+                    <button className="text-sm md:text-base bg-pink-500 hover:bg-pink-600 px-2 py-1 md:p-2 rounded-md" onClick={() => router.push('/admin/manage-vendor/add')}>+ Tambah Vendor</button>
+                    <button className="text-sm md:text-base bg-pink-500 hover:bg-pink-600 px-2 py-1 md:p-2 rounded-md" onClick={onExport}>Export to Excel</button>
                 </div>
             </div>
             {currentVendors.map((vendor) => (
                 <div key={vendor.id} className="bg-white p-4 rounded-md mb-2 text-black shadow-md">
-                    <div className="flex justify-between items-center">
-                        <div className="flex items-center">
+                    <div className="flex flex-col md:flex-row md:justify-between md:items-center">
+                        <div className="flex md:items-center mb-1 md:mb-0">
                             <button onClick={() => toggleExpand(vendor.id)} className="text-xl font-bold">
-                                <span className="mr-2">{expandedVendorId === vendor.id ? 'V' : '>'}</span> 
-                                <span className="ml-2">{vendor.id}. {vendor.name}</span>
+                                <span className="mr-2 text-base md:text-xl">{expandedVendorId === vendor.id ? 'V' : '>'}</span> 
+                                <span className="ml-2 text-base md:text-xl">{vendor.id}. {vendor.name}</span>
                             </button>
                         </div>
-                        <div className="flex items-center">
-                            <span className="mr-5">Jumlah Produk: {vendor.productCount}</span>
-                            <button className="bg-white hover:bg-pink-100 border border-pink-500 text-pink-500 px-3 py-[0.35rem] rounded-md mr-2" onClick={() => router.push(`/admin/manage-vendor/product/${vendor.id}`)}>Kelola Produk</button>
-                            <button className="bg-white hover:bg-pink-100 border border-pink-500 text-pink-500 px-3 py-[0.35rem] rounded-md mr-2" onClick={() => router.push(`/admin/manage-vendor/edit/${vendor.id}`)}>Edit</button>
-                            <button className="bg-red-500 text-white p-2 rounded-md" onClick={() => confirmDelete(vendor.id)}>
+                        <div className="flex flex-col md:flex-row md:items-center">
+                            <span className="mr-5 mb-2 md:mb-0 text-sm md:text-base">Jumlah Produk: {vendor.productCount}</span>
+                            <button className="text-sm md:text-base bg-white hover:bg-pink-100 border border-pink-500 text-pink-500 px-1 md:px-3 py-1 md:py-[0.35rem] rounded-md mr-2" onClick={() => router.push(`/admin/manage-vendor/product/${vendor.id}`)}>Kelola Produk</button>
+                            <button className="text-sm md:text-base bg-white hover:bg-pink-100 border border-pink-500 text-pink-500 px-1 md:px-3 py-1 md:py-[0.35rem] rounded-md mr-2" onClick={() => router.push(`/admin/manage-vendor/edit/${vendor.id}`)}>Edit</button>
+                            <button className="bg-red-500 text-white p-1 md:p-2 rounded-md" onClick={() => confirmDelete(vendor.id)}>
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                     <path fillRule="evenodd" d="M6.5 4a1 1 0 00-.894.553L5 5H3a1 1 0 000 2h1v9a2 2 0 002 2h8a2 2 0 002-2V7h1a1 1 0 100-2h-2l-.606-1.447A1 1 0 0013.5 4h-7zM6 7v9h8V7H6zm4-3a1 1 0 011 1v1h-2V5a1 1 0 011-1z" clipRule="evenodd" />
                                 </svg>
@@ -148,7 +198,7 @@ function ManageVendor({ vendors, triggerFetch, onExport }: { vendors: Vendor[], 
                         </div>
                     </div>
                     {expandedVendorId === vendor.id && (
-                        <div className="mt-2">
+                        <div className="mt-5 md:mt-2">
                             {[
                                 { label: "Nama Lengkap", value: vendor.name },
                                 { 
@@ -186,39 +236,30 @@ function ManageVendor({ vendors, triggerFetch, onExport }: { vendors: Vendor[], 
                                 { label: "Sosial Media Lainnya", value: vendor.socialMedia },
                                 { label: "Tanggal bergabung", value: convertDate(vendor.joinDate) },
                             ].map((item, index) => (
-                                <div key={index} className="flex justify-between">
-                                    <div className="w-1/6">{item.label}:</div>
-                                    <div className="flex-grow">{item.value}</div>
+                                <div key={index} className="flex justify-between text-xs md:text-base">
+                                    <div className="w-1/2 md:w-1/6">{item.label}:</div>
+                                    <div className="w-1/2 flex-grow">{item.value}</div>
                                 </div>
                             ))}
-                            <div className="flex justify-between">
+                            <div className="flex justify-between text-xs md:text-base">
                                 <div className="flex-grow">
                                     <a href={vendor.documentUrl || "#"} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Lihat MoU Kerjasama disini</a>
                                 </div>
-                                <div className="w-1/6"></div>
                             </div>
                         </div>
                     )}
                 </div>
             ))}
-            {vendors.length > vendorsPerPage && (
-                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-            )}
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+
             {showPopup && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                    <div className="bg-white p-6 rounded-md shadow-lg text-center">
-                        <div className="flex items-center justify-center mb-4">
-                            <div className="bg-red-500 text-white p-2 rounded-full">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M12 8v4m0 4h.01m0-4h-.01m-.01 0h.01M11 8v4m0 4h.01m0-4h-.01m-.01 0h.01" />
-                                </svg>
-                            </div>
-                        </div>
-                        <p className="mb-4 text-black">Apakah Anda yakin ingin menghapus vendor ini?</p>
-                        <p className="mb-6 text-black">Dengan menekan tombol YA maka vendor dan seluruh produk yang dimilikinya akan terhapus dan pengunjung tidak akan dapat melihatnya lagi</p>
-                        <div className="flex justify-center space-x-4">
-                            <button className="bg-gray-500 text-white px-4 py-2 rounded-md" onClick={() => setShowPopup(false)}>Tidak</button>
-                            <button className="bg-red-500 text-white px-4 py-2 rounded-md" onClick={handleDelete}>Ya</button>
+                    <div className="bg-white p-6 rounded-md shadow-md text-center text-black">
+                        <h2 className="text-lg mb-4">Konfirmasi Hapus</h2>
+                        <p className="mb-4">Apakah Anda yakin ingin menghapus vendor ini?</p>
+                        <div className="flex justify-center">
+                            <button className="bg-gray-500 text-white px-4 py-2 rounded-md mr-2" onClick={() => setShowPopup(false)}>Batal</button>
+                            <button className="bg-red-500 text-white px-4 py-2 rounded-md" onClick={handleDelete}>Hapus</button>
                         </div>
                     </div>
                 </div>

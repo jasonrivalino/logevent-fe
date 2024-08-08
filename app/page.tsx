@@ -6,7 +6,9 @@ import Cookies from 'js-cookie';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useState, useEffect, useRef, SetStateAction } from 'react';
+import { FaSearch } from 'react-icons/fa';
+
 // self-defined modules
 import { readUserProfile } from '@/app/utils/authApi';
 import { generateWhatsAppUrl } from '@/app/utils/helpers';
@@ -39,6 +41,7 @@ export default function Home() {
         <AboutUsSection />
         <LayananSection />
         <KeunggulanSection />
+        <FAQ />
         <ListProduct products={products}/>
         <ContactBox />
         <footer className="w-full bg-gray-200 text-gray-700 py-5 text-center font-sofia">
@@ -423,8 +426,8 @@ function AboutUsSection() {
           ></iframe>
         </div>
         <div className="w-full md:w-1/2 mt-6 md:mt-0 md:pl-16">
-          <h2 className="text-2xl md:text-4xl font-bold text-pink-500 font-poppins">Tentang Kami</h2>
-          <h3 className="text-4xl md:text-5xl font-semibold font-poppins text-pink-900 mt-2 md:mt-4">Welcome To Logevent</h3>
+          <h2 className="text-lg md:text-4xl font-bold text-pink-500 font-poppins">Tentang Kami</h2>
+          <h3 className="text-2xl md:text-5xl font-semibold font-poppins text-pink-900 mt-2 md:mt-4">Welcome To Logevent</h3>
           <p className="mt-4 md:mt-8 font-sofia text-black text-sm md:text-base">
             Kami menghadirkan pengalaman terbaik untuk penyewaan vendor untuk event secara praktis. Dengan pilihan vendor yang handal dan produk yang berkualitas tinggi, kami memastikan bahwa setiap proyek bangunan Anda berjalan lancar dan sesuai harapan.
           </p>
@@ -444,9 +447,12 @@ function AboutUsSection() {
               </div>
             </div>
           </div>
-          <div className="mt-8">
-            <button className="px-6 py-2 md:py-[0.88rem] bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700" onClick={handleChat}>Pesan Event Organizer</button>
-            <button className="px-6 py-2 md:py-3 mt-3 md:mt-0 md:ml-6 bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold rounded-lg hover:bg-pink-100 hover:text-pink-600 hover:border-pink-600" onClick={() => router.push('/logistik-vendor')}>Cari Logistik Vendor</button>          
+          <div className="mt-8 flex flex-col md:flex-row">
+            <button className="px-6 py-2 md:py-3 md:mt-0 bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold rounded-lg hover:bg-pink-100 hover:text-pink-600 hover:border-pink-600">Menjadi Vendor</button>
+            <div className='md:ml-6 flex mt-3 md:mt-0 flex-col font-sofia'>
+              <h3 className="text-base md:text-lg text-pink-600">Bergabung Menjadi Mitra Vendor Kami !</h3>     
+              <p className="text-sm text-black">Naikkan penjualan Anda, dan jangkau lebih banyak pelanggan </p>
+            </div>
           </div>
         </div>
       </div>
@@ -470,25 +476,25 @@ function LayananCard({ image, title, description, link, onClick }: { image: stri
   return (
     <div className="relative flex-col items-center mb-4 md:mb-8 md:p-4 rounded-lg">
       {/* Pink Circle */}
-      <div className="absolute top-0 left-1 w-10 h-10 bg-pink-200 rounded-full z-0"></div>
-      
+      <div className="absolute top-0 left-1 w-7 h-7 md:w-10 md:h-10 bg-pink-300 rounded-full z-0"></div>
+
       {/* Image with top-left alignment */}
-      <div className="relative z-10 ml-4 mt-4 mb-4 md:ml-0 md:mt-0">
+      <div className="relative z-10 ml-3 mt-2 mb-2 md:ml-0 md:mt-0">
         <Image
           src={image}
           alt={title}
           width={60}
           height={60}
-          className="object-cover rounded-lg"
+          className="object-cover rounded-lg w-10 h-10 md:w-16 md:h-16"
         />
       </div>
-      
+
       <div>
-        <h2 className="text-2xl font-bold mb-2 font-sofia text-gray-700">{title}</h2>
-        <p className="text-gray-600 font-sofia mb-4">{description}</p>
+        <h2 className="text-xl md:text-2xl font-bold mb-2 font-sofia text-gray-700">{title}</h2>
+        <p className="text-gray-600 font-sofia mb-2 md:mb-4 text-sm md:text-base">{description}</p>
         {/* "Detail Layanan" Button */}
         <button
-          className="text-pink-500 hover:text-pink-700 font-bold"
+          className="text-pink-500 hover:text-pink-700 font-bold font-sofia"
           onClick={handleClick}
         >
           Detail Layanan
@@ -508,27 +514,26 @@ function LayananSection() {
     {
       image: "/Image/building.png", // You should replace this with the actual path to your image
       title: "Logistik Vendor",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae.",
+      description: "Kami bekerja sama dengan berbagai vendor terpercaya yang menawarkan beragam produk dan layanan berkualitas tinggi. Dari panggung, sound system, hingga dekorasi, semua kebutuhan logistik event Anda dapat kami penuhi dengan cepat dan efisien.",
       link: "/logistik-vendor"
     },
     {
       image: "/Image/building.png",
       title: "Event Organizer",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae.",
-      link: `https://wa.me/${process.env.NEXT_PUBLIC_ADMIN_NUMBER}`,
-      onClick: handleChat
+      description: "Tidak hanya menyediakan logistik, Logevent juga menawarkan jasa Event Organizer profesional yang siap merancang dan mengelola event impian Anda. Tim kami yang berpengalaman akan bekerja sama dengan Anda dari tahap perencanaan hingga eksekusi, memastikan setiap detail acara Anda tertata dengan sempurna.",
+      link: "/event-organizer"
     },
     {
       image: "/Image/building.png",
       title: "Paket Event",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae.",
+      description: "Kami memahami bahwa setiap event memiliki karakteristik dan kebutuhan yang berbeda. Oleh karena itu, Logevent menyediakan berbagai paket event sesuai dengan kategori acara yang akan diadakan. Baik itu pesta pernikahan, konser musik, atau ulang tahun, kami memiliki paket yang dapat disesuaikan dengan kebutuhan dan anggaran Anda.",
       link: "/paket-event"
     },
   ];
 
   return (
-    <section id="services" className="p-8 md:p-16 mt-16 md:mt-0">
-      <h1 className="text-4xl text-pink-900 font-bold mt-10 mb-7 md:mb-10 font-sofia">Layanan Kami</h1>
+    <section id="services" className="p-8 md:p-16 mt-12 md:mt-0">
+      <h1 className="text-3xl md:text-4xl text-pink-900 font-bold mt-24 mb-7 md:mb-10 font-sofia">Layanan Kami</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
         {descriptions.map((item, index) => (
           <LayananCard
@@ -537,7 +542,7 @@ function LayananSection() {
             title={item.title}
             description={item.description}
             link={item.link}
-            onClick={item.onClick}
+            onClick={handleChat}
           />
         ))}
       </div>
@@ -545,22 +550,21 @@ function LayananSection() {
   );
 }
 
-function KeunggulanCard ({ image, title, description }: { image: string, title: string, description: string }) {
+function KeunggulanCard ({ image, description }: { image: string, description: string }) {
   return (
-    <div className="flex flex-col md:flex-row items-center mb-2 md:mb-3 p-6 md:p-8 bg-white shadow-lg rounded-lg">
+    <div className="flex flex-row items-center mb-2 md:mb-3 p-4 md:p-8 bg-white shadow-lg rounded-lg">
       {/* Increased image container size */}
-      <div className="flex-shrink-0 w-14 h-14 md:w-16 md:h-16">
+      <div className="flex-shrink-0 w-10 h-10 md:w-16 md:h-16 ml-3 md:ml-0">
         <Image
           src={image}
-          alt={title}
+          alt="image"
           width={80}
           height={80}
           className="object-cover rounded-lg"
         />
       </div>
-      <div className="text-center md:text-left md:ml-10 mt-4 md:mt-0">
-        <h2 className="text-2xl font-bold mb-4 md:mb-2 font-sofia text-gray-700">{title}</h2>
-        <p className="text-gray-600 font-sofia text-xs md:text-base">{description}</p>
+      <div className="text-left ml-6 md:ml-8 md:mt-1">
+        <p className="text-gray-600 font-sofia text-base md:text-xl">{description}</p>
       </div>
     </div>
   );
@@ -571,40 +575,112 @@ function KeunggulanSection() {
   const descriptions = [
     {
       image: "/Image/building.png",
-      title: "Sample Title 1",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+      description: "Praktis dan Efisien, Komparasi harga antar vendor, Banyak Pilihan"
     },
     {
       image: "/Image/building.png",
-      title: "Sample Title 2",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+      description: "Paket logistik berdasarkan kebutuhan acara & budget pengguna"
     },
     {
       image: "/Image/building.png",
-      title: "Sample Title 3",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+      description: "Keamanan berbagai jenis transaksi antara vendor dan pengguna"
     },
     {
       image: "/Image/building.png",
-      title: "Sample Title 4",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+      description: "Kemudahan memesan jasa EO dan berbagai kategori logistik yang diperlukan event"
     },
   ];
 
   return (
     <section id="keunggulan" className="p-8 md:p-16">
-      <h1 className="text-4xl text-pink-900 font-bold mt-20 md:mt-5 mb-8 md:mb-10 font-sofia">Mengapa memilih Logevent?</h1>
+      <h1 className="text-3xl md:text-4xl text-pink-900 font-bold mt-6 md:mt-5 mb-8 md:mb-10 font-sofia">Mengapa memilih Logevent?</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-7 md:gap-12">
         {descriptions.map((item, index) => (
           <KeunggulanCard
             key={index}
             image={item.image}
-            title={item.title}
             description={item.description}
           />
         ))}
       </div>
     </section>
+  );
+}
+
+function FAQ() {
+  const [openIndicesLeft, setOpenIndicesLeft] = useState<number[]>([]);
+  const [openIndicesRight, setOpenIndicesRight] = useState<number[]>([]);
+
+  const toggleOpenLeft = (index: number) => {
+    if (openIndicesLeft.includes(index)) {
+      setOpenIndicesLeft(openIndicesLeft.filter(i => i !== index));
+    } else {
+      setOpenIndicesLeft([...openIndicesLeft, index]);
+    }
+  };
+
+  const toggleOpenRight = (index: number) => {
+    if (openIndicesRight.includes(index)) {
+      setOpenIndicesRight(openIndicesRight.filter(i => i !== index));
+    } else {
+      setOpenIndicesRight([...openIndicesRight, index]);
+    }
+  };
+
+  const faqItems = [
+    {
+      question: 'Bagaimana cara menjadi mitra vendor LogEvent?',
+      answer: 'Lakukan pendaftaran dengan melakukan klik pada tombol Menjadi Vendor, lalu Anda akan diarahkan ke Admin kami untuk kesepakatan kerjasama.',
+    },
+    {
+      question: 'Apa persyaratan untuk menjadi mitra vendor?',
+      answer: 'Anda harus memiliki bisnis yang sah dan menyediakan layanan atau produk yang sesuai dengan kebutuhan acara yang kami kelola.',
+    },
+    {
+      question: 'Berapa biaya untuk mendaftar sebagai mitra vendor?',
+      answer: 'Pendaftaran sebagai mitra vendor LogEvent gratis. Namun, ada biaya yang terkait dengan layanan tertentu yang mungkin Anda pilih.',
+    },
+    {
+      question: 'Bagaimana cara mengubah informasi akun vendor saya?',
+      answer: 'Anda dapat mengubah informasi akun Anda melalui dashboard vendor. Masuk ke akun Anda dan pilih opsi untuk mengedit profil.',
+    },
+    {
+      question: 'Apakah ada kontrak yang harus saya tanda tangani?',
+      answer: 'Ya, ada kontrak kerjasama yang harus ditandatangani untuk memastikan bahwa semua pihak memahami tanggung jawab dan hak masing-masing.',
+    },
+    {
+      question: 'Bagaimana cara saya menerima pembayaran dari LogEvent?',
+      answer: 'Pembayaran dilakukan melalui transfer bank setelah layanan atau produk Anda berhasil digunakan dalam acara.',
+    },
+    {
+      question: 'Apakah LogEvent menyediakan dukungan untuk vendor?',
+      answer: 'Ya, kami menyediakan dukungan melalui tim support kami yang siap membantu Anda dengan segala pertanyaan atau masalah yang mungkin Anda hadapi.',
+    },
+  ];
+
+  return (
+    <div className="flex w-full flex-col items-center min-h-screen bg-gray-100 mt-40 md:mt-32 font-sofia">
+      <h1 className="text-3xl md:text-4xl font-bold mb-8 text-pink-900">Ada Pertanyaan?</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-10 w-full px-8 md:px-16">
+        {faqItems.map((item, index) => (
+          <div
+            key={index}
+            className="bg-white rounded-lg shadow-md p-2 md:p-4 cursor-pointer"
+            onClick={() => (index % 2 === 0 ? toggleOpenLeft(index) : toggleOpenRight(index))}
+          >
+            <div className="flex justify-between items-center text-black">
+              <span className="text-base md:text-lg font-semibold">{item.question}</span>
+              <span>{(index % 2 === 0 ? openIndicesLeft : openIndicesRight).includes(index) ? '-' : '>'}</span>
+            </div>
+            {(index % 2 === 0 ? openIndicesLeft : openIndicesRight).includes(index) && (
+              <div className="mt-2 text-gray-600 text-xs md:text-base">
+                {item.answer}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -663,7 +739,7 @@ function ListProduct({ products }: { products: Product[] }) {
 
   return (
     <section className="p-8">
-      <h1 className="text-4xl md:text-4xl text-pink-900 font-bold mt-44 md:mt-32 mb-2 md:mb-0 md:-ml-[5.25rem] font-sofia">Rekomendasi Produk</h1>
+      <h1 className="text-3xl md:text-4xl text-pink-900 font-bold mt-44 md:mt-16 mb-2 md:mb-0 md:-ml-[5.25rem] font-sofia">Rekomendasi Produk</h1>
       <button className="mt-2 md:mt-5 mb-2 md:mb-0 md:-ml-[5.25rem] px-6 py-2 bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700" onClick={() => router.push('/logistik-vendor')}>Lihat Selengkapnya</button>
       <div className="relative flex items-center justify-center mt-10 mb-2">
         <div className="flex flex-wrap gap-10 justify-center mx-4">

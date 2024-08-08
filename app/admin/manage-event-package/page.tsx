@@ -13,23 +13,56 @@ import { readAllEvents, deleteEvent } from '@/app/utils/eventApi';
 import { Event } from '@/app/utils/types';
 
 export default function AdminVendor() {
+    const router = useRouter();
+  
+    const handlePrev = () => {
+      // Add your routing logic for the previous button
+      router.push('/admin/manage-vendor'); // Update with the actual route
+    };
+  
+    const handleNext = () => {
+      // Add your routing logic for the next button
+      router.push('/admin/manage-faq'); // Update with the actual route
+    };
+
     return (
         <div>
-            <div className="min-h-screen flex flex-col p-10 mt-16">
-                <Navbar />
+            <Navbar />
+            <div className="min-h-screen flex flex-col px-6 md:px-6 md:py-8 mt-24 md:mt-16">
                 <div className="flex flex-col md:flex-row flex-grow">
-                    <CommandLeft />
+                    <div className="md:hidden flex justify-center items-center">
+                        <h1 className="text-3xl md:text-4xl font-bold text-pink-900 font-sofia mt-4 mb-8">Manage Paket Event</h1>
+                    </div>
+                    <div className="hidden md:block">
+                        <CommandLeft />
+                    </div>
                     <div className="flex-grow ml-0 md:ml-7 py-[0.15rem]">
-                        <ManagePackage />
+                        <ManageEventPackage />
                     </div>
                 </div>
             </div>
             <ContactBox />
+            <button 
+                className="md:hidden fixed top-[25rem] left-2 px-1 py-1 bg-pink-600 text-white rounded-full shadow-lg hover:shadow-2xl focus:outline-none"
+                onClick={handlePrev}
+                >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+                </button>
+                <button 
+                className="md:hidden fixed top-[25rem] right-2 px-1 md:px-3 py-1 md:py-2 bg-pink-600 text-white rounded-full shadow-lg hover:shadow-2xl focus:outline-none"
+                onClick={handleNext}
+                >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
         </div>
     );
 }
 
-function ManagePackage() {
+function ManageEventPackage() {
     const router = useRouter();
     const [showPopup, setShowPopup] = useState(false);
     const [events, setEvents] = useState<Event[]>([]);
@@ -48,6 +81,8 @@ function ManagePackage() {
         fetchEvents();
     }, []);
 
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filteredPackages, setFilteredPackages] = useState(events);
     const [currentPage, setCurrentPage] = useState(1);
     const eventsPerPage = 5;
     const totalPages = Math.ceil(events.length / eventsPerPage);
@@ -78,14 +113,31 @@ function ManagePackage() {
         router.push(`/admin/manage-event-package/detail/${id}`);
     };
 
+    const handleSearch = (event: { target: { value: string; }; }) => {
+        const query = event.target.value.toLowerCase();
+        setSearchQuery(query);
+        const filtered = events.filter(event => event.name.toLowerCase().includes(query));
+        setFilteredPackages(filtered);
+        setCurrentPage(1);
+    };
+
+    // Get current packages
+    const indexOfLastPackage = currentPage * eventsPerPage;
+    const indexOfFirstPackage = indexOfLastPackage - eventsPerPage;
+    const currentPackages = filteredPackages.slice(indexOfFirstPackage, indexOfLastPackage);
+
     return (
-        <div className="px-8 pt-6 pb-10 bg-white rounded-xl font-sofia shadow-md">
-            <h1 className="text-3xl font-bold mb-3 text-pink-900">Welcome Admin LogEvent!</h1>
-            <div className="flex items-center text-black mb-4">
+        <div className="px-10 md:px-8 pt-6 pb-10 bg-white rounded-xl font-sofia shadow-md">
+            <div className="flex justify-center md:justify-start">
+                <h1 className="text-lg md:text-3xl font-bold mb-4 md:mb-6 text-pink-900 font-sofia">Welcome Admin LogEvent!</h1>
                 <span className="mr-2 text-lg">Total Paket</span>
                 <span className="text-2xl font-bold border-pink-900 border-2 px-3 py-1">{events.length}</span>
             </div>
-            <div className="flex justify-between items-center w-full mb-4">
+            <div className="flex items-center text-black mb-4">
+                <span className="mr-2 text-base md:text-lg">Total Paket</span>
+                <span className="text-2xl font-bold border-pink-900 border-2 px-2 md:px-3 md:py-1">{events.length}</span>
+            </div>
+            <div className="flex md:flex-row flex-col md:justify-between md:items-center w-full mb-4">
                 <div className="relative w-full md:w-[56rem]">
                     <span className="absolute inset-y-0 left-0 flex items-center">
                         <svg className="w-3 md:w-4 h-3 md:h-4 ml-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
@@ -95,14 +147,16 @@ function ManagePackage() {
                     <input
                         type="text"
                         placeholder="Cari kebutuhan paketmu"
+                        value={searchQuery}
+                        onChange={handleSearch}
                         className="w-full text-sm md:text-base p-1 md:p-2 pl-9 md:pl-12 border rounded bg-white text-black font-sofia"
                     />
                 </div>
-                <div className="flex justify-end items-center">
-                    <button className="bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-md" onClick={() => router.push('/admin/manage-event-package/add')}>+ Tambah Paket</button>
+                <div className="flex justify-start md:justify-end items-center md:mt-0 mt-3">
+                    <button className="bg-pink-500 hover:bg-pink-600 text-white p-1 md:p-2 rounded-md text-sm md:text-base" onClick={() => router.push('/admin/manage-event-package/add')}>+ Tambah Paket</button>
                 </div>
             </div>
-            <div className="flex flex-col gap-4 w-[65rem]">
+            <div className="flex flex-col gap-4 w-full md:w-[67rem]">
                 {currentEvents.map(event => (
                     <div key={event.id} className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col md:flex-row justify-between relative">
                         <Image
@@ -116,11 +170,11 @@ function ManagePackage() {
                             {/* Icon buttons */}
                             <div className="absolute top-4 right-4 flex space-x-2">
                                 <FaEdit
-                                    className="text-pink-500 cursor-pointer hover:text-pink-700 w-6 h-6"
+                                    className="text-pink-500 cursor-pointer hover:text-pink-700 w-5 md:w-6 h-5 md:h-6"
                                     onClick={() => router.push(`/admin/manage-event-package/edit/${event.id}`)}
                                 />
                                 <FaTrashAlt
-                                    className="text-pink-500 cursor-pointer hover:text-pink-700 w-5 h-5 mt-[0.15rem]"
+                                    className="text-pink-500 cursor-pointer hover:text-pink-700 w-4 md:w-5 h-5 md:h-5 md:mt-[0.15rem]"
                                     onClick={() => confirmDelete(event.id)}
                                 />
                             </div>
@@ -159,26 +213,32 @@ function ManagePackage() {
                 ))}
             </div>
             {totalPages > 1 && (
-              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                />
             )}
             {showPopup && (
-                <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                <div className="bg-white p-6 rounded-md shadow-lg text-center">
-                  <div className="flex items-center justify-center mb-4">
-                    <div className="bg-red-500 text-white p-2 rounded-full">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M12 8v4m0 4h.01m0-4h-.01m-.01 0h.01M11 8v4m0 4h.01m0-4h-.01m-.01 0h.01" />
-                      </svg>
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white p-6 rounded-md shadow-lg">
+                        <p className="mb-4">Are you sure you want to delete this package?</p>
+                        <div className="flex justify-end">
+                            <button
+                                className="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded mr-2"
+                                onClick={() => setShowPopup(false)}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="bg-pink-500 hover:bg-pink-600 text-white py-2 px-4 rounded"
+                                onClick={handleDeleteClick}
+                            >
+                                Delete
+                            </button>
+                        </div>
                     </div>
-                  </div>
-                  <p className="mb-4 text-black font-sofia">Apakah Anda yakin ingin menghapus paket ini?</p>
-                  <p className="mb-6 text-black font-sofia">Dengan menekan tombol ya maka paket yang dipilih akan terhapus dan pengunjung tidak akan dapat melihatnya lagi </p>
-                  <div className="flex justify-center space-x-4 font-sofia">
-                    <button className="bg-gray-500 text-white px-4 py-2 rounded-md" onClick={() => setShowPopup(false)}>Tidak</button>
-                    <button className="bg-red-500 text-white px-4 py-2 rounded-md" onClick={handleDeleteClick}>Ya</button>
-                  </div>
                 </div>
-              </div>
             )}
         </div>
     );
