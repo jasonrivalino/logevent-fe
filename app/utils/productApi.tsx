@@ -7,7 +7,9 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const readAllProducts = async () => {
   try {
-    const response = await axios.get(`${API_URL}/products/read`);
+    const response = await axios.get(`${API_URL}/products/read`, {
+      withCredentials: true
+    });
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Failed to fetch products');
@@ -16,7 +18,9 @@ export const readAllProducts = async () => {
 
 export const readTopProducts = async () => {
   try {
-    const response = await axios.get(`${API_URL}/products/read/top`);
+    const response = await axios.get(`${API_URL}/products/read/top`, {
+      withCredentials: true
+    });
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Failed to fetch top products');
@@ -25,7 +29,9 @@ export const readTopProducts = async () => {
 
 export const readAdminProducts = async () => {
   try {
-    const response = await axios.get(`${API_URL}/products/read/admin`);
+    const response = await axios.get(`${API_URL}/products/read/admin`, {
+      withCredentials: true
+    });
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Failed to fetch admin products');
@@ -34,7 +40,9 @@ export const readAdminProducts = async () => {
 
 export const readProductsByVendorId = async (vendorId: number) => {
   try {
-    const response = await axios.get(`${API_URL}/products/read/vendor/${vendorId}`);
+    const response = await axios.get(`${API_URL}/products/read/vendor/${vendorId}`, {
+      withCredentials: true
+    });
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Failed to fetch products');
@@ -43,7 +51,9 @@ export const readProductsByVendorId = async (vendorId: number) => {
 
 export const readProductById = async (id: number) => {
   try {
-    const response = await axios.get(`${API_URL}/products/read/${id}`);
+    const response = await axios.get(`${API_URL}/products/read/${id}`, {
+      withCredentials: true
+    });
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Failed to fetch product');
@@ -65,7 +75,8 @@ export const createProduct = async (productData: {
     const response = await axios.post(`${API_URL}/products/create`, productData, {
       headers: {
         'Content-Type': 'application/json'
-      }
+      },
+      withCredentials: true
     });
     return response.data;
   } catch (error: any) {
@@ -88,7 +99,8 @@ export const updateProduct = async (id: number, productData: {
     const response = await axios.put(`${API_URL}/products/update/${id}`, productData, {
       headers: {
         'Content-Type': 'application/json'
-      }
+      },
+      withCredentials: true
     });
     return response.data;
   } catch (error: any) {
@@ -98,7 +110,9 @@ export const updateProduct = async (id: number, productData: {
 
 export const deleteProduct = async (id: number) => {
   try {
-    await axios.delete(`${API_URL}/products/delete/${id}`);
+    await axios.delete(`${API_URL}/products/delete/${id}`, {
+      withCredentials: true
+    });
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Failed to delete product');
   }

@@ -7,7 +7,9 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const readAllEvents = async () => {
   try {
-    const response = await axios.get(`${API_URL}/events/read`);
+    const response = await axios.get(`${API_URL}/events/read`, {
+      withCredentials: true
+    });
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Failed to fetch events');
@@ -16,7 +18,9 @@ export const readAllEvents = async () => {
 
 export const readEventById = async (id: number) => {
   try {
-    const response = await axios.get(`${API_URL}/events/read/${id}`);
+    const response = await axios.get(`${API_URL}/events/read/${id}`, {
+      withCredentials: true
+    });
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Failed to fetch event');
@@ -35,7 +39,8 @@ export const createEvent = async (eventData: {
     const response = await axios.post(`${API_URL}/events/create`, eventData, {
       headers: {
         'Content-Type': 'application/json'
-      }
+      },
+      withCredentials: true
     });
     return response.data;
   } catch (error: any) {
@@ -55,7 +60,8 @@ export const updateEvent = async (id: number, eventData: {
     const response = await axios.put(`${API_URL}/events/update/${id}`, eventData, {
       headers: {
         'Content-Type': 'application/json'
-      }
+      },
+      withCredentials: true
     });
     return response.data;
   } catch (error: any) {
@@ -65,7 +71,9 @@ export const updateEvent = async (id: number, eventData: {
 
 export const deleteEvent = async (id: number) => {
   try {
-    await axios.delete(`${API_URL}/events/delete/${id}`);
+    await axios.delete(`${API_URL}/events/delete/${id}`, {
+      withCredentials: true
+    });
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Failed to delete event');
   }

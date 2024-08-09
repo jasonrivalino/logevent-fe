@@ -7,7 +7,9 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const readEventWishlistsByUserId = async (userId: number) => {
   try {
-    const response = await axios.get(`${API_URL}/wishlists/read/event/${userId}`);
+    const response = await axios.get(`${API_URL}/wishlists/read/event/${userId}`, {
+      withCredentials: true
+    });
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Failed to fetch event wishlists');
@@ -16,7 +18,9 @@ export const readEventWishlistsByUserId = async (userId: number) => {
 
 export const readProductWishlistsByUserId = async (userId: number) => {
   try {
-    const response = await axios.get(`${API_URL}/wishlists/read/product/${userId}`);
+    const response = await axios.get(`${API_URL}/wishlists/read/product/${userId}`, {
+      withCredentials: true
+    });
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Failed to fetch product wishlists');
@@ -29,6 +33,7 @@ export const createWishlist = async (userId: number, eventId: number | null, pro
       headers: {
         'Content-Type': 'application/json'
       },
+      withCredentials: true
     });
     return response.data;
   } catch (error: any) {
@@ -38,7 +43,9 @@ export const createWishlist = async (userId: number, eventId: number | null, pro
 
 export const deleteWishlist = async (id: number) => {
   try {
-    const response = await axios.delete(`${API_URL}/wishlists/delete/${id}`);
+    const response = await axios.delete(`${API_URL}/wishlists/delete/${id}`, {
+      withCredentials: true
+    });
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Failed to delete wishlist');

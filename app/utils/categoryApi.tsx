@@ -1,4 +1,4 @@
-// app/utils/albumApi.tsx
+// app/utils/categoryApi.tsx
 
 // dependency modules
 import axios from 'axios';
@@ -7,7 +7,9 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const readProductCategories = async () => {
   try {
-    const response = await axios.get(`${API_URL}/categories/read/product`);
+    const response = await axios.get(`${API_URL}/categories/read/product`, {
+      withCredentials: true
+    });
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Failed to fetch product categories');
@@ -16,7 +18,9 @@ export const readProductCategories = async () => {
 
 export const readEventCategories = async () => {
   try {
-    const response = await axios.get(`${API_URL}/categories/read/event`);
+    const response = await axios.get(`${API_URL}/categories/read/event`, {
+      withCredentials: true
+    });
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Failed to fetch event categories');

@@ -11,6 +11,7 @@ export const readUserProfile = async (token: string) => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
+      withCredentials: true,
     });
     return response.data;
   } catch (error: any) {
@@ -24,6 +25,7 @@ export const verifyEmail = async (token: string) => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
+      withCredentials: true,
     });
     return response.data;
   } catch (error: any) {
@@ -33,12 +35,15 @@ export const verifyEmail = async (token: string) => {
 
 export const signIn = async (email: string, password: string) => {
   try {
-    const response = await axios.post(`${API_URL}/auth/signin`, { email, password }, {
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      withCredentials: true
-    });  
+    const response = await axios.post(`${API_URL}/auth/signin`, 
+      { email, password }, 
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true,
+      }
+    );  
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Failed to sign in');
@@ -47,12 +52,15 @@ export const signIn = async (email: string, password: string) => {
 
 export const signUp = async (email: string, password: string, name: string, phone: string) => {
   try {
-    const response = await axios.post(`${API_URL}/auth/signup`, { email, password, name, phone }, {
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      withCredentials: true
-    });
+    const response = await axios.post(`${API_URL}/auth/signup`, 
+      { email, password, name, phone }, 
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true,
+      }
+    );
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Failed to sign up');
@@ -61,25 +69,33 @@ export const signUp = async (email: string, password: string, name: string, phon
 
 export const resetPassword = async (email: string) => {
   try {
-    const response = await axios.post(`${API_URL}/auth/reset-password`, { email }, {
-      headers: {
-        'Content-Type': 'application/json'
-      },
-    });
+    const response = await axios.post(`${API_URL}/auth/reset-password`, 
+      { email }, 
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true,
+      }
+    );
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Failed to reset password');
   }
 }
 
-export const updateUser = async (token: string, userData: { name?: string; email?: string; password?: string; phone?: string, picture?: string; isAdmin?: boolean, isVerified?: boolean }) => {
+export const updateUser = async (token: string, userData: { name?: string; email?: string; password?: string; phone?: string; picture?: string; isAdmin?: boolean; isVerified?: boolean }) => {
   try {
-    const response = await axios.put(`${API_URL}/auth/update`, userData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-    });
+    const response = await axios.put(`${API_URL}/auth/update`, 
+      userData, 
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true,
+      }
+    );
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Failed to update user');

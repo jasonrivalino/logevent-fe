@@ -7,7 +7,9 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const readAllVendors = async () => {
   try {
-    const response = await axios.get(`${API_URL}/vendors/read`);
+    const response = await axios.get(`${API_URL}/vendors/read`, {
+      withCredentials: true
+    });
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Failed to fetch vendors');
@@ -16,7 +18,9 @@ export const readAllVendors = async () => {
 
 export const readVendorById = async (id: number) => {
   try {
-    const response = await axios.get(`${API_URL}/vendors/read/${id}`);
+    const response = await axios.get(`${API_URL}/vendors/read/${id}`, {
+      withCredentials: true
+    });
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Failed to fetch vendor');
@@ -36,7 +40,8 @@ export const createVendor = async (vendorData: {
     const response = await axios.post(`${API_URL}/vendors/create`, vendorData, {
       headers: {
         'Content-Type': 'application/json'
-      }
+      },
+      withCredentials: true
     });
     return response.data;
   } catch (error: any) {
@@ -57,7 +62,8 @@ export const updateVendor = async (id: number, vendorData: {
     const response = await axios.put(`${API_URL}/vendors/update/${id}`, vendorData, {
       headers: {
         'Content-Type': 'application/json'
-      }
+      },
+      withCredentials: true
     });
     return response.data;
   } catch (error: any) {
@@ -67,7 +73,9 @@ export const updateVendor = async (id: number, vendorData: {
 
 export const deleteVendor = async (id: number) => {
   try {
-    await axios.delete(`${API_URL}/vendors/delete/${id}`);
+    await axios.delete(`${API_URL}/vendors/delete/${id}`, {
+      withCredentials: true
+    });
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Failed to delete vendor');
   }
