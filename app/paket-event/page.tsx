@@ -51,42 +51,43 @@ function Filter({ categories, tempCategory, tempPriceRange, setCategory, setPric
   return (
     <div className="w-full md:w-96 md:pl-4 md:pr-8 py-4 -mb-2 md:mb-0">
       <h2 className="text-xl md:text-2xl font-semibold font-sofia text-black mb-4">Filter by</h2>
-      <div className="mb-2 md:mb-4">
-        <label htmlFor="category" className="block mb-1 md:mb-2 text-gray-700 font-sofia text-sm md:text-base">Kategori Event</label>
-        <select
-          id="category"
-          className="w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia"
-          onChange={(e) => setCategory(e.target.value)}
-          value={tempCategory}
-        >
-          <option value="" className="font-sofia">Pilih kategori event</option>
-          {categories.map(category => (
-            <option key={category.id} value={category.name}>
-              {category.name}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="flex md:flex-col flex-row">
-        <div className="mb-4 md:mb-8">
-          <label htmlFor="priceRange" className="block mb-1 md:mb-2 text-gray-700 font-sofia text-sm md:text-base">Harga</label>
+      <div className="flex flex-row md:flex-col gap-4 md:gap-0">
+        <div className="mb-2 md:mb-4">
+          <label htmlFor="category" className="block mb-1 md:mb-2 text-gray-700 font-sofia text-sm md:text-base">Kategori Event</label>
           <select
-            id="priceRange"
-            className="w-[11.5rem] md:w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia"
-            onChange={(e) => setPriceRange(e.target.value)}
-            value={tempPriceRange}
+            id="category"
+            className="w-40 md:w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia"
+            onChange={(e) => setCategory(e.target.value)}
+            value={tempCategory}
           >
-            <option value="" className="font-sofia">Pilih range harga</option>
-            <option value="> 25.000.000" className="font-sofia">{`> 25.000.000`}</option>
-            <option value="15.000.000 - 25.000.000" className="font-sofia">15.000.000 - 25.000.000</option>
-            <option value="5.000.000 - 15.000.000" className="font-sofia">5.000.000 - 15.000.000</option>
-            <option value="< 5.000.000" className="font-sofia">{`< 5.000.000`}</option>
+            <option value="" className="font-sofia">Pilih kategori event</option>
+            {categories.map(category => (
+              <option key={category.id} value={category.name}>
+                {category.name}
+              </option>
+            ))}
           </select>
+        </div>
+        <div className="flex md:flex-col flex-row">
+          <div className="mb-4 md:mb-8">
+            <label htmlFor="priceRange" className="block mb-1 md:mb-2 text-gray-700 font-sofia text-sm md:text-base">Harga</label>
+            <select
+              id="priceRange"
+              className="w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia"
+              onChange={(e) => setPriceRange(e.target.value)}
+              value={tempPriceRange}
+            >
+              <option value="" className="font-sofia">Pilih range harga</option>
+              <option value="> 25.000.000" className="font-sofia">{`> 25.000.000`}</option>
+              <option value="15.000.000 - 25.000.000" className="font-sofia">15.000.000 - 25.000.000</option>
+              <option value="5.000.000 - 15.000.000" className="font-sofia">5.000.000 - 15.000.000</option>
+              <option value="< 5.000.000" className="font-sofia">{`< 5.000.000`}</option>
+            </select>
+          </div>
         </div>
       </div>
       <button
-        className="w-full bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold hover:bg-pink-100 hover:text-pink-600 hover:border-pink-600 p-2 rounded mb-2"
-        onClick={handleReset}
+          className="w-full text-sm md:text-base bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold hover:bg-pink-100 hover:text-pink-600 hover:border-pink-600 p-[0.2rem] md:p-2 rounded mb-3 md:mb-2"        onClick={handleReset}
       >
         Reset Filter
       </button>

@@ -54,7 +54,7 @@ export function Filter({ categories, tempCategory, tempLocation, tempPriceRange,
     <div className="w-full md:w-96 md:pl-4 md:pr-8 py-4 -mb-2 md:mb-0">
       <h2 className="text-xl md:text-2xl font-semibold font-sofia text-black mb-4">Filter by</h2>
       <div className="mb-2 md:mb-4">
-        <label htmlFor="category" className="block mb-1 md:mb-2 text-gray-700 font-sofia text-sm md:text-base">Kategori Produk</label>
+        <label htmlFor="category" className="block mb-1 md:mb-2 text-gray-700 font-sofia text-sm md:text-base">Kategori Vendor</label>
         <select
           id="category"
           className="w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia"
@@ -89,7 +89,7 @@ export function Filter({ categories, tempCategory, tempLocation, tempPriceRange,
           <label htmlFor="price" className="block mb-1 md:mb-2 text-gray-700 font-sofia text-sm md:text-base">Harga</label>
           <select
             id="price"
-            className="w-[11.5rem] md:w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia"
+            className="w-[10.75rem] md:w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia"
             onChange={(e) => setPriceRange(e.target.value)}
             value={tempPriceRange}
           >
@@ -103,7 +103,7 @@ export function Filter({ categories, tempCategory, tempLocation, tempPriceRange,
       </div>
       <div className="flex flex-row md:flex-col items-center">
         <button
-          className="w-52 md:w-full text-sm md:text-base bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold hover:bg-pink-100 hover:text-pink-600 hover:border-pink-600 p-[0.2rem] md:p-2 rounded mb-3 md:mb-2"
+          className="w-full text-sm md:text-base bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold hover:bg-pink-100 hover:text-pink-600 hover:border-pink-600 p-[0.2rem] md:p-2 rounded mb-3 md:mb-2"
           onClick={handleReset}
         >
           Reset Filter
@@ -243,24 +243,24 @@ export function ProductList({ products, categories }: { products: Product[], cat
                 alt={`${product.name} Image`}
                 width={400}
                 height={200}
-                className="object-cover"
+                className="object-cover h-20 md:h-32"
               />
               <div className="p-3 md:p-3 font-sofia flex flex-col justify-between flex-grow">
                 <div>
-                  <h3 className="text-xl text-pink-900 font-bold mb-2">{product.name}</h3>
-                  <p className="text-gray-700">{product.specification}</p>
+                  <h3 className="text-sm md:text-base text-pink-900 font-bold mb-2">{product.name}</h3>
+                  <p className="text-xs md:text-sm text-gray-700">{product.specification}</p>
                   <p className="text-xs md:text-sm text-gray-500 flex flex-row">
                     <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className= "h-3 md:h-4 w-3 md:w-4 text-yellow-500 mr-[0.3rem] mt-[0.075rem] md:mt-[0.05rem]"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.14 3.51a1 1 0 00.95.69h3.7c.967 0 1.372 1.24.588 1.81l-2.992 2.179a1 1 0 00-.364 1.118l1.14 3.51c.3.921-.755 1.688-1.54 1.118l-2.992-2.178a1 1 0 00-1.175 0l-2.992 2.178c-.785.57-1.84-.197-1.54-1.118l1.14-3.51a1 1 0 00-.364-1.118L2.93 8.937c-.784-.57-.38-1.81.588-1.81h3.7a1 1 0 00.95-.69l1.14-3.51z" />
+                        xmlns="http://www.w3.org/2000/svg"
+                        className= "h-3 md:h-4 w-3 md:w-4 text-yellow-500 mr-[0.3rem] mt-[0.075rem] md:mt-[0.05rem]"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.14 3.51a1 1 0 00.95.69h3.7c.967 0 1.372 1.24.588 1.81l-2.992 2.179a1 1 0 00-.364 1.118l1.14 3.51c.3.921-.755 1.688-1.54 1.118l-2.992-2.178a1 1 0 00-1.175 0l-2.992 2.178c-.785.57-1.84-.197-1.54-1.118l1.14-3.51a1 1 0 00-.364-1.118L2.93 8.937c-.784-.57-.38-1.81.588-1.81h3.7a1 1 0 00.95-.69l1.14-3.51z" />
                     </svg> {product.rating && product.rating.toFixed(2) !== "0.00" ? product.rating.toFixed(2) : "N/A"}
                   </p>
                   <p
-                    className="text-gray-500 cursor-pointer"
+                    className="text-xs md:text-sm text-gray-500 cursor-pointer"
                     onClick={() => handleAddressClick(product.vendorAddress)}
                   >
                     {product.vendorAddress}
