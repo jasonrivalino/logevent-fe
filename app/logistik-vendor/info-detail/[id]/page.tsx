@@ -2,7 +2,6 @@
 'use client';
 
 // dependency modules
-import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 // self-defined modules
@@ -18,6 +17,7 @@ import type { Album, Product, Review } from '@/app/utils/types';
 export default function Product() {
   const descriptionRef = useRef(null);
   const reviewsRef = useRef(null);
+  const router = useRouter();
   const pathname = usePathname();
   const [product, setProduct] = useState<Product | null>(null);
   const [albums, setAlbums] = useState<Album[]>([]);
@@ -43,6 +43,11 @@ export default function Product() {
       try {
         const id = pathname.split('/').pop();
         if (id) {
+          if (id === '1') {
+            router.push('/event-organizer');
+            return;
+          }
+
           const product = await readProductById(parseInt(id));
           const albums = await readAlbumsByProductId(parseInt(id));
           const reviews = await readReviewsByProductId(parseInt(id));

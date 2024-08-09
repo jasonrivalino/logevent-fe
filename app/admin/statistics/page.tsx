@@ -158,7 +158,7 @@ function Statistics({ orders, visits }: { orders: Order[], visits: Visit[] }) {
                         <DatePicker
                             selected={pengunjungDate}
                             onChange={(date) => setPengunjungDate(date ?? new Date())}
-                            className="border p-1 rounded text-black"
+                            className="border text-xs md:text-base p-[0.15rem] md:p-1 rounded text-black w-1/2 md:w-3/5"
                         />
                     </div>
                     <div className="h-40 md:h-[18rem]">

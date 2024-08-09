@@ -134,6 +134,18 @@ export function Navbar() {
     }
   };
 
+  const handleScrollToSection3 = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+    e.preventDefault();
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const offsetTop = element.getBoundingClientRect().top + window.scrollY - 60;
+      window.scrollTo({
+        top: offsetTop,
+        behavior: 'smooth',
+      });
+    }
+  };
+
   return (
     <nav className="fixed top-0 left-0 w-full bg-pink-900 shadow-md z-50">
       <div className="container mx-auto px-12 py-4 flex justify-between items-center">
@@ -149,8 +161,8 @@ export function Navbar() {
           <ul className="flex justify-center space-x-8">
             <li>
               <a
-                href="#aboutUs"
-                onClick={(e) => handleScrollToSection1(e, 'aboutUs')}
+                href="#about-us"
+                onClick={(e) => handleScrollToSection1(e, 'about-us')}
                 className="hover:underline font-sofia text-white"
               >
                 About Us
@@ -166,9 +178,13 @@ export function Navbar() {
               </a>
             </li>
             <li>
-              <Link href="#contact" className="hover:underline font-sofia">
+              <a
+                href="#faq"
+                onClick={(e) => handleScrollToSection3(e, 'faq')}
+                className="hover:underline font-sofia text-white"
+              >
                 FAQ
-              </Link>
+              </a>
             </li>
             <li className="relative bg-pink-900">
               {userName ? (
@@ -234,8 +250,8 @@ export function Navbar() {
         <ul className="flex flex-col items-center space-y-4 py-2 md:py-4">
           <li>
             <a
-              href="#aboutUs"
-              onClick={(e) => { handleScrollToSection1(e, 'aboutUs'); setIsMenuOpen(false); }}
+              href="#about-us"
+              onClick={(e) => { handleScrollToSection1(e, 'about-us'); setIsMenuOpen(false); }}
               className="hover:underline font-sofia text-white"
             >
               About Us
@@ -405,7 +421,7 @@ function Introduction() {
 function AboutUsSection() {
 
   return (
-    <section id="aboutUs">
+    <section id="about-us">
       <div className="flex flex-col md:flex-row items-center p-8 md:p-16 mt-28 md:mt-[4.5rem] rounded-lg">
         <div className="w-full md:w-1/2">
           <iframe 
@@ -616,8 +632,8 @@ function FAQ({ faqs }: { faqs: Faq[] }) {
   };
 
   return (
-    <div className="flex w-full flex-col items-center min-h-screen bg-gray-100 mt-40 md:mt-32 font-sofia">
-      <h1 className="text-3xl md:text-4xl font-bold mb-8 text-pink-900">Ada Pertanyaan?</h1>
+    <section id="faq" className="p-8 md:p-16">
+      <h1 className="text-3xl md:text-4xl font-bold mb-8 text-pink-900 font-sofia">Pertanyaan Yang Sering Ditanyakan</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-10 w-full px-8 md:px-16">
         {faqs.map((faq, index) => (
           <div
@@ -637,7 +653,7 @@ function FAQ({ faqs }: { faqs: Faq[] }) {
           </div>
         ))}
       </div>
-    </div>
+    </section>
   );
 }
 
