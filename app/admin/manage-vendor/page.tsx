@@ -47,13 +47,11 @@ export default function AdminVendor() {
     const router = useRouter();
   
     const handlePrev = () => {
-      // Add your routing logic for the previous button
-      router.push('/admin/order-recap'); // Update with the actual route
+      router.push('/admin/order-recap');
     };
   
     const handleNext = () => {
-      // Add your routing logic for the next button
-      router.push('/admin/manage-event-package'); // Update with the actual route
+      router.push('/admin/manage-event-package');
     };
 
     return (
@@ -101,6 +99,10 @@ function ManageVendor({ vendors, triggerFetch, onExport }: { vendors: Vendor[], 
 
     const [searchQuery, setSearchQuery] = useState('');
     const [paginatedVendors, setPaginatedVendors] = useState(vendors);
+    
+    useEffect(() => {
+        setPaginatedVendors(vendors);
+    }, [vendors]);
 
     const [currentPage, setCurrentPage] = useState(1);
     const vendorsPerPage = 10;
@@ -143,7 +145,6 @@ function ManageVendor({ vendors, triggerFetch, onExport }: { vendors: Vendor[], 
         setCurrentPage(1);
     };
 
-    // Get current vendors
     const indexOfLastVendor = currentPage * vendorsPerPage;
     const indexOfFirstVendor = indexOfLastVendor - vendorsPerPage;
     const currentVendors = paginatedVendors.slice(indexOfFirstVendor, indexOfLastVendor);
@@ -250,7 +251,9 @@ function ManageVendor({ vendors, triggerFetch, onExport }: { vendors: Vendor[], 
                     )}
                 </div>
             ))}
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+            {totalPages > 1 && (
+              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+            )}
 
             {showPopup && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">

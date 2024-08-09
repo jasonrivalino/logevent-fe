@@ -1,4 +1,4 @@
-// app/admin/manage-event-package/edit/[id]/page.tsx
+// app/admin/manage-event-package/edit/[editEventId]/page.tsx
 'use client';
 
 // dependency modules
@@ -336,7 +336,7 @@ function EditPackageProduct() {
                       <p className="text-xs text-gray-500">{product.vendorName}</p>
                       <p className="text-xs text-gray-500">{product.specification}</p>
                       <p className="text-xs text-gray-500">{product.vendorAddress}</p>
-                      <p className="text-xs text-pink-500 font-bold">Rp {product.price.toLocaleString('id-ID')}</p>
+                      <p className="text-xs text-pink-500 font-bold">Rp{product.price.toLocaleString('id-ID')}</p>
                     </div>
                   ))
                 )}
@@ -499,17 +499,19 @@ function EditPackageProduct() {
                             </svg> {product.rating && product.rating.toFixed(2) !== "0.00" ? product.rating.toFixed(2) : "N/A"}
                           </p>
                           <p className="text-xs md:text-sm text-gray-500">{product.vendorAddress}</p>
-                          <p className="text-xs md:text-sm text-pink-500 font-bold mt-2">Rp {product.price.toLocaleString('id-ID')}</p>
+                          <p className="text-xs md:text-sm text-pink-500 font-bold mt-2">Rp{product.price.toLocaleString('id-ID')}</p>
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                />
+                {totalPages > 1 && (
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
+                )}
               </div>
             </div>
           </div>

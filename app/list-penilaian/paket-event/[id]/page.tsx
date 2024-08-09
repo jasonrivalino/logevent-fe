@@ -76,6 +76,7 @@ export default function ReviewPage() {
             <div className="flex-1">
               <h3 className="font-bold">{review.userName}</h3>
               <p className="text-sm text-gray-600">{review.tag}</p>
+              <p className="text-sm text-gray-600">{convertDate(review.reviewDate)}</p>
               <div className="flex items-center mb-1">
                 {[...Array(5)].map((_, i) => (
                   <svg
@@ -87,7 +88,6 @@ export default function ReviewPage() {
                   </svg>
                 ))}
               </div>
-              <p className="text-sm text-gray-600">{convertDate(review.reviewDate)}</p>
               <p className="text-sm mt-2">{review.comment}</p>
             </div>
           </div>

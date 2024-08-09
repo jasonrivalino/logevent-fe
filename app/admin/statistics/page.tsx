@@ -40,13 +40,11 @@ const [visits, setVisits] = useState<Visit[]>([]);
     const router = useRouter();
   
     const handlePrev = () => {
-      // Add your routing logic for the previous button
-      router.push('/admin/manage-faq'); // Update with the actual route
+      router.push('/admin/manage-faq');
     };
   
     const handleNext = () => {
-      // Add your routing logic for the next button
-      router.push('/admin/order-recap'); // Update with the actual route
+      router.push('/admin/order-recap');
     };
     
     return (
@@ -153,9 +151,9 @@ function Statistics({ orders, visits }: { orders: Order[], visits: Visit[] }) {
             </div>
             <div className="grid grid-cols-1 gap-6 font-sofia">
             <div className="bg-gray-100 shadow-md rounded-lg p-4 relative">
-                <h2 className="text-lg md:text-xl font-bold text-black">Pengunjung Harian</h2>
-                <p className="md:text-base text-sm text-gray-600">0</p>
-                <p className="md:text-base text-sm text-gray-600">0% dari 30 hari terakhir</p>
+                <h2 className="text-lg md:text-xl font-bold text-black">Statistik Pengunjung</h2>
+                <p className="md:text-base text-sm text-gray-600">Pengunjung Hari Ini: {visitToday}</p>
+                <p className="md:text-base text-xs text-gray-600">Perubahan {visitImprovement}% dari hari sebelumnya</p>
                     <div className="relative md:absolute md:top-4 md:right-4 flex space-x-2 md:-mr-[5.5rem] mt-1 md:mt-0 mb-2 md:mb-0">
                         <DatePicker
                             selected={pengunjungDate}
@@ -169,8 +167,6 @@ function Statistics({ orders, visits }: { orders: Order[], visits: Visit[] }) {
                 </div>
                 <div className="bg-gray-100 shadow-md rounded-lg p-4 relative text-black">
                     <h2 className="text-xl font-bold">Statistik Pemesanan</h2>
-                    <p className="md:text-base text-sm text-gray-600">0</p>
-                    <p className="md:text-base text-xs text-gray-600">Peningkatan 0% sejak 30 hari terakhir</p>
                     <div className="relative md:absolute md:top-4 md:right-4 flex space-x-2 md:-mr-[5.5rem] mt-1 md:mt-0 mb-2 md:mb-0">
                         <DatePicker
                             selected={pemesananDate}

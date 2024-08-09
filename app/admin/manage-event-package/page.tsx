@@ -4,7 +4,7 @@
 // dependency modules
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 // self-defined modules
 import { ContactBox, Navbar } from '@/app/page';
@@ -14,15 +14,27 @@ import { Event } from '@/app/utils/types';
 
 export default function AdminVendor() {
     const router = useRouter();
+    const [events, setEvents] = useState<Event[]>([]);
+
+    useEffect(() => {
+        const fetchEvents = async () => {
+            try {
+                const data = await readAllEvents();
+                setEvents(data);
+            } catch (error) {
+                console.error('Failed to fetch products:', error);
+            }
+        };
+    
+        fetchEvents();
+    }, []);
   
     const handlePrev = () => {
-      // Add your routing logic for the previous button
-      router.push('/admin/manage-vendor'); // Update with the actual route
+      router.push('/admin/manage-vendor');
     };
   
     const handleNext = () => {
-      // Add your routing logic for the next button
-      router.push('/admin/manage-faq'); // Update with the actual route
+      router.push('/admin/manage-faq');
     };
 
     return (
@@ -37,7 +49,7 @@ export default function AdminVendor() {
                         <CommandLeft />
                     </div>
                     <div className="flex-grow ml-0 md:ml-7 py-[0.15rem]">
-                        <ManageEventPackage />
+                        <ManageEventPackage events={events} />
                     </div>
                 </div>
             </div>
@@ -62,30 +74,19 @@ export default function AdminVendor() {
     );
 }
 
-function ManageEventPackage() {
+function ManageEventPackage({ events }: { events: Event[] }) {
     const router = useRouter();
     const [showPopup, setShowPopup] = useState(false);
-    const [events, setEvents] = useState<Event[]>([]);
+    const [filteredEvents, setFilteredEvents] = useState<Event[]>(events);
     const [eventToDelete, setEventToDelete] = useState<number | null>(null);
-
-    useEffect(() => {
-        const fetchEvents = async () => {
-            try {
-                const data = await readAllEvents();
-                setEvents(data);
-            } catch (error) {
-                console.error('Failed to fetch products:', error);
-            }
-        };
-    
-        fetchEvents();
-    }, []);
-
     const [searchQuery, setSearchQuery] = useState('');
-    const [filteredPackages, setFilteredPackages] = useState(events);
     const [currentPage, setCurrentPage] = useState(1);
     const eventsPerPage = 5;
-    const totalPages = Math.ceil(events.length / eventsPerPage);
+    const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
+
+    useEffect(() => {
+      handleFilter();
+    }, [searchQuery, events]);
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
@@ -101,37 +102,42 @@ function ManageEventPackage() {
             await deleteEvent(eventToDelete);
             setShowPopup(false);
             setEventToDelete(null);
-            setEvents(events.filter(event => event.id !== eventToDelete));
+            setFilteredEvents(filteredEvents.filter(event => event.id !== eventToDelete));
         }
     };
-
-    const indexOfLastEvent = currentPage * eventsPerPage;
-    const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
-    const currentEvents = events.slice(indexOfFirstEvent, indexOfLastEvent);
 
     const handleDetailClick = (id: number) => {
         router.push(`/admin/manage-event-package/detail/${id}`);
     };
 
     const handleSearch = (event: { target: { value: string; }; }) => {
-        const query = event.target.value.toLowerCase();
-        setSearchQuery(query);
-        const filtered = events.filter(event => event.name.toLowerCase().includes(query));
-        setFilteredPackages(filtered);
-        setCurrentPage(1);
+      const query = event.target.value.toLowerCase();
+      setSearchQuery(query);
+      setCurrentPage(1);
     };
 
-    // Get current packages
-    const indexOfLastPackage = currentPage * eventsPerPage;
-    const indexOfFirstPackage = indexOfLastPackage - eventsPerPage;
-    const currentPackages = filteredPackages.slice(indexOfFirstPackage, indexOfLastPackage);
+    const handleFilter = () => {
+      let result = events;
+      
+      if (searchQuery) {
+        result = result.filter((event) =>
+          event.name.toLowerCase().includes(searchQuery)
+        );
+      }
+    
+      setFilteredEvents(result);
+      setCurrentPage(1);
+    };
+
+    const paginatedEvents = filteredEvents.slice(
+        (currentPage - 1) * eventsPerPage,
+        currentPage * eventsPerPage
+    );
 
     return (
         <div className="px-10 md:px-8 pt-6 pb-10 bg-white rounded-xl font-sofia shadow-md">
             <div className="flex justify-center md:justify-start">
                 <h1 className="text-lg md:text-3xl font-bold mb-4 md:mb-6 text-pink-900 font-sofia">Welcome Admin LogEvent!</h1>
-                <span className="mr-2 text-lg">Total Paket</span>
-                <span className="text-2xl font-bold border-pink-900 border-2 px-3 py-1">{events.length}</span>
             </div>
             <div className="flex items-center text-black mb-4">
                 <span className="mr-2 text-base md:text-lg">Total Paket</span>
@@ -157,7 +163,7 @@ function ManageEventPackage() {
                 </div>
             </div>
             <div className="flex flex-col gap-4 w-full md:w-[67rem]">
-                {currentEvents.map(event => (
+                {paginatedEvents.map(event => (
                     <div key={event.id} className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col md:flex-row justify-between relative">
                         <Image
                             src={event.eventImage || "/Image/planetarium.jpg"}

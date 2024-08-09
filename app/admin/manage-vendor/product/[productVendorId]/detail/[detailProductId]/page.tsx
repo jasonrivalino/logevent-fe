@@ -1,18 +1,53 @@
+// app/admin/manage-vendor/product/[productVendorId]/detail/[detailProductId]/page.tsx
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { Navbar, ContactBox } from '../../../../page';
-import { useRouter } from 'next/navigation';
+// dependency modules
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+// self-defined modules
+import { Navbar, ContactBox } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
+import { readAlbumsByProductId } from '@/app/utils/albumApi';
+import { convertDate, getRateText, getStars } from '@/app/utils/helpers';
+import { readReviewsByProductId } from '@/app/utils/reviewApi';
+import { readProductById } from '@/app/utils/productApi';
+import { Album, Product, Review } from '@/app/utils/types';
 
 export default function ProductDetail() {
   const descriptionRef = useRef(null);
-  const albumRef = useRef(null);
   const reviewsRef = useRef(null);
   const router = useRouter();
+  const pathname = usePathname();
+  const [product, setProduct] = useState<Product | null>(null);
+  const [albums, setAlbums] = useState<Album[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const id = pathname.split('/').pop();
+        if (id) {
+          const product = await readProductById(parseInt(id));
+          const albums = await readAlbumsByProductId(parseInt(id));
+          const reviews = await readReviewsByProductId(parseInt(id));
+
+          reviews.sort((a: Review, b: Review) => new Date(b.reviewDate).getTime() - new Date(a.reviewDate).getTime());
+          reviews.splice(3);
+
+          setProduct(product);
+          setAlbums(albums);
+          setReviews(reviews);
+        }
+      } catch (error) {
+        console.error('Failed to fetch product:', error);
+      }
+    };
+  
+    fetchData();
+  }, [pathname]);
 
   const scrollToSection = (ref: { current: { offsetTop: number; }; }) => {
-    var offset = 20; // Adjust this value for the desired offset
+    var offset = 20;
     const isMobile = window.innerWidth < 768;
 
     if (isMobile) {
@@ -26,7 +61,7 @@ export default function ProductDetail() {
   };
 
   const handleBackClick = () => {
-    router.push('/admin/manage-vendor/product');
+    router.push(`/admin/manage-vendor/product/${product?.vendorId}`);
   }
 
   return (
@@ -65,10 +100,10 @@ export default function ProductDetail() {
                       <p className="text-gray-600 font-sofia font-semibold">Info Detail Produk</p>
                     </div>
                   </div>
-                  <ProductImage />
-                  <Tabs scrollToSection={scrollToSection} refs={{ descriptionRef, albumRef, reviewsRef }} />
-                  <div ref={descriptionRef}><Description/></div>
-                  <div ref={reviewsRef}><Reviews /></div>
+                  {product && <ProductImage product={product} albums={albums} />}
+                  <Tabs scrollToSection={scrollToSection} refs={{ descriptionRef, reviewsRef }} />
+                  {product && <div ref={descriptionRef}><Description product={product} /></div>}
+                  {product && <div ref={reviewsRef}><Reviews product={product} reviews={reviews} /></div>}
                 </div>
             </div>
         </div>
@@ -100,11 +135,10 @@ const useWindowWidth = () => {
   return windowWidth;
 };
 
-const ProductImage = () => {
+const ProductImage = ({ product, albums }: { product: Product; albums: Album[] }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const timeoutRef = useRef<null | NodeJS.Timeout>(null);
   const windowWidth = useWindowWidth();
-  const router = useRouter();
 
   const resetTimeout = () => {
     if (timeoutRef.current) {
@@ -132,23 +166,30 @@ const ProductImage = () => {
       {windowWidth >= 768 ? (
         <div className="py-4">
           <div className="flex md:space-x-4">
-            <img src={images[0]} alt="Main Hall" className="w-full md:w-1/2 h-auto md:h-[21rem] rounded-md" />
+            <img src={product.productImage || "/Image/planetarium.jpg"} alt="Main Hall" className="w-full md:w-1/2 h-auto md:h-[21rem] rounded-md" />
             <div className="grid grid-cols-2 gap-4 w-0 md:w-1/2">
-              {images.slice(1).map((image, index) => (
-                <img key={index} src={image} alt={`Hall Image ${index + 1}`} className="w-0 md:w-full h-auto md:h-40 rounded-md" />
+              {albums.map((album, index) => (
+                <img key={index} src={album.albumImage || "/Image/planetarium.jpg"} alt={`Hall Image ${index + 1}`} className="w-0 md:w-full h-auto md:h-40 rounded-md" />
               ))}
             </div>
           </div>
           <div className="flex flex-col md:flex-row space-x-4">
             <div className="w-full md:w-1/2">
-              <h1 className="text-2xl md:text-3xl text-pink-900 font-bold mt-4">Gedung Sabuga ITB</h1>
-              <p className="text-sm md:text-base text-gray-600">Multifunctional Hall</p>
-              <p className="text-sm md:text-base text-gray-600">Kapasitas: 1000 Orang</p>
-              <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp 5.000.000 / hari</p>
+              <h1 className="text-2xl md:text-3xl text-pink-900 font-bold mt-4">{product.name}</h1>
+              <p className="text-sm md:text-base text-gray-600">{product.specification}</p>
+              <p className="text-sm md:text-base text-gray-600">
+                {product.capacity ? 'Kapasitas: ' + product.capacity + ' Orang' : "Paket Event ini tidak memiliki kapasitas"}
+              </p>
+              <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp{product.price.toLocaleString('id-ID')} {getRateText(product.rate)}</p>
               <div className="text-sm md:text-base flex items-center space-x-2 text-gray-600">
-                <span>Dago, Bandung</span>
+                <span>{product.vendorAddress}</span>
                 <span>|</span>
-                <span>⭐ 4.2 (190 reviews)</span>
+                <div className="flex items-center">
+                  {getStars(product.rating)}
+                  <span> ({product.rating && product.rating.toFixed(2) !== "0.00" ? product.rating.toFixed(2) : "N/A"})</span>
+                </div>
+                <span>|</span>
+                <span>{product.reviewCount} reviews</span>
               </div>
             </div>
           </div>
@@ -156,16 +197,24 @@ const ProductImage = () => {
       ) : (
         <div className="pl-2 pb-4">
           <div className="flex md:space-x-4">
-            <img
-              src={images[currentImageIndex]}
-              alt="Main Hall"
-              className="w-full md:w-1/2 h-44 rounded-md"
-            />
+            {albums.length > 0 ? (
+              <img
+                src={albums[currentImageIndex].albumImage || "/Image/planetarium.jpg"}
+                alt="Main Hall"
+                className="w-full md:w-1/2 h-44 rounded-md"
+              />
+            ) : (
+              <img
+                src={product.productImage || "/Image/planetarium.jpg"}
+                alt="Main Hall"
+                className="w-full md:w-1/2 h-44 rounded-md"
+              />
+            )}
             <div className="grid grid-cols-2 gap-4 w-0 md:w-1/2">
-              {images.map((image, index) => (
+              {albums.map((album, index) => (
                 <img
                   key={index}
-                  src={image}
+                  src={album.albumImage || "/Image/planetarium.jpg"}
                   alt={`Hall Image ${index + 1}`}
                   className="w-0 md:w-full h-auto rounded-md"
                 />
@@ -174,14 +223,21 @@ const ProductImage = () => {
           </div>
           <div className="flex flex-col md:flex-row space-x-4">
             <div className="w-full md:w-1/2">
-              <h1 className="text-2xl md:text-3xl text-pink-900 font-bold mt-4">Gedung Sabuga ITB</h1>
-              <p className="text-sm md:text-base text-gray-600">Multifunctional Hall</p>
-              <p className="text-sm md:text-base text-gray-600">Kapasitas: 1000 Orang</p>
-              <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp 5.000.000 / hari</p>
+              <h1 className="text-2xl md:text-3xl text-pink-900 font-bold mt-4">{product.name}</h1>
+              <p className="text-sm md:text-base text-gray-600">{product.specification}</p>
+              <p className="text-sm md:text-base text-gray-600">
+              {product.capacity ? 'Kapasitas: ' + product.capacity + ' Orang' : "Paket Event ini tidak memiliki kapasitas"}
+              </p>
+              <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp{product.price.toLocaleString('id-ID')} {getRateText(product.rate)}</p>
               <div className="text-sm md:text-base flex items-center space-x-2 text-gray-600">
-                <span>Dago, Bandung</span>
+                <span>{product.vendorAddress}</span>
                 <span>|</span>
-                <span>⭐ 4.2 (190 reviews)</span>
+                <div className="flex items-center">
+                  {getStars(product.rating)}
+                  <span> ({product.rating && product.rating.toFixed(2) !== "0.00" ? product.rating.toFixed(2) : "N/A"})</span>
+                </div>
+                <span>|</span>
+                <span>{product.reviewCount} reviews</span>
               </div>
             </div>
           </div>
@@ -191,7 +247,7 @@ const ProductImage = () => {
   );
 };
 
-function Tabs({ scrollToSection, refs }: { scrollToSection: (ref: React.RefObject<any>) => void; refs: { descriptionRef: React.RefObject<any>; albumRef: React.RefObject<any>; reviewsRef: React.RefObject<any> } }) {
+function Tabs({ scrollToSection, refs }: { scrollToSection: (ref: React.RefObject<any>) => void; refs: { descriptionRef: React.RefObject<any>; reviewsRef: React.RefObject<any> } }) {
   return (
     <nav className="flex justify-center space-x-8 mt-2 md:mt-0 py-2 md:pb-5 border-b">
       <button onClick={() => scrollToSection(refs.descriptionRef)} className="text-gray-600 hover:text-pink-500">Description</button>
@@ -200,65 +256,57 @@ function Tabs({ scrollToSection, refs }: { scrollToSection: (ref: React.RefObjec
   );
 }
 
-function Description() {
+function Description({ product }: { product: Product }) {
   return (
     <div className="px-2 md:pr-2 pb-8 md:py-14 border-b">
       <h2 className="text-2xl md:text-3xl font-bold text-pink-900 pt-10">Description</h2>
       <p className="text-gray-600 mt-4 text-sm md:text-base">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus odio nisi, pellentesque eu molestie eget, lobortis non nisl. Fusce sit amet massa porta, condimentum elit eu, finibus ipsum. Sed sed arcu eu turpis lacinia scelerisque. Vestibulum lacinia mauris vitae nunc tempus, sed laoreet eros gravida. Nullam rhoncus scelerisque odio, eu lobortis urna viverra sed. Quisque feugiat, eros at sagittis commodo, risus lectus viverra odio, a fringilla elit lectus eget purus. Suspendisse tortor mi, pulvinar at vulputate et, cursus ac odio. Integer faucibus quam non nulla lacinia, vel dignissim tellus pulvinar.
-        <br></br><br></br>
-        Suspendisse molestie dictum egestas. Proin vehicula nunc in volutpat cursus. Etiam eu ullamcorper metus. Integer commodo orci eu nisi gravida, a lacinia libero molestie. Nulla luctus rhoncus erat, eget blandit nunc maximus vel. Maecenas convallis vulputate orci, varius venenatis nunc lacinia non. Donec ac vestibulum sapien, eget ullamcorper metus. Donec dolor justo, accumsan ut est eu, maximus sollicitudin dui. Nullam dictum ex dui. Integer justo risus, tincidunt nec mattis lobortis, commodo non magna. Cras non ex eget magna euismod efficitur. Fusce in ullamcorper justo.
-        <br></br><br></br>
-        Phasellus id lorem non massa molestie iaculis. Ut porttitor varius purus, quis feugiat sem commodo et. Donec laoreet nulla sed dui bibendum accumsan. Nullam dignissim massa et commodo accumsan. Mauris suscipit tristique quam, vitae ullamcorper sapien molestie non. Nunc accumsan in felis sit amet posuere. Etiam sodales accumsan tempus. Aliquam nec velit commodo, suscipit ante ac, pulvinar libero. Praesent nunc lectus, venenatis vel libero sed, sollicitudin pellentesque tellus. Vivamus accumsan erat in turpis tincidunt, commodo pulvinar nisl pellentesque. Maecenas at dolor rhoncus, varius elit nec, facilisis nisl. 
+        {product.description || 'Product Description'}
       </p>
     </div>
   );
 }
 
-function Reviews() {
-  const reviews = [
-    {
-      user: "User1",
-      category: "Venue & Decoration",
-      date: "3 Maret 2024",
-      review: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae.",
-      imageUrl: "https://via.placeholder.com/50" // Replace with actual image URLs
-    },
-    {
-      user: "User2",
-      category: "Food & Service",
-      date: "5 April 2024",
-      review: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae.",
-      imageUrl: "https://via.placeholder.com/50" // Replace with actual image URLs
-    },
-    {
-      user: "User3",
-      category: "Overall Experience",
-      date: "10 Mei 2024",
-      review: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dictum maximus sapien, in vestibulum dui. Phasellus viverra lectus nibh, at maximus diam laoreet vitae.",
-      imageUrl: "https://via.placeholder.com/50" // Replace with actual image URLs
-    },
-  ];
+function Reviews({ product, reviews }: { product: Product; reviews: Review[] }) {
+  const router = useRouter();
+
+  if (reviews.length === 0) {
+    return (
+      <div className="px-8 py-14 border-b">
+        <h2 className="text-3xl font-bold text-pink-900 pt-10">Reviews</h2>
+        <p className="text-gray-700 mt-6">Tidak ada review yang tersedia</p>
+      </div>
+    );
+  }
 
   return (
     <div className="mt-4 px-2 pb-8 md:py-14">
       <div className="flex items-center justify-between space-x-4">
         <h2 className="text-2xl md:text-3xl font-bold text-pink-900 pt-10">Reviews</h2>
-        <button className="text-sm md:text-base bg-pink-600 text-white px-2 md:px-4 py-1 md:py-2 rounded-lg -mb-10 md:-mb-8">Lihat Review lengkap</button>
+        <button
+          className="text-sm md:text-base bg-pink-600 text-white px-2 md:px-4 py-1 md:py-2 rounded-lg -mb-10 md:-mb-8"
+          onClick={() => router.push(`/list-penilaian/logistik-vendor/${product.id}`)}
+        >
+          Lihat Review lengkap
+        </button>
       </div>
       <div className="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-8 mt-6">
         {reviews.map((review, index) => (
           <div key={index} className="border border-gray-400 rounded-lg p-4 w-full md:w-1/3">
             <div className="flex items-center space-x-4">
-              <img src={review.imageUrl} alt="User profile" className="w-12 h-12 rounded-full" />
+              <img src={review.userPicture || "https://via.placeholder.com/50"} alt="User profile" className="w-12 h-12 rounded-full" />
               <div>
-                <h3 className="text-lg md:text-xl text-gray-600 font-bold">{review.user}</h3>
-                <p className="text-gray-600 text-sm md:text-base">{review.category}</p>
-                <p className="text-gray-600 text-sm md:text-base">{review.date}</p>
+                <h3 className="text-lg md:text-xl text-gray-600 font-bold">{review.userName}</h3>
+                <p className="text-gray-600 text-sm md:text-base">{review.tag}</p>
+                <p className="text-gray-600 text-sm md:text-base">{convertDate(review.reviewDate)}</p>
+                <div className="flex items-center">
+                  {getStars(review.rating)}
+                  <span> ({review.rating})</span>
+                </div>
               </div>
             </div>
             <p className="text-gray-600 mt-2 text-xs md:text-base">
-              {review.review}
+              {review.comment}
             </p>
           </div>
         ))}

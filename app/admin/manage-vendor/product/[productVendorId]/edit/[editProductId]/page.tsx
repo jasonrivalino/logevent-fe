@@ -1,4 +1,4 @@
-// app/admin/manage-vendor/product/[id]/edit/[id]/page.tsx
+// app/admin/manage-vendor/product/[productVendorId]/edit/[editProductId]/page.tsx
 'use client';
 
 // dependency modules

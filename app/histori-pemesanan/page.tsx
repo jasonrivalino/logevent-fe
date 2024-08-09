@@ -156,7 +156,7 @@ const HistoriPaketEvent = ({ eventOrders, eventItems }: { eventOrders: Order[]; 
                         </p>
                         <p className="line-clamp-3 text-xs md:text-sm text-gray-700 font-sofia">{item.eventDescription}</p>
                         <div className="mt-1 mb-2 flex justify-between items-center">
-                            <span className="text-base md:text-lg font-bold text-pink-600">Rp {item.eventPrice.toLocaleString('id-ID')}</span>
+                            <span className="text-base md:text-lg font-bold text-pink-600">Rp{item.eventPrice.toLocaleString('id-ID')}</span>
                         </div>
                         <div className="mt-2 flex justify-between items-center">
                             <div className="flex flex-col">
@@ -247,7 +247,7 @@ function HistoriLogistikVendor({ productOrders, productItems }: { productOrders:
                       >
                         {item.vendorAddress}
                       </p>
-                      <p className="text-xs md:text-sm text-pink-500 font-bold mt-2">Rp {item.productPrice.toLocaleString('id-ID')}</p>
+                      <p className="text-xs md:text-sm text-pink-500 font-bold mt-2">Rp{item.productPrice.toLocaleString('id-ID')}</p>
                     </div>
                     <div className="flex justify-between items-center mt-4">
                       {item.isReviewed ? (

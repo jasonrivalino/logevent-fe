@@ -1,4 +1,4 @@
-// app/admin/manage-vendor/product/[id]/page.tsx
+// app/admin/manage-vendor/product/[productVendorId]/page.tsx
 'use client';
 
 // dependency modules
@@ -204,12 +204,12 @@ function ManageVendorProduct({ vendor }: { vendor: Vendor }) {
                 >
                   {product.vendorAddress}
                 </p>
-                <p className="text-xs md:text-sm text-pink-500 font-bold mt-2">Rp {product.price.toLocaleString('id-ID')}</p>
+                <p className="text-xs md:text-sm text-pink-500 font-bold mt-2">Rp{product.price.toLocaleString('id-ID')}</p>
               </div>
               <div className="flex justify-between items-center mt-4">
                 <button
                   className="text-xs md:text-base text-pink-500 hover:text-pink-700 font-bold"
-                  onClick={() => router.push(`/logistik-vendor/info-detail/${product.id}`)}
+                  onClick={() => router.push(`/admin/manage-vendor/product/${vendor.id}/detail/${product.id}`)}
                 >
                   Lihat Detail
                 </button>

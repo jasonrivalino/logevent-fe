@@ -3,7 +3,7 @@
 
 // dependency modules
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 // self-defined modules
 import { ContactBox, Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
@@ -14,13 +14,11 @@ export default function Adminquestion() {
     const router = useRouter();
   
     const handlePrev = () => {
-      // Add your routing logic for the previous button
-      router.push('/admin/manage-event-package'); // Update with the actual route
+      router.push('/admin/manage-event-package');
     };
   
     const handleNext = () => {
-      // Add your routing logic for the next button
-      router.push('/admin/statistics'); // Update with the actual route
+      router.push('/admin/statistics');
     };
 
     return (

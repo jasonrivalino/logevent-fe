@@ -296,7 +296,7 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
                       <p className="text-xs text-gray-500">{product.vendorName}</p>
                       <p className="text-xs text-gray-500">{product.specification}</p>
                       <p className="text-xs text-gray-500">{product.vendorAddress}</p>
-                      <p className="text-xs text-pink-500 font-bold">Rp {product.price.toLocaleString('id-ID')}</p>
+                      <p className="text-xs text-pink-500 font-bold">Rp{product.price.toLocaleString('id-ID')}</p>
                     </div>
                   ))
                 )}
@@ -313,10 +313,12 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
                   value={selectedCategoryId ?? 0}
                   onChange={handleCategoryChange}
                 >
-                  <option value="">Pilih Kategori</option>
-                  <option value="katering">Katering</option>
-                  <option value="sound_system">Sound System</option>
-                  <option value="gedung">Gedung</option>
+                  <option value={0}>Pilih Kategori</option>
+                  {categories.map(category => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
                   <option value="tambah_kategori">+ Tambah Kategori</option>
                 </select>
               </div>
@@ -350,16 +352,17 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
                 ) : (
                   eventImages.map((image, index) => (
                     <div key={index} className="relative m-2">
-                      <img src={image} alt={`upload-${index}`} className="w-10 h-10 object-cover rounded" />                      <button
+                      <img src={image} alt={`upload-${index}`} className="w-10 h-10 object-cover rounded" />
+                      <button
                         type="button"
                         onClick={() => handleRemoveImage(index)}
                         className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex justify-center items-center"
                       >
                         &times;
                       </button>
-                      </div>
-                      ))
-                    )}
+                    </div>
+                  ))
+                )}
                   </div>
                 </div>
               </div>
@@ -459,17 +462,19 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
                             </svg> {product.rating && product.rating.toFixed(2) !== "0.00" ? product.rating.toFixed(2) : "N/A"}
                           </p>
                           <p className="text-xs md:text-sm text-gray-500">{product.vendorAddress}</p>
-                          <p className="text-xs md:text-sm text-pink-500 font-bold mt-2">Rp {product.price.toLocaleString('id-ID')}</p>
+                          <p className="text-xs md:text-sm text-pink-500 font-bold mt-2">Rp{product.price.toLocaleString('id-ID')}</p>
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                />
+                {totalPages > 1 && (
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
+                )}
               </div>
             </div>
           </div>

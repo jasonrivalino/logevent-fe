@@ -1,51 +1,35 @@
 // app/paket-event/page.tsx
 'use client';
 
-import { SetStateAction, useEffect, useState } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation'; 
+import { SetStateAction, useEffect, useState } from 'react';
 // self-defined modules
 import { Navbar, ContactBox } from '@/app/page';
+import { readEventCategories } from '@/app/utils/categoryApi';
 import { readAllEvents } from '@/app/utils/eventApi';
 import { Event } from '@/app/utils/types';
-import { set } from 'react-datepicker/dist/date_utils';
+import { Category } from '@/app/utils/types';
 
 export default function PaketEvent() {
-  const [minPrice, setMinPrice] = useState<number | string>('');
-  const [maxPrice, setMaxPrice] = useState<number | string>('');
+  const [categories, setCategories] = useState<Category[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
-  const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
 
   useEffect(() => {
-    const fetchEvents = async () => {
+    const fetchData = async () => {
       try {
         const events = await readAllEvents();
+        const categories = await readEventCategories();
         setEvents(events);
-        setFilteredEvents(events);
+        setCategories(categories);
       } catch (error) {
         console.error('Error fetching events:', error);
       }
     };
 
-    fetchEvents();
+    fetchData();
   }, []);
-
-  const handleFilter = () => {
-    setFilteredEvents(
-      events.filter(
-        (Event) =>
-          (minPrice === '' || Event.price >= Number(minPrice)) &&
-          (maxPrice === '' || Event.price <= Number(maxPrice))
-      )
-    );
-  };
-
-  const handleReset = () => {
-    setMinPrice('');
-    setMaxPrice('');
-    setFilteredEvents(events);
-  };
 
   return (
     <div>
@@ -55,7 +39,7 @@ export default function PaketEvent() {
         </Head>
         <Navbar />
         <div className="flex flex-col md:flex-row py-14 md:py-20">
-          <EventList events={filteredEvents} />
+          <EventList events={events} categories={categories} />
         </div>
       </div>
       <ContactBox />
@@ -63,31 +47,35 @@ export default function PaketEvent() {
   );
 }
 
-function Filter({ handleFilter, handleReset, setCategory, setLocation, setPriceRange }: any) {
+function Filter({ categories, tempCategory, tempPriceRange, setCategory, setPriceRange, handleReset }: { categories: Category[], tempCategory: string, tempPriceRange: string, setCategory: any, setPriceRange: any, handleReset: any }) {
   return (
     <div className="w-full md:w-96 md:pl-4 md:pr-8 py-4 -mb-2 md:mb-0">
       <h2 className="text-xl md:text-2xl font-semibold font-sofia text-black mb-4">Filter by</h2>
       <div className="mb-2 md:mb-4">
         <label htmlFor="category" className="block mb-1 md:mb-2 text-gray-700 font-sofia text-sm md:text-base">Kategori Event</label>
-        <select id="category" className="w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia" onChange={(e) => setCategory(e.target.value)}>
+        <select
+          id="category"
+          className="w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia"
+          onChange={(e) => setCategory(e.target.value)}
+          value={tempCategory}
+        >
           <option value="" className="font-sofia">Pilih kategori event</option>
-          <option value="Multifunctional Hall" className="font-sofia">Multifunctional Hall</option>
+          {categories.map(category => (
+            <option key={category.id} value={category.name}>
+              {category.name}
+            </option>
+          ))}
         </select>
       </div>
       <div className="flex md:flex-col flex-row">
-        <div className="mb-2 md:mb-4 mr-4 md:mr-0">
-          <label htmlFor="location" className="block mb-1 md:mb-2 text-gray-700 font-sofia text-sm md:text-base">Lokasi Event</label>
-          <select id="location" className="w-32 md:w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia" onChange={(e) => setLocation(e.target.value)}>
-            <option value="" className="font-sofia">Pilih lokasi event</option>
-            <option value="Jakarta" className="font-sofia">Jakarta</option>
-            <option value="Jawa Barat" className="font-sofia">Jawa Barat</option>
-            <option value="Jawa Tengah" className="font-sofia">Jawa Tengah</option>
-            <option value="Jawa Timur" className="font-sofia">Jawa Timur</option>
-          </select>
-        </div>
         <div className="mb-4 md:mb-8">
           <label htmlFor="priceRange" className="block mb-1 md:mb-2 text-gray-700 font-sofia text-sm md:text-base">Harga</label>
-          <select id="priceRange" className="w-[11.5rem] md:w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia" onChange={(e) => setPriceRange(e.target.value)}>
+          <select
+            id="priceRange"
+            className="w-[11.5rem] md:w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia"
+            onChange={(e) => setPriceRange(e.target.value)}
+            value={tempPriceRange}
+          >
             <option value="" className="font-sofia">Pilih range harga</option>
             <option value="> 25.000.000" className="font-sofia">{`> 25.000.000`}</option>
             <option value="15.000.000 - 25.000.000" className="font-sofia">15.000.000 - 25.000.000</option>
@@ -95,16 +83,6 @@ function Filter({ handleFilter, handleReset, setCategory, setLocation, setPriceR
             <option value="< 5.000.000" className="font-sofia">{`< 5.000.000`}</option>
           </select>
         </div>
-      </div>
-      <div className="mb-8">
-        <label htmlFor="location" className="block mb-2 text-gray-700 font-sofia">Harga</label>
-        <select id="location" className="w-full p-2 border rounded bg-white text-black font-sofia">
-          <option value="" className="font-sofia">Pilih range harga</option>
-          <option value="Jakarta" className="font-sofia"> {`> 25.000.000`} </option>
-          <option value="Jawa Barat" className="font-sofia"> 15.000.000 - 25.000.000 </option>
-          <option value="Jawa Tengah" className="font-sofia"> 5.000.000 - 15.000.000 </option>
-          <option value="Jawa Timur" className="font-sofia"> { `< 5.000.000`} </option>
-        </select>
       </div>
       <button
         className="w-full bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold hover:bg-pink-100 hover:text-pink-600 hover:border-pink-600 p-2 rounded mb-2"
@@ -116,29 +94,18 @@ function Filter({ handleFilter, handleReset, setCategory, setLocation, setPriceR
   );
 }
 
-export function EventList({ events }: { events: Event[] }) {
+export function EventList({ events, categories }: { events: Event[], categories: Category[] }) {
   const router = useRouter();
   const itemsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
-  const [expandedPackages, setExpandedPackages] = useState<{ [key: number]: boolean }>({});
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredEvents, setFilteredEvents] = useState<Event[]>(events);
-
   const [tempCategory, setTempCategory] = useState('');
-  const [tempLocation, setTempLocation] = useState('');
   const [tempPriceRange, setTempPriceRange] = useState('');
 
   useEffect(() => {
-    let result = events;
-    
-    if (searchQuery) {
-      result = result.filter((event) =>
-        event.name.toLowerCase().includes(searchQuery)
-      );
-    }
-  
-    setFilteredEvents(result);
-  }, [searchQuery, events]);
+    handleFilter();
+  }, [searchQuery, tempCategory, tempPriceRange, events]);
 
   const handlePageChange = (page: SetStateAction<number>) => {
     setCurrentPage(page);
@@ -164,10 +131,6 @@ export function EventList({ events }: { events: Event[] }) {
       result = result.filter(event => event.categoryName === tempCategory);
     }
   
-    // if (tempLocation) {
-    //   result = result.filter(vendor => vendor.location === tempLocation);
-    // }
-  
     if (tempPriceRange) {
       result = result.filter(event => {
         switch (tempPriceRange) {
@@ -190,8 +153,8 @@ export function EventList({ events }: { events: Event[] }) {
   };
 
   const handleReset = () => {
+    setSearchQuery('');
     setTempCategory('');
-    setTempLocation('');
     setTempPriceRange('');
     setFilteredEvents(events);
     setCurrentPage(1);
@@ -211,10 +174,11 @@ export function EventList({ events }: { events: Event[] }) {
   return (
     <div className="flex flex-col md:flex-row">
       <Filter
-        handleFilter={handleFilter}
+        categories={categories}
+        tempCategory={tempCategory}
+        tempPriceRange={tempPriceRange}
         handleReset={handleReset}
         setCategory={setTempCategory}
-        setLocation={setTempLocation}
         setPriceRange={setTempPriceRange}
       />
       <div className="w-full md:w-[69rem] p-5 md:p-6 mr-4 bg-white rounded-2xl">
@@ -255,7 +219,6 @@ export function EventList({ events }: { events: Event[] }) {
               />
               <div className="p-3 md:p-4 md:ml-3 flex-grow font-sofia">
                 <h3 className="text-base md:text-xl text-pink-900 font-bold">{event.name}</h3>
-                <p className="text-xs md:text-sm text-gray-700">{event.categoryName}</p>
                 <p className="text-xs md:text-sm text-gray-700 flex flex-row">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -264,9 +227,8 @@ export function EventList({ events }: { events: Event[] }) {
                     viewBox="0 0 20 20"
                   >
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.14 3.51a1 1 0 00.95.69h3.7c.967 0 1.372 1.24.588 1.81l-2.992 2.179a1 1 0 00-.364 1.118l1.14 3.51c.3.921-.755 1.688-1.54 1.118l-2.992-2.178a1 1 0 00-1.175 0l-2.992 2.178c-.785.57-1.84-.197-1.54-1.118l1.14-3.51a1 1 0 00-.364-1.118L2.93 8.937c-.784-.57-.38-1.81.588-1.81h3.7a1 1 0 00.95-.69l1.14-3.51z" />
-                  </svg> {event.rating}
+                  </svg> {event.rating && event.rating.toFixed(2) !== "0.00" ? event.rating.toFixed(2) : "N/A"}
                 </p>
-                {/* <p className="text-xs md:text-sm text-gray-700 mb-3">{vendor.location}</p> */}
                 <p className="line-clamp-3 text-xs md:text-sm text-gray-700 font-sofia">{event.description}</p>
                 <div className="mt-1 mb-2 flex justify-between items-center">
                   <span className="text-base md:text-lg font-bold text-pink-600">Rp{event.price.toLocaleString('id-ID')}</span>
@@ -275,9 +237,7 @@ export function EventList({ events }: { events: Event[] }) {
                   <div className="flex flex-col">
                     <p className="text-xs md:text-sm text-gray-700 font-sofia">Rincian Paket:</p>
                     <p className="text-xs md:text-sm text-gray-700 w-full md:w-[36rem] mb-14 md:mb-0">
-                      {expandedPackages[event.id]
-                        ? event.bundles
-                        : event.bundles?.split(',').slice(0, 3).join(', ')}
+                      {event.bundles}
                     </p>
                   </div>
                   <button
@@ -291,7 +251,9 @@ export function EventList({ events }: { events: Event[] }) {
             </div>
           ))}
         </div>
-        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+        {totalPages > 1 && (
+          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+        )}
       </div>
     </div>
   );

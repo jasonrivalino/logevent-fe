@@ -1,4 +1,4 @@
-// app/admin/manage-vendor/edit/[id]/page.tsx
+// app/admin/manage-vendor/edit/[editVendorId]/page.tsx
 'use client';
 
 // dependency modules
@@ -197,12 +197,12 @@ function EditVendor({ vendor }: { vendor: Vendor }) {
                     </div>
                 </div>
                 <div className="mb-5">
-                    <label className="block text-gray-700 text-sm font-bold mb-1 md:mb-2" htmlFor="MoU">
+                    <label className="block text-gray-700 text-sm font-bold mb-1 md:mb-2" htmlFor="documentUrl">
                         Link MoU Kerjasama
                     </label>
                     <input
                         type="text"
-                        name="MoU"
+                        name="documentUrl"
                         value={vendorData.documentUrl}
                         onChange={handleChange}
                         className="shadow appearance-none border rounded w-full mb-3 md:mb-0 py-1 md:py-2 px-3 text-sm md:text-base text-gray-700 leading-tight focus:outline-none focus:shadow-outline"

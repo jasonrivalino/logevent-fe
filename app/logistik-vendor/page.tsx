@@ -4,50 +4,34 @@
 // dependency modules
 import Head from 'next/head';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 // self-defined modules
 import { Navbar, ContactBox } from '@/app/page';
+import { readProductCategories } from '@/app/utils/categoryApi';
 import { generateGoogleMapsUrl } from '@/app/utils/helpers';
 import { readAllProducts } from '@/app/utils/productApi';
 import { Product } from '@/app/utils/types';
+import { Category } from '@/app/utils/types';
 
 export default function LogistikVendor() {
-  const [minPrice, setMinPrice] = useState<number | string>('');
-  const [maxPrice, setMaxPrice] = useState<number | string>('');
-  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchData = async () => {
       try {
-        const data = await readAllProducts();
-        setProducts(data);
-        setFilteredProducts(data);
+        const products = await readAllProducts();
+        const categories = await readProductCategories();
+        setFilteredProducts(products);
+        setCategories(categories);
       } catch (error) {
         console.error('Failed to fetch products:', error);
       }
     };
 
-    fetchProducts();
+    fetchData();
   }, []);
-
-  const handleFilter = () => {
-    setFilteredProducts(
-      products.filter(
-        (product) =>
-          (minPrice === '' || product.price >= Number(minPrice)) &&
-          (maxPrice === '' || product.price <= Number(maxPrice))
-      )
-    );
-  };
-
-  const handleReset = () => {
-    setMinPrice('');
-    setMaxPrice('');
-    setFilteredProducts(products);
-  };
 
   return (
     <div>
@@ -57,7 +41,7 @@ export default function LogistikVendor() {
         </Head>
         <Navbar />
         <div className="flex flex-col md:flex-row py-14 md:py-20">
-          <ProductList products={filteredProducts} />
+          <ProductList products={filteredProducts} categories={categories} />
         </div>
       </div>
       <ContactBox />
@@ -65,7 +49,7 @@ export default function LogistikVendor() {
   );
 }
 
-export function Filter({ handleFilter, handleReset, setCategory, setLocation, setPriceRange }: any) {
+export function Filter({ categories, tempCategory, tempLocation, tempPriceRange, setCategory, setLocation, setPriceRange, handleReset }: { categories: Category[], tempCategory: string, tempLocation: string, tempPriceRange: string, setCategory: any, setLocation: any, setPriceRange: any, handleReset: any }) {
   return (
     <div className="w-full md:w-96 md:pl-4 md:pr-8 py-4 -mb-2 md:mb-0">
       <h2 className="text-xl md:text-2xl font-semibold font-sofia text-black mb-4">Filter by</h2>
@@ -75,9 +59,14 @@ export function Filter({ handleFilter, handleReset, setCategory, setLocation, se
           id="category"
           className="w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia"
           onChange={(e) => setCategory(e.target.value)}
+          value={tempCategory}
         >
           <option value="" className="font-sofia">Pilih kategori produk</option>
-          <option value="Multifunctional Hall" className="font-sofia">Multifunctional Hall</option>
+          {categories.map(category => (
+            <option key={category.id} value={category.name}>
+              {category.name}
+            </option>
+          ))}
         </select>
       </div>
       <div className="flex md:flex-col flex-row">
@@ -87,6 +76,7 @@ export function Filter({ handleFilter, handleReset, setCategory, setLocation, se
             id="location"
             className="w-32 md:w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia"
             onChange={(e) => setLocation(e.target.value)}
+            value={tempLocation}
           >
             <option value="" className="font-sofia">Pilih lokasi vendor</option>
             <option value="Jakarta" className="font-sofia">Jakarta</option>
@@ -101,6 +91,7 @@ export function Filter({ handleFilter, handleReset, setCategory, setLocation, se
             id="price"
             className="w-[11.5rem] md:w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia"
             onChange={(e) => setPriceRange(e.target.value)}
+            value={tempPriceRange}
           >
             <option value="" className="font-sofia">Pilih range harga</option>
             <option value="> 25.000.000" className="font-sofia">{`> 25.000.000`}</option>
@@ -112,12 +103,6 @@ export function Filter({ handleFilter, handleReset, setCategory, setLocation, se
       </div>
       <div className="flex flex-row md:flex-col items-center">
         <button
-          className="w-52 md:w-full text-sm md:text-base bg-pink-600 text-white font-sofia font-bold hover:bg-pink-700 p-[0.3rem] md:p-2 rounded mb-3 mr-5 md:mr-0"
-          onClick={handleFilter}
-        > 
-          Apply Filter
-        </button>
-        <button
           className="w-52 md:w-full text-sm md:text-base bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold hover:bg-pink-100 hover:text-pink-600 hover:border-pink-600 p-[0.2rem] md:p-2 rounded mb-3 md:mb-2"
           onClick={handleReset}
         >
@@ -128,20 +113,21 @@ export function Filter({ handleFilter, handleReset, setCategory, setLocation, se
   );
 }
 
-export function ProductList({ products }: { products: Product[] }) {
+export function ProductList({ products, categories }: { products: Product[], categories: Category[] }) {
   const router = useRouter();
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredVendors, setFilteredVendors] = useState(products);
-  const [category, setCategory] = useState('');
-  const [location, setLocation] = useState('');
-  const [priceRange, setPriceRange] = useState('');
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
   const [tempCategory, setTempCategory] = useState('');
   const [tempLocation, setTempLocation] = useState('');
   const [tempPriceRange, setTempPriceRange] = useState('');
 
   useEffect(() => {
+    handleFilter();
+  }, [searchQuery, tempCategory, tempLocation, tempPriceRange, products]);
+
+  const handleFilter = () => {
     let result = products;
     
     if (searchQuery) {
@@ -150,17 +136,17 @@ export function ProductList({ products }: { products: Product[] }) {
       );
     }
     
-    if (category) {
-      result = result.filter(product => product.categoryName === category);
+    if (tempCategory) {
+      result = result.filter(product => product.categoryName === tempCategory);
     }
 
-    if (location) {
-      result = result.filter(product => product.vendorAddress.includes(location));
+    if (tempLocation) {
+      result = result.filter(product => product.vendorAddress.includes(tempLocation));
     }
 
-    if (priceRange) {
+    if (tempPriceRange) {
       result = result.filter((product) => {
-        switch (priceRange) {
+        switch (tempPriceRange) {
           case '> 25.000.000':
             return product.price > 25000000;
           case '15.000.000 - 25.000.000':
@@ -175,8 +161,9 @@ export function ProductList({ products }: { products: Product[] }) {
       });
     }
 
-    setFilteredVendors(result);
-  }, [searchQuery, category, location, priceRange, products]);
+    setFilteredProducts(result);
+    setCurrentPage(1);
+  };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -189,29 +176,21 @@ export function ProductList({ products }: { products: Product[] }) {
     setCurrentPage(1);
   };
 
-  const handleFilter = () => {
-    setCategory(tempCategory);
-    setLocation(tempLocation);
-    setPriceRange(tempPriceRange);
-    setCurrentPage(1);
-  };
-
   const handleReset = () => {
+    setSearchQuery('');
     setTempCategory('');
     setTempLocation('');
     setTempPriceRange('');
-    setCategory('');
-    setLocation('');
-    setPriceRange('');
+    setFilteredProducts(products);
     setCurrentPage(1);
   };
 
-  const paginatedProducts = products.slice(
+  const paginatedProducts = filteredProducts.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  const totalPages = Math.ceil(products.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 
   const handleAddressClick = (address: string) => {
     const googleMapsUrl = generateGoogleMapsUrl(address);
@@ -221,7 +200,10 @@ export function ProductList({ products }: { products: Product[] }) {
   return (
     <div className="flex flex-col md:flex-row">
       <Filter
-        handleFilter={handleFilter}
+        categories={categories}
+        tempCategory={tempCategory}
+        tempLocation={tempLocation}
+        tempPriceRange={tempPriceRange}
         handleReset={handleReset}
         setCategory={setTempCategory}
         setLocation={setTempLocation}
@@ -234,7 +216,7 @@ export function ProductList({ products }: { products: Product[] }) {
           <span className="mx-2 text-gray-600 font-sofia font-semibold"> {'>'} </span>
           <span className="text-gray-600 font-sofia font-semibold">Logistik Vendor</span>
         </div>
-        </div>
+
         {/* Search Bar */}
         <div className="mb-4">
           <div className="relative">
@@ -247,54 +229,56 @@ export function ProductList({ products }: { products: Product[] }) {
               type="text"
               placeholder="Cari kebutuhan vendormu"
               className="w-full text-sm md:text-base p-1 md:p-2 pl-9 md:pl-12 border rounded bg-white text-black font-sofia"
+              value={searchQuery}
               onChange={handleSearch}
             />
           </div>
         </div>
         <h2 className="text-xl md:text-2xl font-semibold mb-4 text-pink-900 font-sofia">Semua Venue</h2>
-      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        {paginatedProducts.map((product) => (
-          <div key={product.id} className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col justify-between">
-            <Image
-              src={product.productImage || "/Image/planetarium.jpg"}
-              alt={`${product.name} Image`}
-              width={400}
-              height={200}
-              className="object-cover"
-            />
-            <div className="p-3 md:p-3 font-sofia flex flex-col justify-between flex-grow">
-              <div>
-                <h3 className="text-xl text-pink-900 font-bold mb-2">{product.name}</h3>
-                <p className="text-gray-700">{product.specification}</p>
-                <p className="text-xs md:text-sm text-gray-500 flex flex-row">
-                  <svg
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          {paginatedProducts.map((product) => (
+            <div key={product.id} className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col justify-between">
+              <Image
+                src={product.productImage || "/Image/planetarium.jpg"}
+                alt={`${product.name} Image`}
+                width={400}
+                height={200}
+                className="object-cover"
+              />
+              <div className="p-3 md:p-3 font-sofia flex flex-col justify-between flex-grow">
+                <div>
+                  <h3 className="text-xl text-pink-900 font-bold mb-2">{product.name}</h3>
+                  <p className="text-gray-700">{product.specification}</p>
+                  <p className="text-xs md:text-sm text-gray-500 flex flex-row">
+                    <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className= "h-3 md:h-4 w-3 md:w-4 text-yellow-500 mr-[0.3rem] mt-[0.075rem] md:mt-[0.05rem]"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.14 3.51a1 1 0 00.95.69h3.7c.967 0 1.372 1.24.588 1.81l-2.992 2.179a1 1 0 00-.364 1.118l1.14 3.51c.3.921-.755 1.688-1.54 1.118l-2.992-2.178a1 1 0 00-1.175 0l-2.992 2.178c-.785.57-1.84-.197-1.54-1.118l1.14-3.51a1 1 0 00-.364-1.118L2.93 8.937c-.784-.57-.38-1.81.588-1.81h3.7a1 1 0 00.95-.69l1.14-3.51z" />
-                  </svg> {product.rating && product.rating.toFixed(2) !== "0.00" ? product.rating.toFixed(2) : "N/A"}
-                </p>
-                <p
-                  className="text-gray-500 cursor-pointer"
-                  onClick={() => handleAddressClick(product.vendorAddress)}
+                    </svg> {product.rating && product.rating.toFixed(2) !== "0.00" ? product.rating.toFixed(2) : "N/A"}
+                  </p>
+                  <p
+                    className="text-gray-500 cursor-pointer"
+                    onClick={() => handleAddressClick(product.vendorAddress)}
+                  >
+                    {product.vendorAddress}
+                  </p>
+                  <p className="text-xs md:text-sm text-pink-500 font-bold mt-2">Rp{product.price.toLocaleString('id-ID')}</p>
+                </div>
+                <button className="self-start text-xs md:text-base text-pink-500 hover:text-pink-700 font-bold mt-4"
+                onClick={() => router.push(`/logistik-vendor/info-detail/${product.id}`)}
                 >
-                  {product.vendorAddress}
-                </p>
-                <p className="text-xs md:text-sm text-pink-500 font-bold mt-2">Rp {product.price.toLocaleString('id-ID')}</p>
+                  Lihat Detail
+                </button>
               </div>
-              <button className="self-start text-xs md:text-base text-pink-500 hover:text-pink-700 font-bold mt-4"
-              onClick={() => router.push(`/logistik-vendor/info-detail/${product.id}`)}
-              >
-                Lihat Detail
-              </button>
             </div>
-            {totalPages > 1 && (
-              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-            )}
-          </div>
-        ))}
+          ))}
+        </div>
+        {totalPages > 1 && (
+          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+        )}
       </div>
     </div>
   );

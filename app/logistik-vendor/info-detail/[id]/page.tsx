@@ -17,7 +17,6 @@ import type { Album, Product, Review } from '@/app/utils/types';
 
 export default function Product() {
   const descriptionRef = useRef(null);
-  const albumRef = useRef(null);
   const reviewsRef = useRef(null);
   const pathname = usePathname();
   const [product, setProduct] = useState<Product | null>(null);
@@ -80,9 +79,8 @@ export default function Product() {
       <Navbar />
       <div className="container mx-auto mt-24 px-20">
         {product && <ProductImage product={product} albums={albums} isWishlist={isWishlist} setIsWishlist={setIsWishlist} />}
-        <Tabs scrollToSection={scrollToSection} refs={{ descriptionRef, albumRef, reviewsRef }} />
+        <Tabs scrollToSection={scrollToSection} refs={{ descriptionRef, reviewsRef }} />
         {product && <div ref={descriptionRef}><Description product={product} /></div>}
-        {product && <div ref={albumRef}><ImageGallery albums={albums} /></div>}
         {product && <div ref={reviewsRef}><Reviews product={product} reviews={reviews} /></div>}
       </div>
       <ContactBox />
@@ -203,8 +201,10 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
             <div className="w-full md:w-1/2">
               <h1 className="text-2xl md:text-3xl text-pink-900 font-bold mt-4">{product.name}</h1>
               <p className="text-sm md:text-base text-gray-600">{product.specification}</p>
-              <p className="text-sm md:text-base text-gray-600">Kapasitas: {product.capacity + ' Orang' || "Produk ini tidak memiliki kapasitas"}</p>
-              <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp {product.price} {getRateText(product.rate)}</p>
+              <p className="text-sm md:text-base text-gray-600">
+                {product.capacity ? 'Kapasitas: ' + product.capacity + ' Orang' : "Paket Event ini tidak memiliki kapasitas"}
+              </p>
+              <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp{product.price.toLocaleString('id-ID')} {getRateText(product.rate)}</p>
               <div className="text-sm md:text-base flex items-center space-x-2 text-gray-600">
                 <span>{product.vendorAddress}</span>
                 <span>|</span>
@@ -244,11 +244,19 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
       ) : (
         <div className="md:px-8 pb-4">
           <div className="flex md:space-x-4">
-            <img
-              src={albums[currentImageIndex].albumImage || "/Image/planetarium.jpg"}
-              alt="Main Hall"
-              className="w-full md:w-1/2 h-44 rounded-md"
-            />
+            {albums.length > 0 ? (
+              <img
+                src={albums[currentImageIndex].albumImage || "/Image/planetarium.jpg"}
+                alt="Main Hall"
+                className="w-full md:w-1/2 h-44 rounded-md"
+              />
+            ) : (
+              <img
+                src={product.productImage || "/Image/planetarium.jpg"}
+                alt="Main Hall"
+                className="w-full md:w-1/2 h-44 rounded-md"
+              />
+            )}
             <div className="grid grid-cols-2 gap-4 w-0 md:w-1/2">
               {albums.map((album, index) => (
                 <img
@@ -264,8 +272,10 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
             <div className="w-full md:w-1/2">
               <h1 className="text-2xl md:text-3xl text-pink-900 font-bold mt-4">{product.name}</h1>
               <p className="text-sm md:text-base text-gray-600">{product.specification}</p>
-              <p className="text-sm md:text-base text-gray-600">Kapasitas: {product.capacity + ' Orang' || "Produk ini tidak memiliki kapasitas"}</p>
-              <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp {product.price} {getRateText(product.rate)}</p>
+              <p className="text-sm md:text-base text-gray-600">
+                {product.capacity ? 'Kapasitas: ' + product.capacity + ' Orang' : "Paket Event ini tidak memiliki kapasitas"}
+              </p>
+              <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp{product.price.toLocaleString('id-ID')} {getRateText(product.rate)}</p>
               <div className="text-sm md:text-base flex items-center space-x-2 text-gray-600">
                 <span>{product.vendorAddress}</span>
                 <span>|</span>
@@ -311,11 +321,10 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
   );
 };
 
-function Tabs({ scrollToSection, refs }: { scrollToSection: (ref: React.RefObject<any>) => void; refs: { descriptionRef: React.RefObject<any>; albumRef: React.RefObject<any>; reviewsRef: React.RefObject<any> } }) {
+function Tabs({ scrollToSection, refs }: { scrollToSection: (ref: React.RefObject<any>) => void; refs: { descriptionRef: React.RefObject<any>; reviewsRef: React.RefObject<any> } }) {
   return (
     <nav className="flex justify-center space-x-8 mt-2 md:mt-0 py-2 border-b">
       <button onClick={() => scrollToSection(refs.descriptionRef)} className="text-gray-600 hover:text-pink-500">Description</button>
-      <button onClick={() => scrollToSection(refs.albumRef)} className="text-gray-600 hover:text-pink-500">Album</button>
       <button onClick={() => scrollToSection(refs.reviewsRef)} className="text-gray-600 hover:text-pink-500">Reviews</button>
     </nav>
   );
@@ -329,102 +338,6 @@ function Description({ product }: { product: Product }) {
         {product.description || 'Product Description'}
       </p>
     </div>
-  );
-}
-
-function ImageGallery({ albums }: { albums: Album[] }) {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(4);
-
-  const totalItems = albums.length;
-  if (totalItems < itemsPerPage) {
-    setItemsPerPage(totalItems);
-  }
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setItemsPerPage(1);
-      } else {
-        setItemsPerPage(4);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    // Set the initial value
-    handleResize();
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
-  const handleNext = () => {
-    if (totalItems > 0) {
-      setCurrentIndex((prevIndex) => (prevIndex + itemsPerPage) % totalItems);
-    }
-  };
-
-  const handlePrev = () => {
-    if (totalItems > 0) {
-      setCurrentIndex((prevIndex) => (prevIndex - itemsPerPage + totalItems) % totalItems);
-    }
-  };
-
-  const displayedImages = () => {
-    const display = [];
-    for (let i = 0; i < itemsPerPage; i++) {
-      const index = (currentIndex + i) % totalItems;
-      display.push(albums[index]);
-    }
-    return display;
-  };
-
-  if (totalItems === 0) {
-    return (
-      <section className="px-8 py-14 border-b">
-        <h2 className="text-3xl font-bold text-pink-900 pt-10">Album</h2>
-        <p className="text-gray-700 mt-6">Tidak ada album yang tersedia</p>
-      </section>
-    );
-  }
-
-  return (
-    <section className="px-8 pb-8 md:py-14 border-b">
-      <h2 className="text-2xl md:text-3xl font-bold text-pink-900 pt-10">Album</h2>
-      <div className="relative flex items-center justify-center mt-6 mb-2">
-        <div className="flex flex-wrap gap-10 justify-center mx-4">
-          {displayedImages().map((album, index) => (
-            <div key={index} className="w-[16.75rem] md:w-[17.5rem] bg-white shadow-lg rounded-3xl overflow-hidden relative">
-              <Image
-                src={album.albumImage || "/Image/planetarium.jpg"}
-                alt={`Image`}
-                width={400}
-                height={200}
-                className="object-cover"
-              />
-            </div>
-          ))}
-        </div>
-        <button 
-          className="absolute left-0 px-1 md:px-3 py-1 md:py-2 bg-pink-600 text-white rounded-full shadow-lg hover:shadow-2xl focus:outline-none"
-          onClick={handlePrev}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-        <button 
-          className="absolute right-0 px-1 md:px-3 py-1 md:py-2 bg-pink-600 text-white rounded-full shadow-lg hover:shadow-2xl focus:outline-none"
-          onClick={handleNext}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-      </div>
-    </section>
   );
 }
 
@@ -458,11 +371,12 @@ function Reviews({ product, reviews }: { product: Product, reviews: Review[] }) 
               <img src={review.userPicture || "https://via.placeholder.com/50"} alt="User profile" className="w-12 h-12 rounded-full" />
               <div>
                 <h3 className="text-lg md:text-xl text-gray-600 font-bold">{review.userName}</h3>
+                <p className="text-gray-600 text-sm md:text-base">{review.tag}</p>
+                <p className="text-gray-600 text-sm md:text-base">{convertDate(review.reviewDate)}</p>
                 <div className="flex items-center">
                   {getStars(review.rating)}
                   <span> ({review.rating})</span>
                 </div>
-                <p className="text-gray-600 text-sm md:text-base">{convertDate(review.reviewDate)}</p>
               </div>
             </div>
             <p className="text-gray-600 mt-2 text-xs md:text-base">

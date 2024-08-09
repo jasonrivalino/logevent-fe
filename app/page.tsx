@@ -6,31 +6,33 @@ import Cookies from 'js-cookie';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect, useRef, SetStateAction } from 'react';
-import { FaSearch } from 'react-icons/fa';
-
+import { useState, useEffect, useRef } from 'react';
 // self-defined modules
 import { readUserProfile } from '@/app/utils/authApi';
-import { generateWhatsAppUrl } from '@/app/utils/helpers';
+import { readAllFaqs } from './utils/faqApi';
 import { readTopProducts } from '@/app/utils/productApi';
 import { createVisit } from '@/app/utils/visitApi';
-import { Product } from '@/app/utils/types';
+import { Faq, Product } from '@/app/utils/types';
 
 export default function Home() {
+  const [faqs, setFaqs] = useState<Faq[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchData = async () => {
       try {
+        const faqs = await readAllFaqs();
+        const products = await readTopProducts();
+        setFaqs(faqs);
+        setProducts(products);
+        
         await createVisit();
-        const data = await readTopProducts();
-        setProducts(data);
       } catch (error) {
         console.error('Failed to fetch products:', error);
       }
     };
 
-    fetchProducts();
+    fetchData();
   }, []);
 
   return (
@@ -41,7 +43,7 @@ export default function Home() {
         <AboutUsSection />
         <LayananSection />
         <KeunggulanSection />
-        <FAQ />
+        <FAQ faqs={faqs} />
         <ListProduct products={products}/>
         <ContactBox />
         <footer className="w-full bg-gray-200 text-gray-700 py-5 text-center font-sofia">
@@ -330,11 +332,6 @@ function Introduction() {
     }
   };
 
-  const handleChat = () => {
-    const adminNumber = process.env.NEXT_PUBLIC_ADMIN_NUMBER;
-    window.open(generateWhatsAppUrl(adminNumber || ""), '_blank', 'noopener,noreferrer');
-  };
-
   useEffect(() => {
     resetTimeout();
     timeoutRef.current = setTimeout(
@@ -397,7 +394,7 @@ function Introduction() {
 
         {/* Buttons */}
         <div className="mt-12">
-          <button className="px-6 py-2 md:py-3 bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700" onClick={handleChat}>Pesan Event Organizer</button>
+          <button className="px-6 py-2 md:py-3 bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700" onClick={() => router.push('/event-organizer')}>Pesan Event Organizer</button>
           <button className="px-6 py-2 md:py-3 mt-5 md:mt-0 md:ml-6  bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold rounded-lg hover:bg-pink-100 hover:text-pink-600 hover:border-pink-600" onClick={() => router.push('/logistik-vendor')}>Cari Logistik Vendor</button>
         </div>
       </div>
@@ -406,12 +403,6 @@ function Introduction() {
 }
 
 function AboutUsSection() {
-  const router = useRouter();
-  
-  const handleChat = () => {
-    const adminNumber = process.env.NEXT_PUBLIC_ADMIN_NUMBER;
-    window.open(generateWhatsAppUrl(adminNumber || ""), '_blank', 'noopener,noreferrer');
-  };
 
   return (
     <section id="aboutUs">
@@ -505,14 +496,11 @@ function LayananCard({ image, title, description, link, onClick }: { image: stri
 }
 
 function LayananSection() {
-  const handleChat = () => {
-    const adminNumber = process.env.NEXT_PUBLIC_ADMIN_NUMBER;
-    window.open(generateWhatsAppUrl(adminNumber || ""), '_blank', 'noopener,noreferrer');
-  };
+  const router = useRouter();
 
   const descriptions = [
     {
-      image: "/Image/building.png", // You should replace this with the actual path to your image
+      image: "/Image/building.png",
       title: "Logistik Vendor",
       description: "Kami bekerja sama dengan berbagai vendor terpercaya yang menawarkan beragam produk dan layanan berkualitas tinggi. Dari panggung, sound system, hingga dekorasi, semua kebutuhan logistik event Anda dapat kami penuhi dengan cepat dan efisien.",
       link: "/logistik-vendor"
@@ -542,7 +530,7 @@ function LayananSection() {
             title={item.title}
             description={item.description}
             link={item.link}
-            onClick={handleChat}
+            onClick={() => router.push(item.link)}
           />
         ))}
       </div>
@@ -607,7 +595,7 @@ function KeunggulanSection() {
   );
 }
 
-function FAQ() {
+function FAQ({ faqs }: { faqs: Faq[] }) {
   const [openIndicesLeft, setOpenIndicesLeft] = useState<number[]>([]);
   const [openIndicesRight, setOpenIndicesRight] = useState<number[]>([]);
 
@@ -627,54 +615,23 @@ function FAQ() {
     }
   };
 
-  const faqItems = [
-    {
-      question: 'Bagaimana cara menjadi mitra vendor LogEvent?',
-      answer: 'Lakukan pendaftaran dengan melakukan klik pada tombol Menjadi Vendor, lalu Anda akan diarahkan ke Admin kami untuk kesepakatan kerjasama.',
-    },
-    {
-      question: 'Apa persyaratan untuk menjadi mitra vendor?',
-      answer: 'Anda harus memiliki bisnis yang sah dan menyediakan layanan atau produk yang sesuai dengan kebutuhan acara yang kami kelola.',
-    },
-    {
-      question: 'Berapa biaya untuk mendaftar sebagai mitra vendor?',
-      answer: 'Pendaftaran sebagai mitra vendor LogEvent gratis. Namun, ada biaya yang terkait dengan layanan tertentu yang mungkin Anda pilih.',
-    },
-    {
-      question: 'Bagaimana cara mengubah informasi akun vendor saya?',
-      answer: 'Anda dapat mengubah informasi akun Anda melalui dashboard vendor. Masuk ke akun Anda dan pilih opsi untuk mengedit profil.',
-    },
-    {
-      question: 'Apakah ada kontrak yang harus saya tanda tangani?',
-      answer: 'Ya, ada kontrak kerjasama yang harus ditandatangani untuk memastikan bahwa semua pihak memahami tanggung jawab dan hak masing-masing.',
-    },
-    {
-      question: 'Bagaimana cara saya menerima pembayaran dari LogEvent?',
-      answer: 'Pembayaran dilakukan melalui transfer bank setelah layanan atau produk Anda berhasil digunakan dalam acara.',
-    },
-    {
-      question: 'Apakah LogEvent menyediakan dukungan untuk vendor?',
-      answer: 'Ya, kami menyediakan dukungan melalui tim support kami yang siap membantu Anda dengan segala pertanyaan atau masalah yang mungkin Anda hadapi.',
-    },
-  ];
-
   return (
     <div className="flex w-full flex-col items-center min-h-screen bg-gray-100 mt-40 md:mt-32 font-sofia">
       <h1 className="text-3xl md:text-4xl font-bold mb-8 text-pink-900">Ada Pertanyaan?</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-10 w-full px-8 md:px-16">
-        {faqItems.map((item, index) => (
+        {faqs.map((faq, index) => (
           <div
             key={index}
             className="bg-white rounded-lg shadow-md p-2 md:p-4 cursor-pointer"
             onClick={() => (index % 2 === 0 ? toggleOpenLeft(index) : toggleOpenRight(index))}
           >
             <div className="flex justify-between items-center text-black">
-              <span className="text-base md:text-lg font-semibold">{item.question}</span>
+              <span className="text-base md:text-lg font-semibold">{faq.question}</span>
               <span>{(index % 2 === 0 ? openIndicesLeft : openIndicesRight).includes(index) ? '-' : '>'}</span>
             </div>
             {(index % 2 === 0 ? openIndicesLeft : openIndicesRight).includes(index) && (
               <div className="mt-2 text-gray-600 text-xs md:text-base">
-                {item.answer}
+                {faq.answer}
               </div>
             )}
           </div>
