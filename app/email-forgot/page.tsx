@@ -1,10 +1,16 @@
+// app/email-forgot/page.tsx
 'use client';
-import Image from 'next/image';
-import { useState, useEffect } from 'react';
+
+// dependency modules
 import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+// self-defined modules
+import { ContactBoxShort } from '@/app/signin/page';
+import { resetPassword } from '@/app/utils/authApi';
 
 export default function EmailForgot() {
   const [email, setEmail] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -33,7 +39,13 @@ export default function EmailForgot() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Email:', email);
+    setError(null);
+    try {
+      await resetPassword(email);
+      router.push('/email-forgot/verifications');
+    } catch (err: any) {
+      setError(err.message);
+    }
   };
 
   const handleBackClick = () => {
@@ -64,6 +76,7 @@ export default function EmailForgot() {
           className="flex flex-col w-full max-w-full md:max-w-sm p-6 md:p-8 shadow-lg rounded-lg bg-white"
         >
           <h2 className="mb-6 md:mb-8 text-2xl md:text-3xl text-center text-gray-800">Forgot Password</h2>
+          {error && <p className="mb-4 text-red-500 text-center">{error}</p>}
           <div className="flex flex-col md:flex-row gap-2 md:gap-6 mb-2 md:mb-4">
             <div className="flex-1">
               <label htmlFor="email" className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Please enter your email:</label>
@@ -78,21 +91,10 @@ export default function EmailForgot() {
               />
             </div>
           </div>
-          <button type="submit" className="mt-6 md:mt-4 mb-4 md:mb-6 p-1 md:p-2 rounded bg-pink-800 hover:bg-pink-900 text-white" onClick={() => router.push('/reset-password')}>Submit</button>
+          <button type="submit" className="mt-6 md:mt-4 mb-4 md:mb-6 p-1 md:p-2 rounded bg-pink-800 hover:bg-pink-900 text-white">Submit</button>
         </form>
       </div>
-      <ContactBoxLogin />
+      <ContactBoxShort />
     </div>
   );
-}
-
-function ContactBoxLogin() {
-    return (
-      <footer className="w-full bg-pink-900 text-white py-4">
-        <div className="container mx-auto flex flex-col items-center text-center">
-          <Image src="/Image/logo.png" alt="Logevent Logo" width={60} height={60} className='cursor-pointer'/>
-          <p className="mt-6 md:mt-2 font-sofia">Jangan khawatir pusing nyari vendor, Logevent solusinya</p>
-        </div>
-      </footer>
-    );
 }

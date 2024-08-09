@@ -1,12 +1,19 @@
+// app/signin/page.tsx
 'use client';
+
+// dependency modules
+import Cookies from 'js-cookie';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation'; // Import useRouter from Next.js for routing
+// self-defined modules
+import { readUserProfile, signIn, googleSignIn } from '@/app/utils/authApi';
 
 export default function SignIn() {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const router = useRouter(); // Initialize useRouter for navigation
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   // Effect to adjust placeholder size based on screen width
   useEffect(() => {
@@ -33,25 +40,30 @@ export default function SignIn() {
     };
   }, []);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log('Username:', username);
-    console.log('Password:', password);
+    try {
+      const response = await signIn(email, password);
+      localStorage.setItem('token', response.token);
+      Cookies.set('token', response.token);
+
+      const user = await readUserProfile(response.token);
+      if (user.isAdmin) {
+        router.push('/admin/statistics');
+      } else {
+        router.push('/');
+      }
+    } catch (err: any) {
+      setError(err.message);
+    }
   };
 
-  const handleGoogleLogin = () => {
-    // Handle Google login logic
-    console.log('Login with Google');
-  };
-
-  const handleFacebookLogin = () => {
-    // Handle Facebook login logic
-    console.log('Login with Facebook');
+  const handleGoogleSignIn = () => {
+    googleSignIn();
   };
 
   const handleBackClick = () => {
-    router.push('/'); // Navigate to home page
+    router.push('/');
   };
 
   return (
@@ -78,15 +90,16 @@ export default function SignIn() {
           className="flex flex-col w-full max-w-3xl md:max-w-md p-6 md:p-8 shadow-lg rounded-lg bg-white"
         >
           <h2 className="mb-5 md:mb-6 text-2xl md:text-3xl text-center text-gray-800">Sign In Menu</h2>
-          <p className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Username</p>
+          {error && <p className="mb-4 text-red-500 text-center">{error}</p>}
+          <p className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Email</p>
           <input
-            type="text"
-            id="username"
-            value={username}
-            placeholder="Username"
-            onChange={(e) => setUsername(e.target.value)}
+            type="email"
+            id="email"
+            value={email}
+            placeholder="Email"
+            onChange={(e) => setEmail(e.target.value)}
             required
-            className="mb-2 md:mb-4 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs"
+            className="mb-2 md:mb-4 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs text-sm md:text-base"
           />
           <label htmlFor="password" className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Password</label>
           <input
@@ -96,7 +109,7 @@ export default function SignIn() {
             placeholder="Password"
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="mb-4 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs"
+            className="mb-4 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs text-sm md:text-base"
           />
           <p className="text-gray-800 text-xs md:text-sm mb-1">
             Not have an account yet? <a onClick={() => router.push('/signup')} className="text-pink-600 hover:text-pink-800 cursor-pointer">Sign Up</a> first
@@ -105,40 +118,33 @@ export default function SignIn() {
             <a onClick={() => router.push('/email-forgot')} className="text-pink-600 hover:text-pink-800 cursor-pointer">Forgot Password?</a>
           </p>
           <button type="submit" className="mb-4 md:mb-6 p-1 md:p-2 rounded bg-pink-800 hover:bg-pink-900 text-white">Sign In</button>
-          <p className="text-center text-sm md:text-base text-gray-800 mb-2">or login with</p>
+          <p className="text-center text-sm md:text-base text-gray-800 mb-2">or sign in with</p>
           <div className="flex justify-center gap-2">
             <button 
               type="button" 
-              onClick={handleGoogleLogin} 
+              onClick={handleGoogleSignIn} 
               className="p-2 rounded-full bg-red-600 text-white flex items-center justify-center"
             >
               <svg width="20" height="20" viewBox="0 0 48 48" className="fill-current">
                 <path d="M44.5 20H24v8.5h11.8c-1.6 4.3-5.5 7.5-11.8 7.5-7.4 0-13.5-6.1-13.5-13.5S16.6 8 24 8c3.1 0 5.9 1.1 8.1 3L38.4 5C34.7 1.8 29.7 0 24 0 10.8 0 0 10.8 0 24s10.8 24 24 24c12.9 0 23.6-9.4 23.6-24 0-1.5-.1-3-.3-4.5z" />
               </svg>
             </button>
-            <button 
-              type="button" 
-              onClick={handleFacebookLogin} 
-              className="p-2 rounded-full bg-blue-600 text-white flex items-center justify-center"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" className="fill-current">
-                <path d="M22.675 0h-21.35C.599 0 0 .599 0 1.325v21.351C0 23.401.599 24 1.325 24H12.82v-9.294H9.692V11.41h3.127V8.789c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.462.099 2.793.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.764v2.314h3.587l-.467 3.296H16.56V24h6.115c.725 0 1.325-.599 1.325-1.324V1.325C24 .599 23.401 0 22.675 0z" />
-              </svg>
-            </button>
           </div>
         </form>
       </div>
-      <ContactBoxLogin />
+      <ContactBoxShort />
     </div>
   );
 }
 
-function ContactBoxLogin() {
+export function ContactBoxShort() {
   return (
     <footer className="w-full bg-pink-900 text-white py-4">
       <div className="container mx-auto flex flex-col items-center text-center">
         <Image src="/Image/logo.png" alt="Logevent Logo" width={60} height={60} className='cursor-pointer'/>
-        <p className="mt-6 md:mt-2 font-sofia">Jangan khawatir pusing nyari vendor, Logevent solusinya</p>
+        <p className="mt-4 md:mt-2 font-sofia text-sm md:text-base">
+          Jangan khawatir pusing nyari vendor,<br className="md:hidden" /> Logevent solusinya
+        </p>
       </div>
     </footer>
   );

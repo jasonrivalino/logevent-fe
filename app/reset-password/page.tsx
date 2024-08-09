@@ -1,12 +1,18 @@
+// app/reset-password/page.tsx
 'use client';
-import Image from 'next/image';
-import { useState, useEffect } from 'react';
+
+// dependency modules
 import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+// self-defined modules
+import { ContactBoxShort } from '@/app/signin/page';
+import { updateUser } from '@/app/utils/authApi';
 
 export default function ResetPassword() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPopup, setShowPopup] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -38,9 +44,16 @@ export default function ResetPassword() {
     if (password !== confirmPassword) {
       setShowPopup(true);
     } else {
-      console.log('password:', password);
-      console.log('confirmPassword:', confirmPassword);
-      router.push('/email-verification');
+      try {
+        const token = new URLSearchParams(window.location.search).get('token');
+        if (!token) {
+          throw new Error('Invalid Token');
+        }
+        await updateUser(token, { password });
+        router.push('/signin');
+      } catch (err: any) {
+        setError(err.message);
+      }
     }
   };
 
@@ -56,6 +69,7 @@ export default function ResetPassword() {
           className="flex flex-col w-full max-w-full md:max-w-sm p-6 md:p-8 shadow-lg rounded-lg bg-white"
         >
           <h2 className="mb-6 md:mb-8 text-2xl md:text-3xl text-center text-gray-800">Reset your Password</h2>
+          {error && <p className="mb-4 text-red-500 text-center">{error}</p>}
           <div className="flex flex-col md:flex-row gap-2 md:gap-6 mb-2 md:mb-4">
             <div className="flex-1">
               <label htmlFor="password" className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Enter your new Password:</label>
@@ -102,18 +116,7 @@ export default function ResetPassword() {
           </div>
         </div>
       )}
-      <ContactBoxLogin />
+      <ContactBoxShort />
     </div>
   );
-}
-
-function ContactBoxLogin() {
-    return (
-      <footer className="w-full bg-pink-900 text-white py-4">
-        <div className="container mx-auto flex flex-col items-center text-center">
-          <Image src="/Image/logo.png" alt="Logevent Logo" width={60} height={60} className='cursor-pointer'/>
-          <p className="mt-6 md:mt-2 font-sofia">Jangan khawatir pusing nyari vendor, Logevent solusinya</p>
-        </div>
-      </footer>
-    );
 }

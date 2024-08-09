@@ -1,14 +1,19 @@
+// app/signup/page.tsx
 'use client';
-import Image from 'next/image';
-import { useState, useEffect } from 'react';
+
+// dependency modules
 import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+// self-defined modules
+import { ContactBoxShort } from '@/app/signin/page';
+import { readUserProfile, signUp, updateUser } from '@/app/utils/authApi';
 
 export default function SignUp() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [email, setEmail] = useState('');
-  const [address, setAddress] = useState('');
-  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -35,13 +40,38 @@ export default function SignUp() {
     };
   }, []);
 
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      const token = new URLSearchParams(window.location.search).get('token');
+      if (token) {
+        try {
+          const user = await readUserProfile(token);
+          setFullName(user.name);
+          setEmail(user.email);
+        } catch (error: any) {
+          setError(error.message);
+        }
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Full Name:', fullName);
-    console.log('Phone Number:', phoneNumber);
-    console.log('Email:', email);
-    console.log('Address:', address);
-    console.log('Password:', password);
+    try {
+      const token = new URLSearchParams(window.location.search).get('token');
+      if (token) {
+        await updateUser(token, { password, phone: phoneNumber, isVerified: true });
+        localStorage.setItem('token', token);
+        router.push('/');
+      } else {
+        await signUp(email, password, fullName, phoneNumber);
+        router.push('/signin');
+      }
+    } catch (err: any) {
+      setError(err.message);
+    }
   };
 
   const handleBackClick = () => {
@@ -72,35 +102,8 @@ export default function SignUp() {
           className="flex flex-col w-full max-w-full md:max-w-xl p-6 md:p-8 shadow-lg rounded-lg bg-white"
         >
           <h2 className="mb-6 md:mb-8 text-2xl md:text-3xl text-center text-gray-800">Sign Up Menu</h2>
+          {error && <p className="mb-4 text-red-500 text-center">{error}</p>}
           
-          {/* Full Name and Phone Number */}
-          <div className="flex flex-col md:flex-row gap-2 md:gap-6 mb-2 md:mb-4">
-            <div className="flex-1">
-              <label htmlFor="fullName" className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Nama Lengkap</label>
-              <input
-                type="text"
-                id="fullName"
-                value={fullName}
-                placeholder="Nama Lengkap"
-                onChange={(e) => setFullName(e.target.value)}
-                required
-                className="w-full mt-1 md:mt-2 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs"
-              />
-            </div>
-            <div className="flex-1">
-              <label htmlFor="phoneNumber" className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Nomor Telepon</label>
-              <input
-                type="text"
-                id="phoneNumber"
-                value={phoneNumber}
-                placeholder="Nomor Telepon"
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                required
-                className="w-full mt-1 md:mt-2 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs"
-              />
-            </div>
-          </div>
-
           {/* Email and Password */}
           <div className="flex flex-col md:flex-row gap-2 md:gap-6 mb-2 md:mb-4">
             <div className="flex-1">
@@ -112,7 +115,7 @@ export default function SignUp() {
                 placeholder="Email"
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full mt-1 md:mt-2 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs"
+                className="w-full mt-1 md:mt-2 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs text-sm md:text-base"
               />
             </div>
             <div className="flex-1">
@@ -124,40 +127,44 @@ export default function SignUp() {
                 placeholder="Password"
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full mt-1 md:mt-2 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs"
+                className="w-full mt-1 md:mt-2 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs text-sm md:text-base"
+              />
+            </div>
+          </div>          
+
+          {/* Full Name and Phone Number */}
+          <div className="flex flex-col md:flex-row gap-2 md:gap-6 mb-2 md:mb-4">
+            <div className="flex-1">
+              <label htmlFor="fullName" className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Nama Lengkap</label>
+              <input
+                type="text"
+                id="fullName"
+                value={fullName}
+                placeholder="Nama Lengkap"
+                onChange={(e) => setFullName(e.target.value)}
+                required
+                className="w-full mt-1 md:mt-2 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs text-sm md:text-base"
+              />
+            </div>
+            <div className="flex-1">
+              <label htmlFor="phoneNumber" className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Nomor Telepon</label>
+              <input
+                type="text"
+                id="phoneNumber"
+                value={phoneNumber}
+                placeholder="Nomor Telepon"
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                required
+                className="w-full mt-1 md:mt-2 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs text-sm md:text-base"
               />
             </div>
           </div>
 
-          {/* Address */}
-          <div className="mb-2 md:mb-4">
-            <label htmlFor="address" className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Alamat</label>
-            <input
-              type="text"
-              id="address"
-              value={address}
-              placeholder="Alamat"
-              onChange={(e) => setAddress(e.target.value)}
-              required
-              className="w-full mt-1 md:mt-2 px-1 md:p-2 rounded border border-gray-300 text-black input-placeholder placeholder:text-xs"
-            />
-          </div>
-
+          {/* Sign Up Button */}
           <button type="submit" className="mt-6 md:mt-4 mb-4 md:mb-6 p-1 md:p-2 rounded bg-pink-800 hover:bg-pink-900 text-white">Sign Up</button>
         </form>
       </div>
-      <ContactBoxLogin />
+      <ContactBoxShort/>
     </div>
   );
-}
-
-function ContactBoxLogin() {
-    return (
-      <footer className="w-full bg-pink-900 text-white py-4">
-        <div className="container mx-auto flex flex-col items-center text-center">
-          <Image src="/Image/logo.png" alt="Logevent Logo" width={60} height={60} className='cursor-pointer'/>
-          <p className="mt-6 md:mt-2 font-sofia">Jangan khawatir pusing nyari vendor, Logevent solusinya</p>
-        </div>
-      </footer>
-    );
 }
