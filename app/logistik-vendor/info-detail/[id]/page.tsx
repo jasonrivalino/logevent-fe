@@ -82,7 +82,7 @@ export default function Product() {
   return (
     <div className="font-sofia">
       <Navbar />
-      <div className="container mx-auto mt-24 px-20">
+      <div className="container mx-auto mt-24 md:px-20 -mb-6 md:mb-0">
         {product && <ProductImage product={product} albums={albums} isWishlist={isWishlist} setIsWishlist={setIsWishlist} />}
         <Tabs scrollToSection={scrollToSection} refs={{ descriptionRef, reviewsRef }} />
         {product && <div ref={descriptionRef}><Description product={product} /></div>}
@@ -194,7 +194,7 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
     <div className="px-8 py-4">
       {windowWidth >= 768 ? (
         <div className="py-4">
-          <div className="flex space-x-4">
+          <div className="flex md:space-x-4">
             <img src={product.productImage || "/Image/planetarium.jpg"} alt="Main Hall" className="w-full md:w-1/2 h-auto md:h-[21rem] rounded-md" />
             <div className="grid grid-cols-2 gap-4 w-0 md:w-1/2">
               {albums.map((album, index) => (
@@ -210,14 +210,14 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
                 {product.capacity ? 'Kapasitas: ' + product.capacity + ' Orang' : "Paket Event ini tidak memiliki kapasitas"}
               </p>
               <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp{product.price.toLocaleString('id-ID')} {getRateText(product.rate)}</p>
-              <div className="text-sm md:text-base flex items-center space-x-2 text-gray-600">
+              <div className="text-sm md:text-base flex flex-col md:flex-row items-center space-x-2 text-gray-600">
                 <span>{product.vendorAddress}</span>
-                <span>|</span>
+                <span className='hidden md:block'>|</span>
                 <div className="flex items-center">
                   {getStars(product.rating)}
                   <span> ({product.rating && product.rating.toFixed(2) !== "0.00" ? product.rating.toFixed(2) : "N/A"})</span>
                 </div>
-                <span>|</span>
+                <span className='hidden md:block'>|</span>
                 <span>{product.reviewCount} reviews</span>
               </div>
             </div>
@@ -281,19 +281,20 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
                 {product.capacity ? 'Kapasitas: ' + product.capacity + ' Orang' : "Paket Event ini tidak memiliki kapasitas"}
               </p>
               <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp{product.price.toLocaleString('id-ID')} {getRateText(product.rate)}</p>
-              <div className="text-sm md:text-base flex items-center space-x-2 text-gray-600">
+              <div className="text-sm md:text-base flex flex-col md:flex-row text-gray-600">
                 <span>{product.vendorAddress}</span>
-                <span>|</span>
-                <div className="flex items-center">
-                  {getStars(product.rating)}
-                  <span> ({product.rating && product.rating.toFixed(2) !== "0.00" ? product.rating.toFixed(2) : "N/A"})</span>
+                <div className="flex flex-row items-center space-x-2">
+                  <div className="flex items-center">
+                    {getStars(product.rating)}
+                    <span> ({product.rating && product.rating.toFixed(2) !== "0.00" ? product.rating.toFixed(2) : "N/A"})</span>
+                  </div>
+                  <span>|</span>
+                  <span>{product.reviewCount} reviews</span>
                 </div>
-                <span>|</span>
-                <span>{product.reviewCount} reviews</span>
               </div>
             </div>
             <div className="flex space-x-4 w-full md:w-1/2 md:justify-end items-center mt-1 md:mt-0">
-              <div className="flex flex-col md:flex-row md:space-x-0 md:space-y-4 md:items-center mr-[5.5rem]">
+              <div className="flex flex-col md:flex-row md:space-x-0 md:space-y-4 md:items-center mr-[4rem]">
                 {/* TODO: Order Popup */}
                 <button
                   className="bg-pink-500 text-white rounded-lg px-2 md:px-4 py-[0.35rem] md:py-2 mt-2 text-sm md:text-base -ml-4"
@@ -302,7 +303,7 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
                   Pesan Langsung
                 </button>
                 <button
-                  className="bg-white text-pink-500 border-pink-500 border-2 rounded-lg md:px-4 py-1 md:py-2 -ml-4 md:ml-0 md:mr-0 text-sm md:text-base mt-2"
+                  className="bg-white text-pink-500 border-pink-500 border-2 rounded-lg px-1 md:px-4 py-2 md:py-2 -ml-4 md:ml-0 md:mr-0 text-sm md:text-base mt-2"
                   onClick={handleClickWishlist}
                 >
                   {isWishlist ? "Hapus dari Wishlist" : "Tambah ke Wishlist"}

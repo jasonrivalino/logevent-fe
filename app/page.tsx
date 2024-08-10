@@ -703,9 +703,9 @@ function ListProduct({ products }: { products: Product[] }) {
 
   if (products.length === 0) {
     return (
-      <section className="px-8 py-14 border-b">
+      <section className="px-8 py-14 border-b font-sofia">
         <h2 className="text-3xl font-bold text-pink-900 pt-10">Rekomendasi Produk</h2>
-        <p className="text-gray-700 mt-6">Rekomendasi produk tidak tersedia saat ini.</p>
+        <p className="text-gray-700 mt-6 -ml-3 justify-center items-center">Rekomendasi produk tidak tersedia saat ini.</p>
       </section>
     );
   }

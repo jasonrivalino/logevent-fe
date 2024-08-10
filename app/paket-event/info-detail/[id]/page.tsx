@@ -295,7 +295,7 @@ const EventImage = ({ event, albums, isWishlist, setIsWishlist }: { event: Event
               </div>
             </div>
             <div className="flex space-x-4 w-full md:w-1/2 md:justify-end items-center mt-1 md:mt-0">
-              <div className="flex flex-col md:flex-row md:space-x-0 md:space-y-4 md:items-center mr-[5.5rem]">
+              <div className="flex flex-col md:flex-row md:space-x-0 md:space-y-4 md:items-center mr-[4rem]">
                 {/* TODO: Order Popup */}
                 <button
                   className="bg-pink-500 text-white rounded-lg px-2 md:px-4 py-[0.35rem] md:py-2 mt-2 text-sm md:text-base -ml-4"
@@ -304,7 +304,7 @@ const EventImage = ({ event, albums, isWishlist, setIsWishlist }: { event: Event
                   Pesan Langsung
                 </button>
                 <button 
-                  className="bg-white text-pink-500 border-pink-500 border-2 rounded-lg md:px-4 py-1 md:py-2 -ml-4 md:ml-0 md:mr-0 text-sm md:text-base mt-2"
+                  className="bg-white text-pink-500 border-pink-500 border-2 rounded-lg px-1 md:px-4 py-2 md:py-2 -ml-4 md:ml-0 md:mr-0 text-sm md:text-base mt-2"
                   onClick={handleClickWishlist}
                 >
                   {isWishlist ? "Hapus dari Wishlist" : "Tambah ke Wishlist"}
@@ -404,7 +404,7 @@ function ProductList({ products }: { products: Product[]; }) {
                 alt={`${product.name} Image`}
                 width={400}
                 height={200}
-                className="object-cover"
+                className="object-cover h-20 md:h-28"
               />
               <div className="p-3 md:p-3 font-sofia flex flex-col justify-between flex-grow">
                 <div>
@@ -441,7 +441,7 @@ function ProductList({ products }: { products: Product[]; }) {
                   alt={`${product.name} Image`}
                   width={400}
                   height={200}
-                  className="object-cover"
+                  className="object-cover h-20 md:h-32"
                 />
                 <div className="p-3 md:p-3 font-sofia flex flex-col justify-between flex-grow">
                   <div>
