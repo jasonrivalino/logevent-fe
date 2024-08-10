@@ -234,8 +234,8 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
           <div className="w-full">
             <div className="flex flex-col md:flex-row md:space-x-6">
               <div className="w-full md:w-[66%]">
-              <label className="block text-gray-700 font-sofia text-sm md:text-base">Nama Paket *</label>
-              <p className="text-gray-500 text-xs md:text-sm font-sofia mb-2">Nama maksimal 40 karakter dengan memasukkan nama barang</p>
+                <label className="block text-gray-700 font-sofia text-sm md:text-base">Nama Paket *</label>
+                <p className="text-gray-500 text-xs md:text-sm font-sofia mb-2">Nama maksimal 40 karakter dengan memasukkan nama barang</p>
                 <input
                   className="w-full px-2 md:px-4 py-1 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 md:mb-0 mb-3"
                   type="text"
@@ -268,52 +268,55 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
                   value={description || ''}
                   onChange={(e) => setDescription(e.target.value)}
                 ></textarea>
-            <div className="w-full mt-3 md:mt-0">
-              <div className='flex flex-row md:ml-5'>
-                <div className="flex flex-col">
-                  <label className="block text-gray-700 font-sofia text-sm md:text-base">Bundle Logistik *</label>
-                  <p className="text-gray-500 font-sofia mb-2 text-xs md:text-sm w-3/4 md:w-full">Pilih Bundle untuk dimasukkan dalam paket</p>
-                </div>
-                <label onClick={togglePopup} className="border bg-pink-600 px-1 md:px-2 py-1 md:-mt-1 mb-3 rounded-lg cursor-pointer flex justify-center items-center text-sm md:text-base ml-auto w-32 md:w-auto">
-                  <span className="text-white">Select Bundle</span>
-                </label>
               </div>
-              <div className="w-full md:pl-5">
-              <div className="border border-dashed border-gray-400 rounded-lg flex justify-start items-center overflow-x-auto whitespace-nowrap min-h-[10rem] md:min-h-[238px] w-full md:w-[33rem] px-5">
-                {selectedProductDetails.length === 0 ? (
-                  <span className="text-gray-500">Select A Bundle</span>
-                ) : (
-                  selectedProductDetails.map((product) => (
-                    <div key={product.id} className="m-2 p-2 border rounded-lg flex flex-col items-center">
-                      <Image
-                        src={product.productImage || '/images/placeholder-image.png'}
-                        alt={`${product.name} Image`}
-                        width={120}
-                        height={50}
-                        className="object-cover rounded mb-4"
-                      />
-                      <p className="text-xs text-gray-700">{product.name}</p>
-                      <p className="text-xs text-gray-500">{product.vendorName}</p>
-                      <p className="text-xs text-gray-500">{product.specification}</p>
-                      <p className="text-xs text-gray-500">{product.vendorAddress}</p>
-                      <p className="text-xs text-pink-500 font-bold">Rp{product.price.toLocaleString('id-ID')}</p>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
             </div>
           </div>
-          <div className="flex flex-col md:flex-row md:space-x-6">
-            <div className="flex flex-col md:flex-row">
-              <div className="w-full mb-2 md:mb-0">
-                <label className="block text-gray-700 font-sofia mb-1 md:mb-2 text-sm md:text-base">Kategori Paket *</label>
-                <select
-                  className="w-full md:w-11/12 px-2 md:px-4 py-1 md:py-[0.65rem] border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 bg-white text-sm md:text-base"
-                  value={selectedCategoryId ?? 0}
-                  onChange={handleCategoryChange}
-                >
-                  <option value={0}>Pilih Kategori</option>
+          <div className="w-full mt-3 md:mt-0">
+            <div className='flex flex-row md:ml-5'>
+              <div className="flex flex-col">
+                <label className="block text-gray-700 font-sofia text-sm md:text-base">Bundle Logistik *</label>
+                <p className="text-gray-500 font-sofia mb-2 text-xs md:text-sm w-3/4 md:w-full">Pilih Bundle untuk dimasukkan dalam paket</p>
+              </div>
+              <label onClick={togglePopup} className="border bg-pink-600 px-1 md:px-2 py-1 md:-mt-1 mb-3 rounded-lg cursor-pointer flex justify-center items-center text-sm md:text-base ml-auto w-32 md:w-auto">
+                <span className="text-white">Select Bundle</span>
+              </label>
+            </div>
+            <div className="w-full md:pl-5">
+            <div className="border border-dashed border-gray-400 rounded-lg flex justify-start items-center overflow-x-auto whitespace-nowrap min-h-[10rem] md:min-h-[238px] w-full md:w-[33rem] px-5">
+              {selectedProductDetails.length === 0 ? (
+                <span className="text-gray-500">Select A Bundle</span>
+              ) : (
+                selectedProductDetails.map((product) => (
+                  <div key={product.id} className="m-2 p-2 border rounded-lg flex flex-col items-center">
+                    <Image
+                      src={product.productImage || '/images/placeholder-image.png'}
+                      alt={`${product.name} Image`}
+                      width={120}
+                      height={50}
+                      className="object-cover rounded mb-4"
+                    />
+                    <p className="text-xs text-gray-700">{product.name}</p>
+                    <p className="text-xs text-gray-500">{product.vendorName}</p>
+                    <p className="text-xs text-gray-500">{product.specification}</p>
+                    <p className="text-xs text-gray-500">{product.vendorAddress}</p>
+                    <p className="text-xs text-pink-500 font-bold">Rp{product.price.toLocaleString('id-ID')}</p>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+          </div>
+        </div>
+        <div className="flex flex-col md:flex-row md:space-x-6">
+          <div className="flex flex-col md:flex-row">
+            <div className="w-full mb-2 md:mb-0">
+              <label className="block text-gray-700 font-sofia mb-1 md:mb-2 text-sm md:text-base">Kategori Paket *</label>
+              <select
+                className="w-full md:w-11/12 px-2 md:px-4 py-1 md:py-[0.65rem] border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 bg-white text-sm md:text-base"
+                value={selectedCategoryId ?? 0}
+                onChange={handleCategoryChange}
+              >
+                <option value={0}>Pilih Kategori</option>
                   {categories.map(category => (
                     <option key={category.id} value={category.id}>
                       {category.name}
@@ -321,73 +324,70 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
                   ))}
                   <option value="tambah_kategori">+ Tambah Kategori</option>
                 </select>
-              </div>
-              <div className="w-full md:w-[21rem]">
-                <label className="block text-gray-700 font-sofia mb-1 md:mb-2 text-sm md:text-base">Harga Paket *</label>
-                <div className="flex">
-                  <span className="flex items-center px-3 text-gray-500 border border-r-0 rounded-l-lg border-gray-300">Rp</span>
-                  <input className="w-full px-4 py-1 md:py-2 border rounded-r-lg focus:outline-none focus:ring-2 focus:ring-pink-600 text-sm md:text-base" type="text" placeholder="Masukkan Harga" />
-                </div>
-              </div>
             </div>
-            <div className="w-full md:w-1/2">
-              <div className="flex flex-row mt-4">
-                <div className="flex flex-col w-1/2">
-                  <label className="block text-gray-700 font-sofia text-sm md:text-base -mt-2 md:mt-0">Foto Paket (masukkan 5 foto) *</label>
-                </div>
-                <label className="border bg-pink-600 px-2 md:py-1 -mt-1 mb-3 rounded-lg cursor-pointer flex justify-center items-center ml-auto">
-                  <span className="text-white text-sm md:text-base">Upload Image</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    className="hidden"
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleImageUpload(event)}
-                  />
-                </label>
-              </div>
-              <div className="border border-dashed border-gray-400 rounded-lg flex justify-center items-center flex-wrap min-h-[50px] mt-2 md:mt-0">
-                {eventImages.length === 0 ? (
-                  <span className="text-gray-500">Upload a photo</span>
-                ) : (
-                  eventImages.map((image, index) => (
-                    <div key={index} className="relative m-2">
-                      <img src={image} alt={`upload-${index}`} className="w-10 h-10 object-cover rounded" />
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveImage(index)}
-                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex justify-center items-center"
-                      >
-                        &times;
-                      </button>
-                    </div>
-                  ))
-                )}
-                  </div>
-                </div>
+            <div className="w-full md:w-[21rem]">
+              <label className="block text-gray-700 font-sofia mb-1 md:mb-2 text-sm md:text-base">Harga Paket *</label>
+              <div className="flex">
+                <span className="flex items-center px-3 text-gray-500 border border-r-0 rounded-l-lg border-gray-300">Rp</span>
+                <input className="w-full px-4 py-1 md:py-2 border rounded-r-lg focus:outline-none focus:ring-2 focus:ring-pink-600 text-sm md:text-base" type="text" placeholder="Masukkan Harga" />
               </div>
             </div>
           </div>
-          <div className="flex justify-center mt-6">
+          <div className="w-full md:w-1/2">
+            <div className="flex flex-row mt-4">
+              <div className="flex flex-col w-1/2">
+                <label className="block text-gray-700 font-sofia text-sm md:text-base -mt-2 md:mt-0">Foto Paket (masukkan 5 foto) *</label>
+              </div>
+              <label className="border bg-pink-600 px-2 md:py-1 -mt-1 mb-3 rounded-lg cursor-pointer flex justify-center items-center ml-auto">
+                <span className="text-white text-sm md:text-base">Upload Image</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleImageUpload(event)}
+                />
+              </label>
+            </div>
+            <div className="border border-dashed border-gray-400 rounded-lg flex justify-center items-center flex-wrap min-h-[50px] mt-2 md:mt-0">
+              {eventImages.length === 0 ? (
+                <span className="text-gray-500">Upload a photo</span>
+              ) : (
+                eventImages.map((image, index) => (
+                  <div key={index} className="relative m-2">
+                    <img src={image} alt={`upload-${index}`} className="w-10 h-10 object-cover rounded" />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(index)}
+                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex justify-center items-center"
+                    >
+                      &times;
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="flex justify-center mt-6">
             <button
-              className="bg-pink-600 text-white px-4 py-2 rounded-lg font-sofia text-sm md:text-base"
+              className="w-full py-1 md:py-2 mt-2 bg-pink-600 text-white font-semibold rounded-lg hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-600"
               onClick={handleSubmit}
             >
               Submit
             </button>
           </div>
-        </div>
       </form>
       {isPopupOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 relative mt-12 overflow-hidden" style={{ width: '80%', height: '80%' }}>
+          <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 relative mt-12 overflow-hidden md:w-4/5 h-4/5 w-11/12">              
             <button onClick={() => setIsPopupOpen(false)} className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-8 h-8 flex justify-center items-center">
               &times;
             </button>
-            <div className="h-full flex flex-col">
+            <div className="w-full h-full flex flex-col">
               <div className="flex-none">
-                <h2 className="text-2xl font-bold text-pink-900 font-sofia mb-2 ml-1">Pilih Logistik</h2>
-                <div className='flex flex-row mb-4'>
+                <h2 className="text-lg md:text-2xl font-bold text-pink-900 font-sofia mb-2 ml-1">Pilih Logistik</h2>
+                <div className='flex flex-col md:flex-row mb-4'>
                   <div className="flex items-center ml-1">
                     <div className="relative">
                       <span className="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -398,34 +398,36 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
                       <input
                         type="text"
                         placeholder="Cari kebutuhan vendormu"
-                        className="w-[55rem] text-sm md:text-base p-1 md:p-2 pl-9 md:pl-12 border rounded bg-white text-black font-sofia"
+                        className="w-[18.25rem] md:w-[55rem] mr-0 md:mr-4 text-sm md:text-base p-1 md:p-2 pl-9 md:pl-12 border rounded bg-white text-black font-sofia"
                         value={searchQuery}
                         onChange={handleSearch}
                       />
                     </div>
                   </div>
-                  <div className="flex items-center ml-auto">
-                    <div className="relative">
-                      <select className="w-48 text-sm md:text-base p-1 md:p-[0.67rem] pl-3 md:pl-4 border rounded bg-white text-black font-sofia">
-                        <option value="sort">Select Vendors</option>
-                        {vendors.map((vendor) => (
-                          <option key={vendor.id} value={vendor.id}>
-                            {vendor.name}
-                          </option>
-                        ))}
-                      </select>
+                  <div className="flex flex-row items-center ml-1 md:ml-0 mt-2 md:mt-0">
+                    <div className="flex items-center md:ml-auto">
+                      <div className="relative">
+                        <select className="w-48 text-sm md:text-base p-1 md:p-[0.67rem] pl-3 md:pl-4 border rounded bg-white text-black font-sofia">
+                          <option value="sort">Select Vendors</option>
+                          {vendors.map((vendor) => (
+                            <option key={vendor.id} value={vendor.id}>
+                              {vendor.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center ml-2">
-                    <button className="bg-pink-600 text-white px-4 py-2 rounded-lg font-sofia text-sm md:text-base" onClick={togglePopup}>
-                      Submit
-                    </button>
+                    <div className="flex items-center ml-2">
+                      <button className="bg-pink-600 text-white px-4 py-1 md:py-2 rounded-lg font-sofia text-sm md:text-base" onClick={togglePopup}>
+                        Submit
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
               <div className="flex-grow overflow-y-auto">
-                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-6 mt-6 mb-5">
-                  {displayedProducts.map((product) => (
+                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-2 md:gap-6 md:mt-6 mb-5">
+                {displayedProducts.map((product) => (
                     <div
                       key={product.id}
                       className={`bg-white shadow-lg rounded-xl overflow-hidden flex flex-col justify-between ${selectedProductIds.includes(product.id) ? 'border-dashed border-blue-600' : 'border-gray-200'}`}
@@ -466,20 +468,18 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
-                {totalPages > 1 && (
+                    ))}
+                  </div>
                   <Pagination
                     currentPage={currentPage}
                     totalPages={totalPages}
                     onPageChange={handlePageChange}
                   />
-                )}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 };

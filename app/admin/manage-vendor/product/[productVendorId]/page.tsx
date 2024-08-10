@@ -169,7 +169,7 @@ function ManageVendorProduct({ vendor }: { vendor: Vendor }) {
         </div>
         <div className="flex md:items-center">
           <span className="text-xs md:text-base text-gray-700 px-3 md:px-5 mr-12 md:mr-0">Jumlah Produk: {productList.length}</span>
-          <button className="bg-pink-500 text-white px-1 md:px-3 py-1 rounded-full font-bold text-xs md:text-base -mt-1 md:mt-0 mb-1 md:mb-0 md:mr-4" onClick={() => router.push(`/admin/manage-vendor/product/${vendor.id}/add`)}>
+          <button className="bg-pink-500 text-white px-1 md:px-3 py-1 rounded-full font-bold text-xs md:text-base -mt-2 md:mt-0 mb-1 md:mb-0 mr-1 md:mr-4 ml-auto" onClick={() => router.push(`/admin/manage-vendor/product/${vendor.id}/add`)}>
             + Tambah Produk
           </button>
         </div>
@@ -182,13 +182,13 @@ function ManageVendorProduct({ vendor }: { vendor: Vendor }) {
               alt={`${product.name} Image`}
               width={245}
               height={50}
-              className="object-cover"
+              className="object-cover h-20 md:h-32 w-full"
             />
             <div className="p-3 md:p-3 font-sofia flex flex-col justify-between flex-grow">
               <div>
                 <h3 className="text-sm md:text-base text-pink-900 font-bold mb-2">{product.name}</h3>
-                <p className="text-xs md:text-sm text-gray-700">{product.specification}</p>
-                <p className="text-xs md:text-sm text-gray-500 flex flex-row">
+                <p className="text-xs md:text-sm text-gray-700 line-clamp-2 mb-1 md:mb-0">{product.specification}</p>                
+                <p className="text-xs md:text-sm text-gray-500 flex flex-row mb-1 md:mb-0">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-3 md:h-4 w-3 md:w-4 text-yellow-500 mr-[0.3rem] mt-[0.075rem] md:mt-[0.05rem]"
@@ -199,7 +199,7 @@ function ManageVendorProduct({ vendor }: { vendor: Vendor }) {
                   </svg> {product.rating && product.rating.toFixed(2) !== "0.00" ? product.rating.toFixed(2) : "N/A"}
                 </p>
                 <p
-                  className="text-gray-500 cursor-pointer"
+                  className="text-xs md:text-sm text-gray-500 line-clamp-1"
                   onClick={() => handleAddressClick(product.vendorAddress)}
                 >
                   {product.vendorAddress}

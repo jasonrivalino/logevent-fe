@@ -167,6 +167,8 @@ function Statistics({ orders, visits }: { orders: Order[], visits: Visit[] }) {
                 </div>
                 <div className="bg-gray-100 shadow-md rounded-lg p-4 relative text-black">
                     <h2 className="text-xl font-bold">Statistik Pemesanan</h2>
+                    <p className="md:text-base text-sm text-gray-600">Pemesanan Bulan Ini: {orderPastMonth}</p>
+                    <p className="md:text-base text-xs text-gray-600">Perubahan {orderImprovement}% dari 30 hari sebelumnya</p>
                     <div className="relative md:absolute md:top-4 md:right-4 flex space-x-2 md:-mr-[5.5rem] mt-1 md:mt-0 mb-2 md:mb-0">
                         <DatePicker
                             selected={pemesananDate}
@@ -174,8 +176,6 @@ function Statistics({ orders, visits }: { orders: Order[], visits: Visit[] }) {
                             className="border text-xs md:text-base p-[0.15rem] md:p-1 rounded text-black w-1/2 md:w-3/5"
                         />
                     </div>
-                    <p className="text-gray-600">Pemesanan Bulan Ini: {orderPastMonth}</p>
-                    <p className="text-gray-600">Perubahan {orderImprovement}% dari 30 hari sebelumnya</p>
                     <div className="h-40 md:h-[18rem]">
                         <Line data={orderData} options={orderOptions} />
                     </div>

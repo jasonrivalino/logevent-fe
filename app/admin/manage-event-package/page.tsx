@@ -30,11 +30,13 @@ export default function AdminVendor() {
     }, []);
   
     const handlePrev = () => {
-      router.push('/admin/manage-vendor');
+      // Add your routing logic for the previous button
+      router.push('/admin/manage-vendor'); // Update with the actual route
     };
   
     const handleNext = () => {
-      router.push('/admin/manage-faq');
+      // Add your routing logic for the next button
+      router.push('/admin/manage-faq'); // Update with the actual route
     };
 
     return (
@@ -135,7 +137,7 @@ function ManageEventPackage({ events }: { events: Event[] }) {
     );
 
     return (
-        <div className="px-10 md:px-8 pt-6 pb-10 bg-white rounded-xl font-sofia shadow-md">
+        <div className="px-6 md:px-8 pt-6 pb-10 bg-white rounded-xl font-sofia shadow-md">            
             <div className="flex justify-center md:justify-start">
                 <h1 className="text-lg md:text-3xl font-bold mb-4 md:mb-6 text-pink-900 font-sofia">Welcome Admin LogEvent!</h1>
             </div>
@@ -170,7 +172,7 @@ function ManageEventPackage({ events }: { events: Event[] }) {
                             alt={`${event.name} Image`}
                             width={400}
                             height={200}
-                            className="object-cover w-80 h-28 md:h-auto"
+                            className="object-cover w-full md:w-80 h-28 md:h-auto"
                         />
                         <div className="p-3 md:p-4 md:ml-3 flex-grow font-sofia relative">
                             {/* Icon buttons */}

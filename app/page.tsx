@@ -110,7 +110,7 @@ export function Navbar() {
     router.push('/histori-pemesanan');
   }
 
-  const handleScrollToSection1 = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+  const handleScrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault();
     const element = document.getElementById(sectionId);
     if (element) {
@@ -126,19 +126,7 @@ export function Navbar() {
     e.preventDefault();
     const element = document.getElementById(sectionId);
     if (element) {
-      const offsetTop = element.getBoundingClientRect().top + window.scrollY - 120;
-      window.scrollTo({
-        top: offsetTop,
-        behavior: 'smooth',
-      });
-    }
-  };
-
-  const handleScrollToSection3 = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
-    e.preventDefault();
-    const element = document.getElementById(sectionId);
-    if (element) {
-      const offsetTop = element.getBoundingClientRect().top + window.scrollY - 60;
+      const offsetTop = element.getBoundingClientRect().top + window.scrollY;
       window.scrollTo({
         top: offsetTop,
         behavior: 'smooth',
@@ -162,7 +150,7 @@ export function Navbar() {
             <li>
               <a
                 href="#about-us"
-                onClick={(e) => handleScrollToSection1(e, 'about-us')}
+                onClick={(e) => handleScrollToSection(e, 'about-us')}
                 className="hover:underline font-sofia text-white"
               >
                 About Us
@@ -171,7 +159,7 @@ export function Navbar() {
             <li>
               <a
                 href="#services"
-                onClick={(e) => handleScrollToSection2(e, 'services')}
+                onClick={(e) => handleScrollToSection(e, 'services')}
                 className="hover:underline font-sofia text-white"
               >
                 Produk & Layanan
@@ -180,7 +168,7 @@ export function Navbar() {
             <li>
               <a
                 href="#faq"
-                onClick={(e) => handleScrollToSection3(e, 'faq')}
+                onClick={(e) => handleScrollToSection(e, 'faq')}
                 className="hover:underline font-sofia text-white"
               >
                 FAQ
@@ -251,7 +239,7 @@ export function Navbar() {
           <li>
             <a
               href="#about-us"
-              onClick={(e) => { handleScrollToSection1(e, 'about-us'); setIsMenuOpen(false); }}
+              onClick={(e) => { handleScrollToSection(e, 'about-us'); setIsMenuOpen(false); }}
               className="hover:underline font-sofia text-white"
             >
               About Us
@@ -268,11 +256,11 @@ export function Navbar() {
           </li>
           <li>
             <a
-              href="#contact"
-              onClick={() => setIsMenuOpen(false)}
+              href="#faq"
+              onClick={(e) => { handleScrollToSection(e, 'faq'); setIsMenuOpen(false); }}
               className="hover:underline font-sofia text-white"
             >
-              QnA
+              FAQ
             </a>
           </li>
           <li>
@@ -422,7 +410,7 @@ function AboutUsSection() {
 
   return (
     <section id="about-us">
-      <div className="flex flex-col md:flex-row items-center p-8 md:p-16 mt-28 md:mt-[4.5rem] rounded-lg">
+      <div className="flex flex-col md:flex-row items-center p-8 md:p-16 mt-4 md:mt-[4.5rem] rounded-lg">
         <div className="w-full md:w-1/2">
           <iframe 
             className="w-full h-48 md:h-96 rounded-lg" 
@@ -484,7 +472,6 @@ function LayananCard({ image, title, description, link, onClick }: { image: stri
     <div className="relative flex-col items-center mb-4 md:mb-8 md:p-4 rounded-lg">
       {/* Pink Circle */}
       <div className="absolute top-0 left-1 w-7 h-7 md:w-10 md:h-10 bg-pink-300 rounded-full z-0"></div>
-
       {/* Image with top-left alignment */}
       <div className="relative z-10 ml-3 mt-2 mb-2 md:ml-0 md:mt-0">
         <Image
@@ -536,7 +523,7 @@ function LayananSection() {
   ];
 
   return (
-    <section id="services" className="p-8 md:p-16 mt-12 md:mt-0">
+    <section id="services" className="p-8 md:px-16 mt-8 md:mt-0">
       <h1 className="text-3xl md:text-4xl text-pink-900 font-bold mt-24 mb-7 md:mb-10 font-sofia">Layanan Kami</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
         {descriptions.map((item, index) => (

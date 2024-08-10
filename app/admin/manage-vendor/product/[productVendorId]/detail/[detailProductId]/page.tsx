@@ -225,19 +225,22 @@ const ProductImage = ({ product, albums }: { product: Product; albums: Album[] }
             <div className="w-full md:w-1/2">
               <h1 className="text-2xl md:text-3xl text-pink-900 font-bold mt-4">{product.name}</h1>
               <p className="text-sm md:text-base text-gray-600">{product.specification}</p>
-              <p className="text-sm md:text-base text-gray-600">
-              {product.capacity ? 'Kapasitas: ' + product.capacity + ' Orang' : "Paket Event ini tidak memiliki kapasitas"}
-              </p>
+              {product.capacity && (
+                <p className="text-sm md:text-base text-gray-600">
+                  Kapasitas: {product.capacity} Orang
+                </p>
+              )}
               <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp{product.price.toLocaleString('id-ID')} {getRateText(product.rate)}</p>
-              <div className="text-sm md:text-base flex items-center space-x-2 text-gray-600">
+              <div className="text-sm md:text-base flex flex-col md:flex-row text-gray-600">
                 <span>{product.vendorAddress}</span>
-                <span>|</span>
-                <div className="flex items-center">
-                  {getStars(product.rating)}
-                  <span> ({product.rating && product.rating.toFixed(2) !== "0.00" ? product.rating.toFixed(2) : "N/A"})</span>
+                <div className="flex flex-row items-center space-x-2">
+                  <div className="flex items-center">
+                    {getStars(product.rating)}
+                    <span> ({product.rating && product.rating.toFixed(2) !== "0.00" ? product.rating.toFixed(2) : "N/A"})</span>
+                  </div>
+                  <span>|</span>
+                  <span>{product.reviewCount} reviews</span>
                 </div>
-                <span>|</span>
-                <span>{product.reviewCount} reviews</span>
               </div>
             </div>
           </div>

@@ -189,13 +189,15 @@ function ManageVendor({ vendors, triggerFetch, onExport }: { vendors: Vendor[], 
                         </div>
                         <div className="flex flex-col md:flex-row md:items-center">
                             <span className="mr-5 mb-2 md:mb-0 text-sm md:text-base">Jumlah Produk: {vendor.productCount}</span>
-                            <button className="text-sm md:text-base bg-white hover:bg-pink-100 border border-pink-500 text-pink-500 px-1 md:px-3 py-1 md:py-[0.35rem] rounded-md mr-2" onClick={() => router.push(`/admin/manage-vendor/product/${vendor.id}`)}>Kelola Produk</button>
-                            <button className="text-sm md:text-base bg-white hover:bg-pink-100 border border-pink-500 text-pink-500 px-1 md:px-3 py-1 md:py-[0.35rem] rounded-md mr-2" onClick={() => router.push(`/admin/manage-vendor/edit/${vendor.id}`)}>Edit</button>
-                            <button className="bg-red-500 text-white p-1 md:p-2 rounded-md" onClick={() => confirmDelete(vendor.id)}>
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fillRule="evenodd" d="M6.5 4a1 1 0 00-.894.553L5 5H3a1 1 0 000 2h1v9a2 2 0 002 2h8a2 2 0 002-2V7h1a1 1 0 100-2h-2l-.606-1.447A1 1 0 0013.5 4h-7zM6 7v9h8V7H6zm4-3a1 1 0 011 1v1h-2V5a1 1 0 011-1z" clipRule="evenodd" />
-                                </svg>
-                            </button>
+                            <div className='flex flex-row items-center'>
+                                <button className="text-sm md:text-base bg-white hover:bg-pink-100 border border-pink-500 text-pink-500 px-1 md:px-3 py-1 md:py-[0.35rem] rounded-md mr-2" onClick={() => router.push(`/admin/manage-vendor/product/${vendor.id}`)}>Kelola Produk</button>
+                                <button className="text-sm md:text-base bg-white hover:bg-pink-100 border border-pink-500 text-pink-500 px-1 md:px-3 py-1 md:py-[0.35rem] rounded-md mr-2" onClick={() => router.push(`/admin/manage-vendor/edit/${vendor.id}`)}>Edit Vendor</button>
+                                <button className="bg-red-500 text-white p-1 md:p-2 rounded-md" onClick={() => confirmDelete(vendor.id)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M6.5 4a1 1 0 00-.894.553L5 5H3a1 1 0 000 2h1v9a2 2 0 002 2h8a2 2 0 002-2V7h1a1 1 0 100-2h-2l-.606-1.447A1 1 0 0013.5 4h-7zM6 7v9h8V7H6zm4-3a1 1 0 011 1v1h-2V5a1 1 0 011-1z" clipRule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     {expandedVendorId === vendor.id && (

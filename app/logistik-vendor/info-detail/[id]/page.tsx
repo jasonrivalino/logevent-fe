@@ -277,9 +277,11 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
             <div className="w-full md:w-1/2">
               <h1 className="text-2xl md:text-3xl text-pink-900 font-bold mt-4">{product.name}</h1>
               <p className="text-sm md:text-base text-gray-600">{product.specification}</p>
-              <p className="text-sm md:text-base text-gray-600">
-                {product.capacity ? 'Kapasitas: ' + product.capacity + ' Orang' : "Paket Event ini tidak memiliki kapasitas"}
-              </p>
+              {product.capacity && (
+                <p className="text-sm md:text-base text-gray-600">
+                  Kapasitas: {product.capacity} Orang
+                </p>
+              )}
               <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp{product.price.toLocaleString('id-ID')} {getRateText(product.rate)}</p>
               <div className="text-sm md:text-base flex flex-col md:flex-row text-gray-600">
                 <span>{product.vendorAddress}</span>
