@@ -81,7 +81,9 @@ function ManageVendorProduct({ vendor }: { vendor: Vendor }) {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [productList, setProductList] = useState<Product[]>([]);
+  const [filteredProductList, setFilteredProductList] = useState<Product[]>([]);
   const [refresh, setRefresh] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -93,6 +95,7 @@ function ManageVendorProduct({ vendor }: { vendor: Vendor }) {
           products = await readProductsByVendorId(vendor.id);
         }
         setProductList(products);
+        setFilteredProductList(products);
       } catch (error) {
         console.error('Failed to fetch vendor products:', error);
       }
@@ -100,6 +103,15 @@ function ManageVendorProduct({ vendor }: { vendor: Vendor }) {
 
     fetchData();
   }, [vendor, refresh]);
+
+  useEffect(() => {
+    const filteredProducts = productList.filter(product =>
+      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.specification.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredProductList(filteredProducts);
+    setCurrentPage(1);
+  }, [searchQuery, productList]);
 
   const handleAddressClick = (address: string) => {
     const googleMapsUrl = generateGoogleMapsUrl(address);
@@ -129,12 +141,12 @@ function ManageVendorProduct({ vendor }: { vendor: Vendor }) {
     }
   };
 
-  const paginatedProducts = productList.slice(
+  const paginatedProducts = filteredProductList.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  const totalPages = Math.ceil(productList.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredProductList.length / itemsPerPage);
 
   return (
     <div className="px-4 md:px-8 pt-6 pb-10 bg-white rounded-xl shadow-md">
@@ -158,6 +170,8 @@ function ManageVendorProduct({ vendor }: { vendor: Vendor }) {
             <input
               type="text"
               placeholder="Cari kebutuhan vendormu"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="w-[17.5rem] md:w-full text-sm md:text-base p-1 md:p-2 pl-9 md:pl-12 border rounded bg-white text-black font-sofia"
             />
           </div>
@@ -168,7 +182,7 @@ function ManageVendorProduct({ vendor }: { vendor: Vendor }) {
           <span className="text-lg md:text-xl text-pink-900 font-bold mr-4">{vendor.name}</span>
         </div>
         <div className="flex md:items-center">
-          <span className="text-xs md:text-base text-gray-700 px-3 md:px-5 mr-12 md:mr-0">Jumlah Produk: {productList.length}</span>
+          <span className="text-xs md:text-base text-gray-700 px-3 md:px-5 mr-12 md:mr-0">Jumlah Produk: {filteredProductList.length}</span>
           <button className="bg-pink-500 text-white px-1 md:px-3 py-1 rounded-full font-bold text-xs md:text-base -mt-2 md:mt-0 mb-1 md:mb-0 mr-1 md:mr-4 ml-auto" onClick={() => router.push(`/admin/manage-vendor/product/${vendor.id}/add`)}>
             + Tambah Produk
           </button>

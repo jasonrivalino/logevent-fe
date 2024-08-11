@@ -67,6 +67,9 @@ function AddVendorProduct() {
   const [capacity, setCapacity] = useState('');
   const [description, setDescription] = useState('');
   const [productImages, setProductImages] = useState<string[]>([]);
+  const [showPopup, setShowPopup] = useState(false);
+  const [newCategory, setNewCategory] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
 
   useEffect(() => {
     const { pathname } = window.location;
@@ -101,6 +104,9 @@ function AddVendorProduct() {
   
   const handleCategoryChange = (event: { target: { value: any; }; }) => {
     setSelectedCategoryId(parseInt(event.target.value));
+    if (event.target.value === 'add-new') {
+      setShowPopup(true);
+    }
   };
 
   const handleRateChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
@@ -127,6 +133,18 @@ function AddVendorProduct() {
   const handleRemoveImage = (index: number) => {
     const newImages = productImages.filter((_, i) => i !== index);
     setProductImages(newImages);
+  };
+
+  const handleAddCategory = () => {
+    if (newCategory.trim() !== '') {
+      setCategories([...categories, {
+        id: 0, name: newCategory.trim(),
+        type: ''
+      }]);
+      setSelectedCategory(newCategory.trim());
+      setNewCategory('');
+      setShowPopup(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -251,21 +269,23 @@ function AddVendorProduct() {
         </div>
         <div className="flex flex-col md:flex-row md:space-x-6">
           <div className="flex flex-col md:flex-row -mt-2 md:mt-0">
-            <div className="w-full mb-2 md:mb-0">
-              <label className="block text-gray-700 font-sofia mb-1 md:mb-2 text-sm md:text-base">Kategori Paket *</label>
-              <select
-                className="w-full md:w-11/12 px-2 md:px-4 py-1 md:py-[0.65rem] border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 bg-white text-sm md:text-base"
-                value={selectedCategoryId ?? 0}
-                onChange={handleCategoryChange}
-              >
-              <option value={0}>Pilih Kategori</option>
-              {categories.map(category => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-                <option value="add-new">+ Tambah Kategori</option>
-              </select>
+          <div className="w-full mb-2 md:mb-0">
+                <label className="block text-gray-700 font-sofia mb-1 md:mb-2 text-sm md:text-base">
+                  Kategori Paket *
+                </label>
+                <select
+                  className="w-full md:w-11/12 px-2 md:px-4 py-1 md:py-[0.65rem] border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 bg-white text-sm md:text-base"
+                  value={selectedCategoryId ?? 0}
+                  onChange={handleCategoryChange}
+                >
+                  <option value={0}>Pilih Kategori</option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                  <option value="add-new">+ Tambah Kategori</option>
+                </select>
             </div>
             <div className="w-full md:w-[21rem]">
               <label className="block text-gray-700 font-sofia mb-1 md:mb-2 text-sm md:text-base">Harga Paket *</label>
@@ -358,6 +378,24 @@ function AddVendorProduct() {
           </button>
         </div>
       </form>
+      {showPopup && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 font-sofia text-black">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h2 className="text-xl font-semibold mb-4">Tambah Kategori Baru</h2>
+            <input
+              type="text"
+              value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 mb-4"
+              placeholder="Masukkan kategori"
+            />
+            <div className="flex justify-end space-x-4">
+              <button onClick={() => setShowPopup(false)} className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg">Batal</button>
+              <button onClick={handleAddCategory} className="px-4 py-2 bg-pink-600 text-white rounded-lg">Tambah</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

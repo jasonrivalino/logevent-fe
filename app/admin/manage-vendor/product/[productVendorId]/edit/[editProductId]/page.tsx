@@ -78,143 +78,201 @@ export default function AdminEventPackage() {
 }
 
 function EditVendorProduct({ product, categories, albums }: { product: Product, categories: Category[], albums: Album[] }) {
-    const router = useRouter();
-    const [initialized, setInitialized] = useState(false);
-    const [productId, setProductId] = useState<number | null>(null);
-    const [vendorId, setVendorId] = useState<number | null>(null);
-    const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
-    const [name, setName] = useState('');
-    const [specification, setSpecification] = useState('');
-    const [selectedRate, setSelectedRate] = useState<string | null>(null);
-    const [price, setPrice] = useState('');
-    const [capacity, setCapacity] = useState('');
-    const [description, setDescription] = useState('');
-    const [productImages, setProductImages] = useState<string[]>([]);
+  const router = useRouter();
+  const [initialized, setInitialized] = useState(false);
+  const [productId, setProductId] = useState<number | null>(null);
+  const [vendorId, setVendorId] = useState<number | null>(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [name, setName] = useState('');
+  const [specification, setSpecification] = useState('');
+  const [selectedRate, setSelectedRate] = useState<string | null>(null);
+  const [price, setPrice] = useState('');
+  const [capacity, setCapacity] = useState('');
+  const [description, setDescription] = useState('');
+  const [productImages, setProductImages] = useState<string[]>([]);
+  const [showPopup, setShowPopup] = useState(false);
+  const [showEditPopup, setShowEditPopup] = useState(false);
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [newCategory, setNewCategory] = useState('');
+  const [categoryToEdit, setCategoryToEdit] = useState<Category | null>(null);
+  const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-    useEffect(() => {
-        if (product && !initialized) {
-            setProductId(product.id);
-            setVendorId(product.vendorId);
-            setSelectedCategoryId(product.categoryId);
-            setSelectedRate(product.rate);
-            setName(product.name);
-            setSpecification(product.specification);
-            setPrice(product.price.toString());
-            setCapacity(product.capacity ? product.capacity.toString() : '');
-            setDescription(product.description || '');
+  useEffect(() => {
+    if (product && !initialized) {
+      setProductId(product.id);
+      setVendorId(product.vendorId);
+      setSelectedCategoryId(product.categoryId);
+      setSelectedRate(product.rate);
+      setName(product.name);
+      setSpecification(product.specification);
+      setPrice(product.price.toString());
+      setCapacity(product.capacity ? product.capacity.toString() : '');
+      setDescription(product.description || '');
 
-            const images = [];
-            if (product.productImage) {
-                images.push(product.productImage);
-            }
+      const images = [];
+      if (product.productImage) {
+        images.push(product.productImage);
+      }
 
-            for (const album of albums) {
-                if (album.albumImage) {
-                    images.push(album.albumImage);
-                }
-            }
-
-            setProductImages(images);
-            setInitialized(true);
+      for (const album of albums) {
+        if (album.albumImage) {
+          images.push(album.albumImage);
         }
-    }, [product, initialized]);
-  
-    const handleCategoryChange = (event: { target: { value: any; }; }) => {
-      setSelectedCategoryId(parseInt(event.target.value));
-    };
-  
-    const handleRateChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
-      setSelectedRate(event.target.value as string);
-    };
-
-    const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const files = event.target.files ? Array.from(event.target.files) : [];
-      if (files.length > 0) {
-        if (productImages.length + files.length > 5) {
-          alert("You can only upload a maximum of 5 photos.");
-          return;
-        }
-
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setProductImages([...productImages, reader.result as string]);
-        };
-
-        reader.readAsDataURL(files[0]);
-      }
-    };
-  
-    const handleRemoveImage = (index: number) => {
-      const newImages = productImages.filter((_, i) => i !== index);
-      setProductImages(newImages);
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
-
-      if (!productId) {
-        throw new Error('Product ID is not set');
       }
 
-      if (!vendorId) {
-        throw new Error('Vendor ID is not set');
+      setProductImages(images);
+      setInitialized(true);
+    }
+  }, [product, initialized]);
+
+  const handleRateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedRate(event.target.value as string);
+  };
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files ? Array.from(event.target.files) : [];
+    if (files.length > 0) {
+      if (productImages.length + files.length > 5) {
+        alert("You can only upload a maximum of 5 photos.");
+        return;
       }
 
-      if (!selectedCategoryId) {
-        throw new Error('Category ID is not set');
-      }
-
-      if (!name) {
-        throw new Error('Name is not set');
-      }
-
-      if (!specification) {
-        throw new Error('Specification is not set');
-      }
-
-      if (!selectedRate) {
-        throw new Error('Rate is not set');
-      }
-
-      if (!price) {
-        throw new Error('Price is not set');
-      }
-
-      const productData = {
-        vendorId,
-        categoryId: selectedCategoryId,
-        name,
-        specification,
-        rate: selectedRate,
-        price: parseInt(price),
-        capacity: capacity ? parseInt(capacity) : null,
-        description: description || null,
-        productImage: productImages.length > 0 ? productImages[0] : null
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProductImages([...productImages, reader.result as string]);
       };
 
-      const albumImages = productImages.slice(1);
-      try {
-        await updateProduct(productId, productData);
+      reader.readAsDataURL(files[0]);
+    }
+  };
 
-        for (let i = 0; i < albums.length; i++) {
-          if (i < albumImages.length) {
-            await updateAlbum(albums[i].id, albumImages[i]);
-          } else {
-            await deleteAlbum(albums[i].id);
-          }
-        }
+  const handleRemoveImage = (index: number) => {
+    const newImages = productImages.filter((_, i) => i !== index);
+    setProductImages(newImages);
+  };
 
-        for (let i = albums.length; i < albumImages.length; i++) {
-          await createAlbum(albumImages[i], null, productId);
-        }
+  const handleAddCategory = () => {
+    if (newCategory.trim() !== '') {
+      const newCategoryObj = {
+        id: categories.length + 1, // Assuming ID is generated in this manner
+        name: newCategory.trim(),
+        type: ''
+      };
 
-        router.push(`/admin/manage-vendor/product/${vendorId}`);
-      } catch (error) {
-        console.error('Failed to edit product:', error);
-      }
+      // Update the categories list and set the new category as selected
+      setSelectedCategoryId(newCategoryObj.id);
+      categories.push(newCategoryObj);
+      setNewCategory('');
+      setShowPopup(false);
+    }
+  };
+
+  const handleEditCategory = (category: Category) => {
+    setCategoryToEdit(category);
+    setNewCategory(category.name);
+    setShowEditPopup(true);
+  };
+
+  const handleDeleteCategory = (category: Category) => {
+    setCategoryToDelete(category);
+    setShowDeletePopup(true);
+  };
+
+  const handleUpdateCategory = () => {
+    // Logic for updating the category
+    if (categoryToEdit) {
+      console.log(`Update category ${categoryToEdit.id} to ${newCategory}`);
+    }
+    setShowEditPopup(false);
+  };
+
+  const handleConfirmDeleteCategory = () => {
+    if (categoryToDelete) {
+      console.log(`Delete category ${categoryToDelete.id}`);
+    }
+    setShowDeletePopup(false);
+  };
+
+  const handleCancelDeleteCategory = () => {
+    setShowDeletePopup(false);
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const handleOptionClick = (categoryId: number) => {
+    setSelectedCategoryId(categoryId);
+    setIsDropdownOpen(false);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!productId) {
+      throw new Error('Product ID is not set');
+    }
+
+    if (!vendorId) {
+      throw new Error('Vendor ID is not set');
+    }
+
+    if (!selectedCategoryId) {
+      throw new Error('Category ID is not set');
+    }
+
+    if (!name) {
+      throw new Error('Name is not set');
+    }
+
+    if (!specification) {
+      throw new Error('Specification is not set');
+    }
+
+    if (!selectedRate) {
+      throw new Error('Rate is not set');
+    }
+
+    if (!price) {
+      throw new Error('Price is not set');
+    }
+
+    const productData = {
+      vendorId,
+      categoryId: selectedCategoryId,
+      name,
+      specification,
+      rate: selectedRate,
+      price: parseInt(price),
+      capacity: capacity ? parseInt(capacity) : null,
+      description: description || null,
+      productImage: productImages.length > 0 ? productImages[0] : null
     };
-  
-    return (
+
+    const albumImages = productImages.slice(1);
+    try {
+      await updateProduct(productId, productData);
+
+      for (let i = 0; i < albums.length; i++) {
+        if (i < albumImages.length) {
+          await updateAlbum(albums[i].id, albumImages[i]);
+        } else {
+          await deleteAlbum(albums[i].id);
+        }
+      }
+
+      for (let i = albums.length; i < albumImages.length; i++) {
+        await createAlbum(albumImages[i], null, productId);
+      }
+
+      router.push(`/admin/manage-vendor/product/${vendorId}`);
+    } catch (error) {
+      console.error('Failed to edit product:', error);
+    }
+  };
+
+  return (
       <div className="px-6 pt-4 pb-6 bg-white rounded-xl shadow-md">
         {/* Text in center */}
         <h1 className="text-2xl md:text-3xl font-bold md:mb-3 text-pink-900 font-sofia text-center mt-5 md:mt-0">Edit Produk A</h1>
@@ -282,19 +340,37 @@ function EditVendorProduct({ product, categories, albums }: { product: Product, 
           <div className="flex flex-col md:flex-row md:space-x-6">
             <div className="flex flex-col md:flex-row -mt-2 md:mt-0">
               <div className="w-full mb-2 md:mb-0">
-                <label className="block text-gray-700 font-sofia mb-1 md:mb-2 text-sm md:text-base">Kategori Paket *</label>
-                <select
-                  className="w-full md:w-11/12 px-2 md:px-4 py-1 md:py-[0.65rem] border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 bg-white text-sm md:text-base"
-                  value={selectedCategoryId ?? 0}
-                  onChange={handleCategoryChange}
-                >
-                  {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-                <option value="tambah_kategori">+ Tambah Kategori</option>
-              </select>
+                <label className="block text-gray-700 font-sofia text-sm md:text-base">Kategori Paket*</label>
+                <p className="text-gray-500 text-xs md:text-sm font-sofia mb-1 md:mb-2">Kategori produk yang tersedia</p>
+                <div className="relative">
+                  <button type="button" onClick={toggleDropdown} className="w-full md:w-11/12 px-2 md:px-4 py-1 md:py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 bg-white text-sm md:text-base">
+                    {categories.find(cat => cat.id === selectedCategoryId)?.name || 'Pilih Kategori'}
+                  </button>
+                  {isDropdownOpen && (
+                    <div className="absolute bg-white border rounded-lg shadow-lg mt-1 w-full z-10">
+                      {categories.map((category) => (
+                        <div key={category.id} className="flex items-center justify-between p-2 hover:bg-gray-100 cursor-pointer text-xs md:text-base" onClick={() => handleOptionClick(category.id)}>
+                          {category.name}
+                          <button
+                            className="text-blue-500 text-xs ml-20" // Add margin-right to adjust spacing
+                            onClick={(e) => { e.stopPropagation(); handleEditCategory(category); }}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            className="text-red-500 text-xs" // No margin needed here
+                            onClick={(e) => { e.stopPropagation(); handleDeleteCategory(category); }}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      ))}
+                      <div className="flex items-center justify-between p-2 hover:bg-gray-100 cursor-pointer" onClick={() => setShowPopup(true)}>
+                        <span>+ Tambah Kategori</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="w-full md:w-[21rem]">
                 <label className="block text-gray-700 font-sofia mb-1 md:mb-2 text-sm md:text-base">Harga Paket *</label>
@@ -387,6 +463,79 @@ function EditVendorProduct({ product, categories, albums }: { product: Product, 
             </button>
           </div>
         </form>
+
+        {/* Popup for Adding New Category */}
+          {showPopup && (
+              <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 font-sofia text-black">
+                  <div className="bg-white p-6 rounded-lg shadow-lg">
+                      <h2 className="text-xl font-semibold mb-4">Tambah Kategori Baru</h2>
+                      <input
+                          type="text"
+                          value={newCategory}
+                          onChange={(e) => setNewCategory(e.target.value)}
+                          className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 mb-4"
+                          placeholder="Masukkan kategori"
+                      />
+                      <div className="flex justify-end space-x-4">
+                          <button onClick={() => setShowPopup(false)} className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg">Batal</button>
+                          <button onClick={handleAddCategory} className="px-4 py-2 bg-pink-600 text-white rounded-lg">Tambah</button>
+                      </div>
+                  </div>
+              </div>
+          )}
+
+          {/* Popup for Editing Category */}
+          {showEditPopup && (
+            <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 text-black">
+              <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm mx-auto">
+                <h3 className="text-lg font-semibold">Edit Category</h3>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border rounded-lg mt-2"
+                  value={newCategory}
+                  onChange={(e) => setNewCategory(e.target.value)}
+                />
+                <div className="flex mt-4 space-x-2">
+                  <button
+                    onClick={handleUpdateCategory}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  >
+                    Update
+                  </button>
+                  <button
+                    onClick={() => setShowEditPopup(false)}
+                    className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Popup for Deleting Category */}
+          {showDeletePopup && (
+            <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 text-black">
+              <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm mx-auto">
+                <h3 className="text-lg font-semibold">Delete Category</h3>
+                <p>Are you sure you want to delete the category "{categoryToDelete?.name}"?</p>
+                <div className="flex mt-4 space-x-2">
+                  <button
+                    onClick={handleConfirmDeleteCategory}
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                  >
+                    Delete
+                  </button>
+                  <button
+                    onClick={handleCancelDeleteCategory}
+                    className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
       </div>
-    );
+  );
 }
