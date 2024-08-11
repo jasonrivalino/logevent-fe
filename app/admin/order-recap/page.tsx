@@ -91,6 +91,7 @@ function Table({ orders, onExport }: { orders: Order[], onExport: () => void }) 
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [showModal, setShowModal] = useState(false);
+    const [action, setAction] = useState(""); // State to store the current action
     const [modalContent, setModalContent] = useState("");
     const [filteredOrders, setFilteredOrders] = useState<Order[]>(orders);
     const ordersPerPage = 10;
@@ -101,6 +102,7 @@ function Table({ orders, onExport }: { orders: Order[], onExport: () => void }) 
     }, [searchQuery, orders]);
 
     const handleConfirmation = (action: string) => {
+        setAction(action); // Set the current action
         setModalContent(action === "approve" ? "Apakah kamu yakin ingin menyelesaikan pemesanan ini?" : "Apakah kamu yakin ingin membatalkan pemesanan ini?");
         setShowModal(true);
     };
@@ -222,8 +224,13 @@ function Table({ orders, onExport }: { orders: Order[], onExport: () => void }) 
                         <p className="text-black text-sm md:text-lg">{modalContent}</p>
                         <div className="mt-4 flex justify-end">
                             <button onClick={() => setShowModal(false)} className="px-4 py-2 bg-gray-300 text-black rounded mr-2 text-sm md:text-base">Cancel</button>
-                            <button onClick={() => setShowModal(false)} className="px-4 py-2 bg-pink-500 text-white rounded text-sm md:text-base">Confirm</button>
-                        </div>
+                            {/* make button can have 2 position */}
+                            <button
+                                onClick={() => setShowModal(false)}
+                                className={`px-4 py-2 text-white rounded text-sm md:text-base ${action === "approve" ? "bg-green-500" : "bg-red-500"}`}
+                            >
+                                Confirm
+                            </button>                        </div>
                     </div>
                 </div>
             )}

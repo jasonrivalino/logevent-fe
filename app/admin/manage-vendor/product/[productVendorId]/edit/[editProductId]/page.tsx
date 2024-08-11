@@ -382,7 +382,7 @@ function EditVendorProduct({ product, categories, albums }: { product: Product, 
             </div>
           </div>
           <div className="w-full">
-            <button type="submit" className="w-full py-1 md:py-2 mt-2 bg-pink-600 text-white font-semibold rounded-lg hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-600" onClick={() => router.push('/admin/manage-event-package')}>
+            <button type="submit" className="w-full py-1 md:py-2 mt-2 bg-pink-600 text-white font-semibold rounded-lg hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-600" onClick={() => router.push('/admin/manage-vendor/product/1')}>
               Edit Produk
             </button>
           </div>

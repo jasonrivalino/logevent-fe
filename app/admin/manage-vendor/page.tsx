@@ -259,12 +259,19 @@ function ManageVendor({ vendors, triggerFetch, onExport }: { vendors: Vendor[], 
 
             {showPopup && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                    <div className="bg-white p-6 rounded-md shadow-md text-center text-black">
-                        <h2 className="text-lg mb-4">Konfirmasi Hapus</h2>
-                        <p className="mb-4">Apakah Anda yakin ingin menghapus vendor ini?</p>
-                        <div className="flex justify-center">
-                            <button className="bg-gray-500 text-white px-4 py-2 rounded-md mr-2" onClick={() => setShowPopup(false)}>Batal</button>
-                            <button className="bg-red-500 text-white px-4 py-2 rounded-md" onClick={handleDelete}>Hapus</button>
+                    <div className="bg-white p-6 rounded-md shadow-lg text-center w-10/12 md:w-full">
+                        <div className="flex items-center justify-center mb-4">
+                        <div className="bg-red-500 text-white p-2 rounded-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M12 8v4m0 4h.01m0-4h-.01m-.01 0h.01M11 8v4m0 4h.01m0-4h-.01m-.01 0h.01" />
+                            </svg>
+                        </div>
+                        </div>
+                        <p className="mb-4 text-black font-sofia">Apakah Anda yakin ingin menghapus produk ini?</p>
+                        <p className="mb-6 text-black font-sofia">Dengan menekan tombol ya maka produk yang dipilih akan terhapus dan pengunjung tidak akan dapat melihatnya lagi </p>
+                        <div className="flex justify-center space-x-4 font-sofia">
+                        <button className="bg-gray-500 text-white px-4 py-2 rounded-md" onClick={() => setShowPopup(false)}>Tidak</button>
+                        <button className="bg-red-500 text-white px-4 py-2 rounded-md" onClick={handleDelete}>Ya</button>
                         </div>
                     </div>
                 </div>

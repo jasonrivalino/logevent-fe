@@ -471,15 +471,15 @@ function LayananCard({ image, title, description, link, onClick }: { image: stri
   return (
     <div className="relative flex-col items-center mb-4 md:mb-8 md:p-4 rounded-lg">
       {/* Pink Circle */}
-      <div className="absolute top-0 left-1 w-7 h-7 md:w-10 md:h-10 bg-pink-300 rounded-full z-0"></div>
+      <div className="absolute top-0 left-1 w-7 h-7 md:w-10 md:h-10 bg-pink-400 rounded-full z-0"></div>
       {/* Image with top-left alignment */}
-      <div className="relative z-10 ml-3 mt-2 mb-2 md:ml-0 md:mt-0">
+      <div className="relative z-10 ml-3 mt-2 mb-2 md:ml-0 md:-mt-1">
         <Image
           src={image}
           alt={title}
           width={60}
           height={60}
-          className="object-cover rounded-lg w-10 h-10 md:w-16 md:h-16"
+          className="object-cover rounded-lg w-8 h-8 md:w-12 md:h-12"
         />
       </div>
 
@@ -503,19 +503,19 @@ function LayananSection() {
 
   const descriptions = [
     {
-      image: "/Image/building.png",
+      image: "/Image/IconButton/house.png",
       title: "Logistik Vendor",
       description: "Kami bekerja sama dengan berbagai vendor terpercaya yang menawarkan beragam produk dan layanan berkualitas tinggi. Dari panggung, sound system, hingga dekorasi, semua kebutuhan logistik event Anda dapat kami penuhi dengan cepat dan efisien.",
       link: "/logistik-vendor"
     },
     {
-      image: "/Image/building.png",
+      image: "/Image/IconButton/calendar.png",
       title: "Event Organizer",
       description: "Tidak hanya menyediakan logistik, Logevent juga menawarkan jasa Event Organizer profesional yang siap merancang dan mengelola event impian Anda. Tim kami yang berpengalaman akan bekerja sama dengan Anda dari tahap perencanaan hingga eksekusi, memastikan setiap detail acara Anda tertata dengan sempurna.",
       link: "/event-organizer"
     },
     {
-      image: "/Image/building.png",
+      image: "/Image/IconButton/box.png",
       title: "Paket Event",
       description: "Kami memahami bahwa setiap event memiliki karakteristik dan kebutuhan yang berbeda. Oleh karena itu, Logevent menyediakan berbagai paket event sesuai dengan kategori acara yang akan diadakan. Baik itu pesta pernikahan, konser musik, atau ulang tahun, kami memiliki paket yang dapat disesuaikan dengan kebutuhan dan anggaran Anda.",
       link: "/paket-event"
@@ -523,7 +523,7 @@ function LayananSection() {
   ];
 
   return (
-    <section id="services" className="p-8 md:px-16 mt-8 md:mt-0">
+    <section id="services" className="p-8 md:px-16 mt-8 md:-mt-14">
       <h1 className="text-3xl md:text-4xl text-pink-900 font-bold mt-24 mb-7 md:mb-10 font-sofia">Layanan Kami</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
         {descriptions.map((item, index) => (
@@ -541,11 +541,14 @@ function LayananSection() {
   );
 }
 
-function KeunggulanCard ({ image, description }: { image: string, description: string }) {
+function KeunggulanCard({ image, description }: { image: string, description: string }) {
   return (
-    <div className="flex flex-row items-center mb-2 md:mb-3 p-4 md:p-8 bg-white shadow-lg rounded-lg">
+    <div className="relative flex flex-row items-center mb-2 md:mb-3 p-4 md:p-8 bg-white shadow-lg rounded-lg">
+      {/* Circle on the left */}
+      <div className="absolute -left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 md:w-4 md:h-4 bg-pink-600 rounded-full"></div>
+      
       {/* Increased image container size */}
-      <div className="flex-shrink-0 w-10 h-10 md:w-16 md:h-16 ml-3 md:ml-0">
+      <div className="flex-shrink-0 w-10 h-10 md:w-16 md:h-16 ml-2"> {/* Adjusted margin for the circle */}
         <Image
           src={image}
           alt="image"
@@ -555,7 +558,7 @@ function KeunggulanCard ({ image, description }: { image: string, description: s
         />
       </div>
       <div className="text-left ml-6 md:ml-8 md:mt-1">
-        <p className="text-gray-600 font-sofia text-base md:text-xl">{description}</p>
+        <p className="text-gray-600 font-sofia text-sm md:text-xl">{description}</p>
       </div>
     </div>
   );
@@ -565,27 +568,27 @@ function KeunggulanSection() {
   // Dummy data for the section
   const descriptions = [
     {
-      image: "/Image/building.png",
+      image: "/Image/IconButton/keunggulan1.png",
       description: "Praktis dan Efisien, Komparasi harga antar vendor, Banyak Pilihan"
     },
     {
-      image: "/Image/building.png",
+      image: "/Image/IconButton/keunggulan2.png",
       description: "Paket logistik berdasarkan kebutuhan acara & budget pengguna"
     },
     {
-      image: "/Image/building.png",
+      image: "/Image/IconButton/keunggulan4.png",
       description: "Keamanan berbagai jenis transaksi antara vendor dan pengguna"
     },
     {
-      image: "/Image/building.png",
+      image: "/Image/IconButton/keunggulan3.png",
       description: "Kemudahan memesan jasa EO dan berbagai kategori logistik yang diperlukan event"
     },
   ];
 
   return (
-    <section id="keunggulan" className="p-8 md:p-16">
+    <section id="keunggulan" className="p-8 md:p-16 mt-8 md:-mt-8">
       <h1 className="text-3xl md:text-4xl text-pink-900 font-bold mt-6 md:mt-5 mb-8 md:mb-10 font-sofia">Mengapa memilih Logevent?</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-7 md:gap-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-7 md:gap-6">
         {descriptions.map((item, index) => (
           <KeunggulanCard
             key={index}
@@ -619,24 +622,34 @@ function FAQ({ faqs }: { faqs: Faq[] }) {
   };
 
   return (
-    <section id="faq" className="p-8 md:p-16">
-      <h1 className="text-3xl md:text-4xl font-bold mb-8 text-pink-900 font-sofia">Pertanyaan Yang Sering Ditanyakan</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-10 w-full px-8 md:px-16">
+    <section id="faq" className="p-8 md:p-16 max-w-screen-2xl mx-auto mt-24 md:mt-14">
+      <h1 className="text-3xl md:text-4xl font-bold mb-12 text-pink-900 font-sofia">
+        Pertanyaan Yang Sering Ditanyakan
+      </h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-4">
         {faqs.map((faq, index) => (
           <div
             key={index}
-            className="bg-white rounded-lg shadow-md p-2 md:p-4 cursor-pointer"
+            className="bg-white rounded-lg shadow-lg p-4 md:p-6 cursor-pointer transition-transform duration-200 hover:scale-105 overflow-hidden w-full h-full"
             onClick={() => (index % 2 === 0 ? toggleOpenLeft(index) : toggleOpenRight(index))}
           >
             <div className="flex justify-between items-center text-black">
-              <span className="text-base md:text-lg font-semibold">{faq.question}</span>
+            <span className="text-sm md:text-base font-semibold break-words whitespace-normal">
+              {faq.question}
+            </span>
               <span>{(index % 2 === 0 ? openIndicesLeft : openIndicesRight).includes(index) ? '-' : '>'}</span>
             </div>
-            {(index % 2 === 0 ? openIndicesLeft : openIndicesRight).includes(index) && (
-              <div className="mt-2 text-gray-600 text-xs md:text-base">
-                {faq.answer}
-              </div>
-            )}
+            <div
+              className={`mt-4 text-gray-600 text-sm md:text-base break-words transition-all duration-300 ${
+                (index % 2 === 0 ? openIndicesLeft : openIndicesRight).includes(index) ? 'max-h-full' : 'max-h-0'
+              }`}
+              style={{
+                overflow: 'hidden',
+                maxHeight: (index % 2 === 0 ? openIndicesLeft : openIndicesRight).includes(index) ? '1000px' : '0',
+              }}
+            >
+              {faq.answer}
+            </div>
           </div>
         ))}
       </div>
