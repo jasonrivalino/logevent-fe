@@ -263,17 +263,26 @@ function ProductList({ products }: { products: Product[]; }) {
   const router = useRouter();
   const windowWidth = useWindowWidth();
 
+  const [totalItems, setTotalItems] = useState(0);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(2);
 
-  const totalItems = products.length;
-
   useEffect(() => {
+    setTotalItems(products.length);
+
     const handleResize = () => {
       if (window.innerWidth < 768) {
-        setItemsPerPage(2);
+        if (totalItems < 2) {
+          setItemsPerPage(totalItems);
+        } else {
+          setItemsPerPage(2);
+        }
       } else {
-        setItemsPerPage(4);
+        if (totalItems < 4) {
+          setItemsPerPage(totalItems);
+        } else {
+          setItemsPerPage(4);
+        }
       }
     };
 
@@ -283,7 +292,7 @@ function ProductList({ products }: { products: Product[]; }) {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }, [products.length, totalItems]);
 
   const handleNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + itemsPerPage) % totalItems);
@@ -301,6 +310,15 @@ function ProductList({ products }: { products: Product[]; }) {
     }
     return display;
   };
+
+  if (products.length === 0) {
+    return (
+      <div className="px-8 py-14 border-b">
+        <h2 className="text-3xl font-bold text-pink-900 pt-10">Bundle Logistik</h2>
+        <p className="text-gray-700 mt-6">Tidak ada produk yang tersedia</p>
+      </div>
+    );
+  }
 
   return (
     <section className="px-0 md:px-2 py-12 md:pb-16 border-b">

@@ -180,7 +180,6 @@ function EditVendorProduct({ product, categories, albums }: { product: Product, 
   };
 
   const handleUpdateCategory = () => {
-    // Logic for updating the category
     if (categoryToEdit) {
       console.log(`Update category ${categoryToEdit.id} to ${newCategory}`);
     }

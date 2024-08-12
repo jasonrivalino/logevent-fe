@@ -622,7 +622,7 @@ function FAQ({ faqs }: { faqs: Faq[] }) {
   };
 
   return (
-    <section id="faq" className="p-8 md:p-16 max-w-screen-2xl mx-auto mt-24 md:mt-14">
+    <section id="faq" className="p-8 md:p-16 mt-8 md:-mt-8">
       <h1 className="text-3xl md:text-4xl font-bold mb-12 text-pink-900 font-sofia">
         Pertanyaan Yang Sering Ditanyakan
       </h1>
@@ -660,29 +660,32 @@ function FAQ({ faqs }: { faqs: Faq[] }) {
 function ListProduct({ products }: { products: Product[] }) {
   const router = useRouter();
 
+  const [totalItems, setTotalItems] = useState(0);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(4);
 
-  const totalItems = products.length;
-
   useEffect(() => {
+    setTotalItems(products.length);
+
     const handleResize = () => {
       if (window.innerWidth < 768) {
         setItemsPerPage(1);
       } else {
-        setItemsPerPage(4);
+        if (totalItems < 4) {
+          setItemsPerPage(totalItems);
+        } else {
+          setItemsPerPage(4);
+        }
       }
     };
 
     window.addEventListener('resize', handleResize);
-
-    // Set the initial value
     handleResize();
 
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }, [products.length, totalItems]);
 
   const handleNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + itemsPerPage) % totalItems);
@@ -693,7 +696,7 @@ function ListProduct({ products }: { products: Product[] }) {
   };
 
   const displayedProducts = () => {
-    let display = [];
+    const display = [];
     for (let i = 0; i < itemsPerPage; i++) {
       const index = (currentIndex + i) % totalItems;
       display.push(products[index]);
@@ -711,7 +714,7 @@ function ListProduct({ products }: { products: Product[] }) {
   }
 
   return (
-    <section className="p-8">
+    <section className="p-8 md:p-16 mt-8 md:-mt-8">
       <h1 className="text-3xl md:text-4xl text-pink-900 font-bold mt-44 md:mt-16 mb-2 md:mb-0 md:-ml-[5.25rem] font-sofia">Rekomendasi Produk</h1>
       <button className="mt-2 md:mt-5 mb-2 md:mb-0 md:-ml-[5.25rem] px-6 py-2 bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700" onClick={() => router.push('/logistik-vendor')}>Lihat Selengkapnya</button>
       <div className="relative flex items-center justify-center mt-10 mb-2">
