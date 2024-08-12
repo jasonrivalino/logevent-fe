@@ -10,7 +10,7 @@ import { Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
 import { readAlbumsByEventId, createAlbum, updateAlbum, deleteAlbum } from '@/app/utils/albumApi';
 import { readBundlesByEventId, createBundle, deleteBundle } from '@/app/utils/bundleApi';
-import { readEventCategories } from '@/app/utils/categoryApi';
+import { createCategory, deleteCategory, readEventCategories, updateCategory } from '@/app/utils/categoryApi';
 import { readEventById, updateEvent } from '@/app/utils/eventApi';
 import { readAllProducts } from '@/app/utils/productApi';
 import { readAllVendors } from '@/app/utils/vendorApi';
@@ -78,6 +78,14 @@ function EditPackageProduct() {
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+
+  const [showPopup, setShowPopup] = useState(false);
+  const [showEditPopup, setShowEditPopup] = useState(false);
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [newCategory, setNewCategory] = useState('');
+  const [categoryToEdit, setCategoryToEdit] = useState<Category | null>(null);
+  const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const [paginatedProducts, setPaginatedProducts] = useState<Product[]>([]);
   const [selectedProductId, setSelectedProductId] = useState<number[]>([])
@@ -173,6 +181,59 @@ function EditPackageProduct() {
     setSelectedCategoryId(parseInt(event.target.value));
   };
 
+  const handleAddCategory = async () => {
+    const newCategoryValue = newCategory.trim();
+    if (newCategoryValue !== '') {
+      const categoryData = {
+        name: newCategoryValue,
+        type: 'Product'
+      };
+
+      const newCategory = await createCategory(categoryData);
+      setCategories([...categories, newCategory]);
+      setSelectedCategoryId(newCategory.id);
+      setNewCategory('');
+    }
+    setShowPopup(false);
+  };
+
+  const handleEditCategory = (category: Category) => {
+    setCategoryToEdit(category);
+    setNewCategory(category.name);
+    setShowEditPopup(true);
+  };
+
+  const handleDeleteCategory = (category: Category) => {
+    setCategoryToDelete(category);
+    setShowDeletePopup(true);
+  };
+
+  const handleUpdateCategory = async () => {
+    if (categoryToEdit) {
+      const updatedCategory = { ...categoryToEdit, name: newCategory };
+      setCategories(categories.map(cat => cat.id === categoryToEdit.id ? updatedCategory : cat));
+
+      const categoryData = { name: newCategory };
+      await updateCategory(categoryToEdit.id, categoryData);
+      
+      setCategoryToEdit(null);
+      setNewCategory('');
+    }
+    setShowEditPopup(false);
+  };
+
+  const handleConfirmDeleteCategory = async () => {
+    if (categoryToDelete) {
+      if (categoryToDelete.id === selectedCategoryId) {
+        setSelectedCategoryId(null);
+      }
+      await deleteCategory(categoryToDelete.id);
+      setCategoryToDelete(null);
+      setCategories(categories.filter(cat => cat.id !== categoryToDelete.id));
+    }
+    setShowDeletePopup(false);
+  };
+
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files ? Array.from(event.target.files) : [];
     if (files.length > 0) {
@@ -197,6 +258,10 @@ function EditPackageProduct() {
 
   const togglePopup = () => {
     setIsPopupOpen(!isPopupOpen);
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
   };
 
   const handlePageChange = (newPage: React.SetStateAction<number>) => {
@@ -277,6 +342,10 @@ function EditPackageProduct() {
       console.error('Failed to edit vendor:', error);
     }
   };
+
+  function handleOptionClick(id: number): void {
+    throw new Error('Function not implemented.');
+  }
 
   return (
     <div className="px-5 md:px-6 pt-4 pb-6 bg-white rounded-xl shadow-md">
@@ -373,18 +442,59 @@ function EditPackageProduct() {
           <div className="flex flex-col md:flex-row">
             <div className="w-full mb-2 md:mb-0">
               <label className="block text-gray-700 font-sofia mb-1 md:mb-2 text-sm md:text-base">Kategori Paket *</label>
-              <select
-                className="w-full md:w-11/12 px-2 md:px-4 py-1 md:py-[0.65rem] border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 bg-white text-sm md:text-base"
-                value={selectedCategoryId ?? 0}
-                onChange={handleCategoryChange}
-              >
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-                <option value="add-new">+ Tambah Kategori</option>
-              </select>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={toggleDropdown}
+                  className="w-full md:w-11/12 px-2 md:px-4 py-1 md:py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 bg-white text-sm md:text-base"
+                >
+                  {categories.find(cat => cat.id === selectedCategoryId)?.name || 'Pilih Kategori'}
+                </button>
+                {isDropdownOpen && (
+                  <div className="absolute bg-white border rounded-lg shadow-lg mt-1 w-full z-10">
+                    {categories.map((category) => (
+                      <div 
+                        key={category.id}
+                        onClick={() => handleOptionClick(category.id)}
+                        className="flex items-center justify-between p-2 hover:bg-gray-100 cursor-pointer text-xs md:text-base"
+                      >
+                        {category.name}
+                        <button
+                          className="text-blue-500 text-xs ml-20"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            toggleDropdown();
+                            handleEditCategory(category);
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="text-red-500 text-xs"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            toggleDropdown();
+                            handleDeleteCategory(category);
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    ))}
+                    <div
+                      className="flex items-center justify-between p-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => {
+                        toggleDropdown();
+                        setShowPopup(true);
+                      }}
+                    >
+                      <span>+ Tambah Kategori</span>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
             <div className="w-full md:w-[21rem]">
               <label className="block text-gray-700 font-sofia mb-1 md:mb-2 text-sm md:text-base">Harga Paket *</label>
@@ -442,6 +552,85 @@ function EditPackageProduct() {
           </button>
         </div>
       </form>
+            {/* Popup for Adding New Category */}
+            {showPopup && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 font-sofia text-black">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h2 className="text-xl font-semibold mb-4">Tambah Kategori Baru</h2>
+            <input
+              type="text"
+              value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 mb-4"
+              placeholder="Masukkan kategori"
+            />
+            <div className="flex justify-end space-x-4">
+              <button onClick={() => setShowPopup(false)} className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg">Batal</button>
+              <button onClick={handleAddCategory} className="px-4 py-2 bg-pink-600 text-white rounded-lg">Tambah</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Popup for Editing Category */}
+      {showEditPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 text-black">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm mx-auto">
+            <h3 className="text-lg font-semibold">Edit Category</h3>
+            <input
+              type="text"
+              className="w-full px-3 py-2 border rounded-lg mt-2"
+              value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+            />
+            <div className="mt-4 flex justify-end space-x-2">
+              <button
+                onClick={() => {
+                  setCategoryToEdit(null);
+                  setNewCategory('');
+                  setShowEditPopup(false);
+                }}
+                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleUpdateCategory}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                Update
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Popup for Deleting Category */}
+      {showDeletePopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 text-black">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm mx-auto">
+            <h3 className="text-lg font-semibold">Delete Category</h3>
+            <p>Are you sure you want to delete the category "{categoryToDelete?.name}"?</p>
+            <div className="mt-4 flex justify-end space-x-2">
+              <button
+                onClick={() => {
+                  setCategoryToDelete(null);
+                  setShowDeletePopup(false);
+                }}
+                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmDeleteCategory}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {isPopupOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 relative mt-12 overflow-hidden md:w-4/5 h-4/5 w-11/12">              

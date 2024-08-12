@@ -162,75 +162,84 @@ function Table({ orders, onExport }: { orders: Order[], onExport: () => void }) 
                     <button className="text-sm md:text-base bg-pink-500 hover:bg-pink-600 px-2 py-1 md:p-2 rounded-md" onClick={onExport}>Export to Excel</button>
                 </div>
             </div>
-            <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                    <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Lengkap</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nomor Telepon</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alamat</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Mulai</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Berakhir</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kategori Pemesanan</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status Pemesanan</th>
-                    </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                    {paginatedOrders.map((order, index) => (
-                        <tr key={index}>
-                            <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm font-medium text-gray-900">{order.id}</td>
-                            <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900">{order.name}</td>
-                            <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900">
-                                <a href={generateWhatsAppUrl(order.phone, '')} target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:underline">
-                                    {order.phone}
-                                </a>
-                            </td>
-                            <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900">
-                                <a href={generateEmailUrl(order.userEmail)} className="text-gray-900 hover:underline">
-                                    {order.userEmail}
-                                </a>
-                            </td>
-                            <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900">
-                                <a href={generateGoogleMapsUrl(order.address)} target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:underline">
-                                    {order.address}
-                                </a>
-                            </td>
-                            <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900">{convertDate(order.startDate)}</td>
-                            <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900">{convertDate(order.endDate)}</td>
-                            <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900">
-                              {order.cartType === 'Product' ? 'Logistik Vendor' : 'Paket Event'}
-                            </td>
-                            <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900 flex justify-center items-center">
-                                <button onClick={() => handleConfirmation("approve")} className="mr-2">
-                                    <FaCheck className="text-green-500" />
-                                </button>
-                                <button onClick={() => handleConfirmation("reject")}>
-                                    <FaTimes className="text-red-500" />
-                                </button>
-                            </td>
+            <div className="overflow-x-auto md:overflow-x-visible"> {/* Scrollable container */}
+                <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                        <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Lengkap</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nomor Telepon</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alamat</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Mulai</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Berakhir</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kategori Pemesanan</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status Pemesanan</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                        {paginatedOrders.map((order, index) => (
+                            <tr key={index}>
+                                <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm font-medium text-gray-900">{order.id}</td>
+                                <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900">{order.name}</td>
+                                <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900">
+                                    <a href={generateWhatsAppUrl(order.phone, '')} target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:underline">
+                                        {order.phone}
+                                    </a>
+                                </td>
+                                <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900">
+                                    <a href={generateEmailUrl(order.userEmail)} className="text-gray-900 hover:underline">
+                                        {order.userEmail}
+                                    </a>
+                                </td>
+                                <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900">
+                                    <a href={generateGoogleMapsUrl(order.address)} target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:underline">
+                                        {order.address}
+                                    </a>
+                                </td>
+                                <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900">{convertDate(order.startDate)}</td>
+                                <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900">{convertDate(order.endDate)}</td>
+                                <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900">
+                                    {order.cartType === 'Product' ? 'Logistik Vendor' : 'Paket Event'}
+                                </td>
+                                <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900 flex justify-center items-center">
+                                    <button onClick={() => handleConfirmation("approve")} className="mr-2">
+                                        <FaCheck className="text-green-500" />
+                                    </button>
+                                    <button onClick={() => handleConfirmation("reject")}>
+                                        <FaTimes className="text-red-500" />
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
             <div className="flex justify-center bg-white z-10">
-            {totalPages > 1 && (
-              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
-            )}
+                {totalPages > 1 && (
+                    <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+                )}
             </div>
             {showModal && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 font-sofia">
                     <div className="bg-white p-4 md:p-8 rounded shadow-lg z-60 max-w-xs md:max-w-md w-full">
-                        <p className="text-black text-sm md:text-lg">{modalContent}</p>
-                        <div className="mt-4 flex justify-end">
-                            <button onClick={() => setShowModal(false)} className="px-4 py-2 bg-gray-300 text-black rounded mr-2 text-sm md:text-base">Cancel</button>
-                            {/* make button can have 2 position */}
-                            <button
-                                onClick={() => setShowModal(false)}
-                                className={`px-4 py-2 text-white rounded text-sm md:text-base ${action === "approve" ? "bg-green-500" : "bg-red-500"}`}
-                            >
-                                Confirm
-                            </button>                        </div>
+                        <h2 className="text-lg md:text-xl font-bold mb-2 text-pink-900">{action === "approve" ? "Konfirmasi Penyelesaian" : "Konfirmasi Pembatalan"}</h2>
+                        <p className="text-sm md:text-base">{modalContent}</p>
+                        <div className="flex justify-end mt-4">
+                            <button onClick={() => setShowModal(false)} className="text-sm md:text-base bg-pink-500 hover:bg-pink-600 px-2 py-1 md:p-2 rounded-md mr-2">
+                                Batal
+                            </button>
+                            <button onClick={() => {
+                                if (action === "approve") {
+                                    // Handle approve logic here
+                                } else {
+                                    // Handle reject logic here
+                                }
+                                setShowModal(false);
+                            }} className="text-sm md:text-base bg-green-500 hover:bg-green-600 px-2 py-1 md:p-2 rounded-md">
+                                Konfirmasi
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

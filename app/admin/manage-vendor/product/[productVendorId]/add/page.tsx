@@ -153,31 +153,38 @@ function AddVendorProduct({ vendor }: { vendor: Vendor }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!vendor) {
-      throw new Error('Vendor is not set');
+  
+    // Check for required fields
+    if (!selectedCategoryId || selectedCategoryId === 0) {
+      alert('Please select a category.');
+      return;
     }
-
-    if (!selectedCategoryId) {
-      throw new Error('Category ID is not set');
-    }
-
+  
     if (!name) {
-      throw new Error('Name is not set');
+      alert('Please enter the product name.');
+      return;
     }
-
+  
     if (!specification) {
-      throw new Error('Specification is not set');
+      alert('Please enter the product specification.');
+      return;
     }
-
+  
     if (!selectedRate) {
-      throw new Error('Rate is not set');
+      alert('Please select a rate.');
+      return;
     }
-
+  
     if (!price) {
-      throw new Error('Price is not set');
+      alert('Please enter the product price.');
+      return;
     }
-
+  
+    if (productImages.length === 0) {
+      alert('Please upload at least one product image.');
+      return;
+    }
+  
     const productData = {
       vendorId: vendor.id,
       categoryId: selectedCategoryId,
@@ -189,8 +196,9 @@ function AddVendorProduct({ vendor }: { vendor: Vendor }) {
       description: description || null,
       productImage: productImages.length > 0 ? productImages[0] : null
     };
-
-    const albumImages = productImages.slice(1);    
+  
+    const albumImages = productImages.slice(1);
+    
     try {
       const product = await createProduct(productData);
       if (albumImages.length > 0) {
@@ -199,7 +207,8 @@ function AddVendorProduct({ vendor }: { vendor: Vendor }) {
           await createAlbum(image, null, productId);
         }
       }
-
+  
+      // Navigate to the next page only if product creation is successful
       router.push(`/admin/manage-vendor/product/${vendor.id}`);
     } catch (error) {
       console.error('Failed to create product:', error);
@@ -233,6 +242,7 @@ function AddVendorProduct({ vendor }: { vendor: Vendor }) {
               maxLength={40}
               value={name}
               onChange={(e) => setName(e.target.value)}
+              required
             />
           </div>
           <div className="w-full md:w-[30%] mb-3 md:mb-0">
@@ -244,6 +254,7 @@ function AddVendorProduct({ vendor }: { vendor: Vendor }) {
               placeholder="Contoh: Multifunction Hall"
               value={specification}
               onChange={(e) => setSpecification(e.target.value)}
+              required
             />
           </div>
           <div className="w-full md:w-[30%]">
@@ -268,6 +279,7 @@ function AddVendorProduct({ vendor }: { vendor: Vendor }) {
               placeholder="Contoh: Gedung Sabuga ITB adalah gedung Sasana Budaya Ganesha"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              required
             ></textarea>
           </div>
         </div>
@@ -281,6 +293,7 @@ function AddVendorProduct({ vendor }: { vendor: Vendor }) {
                   className="w-full md:w-11/12 px-2 md:px-4 py-1 md:py-[0.65rem] border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 bg-white text-sm md:text-base"
                   value={selectedCategoryId ?? 0}
                   onChange={handleCategoryChange}
+                  required
                 >
                   <option value={0}>Pilih Kategori</option>
                   {categories.map((category) => (
@@ -301,6 +314,7 @@ function AddVendorProduct({ vendor }: { vendor: Vendor }) {
                 placeholder="Masukkan Harga"
                 value={price}
                 onChange={(e) => setPrice(e.target.value )}
+                required
               />
               </div>
               <div className="flex mt-1 space-x-4">
@@ -353,6 +367,7 @@ function AddVendorProduct({ vendor }: { vendor: Vendor }) {
                   multiple
                   className="hidden"
                   onChange={handleImageUpload}
+                  required
                 />
               </label>
             </div>
