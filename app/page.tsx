@@ -368,8 +368,7 @@ function Introduction() {
       <div className="absolute inset-0 bg-pink-900 opacity-50"></div>
 
       {/* Add image and text content */}
-      <div className="absolute inset-0 flex flex-col text-white p-10 md:p-20 mt-[6.5rem]">
-
+      <div className="absolute inset-0 flex flex-col text-white p-10 md:p-20 mt-[6.5rem] h-sm:mt-14 md:h-sm:mt-[6.5rem]">
         {/* Titles and descriptions */}
         <h1 className="text-5xl md:text-5xl font-bold font-poppins flex items-center">
           Wujudkan Event Impianmu

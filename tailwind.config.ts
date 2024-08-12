@@ -11,6 +11,9 @@ module.exports = {
         sofia: ['"Sofia Sans"', 'sans-serif'], // Adding Sofia Sans
         poppins: ['Poppins', 'sans-serif'], // Adding Poppins
       },
+      screens: {
+        'h-sm': { 'raw': '(max-height: 768px)' },  // Custom height breakpoint
+      },
     },
   },
   plugins: [],
