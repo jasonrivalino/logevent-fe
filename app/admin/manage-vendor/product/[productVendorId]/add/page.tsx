@@ -9,15 +9,35 @@ import { Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
 import { createProduct } from '@/app/utils/productApi';
 import { createAlbum } from '@/app/utils/albumApi';
-import { readProductCategories } from '@/app/utils/categoryApi';
+import { readProductCategories, createCategory } from '@/app/utils/categoryApi';
 import { readVendorById } from '@/app/utils/vendorApi';
-import { Category, Product } from '@/app/utils/types';
+import { Category, Vendor } from '@/app/utils/types';
 
 export default function AdminAddVendor() {
   const router = useRouter();
+  const [vendor, setVendor] = useState<Vendor | null>(null);
+
+  useEffect(() => {
+    const { pathname } = window.location;
+    const segments = pathname.split('/');
+    const id = segments[segments.length - 2];
+    
+    const fetchVendor = async () => {
+      try {
+        const vendor = await readVendorById(parseInt(id));
+        setVendor(vendor);
+      } catch (error) {
+        console.error('Failed to fetch vendor:', error);
+      }
+    };
+    
+    fetchVendor();
+  }, [router]);
+
   const handleBackClick = () => {
-      // TODO: ini tar diganti endpointnya
-      router.push(`/admin/manage-vendor/product/1`);
+      if (vendor) {
+          router.push(`/admin/manage-vendor/product/${vendor.id}`);
+      }
   }
 
   return (
@@ -46,7 +66,7 @@ export default function AdminAddVendor() {
                   <CommandLeft />
                 </div>
                 <div className="flex-grow ml-0 md:ml-7 pt-[0.15rem]">
-                    <AddVendorProduct />
+                    {vendor && <AddVendorProduct vendor={vendor} />}
                 </div>
             </div>
         </div>
@@ -54,10 +74,8 @@ export default function AdminAddVendor() {
     );
 }
 
-function AddVendorProduct() {
+function AddVendorProduct({ vendor }: { vendor: Vendor }) {
   const router = useRouter();
-  const [vendorId, setVendorId] = useState<number | null>(null);
-  const [vendorName, setVendorName] = useState('');
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [name, setName] = useState('');
@@ -69,25 +87,6 @@ function AddVendorProduct() {
   const [productImages, setProductImages] = useState<string[]>([]);
   const [showPopup, setShowPopup] = useState(false);
   const [newCategory, setNewCategory] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
-
-  useEffect(() => {
-    const { pathname } = window.location;
-    const segments = pathname.split('/');
-    const id = segments[segments.length - 2];
-    
-    const fetchVendor = async () => {
-      try {
-        const vendor = await readVendorById(parseInt(id));
-        setVendorName(vendor.name);
-      } catch (error) {
-        console.error('Failed to fetch vendor:', error);
-      }
-    };
-    
-    setVendorId(parseInt(id));
-    fetchVendor();
-  }, [router]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -103,9 +102,10 @@ function AddVendorProduct() {
   }, []);
   
   const handleCategoryChange = (event: { target: { value: any; }; }) => {
-    setSelectedCategoryId(parseInt(event.target.value));
     if (event.target.value === 'add-new') {
       setShowPopup(true);
+    } else {
+      setSelectedCategoryId(parseInt(event.target.value));
     }
   };
 
@@ -135,13 +135,17 @@ function AddVendorProduct() {
     setProductImages(newImages);
   };
 
-  const handleAddCategory = () => {
-    if (newCategory.trim() !== '') {
-      setCategories([...categories, {
-        id: 0, name: newCategory.trim(),
-        type: ''
-      }]);
-      setSelectedCategory(newCategory.trim());
+  const handleAddCategory = async () => {
+    const newCategoryValue = newCategory.trim();
+    if (newCategoryValue !== '') {
+      const categoryData = {
+        name: newCategoryValue,
+        type: 'Product'
+      };
+  
+      const newCategory = await createCategory(categoryData);
+      setCategories([...categories, newCategory]);
+      setSelectedCategoryId(newCategory.id);
       setNewCategory('');
       setShowPopup(false);
     }
@@ -150,8 +154,8 @@ function AddVendorProduct() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!vendorId) {
-      throw new Error('Vendor ID is not set');
+    if (!vendor) {
+      throw new Error('Vendor is not set');
     }
 
     if (!selectedCategoryId) {
@@ -175,7 +179,7 @@ function AddVendorProduct() {
     }
 
     const productData = {
-      vendorId,
+      vendorId: vendor.id,
       categoryId: selectedCategoryId,
       name,
       specification,
@@ -196,7 +200,7 @@ function AddVendorProduct() {
         }
       }
 
-      router.push(`/admin/manage-vendor/product/${vendorId}`);
+      router.push(`/admin/manage-vendor/product/${vendor.id}`);
     } catch (error) {
       console.error('Failed to create product:', error);
     }
@@ -205,7 +209,7 @@ function AddVendorProduct() {
   return (
     <div className="px-6 pt-4 pb-6 bg-white rounded-xl shadow-md">
       {/* Text in center */}
-      <h1 className="text-2xl md:text-3xl font-bold md:mb-3 text-pink-900 font-sofia text-center mt-5 md:mt-0">Tambah Produk Vendor {vendorName}</h1>
+      <h1 className="text-2xl md:text-3xl font-bold md:mb-3 text-pink-900 font-sofia text-center mt-5 md:mt-0">Tambah Produk Vendor {vendor.name}</h1>
       {/* Breadcrumb Navigation */}
       <div className="hidden md:flex items-center mb-4">
         <div className="flex items-center">
@@ -373,7 +377,7 @@ function AddVendorProduct() {
           </div>
         </div>
         <div className="w-full">
-          <button type="submit" className="w-full py-1 md:py-2 mt-2 bg-pink-600 text-white font-semibold rounded-lg hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-600" onClick={() => router.push('/admin/manage-vendor/product/1')}>
+          <button type="submit" className="w-full py-1 md:py-2 mt-2 bg-pink-600 text-white font-semibold rounded-lg hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-600" onClick={() => router.push(`/admin/manage-vendor/product/${vendor.id}`)}>
             Tambah Produk
           </button>
         </div>

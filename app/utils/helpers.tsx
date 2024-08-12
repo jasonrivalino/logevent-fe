@@ -42,9 +42,10 @@ export const generateInstagramUrl = (username: string) => {
   return `https://www.instagram.com/${username}`;
 };
 
-export const generateWhatsAppUrl = (phone: string) => {
-  const encodedPhone = phone.replace(/\D/g, '');
-  return `https://wa.me/${encodedPhone}`;
+export const generateWhatsAppUrl = (number: string, message: string) => {
+  const encodedNumber = encodeURIComponent(number);
+  const encodedMessage = encodeURIComponent(message);
+  return `https://wa.me/${encodedNumber}?text=${encodedMessage}`;
 };
 
 export const getExcludedDates = (bookedDates: string[]) => {

@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 // self-defined modules
 import { readUserProfile } from '@/app/utils/authApi';
+import { generateWhatsAppUrl } from '@/app/utils/helpers';
 import { readAllFaqs } from './utils/faqApi';
 import { readTopProducts } from '@/app/utils/productApi';
 import { createVisit } from '@/app/utils/visitApi';
@@ -406,6 +407,13 @@ function Introduction() {
 }
 
 function AboutUsSection() {
+  const handleChat = () => {
+    const adminNumber = process.env.NEXT_PUBLIC_ADMIN_NUMBER;
+    const messageTemplate = `Hai Admin LOGEVENT, saya tertarik menjadi bagian dari mitra Vendor LOGEVENT, apa saja persyaratan yang harus saya persiapkan?`;
+    
+    const whatsappUrl = generateWhatsAppUrl(adminNumber || "", messageTemplate);
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+  };
 
   return (
     <section id="about-us">
@@ -413,7 +421,7 @@ function AboutUsSection() {
         <div className="w-full md:w-1/2">
           <iframe 
             className="w-full h-48 md:h-96 rounded-lg" 
-            src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+            src="https://www.youtube.com/embed/ZZl2uAkUfHA" 
             title="YouTube video player" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
             allowFullScreen
@@ -442,7 +450,12 @@ function AboutUsSection() {
             </div>
           </div>
           <div className="mt-8 flex flex-col md:flex-row">
-            <button className="px-6 py-2 md:py-3 md:mt-0 bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold rounded-lg hover:bg-pink-100 hover:text-pink-600 hover:border-pink-600">Menjadi Vendor</button>
+            <button
+              className="px-6 py-2 md:py-3 md:mt-0 bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold rounded-lg hover:bg-pink-100 hover:text-pink-600 hover:border-pink-600"
+              onClick={handleChat}
+            >
+              Menjadi Vendor
+            </button>
             <div className='md:ml-6 flex mt-3 md:mt-0 flex-col font-sofia'>
               <h3 className="text-base md:text-lg text-pink-600">Bergabung Menjadi Mitra Vendor Kami !</h3>     
               <p className="text-sm text-black">Naikkan penjualan Anda, dan jangkau lebih banyak pelanggan </p>
@@ -621,7 +634,7 @@ function FAQ({ faqs }: { faqs: Faq[] }) {
   };
 
   return (
-    <section id="faq" className="p-8 md:p-16 max-w-screen-2xl mx-auto mt-24 md:mt-14">
+    <section id="faq" className="p-8 md:p-16 mt-8 md:-mt-8">
       <h1 className="text-3xl md:text-4xl font-bold mb-12 text-pink-900 font-sofia">
         Pertanyaan Yang Sering Ditanyakan
       </h1>
@@ -659,29 +672,32 @@ function FAQ({ faqs }: { faqs: Faq[] }) {
 function ListProduct({ products }: { products: Product[] }) {
   const router = useRouter();
 
+  const [totalItems, setTotalItems] = useState(0);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(4);
 
-  const totalItems = products.length;
-
   useEffect(() => {
+    setTotalItems(products.length);
+
     const handleResize = () => {
       if (window.innerWidth < 768) {
         setItemsPerPage(1);
       } else {
-        setItemsPerPage(4);
+        if (totalItems < 4) {
+          setItemsPerPage(totalItems);
+        } else {
+          setItemsPerPage(4);
+        }
       }
     };
 
     window.addEventListener('resize', handleResize);
-
-    // Set the initial value
     handleResize();
 
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }, [products.length, totalItems]);
 
   const handleNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + itemsPerPage) % totalItems);
@@ -692,7 +708,7 @@ function ListProduct({ products }: { products: Product[] }) {
   };
 
   const displayedProducts = () => {
-    let display = [];
+    const display = [];
     for (let i = 0; i < itemsPerPage; i++) {
       const index = (currentIndex + i) % totalItems;
       display.push(products[index]);
@@ -710,7 +726,7 @@ function ListProduct({ products }: { products: Product[] }) {
   }
 
   return (
-    <section className="p-8">
+    <section className="p-8 md:p-16 mt-8 md:-mt-8">
       <h1 className="text-3xl md:text-4xl text-pink-900 font-bold mt-44 md:mt-16 mb-2 md:mb-0 md:-ml-[5.25rem] font-sofia">Rekomendasi Produk</h1>
       <button className="mt-2 md:mt-5 mb-2 md:mb-0 md:-ml-[5.25rem] px-6 py-2 bg-pink-600 text-white font-sofia font-bold rounded-lg hover:bg-pink-700" onClick={() => router.push('/logistik-vendor')}>Lihat Selengkapnya</button>
       <div className="relative flex items-center justify-center mt-10 mb-2">

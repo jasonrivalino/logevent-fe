@@ -26,6 +26,10 @@ export const createVisit = async () => {
     });
     return response.data;
   } catch (error: any) {
+    if (error.response && error.response.status === 429) {
+      return null;
+    }
+    
     throw new Error(error.response?.data?.message || 'Failed to create visit');
   }
 };

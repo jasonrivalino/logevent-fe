@@ -317,19 +317,25 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
                 onChange={handleCategoryChange}
               >
                 <option value={0}>Pilih Kategori</option>
-                  {categories.map(category => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-                  <option value="tambah_kategori">+ Tambah Kategori</option>
-                </select>
+                {categories.map(category => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+                <option value="add-new">+ Tambah Kategori</option>
+              </select>
             </div>
             <div className="w-full md:w-[21rem]">
               <label className="block text-gray-700 font-sofia mb-1 md:mb-2 text-sm md:text-base">Harga Paket *</label>
               <div className="flex">
                 <span className="flex items-center px-3 text-gray-500 border border-r-0 rounded-l-lg border-gray-300">Rp</span>
-                <input className="w-full px-4 py-1 md:py-2 border rounded-r-lg focus:outline-none focus:ring-2 focus:ring-pink-600 text-sm md:text-base" type="text" placeholder="Masukkan Harga" />
+                <input
+                  className="w-full px-4 py-1 md:py-2 border rounded-r-lg focus:outline-none focus:ring-2 focus:ring-pink-600 text-sm md:text-base"
+                  type="text"
+                  placeholder="Masukkan Harga"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                />
               </div>
             </div>
           </div>

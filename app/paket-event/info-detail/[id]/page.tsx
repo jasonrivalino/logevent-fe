@@ -130,12 +130,13 @@ const EventImage = ({ event, albums, isWishlist, setIsWishlist }: { event: Event
     }
   };
 
+  const images = [{ albumImage: event.eventImage }, ...albums];
   useEffect(() => {
     resetTimeout();
     timeoutRef.current = setTimeout(
       () =>
         setCurrentImageIndex((prevIndex) =>
-          prevIndex === albums.length - 1 ? 0 : prevIndex + 1
+          prevIndex === images.length - 1 ? 0 : prevIndex + 1
         ),
       2000
     );
@@ -143,7 +144,7 @@ const EventImage = ({ event, albums, isWishlist, setIsWishlist }: { event: Event
     return () => {
       resetTimeout();
     };
-  }, [currentImageIndex]);
+  }, [currentImageIndex, images.length]);
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -168,7 +169,10 @@ const EventImage = ({ event, albums, isWishlist, setIsWishlist }: { event: Event
 
   const handleChat = () => {
     const adminNumber = process.env.NEXT_PUBLIC_ADMIN_NUMBER;
-    window.open(generateWhatsAppUrl(adminNumber || ""), '_blank', 'noopener,noreferrer');
+    const messageTemplate = `Hai Admin LOGEVENT, saya tertarik dengan Paket Event ${event.name}. Bisa berikan informasi lebih lanjut?`;
+    
+    const whatsappUrl = generateWhatsAppUrl(adminNumber || "", messageTemplate);
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
   };
 
   const handleClickWishlist = async (e: { preventDefault: () => void; }) => {
@@ -254,19 +258,11 @@ const EventImage = ({ event, albums, isWishlist, setIsWishlist }: { event: Event
       ) : (
         <div className="md:px-8 pb-4">
           <div className="flex md:space-x-4">
-            {albums.length > 0 ? (
-              <img
-                src={albums[currentImageIndex].albumImage || "/Image/planetarium.jpg"}
-                alt="Main Hall"
-                className="w-full md:w-1/2 h-44 rounded-md"
-              />
-            ) : (
-              <img
-                src={event.eventImage || "/Image/planetarium.jpg"}
-                alt="Main Hall"
-                className="w-full md:w-1/2 h-44 rounded-md"
-              />
-            )}
+            <img
+              src={images[currentImageIndex].albumImage || "/Image/planetarium.jpg"}
+              alt="Main Hall"
+              className="w-full md:w-1/2 h-44 rounded-md"
+            />
             <div className="grid grid-cols-2 gap-4 w-0 md:w-1/2">
               {albums.map((album, index) => (
                 <img
@@ -353,17 +349,26 @@ function ProductList({ products }: { products: Product[]; }) {
   const router = useRouter();
   const windowWidth = useWindowWidth();
 
+  const [totalItems, setTotalItems] = useState(0);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(2);
 
-  const totalItems = products.length;
-
   useEffect(() => {
+    setTotalItems(products.length);
+
     const handleResize = () => {
       if (window.innerWidth < 768) {
-        setItemsPerPage(2);
+        if (totalItems < 2) {
+          setItemsPerPage(totalItems);
+        } else {
+          setItemsPerPage(2);
+        }
       } else {
-        setItemsPerPage(4);
+        if (totalItems < 4) {
+          setItemsPerPage(totalItems);
+        } else {
+          setItemsPerPage(4);
+        }
       }
     };
 
@@ -373,7 +378,7 @@ function ProductList({ products }: { products: Product[]; }) {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }, [products.length, totalItems]);
 
   const handleNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + itemsPerPage) % totalItems);
@@ -391,6 +396,15 @@ function ProductList({ products }: { products: Product[]; }) {
     }
     return display;
   };
+
+  if (products.length === 0) {
+    return (
+      <div className="px-8 py-14 border-b">
+        <h2 className="text-3xl font-bold text-pink-900 pt-10">Bundle Logistik</h2>
+        <p className="text-gray-700 mt-6">Tidak ada produk yang tersedia</p>
+      </div>
+    );
+  }
 
   return (
     <section className="px-8 py-12 md:pb-16 border-b">
