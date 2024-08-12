@@ -182,7 +182,7 @@ function Table({ orders, onExport }: { orders: Order[], onExport: () => void }) 
                             <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm font-medium text-gray-900">{order.id}</td>
                             <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900">{order.name}</td>
                             <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900">
-                                <a href={generateWhatsAppUrl(order.phone)} target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:underline">
+                                <a href={generateWhatsAppUrl(order.phone, '')} target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:underline">
                                     {order.phone}
                                 </a>
                             </td>

@@ -161,7 +161,10 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
 
   const handleChat = () => {
     const vendorNumber = product.vendorPhone;
-    window.open(generateWhatsAppUrl(vendorNumber || ""), '_blank', 'noopener,noreferrer');
+    const messageTemplate = `Hai Vendor ${product.vendorName} LOGEVENT, saya tertarik dengan Produk ${product.name}. Bisa berikan informasi lebih lanjut?`;
+    
+    const whatsappUrl = generateWhatsAppUrl(vendorNumber || "", messageTemplate);
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
   };
 
   const handleClickWishlist = async (e: { preventDefault: () => void; }) => {

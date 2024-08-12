@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 // self-defined modules
 import { readUserProfile } from '@/app/utils/authApi';
+import { generateWhatsAppUrl } from '@/app/utils/helpers';
 import { readAllFaqs } from './utils/faqApi';
 import { readTopProducts } from '@/app/utils/productApi';
 import { createVisit } from '@/app/utils/visitApi';
@@ -407,6 +408,13 @@ function Introduction() {
 }
 
 function AboutUsSection() {
+  const handleChat = () => {
+    const adminNumber = process.env.NEXT_PUBLIC_ADMIN_NUMBER;
+    const messageTemplate = `Hai Admin LOGEVENT, saya tertarik menjadi bagian dari mitra Vendor LOGEVENT, apa saja persyaratan yang harus saya persiapkan?`;
+    
+    const whatsappUrl = generateWhatsAppUrl(adminNumber || "", messageTemplate);
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+  };
 
   return (
     <section id="about-us">
@@ -414,7 +422,7 @@ function AboutUsSection() {
         <div className="w-full md:w-1/2">
           <iframe 
             className="w-full h-48 md:h-96 rounded-lg" 
-            src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+            src="https://www.youtube.com/embed/ZZl2uAkUfHA" 
             title="YouTube video player" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
             allowFullScreen
@@ -443,7 +451,12 @@ function AboutUsSection() {
             </div>
           </div>
           <div className="mt-8 flex flex-col md:flex-row">
-            <button className="px-6 py-2 md:py-3 md:mt-0 bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold rounded-lg hover:bg-pink-100 hover:text-pink-600 hover:border-pink-600">Menjadi Vendor</button>
+            <button
+              className="px-6 py-2 md:py-3 md:mt-0 bg-white text-pink-600 border-2 border-pink-600 font-sofia font-bold rounded-lg hover:bg-pink-100 hover:text-pink-600 hover:border-pink-600"
+              onClick={handleChat}
+            >
+              Menjadi Vendor
+            </button>
             <div className='md:ml-6 flex mt-3 md:mt-0 flex-col font-sofia'>
               <h3 className="text-base md:text-lg text-pink-600">Bergabung Menjadi Mitra Vendor Kami !</h3>     
               <p className="text-sm text-black">Naikkan penjualan Anda, dan jangkau lebih banyak pelanggan </p>

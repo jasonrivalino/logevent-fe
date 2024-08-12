@@ -169,7 +169,10 @@ const EventImage = ({ event, albums, isWishlist, setIsWishlist }: { event: Event
 
   const handleChat = () => {
     const adminNumber = process.env.NEXT_PUBLIC_ADMIN_NUMBER;
-    window.open(generateWhatsAppUrl(adminNumber || ""), '_blank', 'noopener,noreferrer');
+    const messageTemplate = `Hai Admin LOGEVENT, saya tertarik dengan Paket Event ${event.name}. Bisa berikan informasi lebih lanjut?`;
+    
+    const whatsappUrl = generateWhatsAppUrl(adminNumber || "", messageTemplate);
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
   };
 
   const handleClickWishlist = async (e: { preventDefault: () => void; }) => {

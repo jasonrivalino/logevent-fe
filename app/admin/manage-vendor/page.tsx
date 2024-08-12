@@ -207,7 +207,7 @@ function ManageVendor({ vendors, triggerFetch, onExport }: { vendors: Vendor[], 
                                 { 
                                     label: "Nomor Telepon", 
                                     value: (
-                                        <a href={generateWhatsAppUrl(vendor.phone)} target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:underline">
+                                        <a href={generateWhatsAppUrl(vendor.phone, '')} target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:underline">
                                             {vendor.phone}
                                         </a>
                                     ) 

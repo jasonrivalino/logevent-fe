@@ -136,8 +136,11 @@ const ProductImage = ({ product, albums }: { product: Product; albums: Album[]; 
   };
 
   const handleChat = () => {
-    const vendorNumber = product.vendorPhone;
-    window.open(generateWhatsAppUrl(vendorNumber || ""), '_blank', 'noopener,noreferrer');
+    const adminNumber = process.env.NEXT_PUBLIC_ADMIN_NUMBER;
+    const messageTemplate = `Hai Admin LOGEVENT, saya tertarik dengan layanan Event Organizer. Bisa berikan informasi lebih lanjut?`;
+    
+    const whatsappUrl = generateWhatsAppUrl(adminNumber || "", messageTemplate);
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
   };
 
   return (
