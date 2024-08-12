@@ -9,7 +9,7 @@ import { Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
 import { createProduct } from '@/app/utils/productApi';
 import { createAlbum } from '@/app/utils/albumApi';
-import { readProductCategories } from '@/app/utils/categoryApi';
+import { readProductCategories, createCategory } from '@/app/utils/categoryApi';
 import { readVendorById } from '@/app/utils/vendorApi';
 import { Category, Vendor } from '@/app/utils/types';
 
@@ -102,9 +102,10 @@ function AddVendorProduct({ vendor }: { vendor: Vendor }) {
   }, []);
   
   const handleCategoryChange = (event: { target: { value: any; }; }) => {
-    setSelectedCategoryId(parseInt(event.target.value));
     if (event.target.value === 'add-new') {
       setShowPopup(true);
+    } else {
+      setSelectedCategoryId(parseInt(event.target.value));
     }
   };
 
@@ -134,14 +135,17 @@ function AddVendorProduct({ vendor }: { vendor: Vendor }) {
     setProductImages(newImages);
   };
 
-  const handleAddCategory = () => {
-    if (newCategory.trim() !== '') {
-      // setCategories([...categories, {
-      //   id: 0, name: newCategory.trim(),
-      //   type: ''
-      // }]);
-      // setSelectedCategory(newCategory.trim());
-
+  const handleAddCategory = async () => {
+    const newCategoryValue = newCategory.trim();
+    if (newCategoryValue !== '') {
+      const categoryData = {
+        name: newCategoryValue,
+        type: 'Product'
+      };
+  
+      const newCategory = await createCategory(categoryData);
+      setCategories([...categories, newCategory]);
+      setSelectedCategoryId(newCategory.id);
       setNewCategory('');
       setShowPopup(false);
     }

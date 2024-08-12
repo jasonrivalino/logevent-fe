@@ -379,12 +379,12 @@ function EditPackageProduct() {
                 onChange={handleCategoryChange}
               >
                 {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-              <option value="tambah_kategori">+ Tambah Kategori</option>
-            </select>
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+                <option value="add-new">+ Tambah Kategori</option>
+              </select>
             </div>
             <div className="w-full md:w-[21rem]">
               <label className="block text-gray-700 font-sofia mb-1 md:mb-2 text-sm md:text-base">Harga Paket *</label>
