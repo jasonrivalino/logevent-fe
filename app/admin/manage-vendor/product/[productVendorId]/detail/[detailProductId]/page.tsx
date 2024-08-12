@@ -112,14 +112,6 @@ export default function ProductDetail() {
   );
 }
 
-const images = [
-  "/Image/landingpage1.jpg",
-  "/Image/landingpage2.jpg",
-  "/Image/landingpage3.jpg",
-  "/Image/planetarium.jpg",
-  "/Image/partyevent.jpg"
-];
-
 const useWindowWidth = () => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
@@ -146,6 +138,7 @@ const ProductImage = ({ product, albums }: { product: Product; albums: Album[] }
     }
   };
 
+  const images = [{ albumImage: product.productImage }, ...albums];
   useEffect(() => {
     resetTimeout();
     timeoutRef.current = setTimeout(
@@ -159,7 +152,7 @@ const ProductImage = ({ product, albums }: { product: Product; albums: Album[] }
     return () => {
       resetTimeout();
     };
-  }, [currentImageIndex]);
+  }, [currentImageIndex, images.length]);
 
   return (
     <div className="mr-2 md:mr-0 mt-2 md:-mt-4">
@@ -197,19 +190,11 @@ const ProductImage = ({ product, albums }: { product: Product; albums: Album[] }
       ) : (
         <div className="pl-2 pb-4">
           <div className="flex md:space-x-4">
-            {albums.length > 0 ? (
-              <img
-                src={albums[currentImageIndex].albumImage || "/Image/planetarium.jpg"}
-                alt="Main Hall"
-                className="w-full md:w-1/2 h-44 rounded-md"
-              />
-            ) : (
-              <img
-                src={product.productImage || "/Image/planetarium.jpg"}
-                alt="Main Hall"
-                className="w-full md:w-1/2 h-44 rounded-md"
-              />
-            )}
+            <img
+              src={images[currentImageIndex].albumImage || "/Image/planetarium.jpg"}
+              alt="Main Hall"
+              className="w-full md:w-1/2 h-44 rounded-md"
+            />
             <div className="grid grid-cols-2 gap-4 w-0 md:w-1/2">
               {albums.map((album, index) => (
                 <img

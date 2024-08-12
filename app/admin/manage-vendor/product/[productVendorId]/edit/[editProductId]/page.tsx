@@ -10,7 +10,7 @@ import { CommandLeft } from '@/app/admin/commandLeft';
 import { readAlbumsByProductId, createAlbum, updateAlbum, deleteAlbum } from '@/app/utils/albumApi';
 import { readProductCategories } from '@/app/utils/categoryApi';
 import { readProductById, updateProduct } from '@/app/utils/productApi';
-import type { Album, Category, Product } from '@/app/utils/types';
+import type { Album, Category, Product, Vendor } from '@/app/utils/types';
 
 export default function AdminEventPackage() {
     const pathname = usePathname();
@@ -40,7 +40,7 @@ export default function AdminEventPackage() {
 
     const router = useRouter();
     const handleBackClick = () => {
-        router.push('/admin/manage-vendor/product/1');
+        router.push(`/admin/manage-vendor/product/${product?.vendorId}`);
     }
 
     return (
@@ -458,7 +458,7 @@ function EditVendorProduct({ product, categories, albums }: { product: Product, 
             </div>
           </div>
           <div className="w-full">
-            <button type="submit" className="w-full py-1 md:py-2 mt-2 bg-pink-600 text-white font-semibold rounded-lg hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-600" onClick={() => router.push('/admin/manage-vendor/product/1')}>
+            <button type="submit" className="w-full py-1 md:py-2 mt-2 bg-pink-600 text-white font-semibold rounded-lg hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-600" onClick={() => router.push(`/admin/manage-vendor/product/${vendorId}`)}>
               Edit Produk
             </button>
           </div>

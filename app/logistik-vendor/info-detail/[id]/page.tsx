@@ -122,12 +122,13 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
     }
   };
 
+  const images = [{ albumImage: product.productImage }, ...albums];
   useEffect(() => {
     resetTimeout();
     timeoutRef.current = setTimeout(
       () =>
         setCurrentImageIndex((prevIndex) =>
-          prevIndex === albums.length - 1 ? 0 : prevIndex + 1
+          prevIndex === images.length - 1 ? 0 : prevIndex + 1
         ),
       2000
     );
@@ -135,7 +136,7 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
     return () => {
       resetTimeout();
     };
-  }, [currentImageIndex]);
+  }, [currentImageIndex, images.length]);
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -249,19 +250,11 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
       ) : (
         <div className="md:px-8 pb-4">
           <div className="flex md:space-x-4">
-            {albums.length > 0 ? (
-              <img
-                src={albums[currentImageIndex].albumImage || "/Image/planetarium.jpg"}
-                alt="Main Hall"
-                className="w-full md:w-1/2 h-44 rounded-md"
-              />
-            ) : (
-              <img
-                src={product.productImage || "/Image/planetarium.jpg"}
-                alt="Main Hall"
-                className="w-full md:w-1/2 h-44 rounded-md"
-              />
-            )}
+            <img
+              src={images[currentImageIndex].albumImage || "/Image/planetarium.jpg"}
+              alt="Main Hall"
+              className="w-full md:w-1/2 h-44 rounded-md"
+            />
             <div className="grid grid-cols-2 gap-4 w-0 md:w-1/2">
               {albums.map((album, index) => (
                 <img

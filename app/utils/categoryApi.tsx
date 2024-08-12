@@ -26,3 +26,17 @@ export const readEventCategories = async () => {
     throw new Error(error.response?.data?.message || 'Failed to fetch event categories');
   }
 };
+
+export const createCategory = async (categoryData: {
+  name: string;
+  type: string;
+}) => {
+  try {
+    const response = await axios.post(`${API_URL}/categories/create`, categoryData, {
+      withCredentials: true
+    });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Failed to create category');
+  }
+};

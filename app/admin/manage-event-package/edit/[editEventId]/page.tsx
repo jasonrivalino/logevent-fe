@@ -396,7 +396,8 @@ function EditPackageProduct() {
                   placeholder="Masukkan Harga"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
-                />              </div>
+                />
+              </div>
             </div>
           </div>
           <div className="w-full md:w-1/2">

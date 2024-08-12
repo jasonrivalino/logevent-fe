@@ -11,7 +11,7 @@ import { CommandLeft } from '@/app/admin/commandLeft';
 import { readAlbumsByEventId } from '@/app/utils/albumApi';
 import { readBundlesByEventId } from '@/app/utils/bundleApi';
 import { readEventById } from '@/app/utils/eventApi';
-import { convertDate, generateWhatsAppUrl, getStars } from '@/app/utils/helpers';
+import { convertDate, getStars } from '@/app/utils/helpers';
 import { readProductById } from '@/app/utils/productApi';
 import { readReviewsByEventId } from '@/app/utils/reviewApi';
 import { Album, Event, Product, Review } from '@/app/utils/types';
@@ -150,12 +150,13 @@ const EventImage = ({ event, albums }: { event: Event; albums: Album[]; }) => {
     }
   };
 
+  const images = [{ albumImage: event.eventImage }, ...albums];
   useEffect(() => {
     resetTimeout();
     timeoutRef.current = setTimeout(
       () =>
         setCurrentImageIndex((prevIndex) =>
-          prevIndex === albums.length - 1 ? 0 : prevIndex + 1
+          prevIndex === images.length - 1 ? 0 : prevIndex + 1
         ),
       2000
     );
@@ -163,7 +164,7 @@ const EventImage = ({ event, albums }: { event: Event; albums: Album[]; }) => {
     return () => {
       resetTimeout();
     };
-  }, [currentImageIndex]);
+  }, [currentImageIndex, images.length]);
 
   return (
     <div className="mt-2 md:-mt-4">
@@ -198,19 +199,11 @@ const EventImage = ({ event, albums }: { event: Event; albums: Album[]; }) => {
       ) : (
         <div className="md:px-8 pb-4">
           <div className="flex md:space-x-4">
-            {albums.length > 0 ? (
-              <img
-                src={albums[currentImageIndex].albumImage || "/Image/planetarium.jpg"}
-                alt="Main Hall"
-                className="w-full md:w-1/2 h-44 rounded-md"
-              />
-            ) : (
-              <img
-                src={event.eventImage || "/Image/planetarium.jpg"}
-                alt="Main Hall"
-                className="w-full md:w-1/2 h-44 rounded-md"
-              />
-            )}
+            <img
+              src={images[currentImageIndex].albumImage || "/Image/planetarium.jpg"}
+              alt="Main Hall"
+              className="w-full md:w-1/2 h-44 rounded-md"
+            />
             <div className="grid grid-cols-2 gap-4 w-0 md:w-1/2">
               {albums.map((album, index) => (
                 <img
