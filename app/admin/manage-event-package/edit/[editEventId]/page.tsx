@@ -177,16 +177,12 @@ function EditPackageProduct() {
     };
   }, [isPopupOpen]);
 
-  const handleCategoryChange = (event: { target: { value: any; }; }) => {
-    setSelectedCategoryId(parseInt(event.target.value));
-  };
-
   const handleAddCategory = async () => {
     const newCategoryValue = newCategory.trim();
     if (newCategoryValue !== '') {
       const categoryData = {
         name: newCategoryValue,
-        type: 'Product'
+        type: 'Event'
       };
 
       const newCategory = await createCategory(categoryData);
@@ -343,9 +339,10 @@ function EditPackageProduct() {
     }
   };
 
-  function handleOptionClick(id: number): void {
-    throw new Error('Function not implemented.');
-  }
+  const handleOptionClick = (categoryId: number) => {
+    setSelectedCategoryId(categoryId);
+    toggleDropdown();
+  };
 
   return (
     <div className="px-5 md:px-6 pt-4 pb-6 bg-white rounded-xl shadow-md">

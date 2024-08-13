@@ -15,7 +15,6 @@ import type { Album, Category, Product } from '@/app/utils/types';
 export default function AdminEventPackage() {
   const pathname = usePathname();
   const [product, setProduct] = useState<Product | null>(null);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [albums, setAlbums] = useState<Album[]>([]);
 
   useEffect(() => {
@@ -24,10 +23,8 @@ export default function AdminEventPackage() {
         const id = pathname.split('/').pop();
         if (id) {
           const product = await readProductById(parseInt(id));
-          const categories = await readProductCategories();
           const albums = await readAlbumsByProductId(parseInt(id));
           setProduct(product);
-          setCategories(categories);
           setAlbums(albums);
         }
       } catch (error) {
