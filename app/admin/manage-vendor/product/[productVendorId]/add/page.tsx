@@ -286,23 +286,24 @@ function AddVendorProduct({ vendor }: { vendor: Vendor }) {
         <div className="flex flex-col md:flex-row md:space-x-6">
           <div className="flex flex-col md:flex-row -mt-2 md:mt-0">
           <div className="w-full mb-2 md:mb-0">
-                <label className="block text-gray-700 font-sofia mb-1 md:mb-2 text-sm md:text-base">
-                  Kategori Paket *
-                </label>
-                <select
-                  className="w-full md:w-11/12 px-2 md:px-4 py-1 md:py-[0.65rem] border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 bg-white text-sm md:text-base"
-                  value={selectedCategoryId ?? 0}
-                  onChange={handleCategoryChange}
-                  required
-                >
-                  <option value={0}>Pilih Kategori</option>
-                  {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-                  <option value="add-new">+ Tambah Kategori</option>
-                </select>
+              <label className="block text-gray-700 font-sofia mb-1 md:mb-2 text-sm md:text-base">
+                Kategori Paket *
+              </label>
+              <select
+                className="w-full md:w-11/12 px-2 md:px-4 py-1 md:py-[0.65rem] border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 bg-white text-sm md:text-base overflow-auto max-h-48"
+                value={selectedCategoryId ?? 0}
+                onChange={handleCategoryChange}
+                required
+              >
+                {/* Show 5 categories on top and if more than make scrollable */}
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+                
+                <option value="add-new">+ Tambah Kategori</option>
+              </select>
             </div>
             <div className="w-full md:w-[21rem]">
               <label className="block text-gray-700 font-sofia mb-1 md:mb-2 text-sm md:text-base">Harga Paket *</label>

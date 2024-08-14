@@ -95,6 +95,8 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
   const [paginatedProducts, setPaginatedProducts] = useState<Product[]>([]);
   const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
 
+  const [selectedVendor, setSelectedVendor] = useState(''); // State for selected vendor
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -106,9 +108,7 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
     const query = event.target.value.toLowerCase();
     setSearchQuery(query);
     const filteredProducts = products.filter((product) =>
-      product.name.toLowerCase().includes(query) ||
-      product.specification.toLowerCase().includes(query) ||
-      product.vendorAddress.toLowerCase().includes(query)
+      product.name.toLowerCase().includes(query)
     );
     setPaginatedProducts(filteredProducts);
     setCurrentPage(1);
@@ -183,6 +183,22 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
       setSelectedProductIds([...selectedProductIds, productId]);
     }
   };
+
+  // Update displayed products when the selected vendor or search query changes
+  useEffect(() => {
+    setPaginatedProducts(filteredProducts);
+  }, [searchQuery, selectedVendor]);
+
+  const handleVendorChange = (e : { target: { value: string; }; }) => {
+    setSelectedVendor(e.target.value); // Update the selected vendor
+  };
+
+  // Filter products based on search query and selected vendor
+  const filteredProducts = products.filter(product => {
+    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesVendor = selectedVendor ? product.vendorName === selectedVendor : true;
+    return matchesSearch && matchesVendor;
+  });
 
   const totalPages = Math.ceil(paginatedProducts.length / itemsPerPage);
   const displayedProducts = paginatedProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -301,29 +317,29 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
               </label>
             </div>
             <div className="w-full md:pl-5">
-            <div className="border border-dashed border-gray-400 rounded-lg flex justify-start items-center overflow-x-auto whitespace-nowrap min-h-[10rem] md:min-h-[238px] w-full md:w-[33rem] px-5">
-              {selectedProductDetails.length === 0 ? (
-                <span className="text-gray-500">Select A Bundle</span>
-              ) : (
-                selectedProductDetails.map((product) => (
-                  <div key={product.id} className="m-2 p-2 border rounded-lg flex flex-col items-center">
-                    <Image
-                      src={product.productImage || '/images/placeholder-image.png'}
-                      alt={`${product.name} Image`}
-                      width={120}
-                      height={50}
-                      className="object-cover rounded mb-4"
-                    />
-                    <p className="text-xs text-gray-700">{product.name}</p>
-                    <p className="text-xs text-gray-500">{product.vendorName}</p>
-                    <p className="text-xs text-gray-500">{product.specification}</p>
-                    <p className="text-xs text-gray-500">{product.vendorAddress}</p>
-                    <p className="text-xs text-pink-500 font-bold">Rp{product.price.toLocaleString('id-ID')}</p>
-                  </div>
-                ))
-              )}
+              <div className="border border-dashed border-gray-400 rounded-lg flex justify-start items-center overflow-x-auto whitespace-nowrap min-h-[10rem] md:min-h-[238px] w-full md:w-[33rem] px-5">
+                {selectedProductDetails.length === 0 ? (
+                  <span className="text-gray-500">Select A Bundle</span>
+                ) : (
+                  selectedProductDetails.map((product) => (
+                    <div key={product.id} className="m-2 p-2 border rounded-lg flex flex-col items-center">
+                      <Image
+                        src={product.productImage || '/images/placeholder-image.png'}
+                        alt={`${product.name} Image`}
+                        width={120}
+                        height={50}
+                        className="object-cover rounded mb-4 h-14 md:h-20"
+                      />
+                      <p className="text-xs text-gray-700">{product.name}</p>
+                      <p className="text-xs text-gray-500">{product.vendorName}</p>
+                      <p className="text-xs text-gray-500">{product.specification}</p>
+                      <p className="text-xs text-gray-500">{product.vendorAddress}</p>
+                      <p className="text-xs text-pink-500 font-bold">Rp{product.price.toLocaleString('id-ID')}</p>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
-          </div>
           </div>
         </div>
         <div className="flex flex-col md:flex-row md:space-x-6">
@@ -429,40 +445,48 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
               &times;
             </button>
             <div className="w-full h-full flex flex-col">
-              <div className="flex-none">
-                <h2 className="text-lg md:text-2xl font-bold text-pink-900 font-sofia mb-2 ml-1">Pilih Logistik</h2>
-                <div className='flex flex-col md:flex-row mb-4'>
-                  <div className="flex items-center ml-1">
-                    <div className="relative">
+              <div className="flex-none w-full">
+                <h2 className="text-lg md:text-2xl font-bold text-pink-900 font-sofia mb-2">Pilih Logistik</h2>
+                <div className="flex flex-col md:flex-row mb-4">
+                  <div className="flex items-center w-full md:w-auto">
+                    <div className="relative w-full">
                       <span className="absolute inset-y-0 left-0 flex items-center pl-3">
                         <svg className="w-3 md:w-4 h-3 md:h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M12.9 14.32a8 8 0 111.414-1.414l4.287 4.287a1 1 0 01-1.414 1.414l-4.287-4.287zM8 14a6 6 0 100-12 6 6 0 000 12z" clipRule="evenodd" />
+                          <path
+                            fillRule="evenodd"
+                            d="M12.9 14.32a8 8 0 111.414-1.414l4.287 4.287a1 1 0 01-1.414 1.414l-4.287-4.287zM8 14a6 6 0 100-12 6 6 0 000 12z"
+                            clipRule="evenodd"
+                          />
                         </svg>
                       </span>
                       <input
                         type="text"
                         placeholder="Cari kebutuhan vendormu"
-                        className="w-[18.25rem] md:w-[55rem] mr-0 md:mr-4 text-sm md:text-base p-1 md:p-2 pl-9 md:pl-12 border rounded bg-white text-black font-sofia"
+                        className="w-full md:w-[55rem] mr-0 md:mr-5 text-sm md:text-base p-[0.35rem] pl-9 md:pl-12 border rounded bg-white text-black font-sofia"
                         value={searchQuery}
-                        onChange={handleSearch}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                       />
                     </div>
                   </div>
-                  <div className="flex flex-row items-center ml-1 md:ml-0 mt-2 md:mt-0">
-                    <div className="flex items-center md:ml-auto">
-                      <div className="relative">
-                        <select className="w-48 text-sm md:text-base p-1 md:p-[0.67rem] pl-3 md:pl-4 border rounded bg-white text-black font-sofia">
-                          <option value="sort">Select Vendors</option>
+                  <div className="flex flex-row items-center mt-2 md:mt-0 w-full md:w-auto ml-0 md:ml-2">
+                    <div className="flex items-center w-full md:w-auto">
+                      <div className="relative w-full md:max-w-xs">
+                        <select 
+                          className="w-full text-sm md:text-base p-2 pl-3 md:pl-4 mr-0 md:mr-7 border rounded bg-white text-black font-sofia"
+                          value={selectedVendor}
+                          onChange={handleVendorChange} // Update selected vendor on change
+                        >
+                          <option value="">All Vendors</option>
                           {vendors.map((vendor) => (
-                            <option key={vendor.id} value={vendor.id}>
+                            <option key={vendor.id} value={vendor.name}>
                               {vendor.name}
                             </option>
                           ))}
                         </select>
                       </div>
                     </div>
-                    <div className="flex items-center ml-2">
-                      <button className="bg-pink-600 text-white px-4 py-1 md:py-2 rounded-lg font-sofia text-sm md:text-base" onClick={togglePopup}>
+                    <div className="flex items-center ml-2 md:ml-7">
+                      <button className="bg-pink-600 text-white px-4 py-2 rounded-lg font-sofia text-sm md:text-base" onClick={togglePopup}>
                         Submit
                       </button>
                     </div>
@@ -471,7 +495,7 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
               </div>
               <div className="flex-grow overflow-y-auto">
                 <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-2 md:gap-6 md:mt-6 mb-5">
-                {displayedProducts.map((product) => (
+                {filteredProducts.map((product) => (
                     <div
                       key={product.id}
                       className={`bg-white shadow-lg rounded-xl overflow-hidden flex flex-col justify-between ${selectedProductIds.includes(product.id) ? 'border-dashed border-blue-600' : 'border-gray-200'}`}
@@ -489,7 +513,7 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
                           alt={`${product.name} Image`}
                           width={245}
                           height={50}
-                          className="object-cover"
+                          className="object-cover w-full h-20 md:h-32"
                         />
                       </div>
                       <div className="p-3 md:p-3 font-sofia flex flex-col justify-between flex-grow">
@@ -526,7 +550,7 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
         )}
     </div>
   );
-};
+}
 
 function Pagination({ currentPage, totalPages, onPageChange }: any) {
   const getPages = () => {

@@ -86,6 +86,7 @@ function EditPackageProduct() {
   const [categoryToEdit, setCategoryToEdit] = useState<Category | null>(null);
   const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedVendor, setSelectedVendor] = useState(''); // State for selected vendor
 
   const [paginatedProducts, setPaginatedProducts] = useState<Product[]>([]);
   const [selectedProductId, setSelectedProductId] = useState<number[]>([])
@@ -158,9 +159,7 @@ function EditPackageProduct() {
     const query = event.target.value.toLowerCase();
     setSearchQuery(query);
     const filteredProducts = products.filter((product) =>
-      product.name.toLowerCase().includes(query) ||
-      product.specification.toLowerCase().includes(query) ||
-      product.vendorAddress.toLowerCase().includes(query)
+      product.name.toLowerCase().includes(query)
     );
     setPaginatedProducts(filteredProducts);
     setCurrentPage(1);
@@ -180,6 +179,22 @@ function EditPackageProduct() {
   const handleCategoryChange = (event: { target: { value: any; }; }) => {
     setSelectedCategoryId(parseInt(event.target.value));
   };
+
+  // Update displayed products when the selected vendor or search query changes
+  useEffect(() => {
+    setPaginatedProducts(filteredProducts);
+  }, [searchQuery, selectedVendor]);
+  
+  const handleVendorChange = (e : { target: { value: string; }; }) => {
+    setSelectedVendor(e.target.value); // Update the selected vendor
+  };
+  
+  // Filter products based on search query and selected vendor
+  const filteredProducts = products.filter(product => {
+    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesVendor = selectedVendor ? product.vendorName === selectedVendor : true;
+    return matchesSearch && matchesVendor;
+  });
 
   const handleAddCategory = async () => {
     const newCategoryValue = newCategory.trim();
@@ -350,13 +365,13 @@ function EditPackageProduct() {
   return (
     <div className="px-5 md:px-6 pt-4 pb-6 bg-white rounded-xl shadow-md">
       {/* Text in center */}
-      <h1 className="text-2xl md:text-3xl font-bold mb-6 md:mb-3 text-pink-900 font-sofia text-center">Tambah Paket</h1>
+      <h1 className="text-2xl md:text-3xl font-bold mb-6 md:mb-3 text-pink-900 font-sofia text-center">Edit Paket</h1>
       {/* Breadcrumb Navigation */}
       <div className="hidden md:flex items-center mb-4">
         <div className="flex items-center">
           <a onClick={() => router.push('/admin/manage-event-package')} className="text-pink-600 font-semibold font-sofia cursor-pointer">Kelola Paket</a>
           <span className="mx-2 text-gray-600 font-sofia font-semibold"> {'>'} </span>
-          <p className="text-gray-600 font-sofia font-semibold">Tambah Paket</p>
+          <p className="text-gray-600 font-sofia font-semibold">Edit Paket</p>
         </div>
       </div>
       {/* Form */}
@@ -638,40 +653,48 @@ function EditPackageProduct() {
               &times;
             </button>
             <div className="w-full h-full flex flex-col">
-              <div className="flex-none">
-                <h2 className="text-lg md:text-2xl font-bold text-pink-900 font-sofia mb-2 ml-1">Pilih Logistik</h2>
-                <div className='flex flex-col md:flex-row mb-4'>
-                  <div className="flex items-center ml-1">
-                    <div className="relative">
+              <div className="flex-none w-full">
+                <h2 className="text-lg md:text-2xl font-bold text-pink-900 font-sofia mb-2">Pilih Logistik</h2>
+                <div className="flex flex-col md:flex-row mb-4">
+                  <div className="flex items-center w-full md:w-auto">
+                    <div className="relative w-full">
                       <span className="absolute inset-y-0 left-0 flex items-center pl-3">
                         <svg className="w-3 md:w-4 h-3 md:h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M12.9 14.32a8 8 0 111.414-1.414l4.287 4.287a1 1 0 01-1.414 1.414l-4.287-4.287zM8 14a6 6 0 100-12 6 6 0 000 12z" clipRule="evenodd" />
+                          <path
+                            fillRule="evenodd"
+                            d="M12.9 14.32a8 8 0 111.414-1.414l4.287 4.287a1 1 0 01-1.414 1.414l-4.287-4.287zM8 14a6 6 0 100-12 6 6 0 000 12z"
+                            clipRule="evenodd"
+                          />
                         </svg>
                       </span>
                       <input
                         type="text"
                         placeholder="Cari kebutuhan vendormu"
-                        className="w-[18.25rem] md:w-[55rem] mr-0 md:mr-4 text-sm md:text-base p-1 md:p-2 pl-9 md:pl-12 border rounded bg-white text-black font-sofia"
+                        className="w-full md:w-[55rem] mr-0 md:mr-5 text-sm md:text-base p-[0.35rem] pl-9 md:pl-12 border rounded bg-white text-black font-sofia"
                         value={searchQuery}
                         onChange={handleSearch}
                       />
                     </div>
                   </div>
-                  <div className="flex flex-row items-center ml-1 md:ml-0 mt-2 md:mt-0">
-                    <div className="flex items-center md:ml-auto">
-                      <div className="relative">
-                      <select className="w-48 text-sm md:text-base p-1 md:p-[0.67rem] pl-3 md:pl-4 border rounded bg-white text-black font-sofia">
-                        <option value="sort">Select Vendors</option>
-                        {vendors.map((vendor) => (
-                          <option key={vendor.id} value={vendor.id}>
-                            {vendor.name}
-                          </option>
-                        ))}
-                      </select>
+                  <div className="flex flex-row items-center mt-2 md:mt-0 w-full md:w-auto ml-0 md:ml-2">
+                    <div className="flex items-center w-full md:w-auto">
+                      <div className="relative w-full md:max-w-xs">
+                        <select 
+                          className="w-full text-sm md:text-base p-2 pl-3 md:pl-4 mr-0 md:mr-7 border rounded bg-white text-black font-sofia"
+                          value={selectedVendor}
+                          onChange={handleVendorChange} // Update selected vendor on change
+                        >
+                          <option value="">All Vendors</option>
+                          {vendors.map((vendor) => (
+                            <option key={vendor.id} value={vendor.name}>
+                              {vendor.name}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                     </div>
-                    <div className="flex items-center ml-2">
-                      <button className="bg-pink-600 text-white px-4 py-1 md:py-2 rounded-lg font-sofia text-sm md:text-base" onClick={togglePopup}>
+                    <div className="flex items-center ml-2 md:ml-7">
+                      <button className="bg-pink-600 text-white px-4 py-2 rounded-lg font-sofia text-sm md:text-base" onClick={togglePopup}>
                         Submit
                       </button>
                     </div>
@@ -698,7 +721,7 @@ function EditPackageProduct() {
                           alt={`${product.name} Image`}
                           width={245}
                           height={50}
-                          className="object-cover"
+                          className="object-cover h-20 md:h-32"
                         />
                       </div>
                       <div className="p-3 md:p-3 font-sofia flex flex-col justify-between flex-grow">
