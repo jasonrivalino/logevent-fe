@@ -114,16 +114,6 @@ function AddPackageProduct({ products, vendors }: { products: Product[], vendors
     setPaginatedProducts(products);
   }, [products]);
 
-  const handleSearch = (event: { target: { value: string; }; }) => {
-    const query = event.target.value.toLowerCase();
-    setSearchQuery(query);
-    const filteredProducts = products.filter((product) =>
-      product.name.toLowerCase().includes(query)
-    );
-    setPaginatedProducts(filteredProducts);
-    setCurrentPage(1);
-  };
-
   useEffect(() => {
     if (isPopupOpen) {
       document.body.style.overflow = 'hidden';
@@ -214,8 +204,6 @@ function AddPackageProduct({ products, vendors }: { products: Product[], vendors
   });
 
   const totalPages = Math.ceil(paginatedProducts.length / itemsPerPage);
-  const displayedProducts = paginatedProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-
   const selectedProductDetails = products.filter(product => selectedProductIds.includes(product.id));
 
   const handleSubmit = async (e: { preventDefault: () => void; }) => {

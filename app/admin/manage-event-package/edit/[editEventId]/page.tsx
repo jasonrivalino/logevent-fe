@@ -176,10 +176,6 @@ function EditPackageProduct() {
     };
   }, [isPopupOpen]);
 
-  const handleCategoryChange = (event: { target: { value: any; }; }) => {
-    setSelectedCategoryId(parseInt(event.target.value));
-  };
-
   // Update displayed products when the selected vendor or search query changes
   useEffect(() => {
     setPaginatedProducts(filteredProducts);

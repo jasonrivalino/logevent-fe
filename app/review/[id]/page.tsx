@@ -150,7 +150,7 @@ export default function Review() {
           className="flex flex-col w-full max-w-3xl md:max-w-md p-6 md:p-8 shadow-lg rounded-lg bg-white"
         >
           <div className="text-center mb-4">
-            <h2 className="text-3xl font-semibold text-pink-900 mb-2">Review</h2>
+            <h2 className="text-2xl md:text-3xl font-semibold text-pink-900 mb-2">Review</h2>
             <p className="text-sm text-gray-500">Feedback yang kamu berikan sangat berarti bagi kami😊</p>
           </div>
           <div className="flex justify-center mb-4">
@@ -161,7 +161,7 @@ export default function Review() {
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
-                  className={`w-8 h-8 cursor-pointer ${
+                  className={`w-6 md:w-8 h-6 md:h-8 cursor-pointer ${
                     index < rating ? 'text-pink-600' : 'text-gray-200'
                   }`}
                   onClick={() => handleStarClick(index)}
@@ -172,10 +172,10 @@ export default function Review() {
             </div>
           </div>
           <div className="mb-4">
-            <label htmlFor="topic" className="block text-base font-medium text-black">Topik Ulasan</label>
+            <label htmlFor="topic" className="block font-medium text-black text-sm md:text-base">Topik Ulasan</label>
             <select
               id="topic"
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base bg-white text-black border-gray-300 border-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+              className="mt-1 block w-full pl-3 pr-10 py-1 md:py-2 text-xs md:text-base bg-white text-black border-gray-300 border-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
               value={tag}
               onChange={e => setTag(e.target.value)}
             >
@@ -187,11 +187,11 @@ export default function Review() {
             </select>
           </div>
           <div className="mb-6">
-            <label htmlFor="review" className="block text-base font-medium text-black">Ceritakan ulasanmu disini</label>
+            <label htmlFor="review" className="block font-medium text-black text-sm md:text-base">Ceritakan ulasanmu disini</label>
             <textarea
               id="review"
               rows={4}
-              className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 border-2 rounded-md p-2 text-black"
+              className="mt-1 block w-full shadow-sm text-xs md:text-base border-gray-300 border-2 rounded-md p-2 text-black"
               placeholder="Ceritakan ulasanmu disini"
               value={comment}
               onChange={e => setComment(e.target.value)}
@@ -199,7 +199,7 @@ export default function Review() {
           </div>
           <button
             type="submit"
-            className="w-full bg-pink-800 text-white py-2 rounded-md hover:bg-pink-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
+            className="w-full bg-pink-800 text-white py-1 md:py-2 rounded-md hover:bg-pink-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
           >
             Submit
           </button>
