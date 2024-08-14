@@ -91,7 +91,7 @@ export default function ReviewPage() {
                   </svg>
                 ))}
               </div>
-              <p className="text-sm mt-4">{review.comment}</p>
+              <p className="text-xs md:text-sm mt-4">{review.comment}</p>
             </div>
           </div>
         ))}

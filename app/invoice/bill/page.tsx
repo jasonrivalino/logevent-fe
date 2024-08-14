@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { FaEnvelope, FaPhoneAlt } from 'react-icons/fa';
 import { FaLocationDot } from 'react-icons/fa6';
 
-export default function Invoice() {
+export default function BillInvoice() {
   const invoiceItems = [
     {
       product: "Katering Bu Daffa",
@@ -42,16 +42,14 @@ export default function Invoice() {
           {/* Add Logevent logo */}
           <Image src="/Image/logo2.png" alt="Logevent Logo" width={100} height={100} className="mb-2 cursor-pointer"/>
         </div>
-        <div className="text-right">
-          {/* TODO: Change with Invoice Font */}
-          {/* <h2 className="text-lg font-semibold">INVOICE</h2> */}
+        {/* <div className="text-right">
           <p>Invoice No : <strong>3</strong></p>
           <p>Date : <strong>08/03/2021 19:30</strong></p>
-        </div>
+        </div> */}
       </header>
       
       <section className="mb-8">
-        <p><strong>Invoice to:</strong> Emely River</p>
+        <p><strong>Tagihan Kepada:</strong> Emely River</p>
         <p className="text-sm">District Solnechny st. Rainbow, house 7, Location</p>
       </section>
       
