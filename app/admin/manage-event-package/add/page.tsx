@@ -10,24 +10,21 @@ import { Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
 import { createBundle } from '@/app/utils/bundleApi';
 import { createAlbum } from '@/app/utils/albumApi';
-import { readEventCategories } from '@/app/utils/categoryApi';
+import { readEventCategories, createCategory } from '@/app/utils/categoryApi';
 import { createEvent } from '@/app/utils/eventApi';
 import { readAllProducts } from '@/app/utils/productApi';
 import { readAllVendors } from '@/app/utils/vendorApi';
 import { Category, Product, Vendor } from '@/app/utils/types';
 
 export default function AdminEventPackage() {
-    const [categories, setCategories] = useState<Category[]>([]);
     const [products, setProducts] = useState<Product[]>([]);
     const [vendors, setVendors] = useState<Vendor[]>([]);
 
     useEffect(() => {
       const fetchData = async () => {
         try {
-          const categories = await readEventCategories();
           const products = await readAllProducts();
           const vendors = await readAllVendors();
-          setCategories(categories);
           setProducts(products);
           setVendors(vendors);
         } catch (error: any) {
@@ -69,7 +66,7 @@ export default function AdminEventPackage() {
                         <CommandLeft />
                     </div>
                 <div className="flex-grow ml-0 md:ml-7 pt-10 md:pt-[0.15rem] pb-10 md:pb-0">
-                    <AddPackageProduct categories={categories} products={products} vendors={vendors} />
+                    <AddPackageProduct products={products} vendors={vendors} />
                 </div>
             </div>
         </div>
@@ -77,9 +74,10 @@ export default function AdminEventPackage() {
     );
 }
 
-function AddPackageProduct({ categories, products, vendors }: { categories: Category[], products: Product[], vendors: Vendor[] }) {
+function AddPackageProduct({ products, vendors }: { products: Product[], vendors: Vendor[] }) {
   const router = useRouter();
   
+  const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
@@ -99,6 +97,18 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const categories = await readEventCategories();
+        setCategories(categories);
+      } catch (error: any) {
+        console.error(error.message);
+      }
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => {
     setPaginatedProducts(products);
@@ -133,16 +143,19 @@ function AddPackageProduct({ categories, products, vendors }: { categories: Cate
     }
   };
 
-  const handleAddCategory = () => {
-    if (newCategory.trim() !== '') {
-      // You might want to handle this by sending the new category to your backend
-      const newCategoryId = categories.length + 1; // Assuming new ID generation
-      const newCategoryObj: Category = { id: newCategoryId, name: newCategory, type: '' };
-
-      categories.push(newCategoryObj);
-      setSelectedCategoryId(newCategoryId);
-      setShowPopup(false);
+  const handleAddCategory = async () => {
+    const newCategoryValue = newCategory.trim();
+    if (newCategoryValue !== '') {
+      const categoryData = {
+        name: newCategoryValue,
+        type: 'Event'
+      };
+  
+      const newCategory = await createCategory(categoryData);
+      setCategories([...categories, newCategory]);
+      setSelectedCategoryId(newCategory.id);
       setNewCategory('');
+      setShowPopup(false);
     }
   };
 
