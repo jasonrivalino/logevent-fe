@@ -284,38 +284,23 @@ const EventImage = ({ event, albums, isWishlist, setIsWishlist }: { event: Event
             </div>
           </div>
           <div className="flex flex-col md:flex-row space-x-4">
-            <div className="w-full md:w-1/2">
-              <h1 className="text-2xl md:text-3xl text-pink-900 font-bold mt-4">{event.name}</h1>
-              <p className="text-sm md:text-base text-gray-600">
-                {event.capacity ? 'Kapasitas: ' + event.capacity + ' Orang' : "Paket Event ini tidak memiliki kapasitas"}
-              </p>
-              <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp{event.price.toLocaleString('id-ID')}</p>
-              <div className="text-sm md:text-base flex items-center space-x-2 text-gray-600">
-                <div className="flex items-center">
-                  {getStars(event.rating)}
-                  <span> ({event.rating && event.rating.toFixed(2) !== "0.00" ? event.rating.toFixed(2) : "N/A"})</span>
+            <div className="w-full flex flex-row md:flex-col md:items-center">
+              <div className="w-full md:w-1/2">
+                <h1 className="text-2xl md:text-3xl text-pink-900 font-bold mt-4">{event.name}</h1>
+                <p className="text-sm md:text-base text-gray-600">
+                  {event.capacity ? 'Kapasitas: ' + event.capacity + ' Orang' : "Paket Event ini tidak memiliki kapasitas"}
+                </p>
+                <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp{event.price.toLocaleString('id-ID')}</p>
+                <div className="text-sm md:text-base flex items-center space-x-2 text-gray-600">
+                  <div className="flex items-center">
+                    {getStars(event.rating)}
+                    <span> ({event.rating && event.rating.toFixed(2) !== "0.00" ? event.rating.toFixed(2) : "N/A"})</span>
+                  </div>
+                  <span>|</span>
+                  <span>{event.reviewCount} reviews</span>
                 </div>
-                <span>|</span>
-                <span>{event.reviewCount} reviews</span>
               </div>
-            </div>
-            <div className="flex space-x-4 w-full md:w-1/2 md:justify-end items-center mt-1 md:mt-0">
-              <div className="flex flex-col md:flex-row md:space-x-0 md:space-y-4 md:items-center mr-[4rem]">
-                {/* TODO: Order Popup */}
-                <button
-                  className="bg-pink-500 text-white rounded-lg px-2 md:px-4 py-[0.35rem] md:py-2 mt-2 text-sm md:text-base -ml-4"
-                  onClick={() => router.push('/isi-pemesanan')}
-                >
-                  Pesan Langsung
-                </button>
-                <button 
-                  className="bg-white text-pink-500 border-pink-500 border-2 rounded-lg px-1 md:px-4 py-2 md:py-2 -ml-4 md:ml-0 md:mr-0 text-sm md:text-base mt-2"
-                  onClick={handleClickWishlist}
-                >
-                  {isWishlist ? "Hapus dari Wishlist" : "Tambah ke Wishlist"}
-                </button>
-              </div>
-              <div className="flex flex-row space-x-4 mt-3">
+              <div className="flex flex-row space-x-4 mt-5">
                 <button onClick={handleChat} className="text-pink-500 flex flex-col items-center text-sm md:text-base">
                   <img src="/Image/IconButton/chat_button.png" alt="Whatsapp" className="w-5 md:w-6 h-5 md:h-6" />
                   Chat
@@ -323,6 +308,22 @@ const EventImage = ({ event, albums, isWishlist, setIsWishlist }: { event: Event
                 <button onClick={handleShare} className="text-pink-500 flex flex-col items-center text-sm md:text-base">
                   <img src="/Image/IconButton/share_button.png" alt="Whatsapp" className="w-5 md:w-6 h-5 md:h-6" />
                   {copied ? 'Link Copied!' : 'Share'}
+                </button>
+              </div>
+            </div>
+            <div className="flex flex-col md:flex-row space-x-4 w-full md:w-1/2 justify-start md:justify-end md:items-center mt-1 md:mt-0 pr-3">
+              <div className="flex flex-col md:flex-row md:space-x-0 md:space-y-4 md:items-center">
+                <button
+                  className="bg-white text-pink-500 border-pink-500 border-2 rounded-lg px-1 md:px-4 py-[0.35rem] md:py-2 -ml-4 md:ml-0 md:mr-0 text-sm md:text-base mt-2"
+                  onClick={handleClickWishlist}
+                >
+                  {isWishlist ? "Hapus dari Wishlist" : "Tambah ke Wishlist"}
+                </button>
+                <button
+                  className="bg-pink-500 text-white rounded-lg px-2 md:px-4 py-[0.35rem] md:py-2 mt-2 text-sm md:text-base -ml-4"
+                  onClick={() => router.push('/isi-pemesanan')}
+                >
+                  Pesan Langsung
                 </button>
               </div>
             </div>

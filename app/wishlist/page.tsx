@@ -372,10 +372,10 @@ function WishlistLogistikVendor({ productWishlists }: { productWishlists: Produc
       <footer className="fixed bottom-0 left-0 right-0 bg-gray-100 shadow-md p-4 z-50">
         <div className="flex justify-between items-center">
           <div>
-            <p className="text-black font-sofia">Jumlah Barang: {selectedItems.length}</p>
-            <p className="text-black font-sofia">Total Harga: Rp{totalPrice.toLocaleString('id-ID')}</p>
+            <p className="text-black font-sofia text-sm md:text-base">Jumlah Barang: {selectedItems.length}</p>
+            <p className="text-black font-sofia text-sm md:text-base">Total Harga: Rp{totalPrice.toLocaleString('id-ID')}</p>
           </div>
-          <button className="bg-pink-500 text-white px-4 py-2 rounded-md font-sofia" onClick={handleSubmit}>
+          <button className="bg-pink-500 text-white px-2 md:px-4 py-2 rounded-md font-sofia text-xs md:text-base" onClick={handleSubmit}>
             Lanjutkan Pemesanan
           </button>
         </div>
