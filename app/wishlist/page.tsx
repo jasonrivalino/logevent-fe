@@ -210,10 +210,11 @@ function WishlistLogistikVendor({ productWishlists }: { productWishlists: Produc
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedItems, setSelectedItems] = useState<ProductWishlist[]>([]);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [quantities, setQuantities] = useState<{ [key: number]: number }>({});
 
   const totalPages = Math.ceil(productWishlists.length / itemsPerPage);
 
-  const handlePageChange = (page: SetStateAction<number>) => {
+  const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
@@ -227,16 +228,32 @@ function WishlistLogistikVendor({ productWishlists }: { productWishlists: Produc
     let updatedItems = [];
     let updatedPrice = totalPrice;
 
+    const quantity = quantities[productWishlist.id] || 1;
+
     if (isSelected) {
       updatedItems = selectedItems.filter((item) => item.id !== productWishlist.id);
-      updatedPrice -= productWishlist.productPrice;
+      updatedPrice -= productWishlist.productPrice * quantity;
     } else {
       updatedItems = [...selectedItems, productWishlist];
-      updatedPrice += productWishlist.productPrice;
+      updatedPrice += productWishlist.productPrice * quantity;
     }
 
     setSelectedItems(updatedItems);
     setTotalPrice(updatedPrice);
+  };
+
+  const increaseQuantity = (id: number) => {
+    setQuantities((prev) => ({
+      ...prev,
+      [id]: (prev[id] || 1) + 1,
+    }));
+  };
+
+  const decreaseQuantity = (id: number) => {
+    setQuantities((prev) => ({
+      ...prev,
+      [id]: Math.max(1, (prev[id] || 1) - 1),
+    }));
   };
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
@@ -264,7 +281,7 @@ function WishlistLogistikVendor({ productWishlists }: { productWishlists: Produc
             eventId: null,
             productId: item.productId,
             duration: null,
-            quantity: null,
+            quantity: quantities[item.id] || 1,
           };
 
           await createItem(itemData);
@@ -320,8 +337,24 @@ function WishlistLogistikVendor({ productWishlists }: { productWishlists: Produc
                     <p className="text-xs md:text-sm text-gray-500">{item.vendorAddress}</p>
                     <p className="text-xs md:text-sm text-pink-500 font-bold mt-2">Rp{item.productPrice.toLocaleString('id-ID')}</p>
                   </div>
+                  <div className="flex justify-between items-center mt-2 bg-gray-100 w-2/5 text-xs md:text-base">
+                    <button
+                      className="bg-gray-200 text-gray-700 px-1 md:px-2 md:py-1 rounded-md"
+                      onClick={() => decreaseQuantity(item.id)}
+                      disabled={quantities[item.id] === 1}
+                    >
+                      -
+                    </button>
+                    <span className="mx-2 text-black">{quantities[item.id] || 1}</span>
+                    <button
+                      className="bg-gray-200 text-gray-700 px-1 md:px-2 md:py-1 rounded-md tetx-black"
+                      onClick={() => increaseQuantity(item.id)}
+                    >
+                      +
+                    </button>
+                  </div>
                   <div className="flex justify-between items-center">
-                    <button className="self-start text-xs md:text-base text-pink-500 hover:text-pink-700 font-bold mt-4"
+                    <button className="self-start text-xs md:text-base text-pink-500 hover:text-pink-700 font-bold mt-2"
                       onClick={() => router.push(`/logistik-vendor/info-detail/${item.productId}`)}
                     >
                       Lihat Detail
@@ -343,7 +376,7 @@ function WishlistLogistikVendor({ productWishlists }: { productWishlists: Produc
             <p className="text-black font-sofia">Total Harga: Rp{totalPrice.toLocaleString('id-ID')}</p>
           </div>
           <button className="bg-pink-500 text-white px-4 py-2 rounded-md font-sofia" onClick={handleSubmit}>
-            Lanjut Pemesanan
+            Lanjutkan Pemesanan
           </button>
         </div>
       </footer>
