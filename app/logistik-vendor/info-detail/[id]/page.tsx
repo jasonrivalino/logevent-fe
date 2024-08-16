@@ -114,6 +114,8 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
   const windowWidth = useWindowWidth();
   const productUrl = typeof window !== 'undefined' ? window.location.href : '';
   const [copied, setCopied] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupMessage, setPopupMessage] = useState('');
   const router = useRouter();
 
   const resetTimeout = () => {
@@ -184,14 +186,21 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
 
       if (isWishlist) {
         await deleteWishlist(wishlist.id);
-      } else if (!isWishlist) {
+        setPopupMessage('Berhasil menghapus produk dari wishlist');
+      } else {
         await createWishlist(userId, null, product.id);
+        setPopupMessage('Berhasil menambahkan produk pada wishlist');
       }
 
       setIsWishlist(!isWishlist);
+      setShowPopup(true); // Show the popup
     } catch (error) {
       console.error('Failed to edit wishlist:', error);
     }
+  };
+
+  const closePopup = () => {
+    setShowPopup(false);
   };
 
   return (
@@ -318,6 +327,19 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+      {showPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-4 rounded-lg shadow-lg text-center">
+            <p className="text-black mb-4">{popupMessage}</p>
+            <button
+              className="bg-pink-500 text-white rounded-lg px-4 py-2"
+              onClick={closePopup}
+            >
+              OK
+            </button>
           </div>
         </div>
       )}
