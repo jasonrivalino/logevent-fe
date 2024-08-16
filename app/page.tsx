@@ -104,12 +104,12 @@ export function Navbar() {
   const handleWishlistClick = () => {
     setIsDropdownOpen(false);
     router.push('/wishlist');
-  }
+  };
 
   const handleHistoryClick = () => {
     setIsDropdownOpen(false);
     router.push('/histori-pemesanan');
-  }
+  };
 
   const handleScrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault();
@@ -143,87 +143,108 @@ export function Navbar() {
           alt="Logevent Logo"
           width={40}
           height={30}
-          className='-ml-6 md:-ml-0 cursor-pointer'
-          onClick={() => router.push('/')}
+          className="-ml-6 md:-ml-0 cursor-pointer"
+          onClick={() => {
+            if (!isAdmin) {
+              router.push('/');
+            }
+          }}
         />
         <div className="hidden md:flex justify-center space-x-8">
           <ul className="flex justify-center space-x-8">
-            <li>
-              <a
-                href="#about-us"
-                onClick={(e) => handleScrollToSection(e, 'about-us')}
-                className="hover:underline font-sofia text-white"
-              >
-                About Us
-              </a>
-            </li>
-            <li>
-              <a
-                href="#services"
-                onClick={(e) => handleScrollToSection(e, 'services')}
-                className="hover:underline font-sofia text-white"
-              >
-                Produk & Layanan
-              </a>
-            </li>
-            <li>
-              <a
-                href="#faq"
-                onClick={(e) => handleScrollToSection(e, 'faq')}
-                className="hover:underline font-sofia text-white"
-              >
-                FAQ
-              </a>
-            </li>
-            <li className="relative bg-pink-900">
-              {userName ? (
-                <div className='flex items-center space-x-4'>
+            {!isAdmin && (
+              <>
+                <li>
+                  <a
+                    href="#about-us"
+                    onClick={(e) => handleScrollToSection(e, 'about-us')}
+                    className="hover:underline font-sofia text-white"
+                  >
+                    About Us
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#services"
+                    onClick={(e) => handleScrollToSection(e, 'services')}
+                    className="hover:underline font-sofia text-white"
+                  >
+                    Produk & Layanan
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#faq"
+                    onClick={(e) => handleScrollToSection(e, 'faq')}
+                    className="hover:underline font-sofia text-white"
+                  >
+                    FAQ
+                  </a>
+                </li>
+              </>
+            )}
+            {userName ? (
+              <li className="relative bg-pink-900">
+                <div className="flex items-center space-x-4">
                   <span
-                    className='font-sofia cursor-pointer text-white'
+                    className="font-sofia cursor-pointer text-white"
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   >
                     {userName}
                   </span>
                   {isDropdownOpen && (
-                    <div className={`absolute top-full right-0 mt-[1.125rem] w-[13rem] bg-pink-900 shadow-lg max-h-44 overflow-y-auto z-50`}>
-                      <button
-                        onClick={handleProfileClick}
-                        className="pl-[1.2rem] py-[0.6rem] text-white w-full justify-start flex items-center font-sofia text-base hover:bg-pink-800"
-                      >
-                        <Image src="/Image/IconButton/profile.png" alt="User Profile" width={18} height={18} className='mr-[0.8rem]'/>
-                        Profile
-                      </button>
-                      <button
-                        onClick={handleWishlistClick}
-                        className="pl-[1.2rem] py-[0.6rem] text-white w-full justify-start flex items-center font-sofia text-base hover:bg-pink-800"
-                      >
-                        {/* TODO: Change To Wishlist Icon */}
-                        <Image src="/Image/IconButton/shopping.png" alt="User Profile" width={18} height={18} className='mr-[0.8rem]'/>
-                        Wishlist
-                      </button>
-                      <button
-                        onClick={handleHistoryClick}
-                        className="pl-[1.2rem] py-[0.6rem] text-white w-full justify-start flex items-center font-sofia text-base hover:bg-pink-800"
-                      >
-                        <Image src="/Image/IconButton/history.png" alt="User Profile" width={18} height={18} className='mr-[0.8rem]'/>
-                        Histori Pemesanan
-                      </button>
-                      <button
-                        onClick={handleSignOutClick}
-                        className="pl-[1.3rem] py-[0.6rem] text-white w-full justify-start flex items-center font-sofia text-base hover:bg-pink-800"
-                      >
-                        <Image src="/Image/IconButton/logout.png" alt="User Profile" width={16} height={16} className='mr-[0.7rem] mb-[0.15rem]'/>
-                        Sign Out
-                      </button>
+                    <div className="absolute top-full right-0 mt-[1.125rem] w-[13rem] bg-pink-900 shadow-lg max-h-44 overflow-y-auto z-50">
+                      {isAdmin ? (
+                        <button
+                          onClick={handleSignOutClick}
+                          className="pl-[1.3rem] py-[0.6rem] text-white w-full justify-start flex items-center font-sofia text-base hover:bg-pink-800"
+                        >
+                          <Image src="/Image/IconButton/logout.png" alt="Sign Out" width={16} height={16} className="mr-[0.7rem] mb-[0.15rem]" />
+                          Sign Out
+                        </button>
+                      ) : (
+                        <>
+                          <button
+                            onClick={handleProfileClick}
+                            className="pl-[1.2rem] py-[0.6rem] text-white w-full justify-start flex items-center font-sofia text-base hover:bg-pink-800"
+                          >
+                            <Image src="/Image/IconButton/profile.png" alt="User Profile" width={18} height={18} className="mr-[0.8rem]" />
+                            Profile
+                          </button>
+                          <button
+                            onClick={handleWishlistClick}
+                            className="pl-[1.2rem] py-[0.6rem] text-white w-full justify-start flex items-center font-sofia text-base hover:bg-pink-800"
+                          >
+                            <Image src="/Image/IconButton/shopping.png" alt="User Wishlist" width={18} height={18} className="mr-[0.8rem]" />
+                            Wishlist
+                          </button>
+                          <button
+                            onClick={handleHistoryClick}
+                            className="pl-[1.2rem] py-[0.6rem] text-white w-full justify-start flex items-center font-sofia text-base hover:bg-pink-800"
+                          >
+                            <Image src="/Image/IconButton/history.png" alt="Order History" width={18} height={18} className="mr-[0.8rem]" />
+                            Histori Pemesanan
+                          </button>
+                          <button
+                            onClick={handleSignOutClick}
+                            className="pl-[1.3rem] py-[0.6rem] text-white w-full justify-start flex items-center font-sofia text-base hover:bg-pink-800"
+                          >
+                            <Image src="/Image/IconButton/logout.png" alt="Sign Out" width={16} height={16} className="mr-[0.7rem] mb-[0.15rem]" />
+                            Sign Out
+                          </button>
+                        </>
+                      )}
                     </div>
                   )}
                 </div>
-              ) : (
-                <button onClick={handleSignInClick} className='font-sofia text-white'>
+              </li>
+            ) : (
+              <li>
+                <button onClick={handleSignInClick} className="font-sofia text-white">
                   Sign In
                 </button>
-              )}
-            </li>
+              </li>
+            )}
           </ul>
         </div>
         <div className="md:hidden">
@@ -235,36 +256,39 @@ export function Navbar() {
         </div>
       </div>
       {isMenuOpen && (
-      <div className="md:hidden bg-pink-900">
-        <ul className="flex flex-col items-center space-y-4 py-2 md:py-4">
-          <li>
-            <a
-              href="#about-us"
-              onClick={(e) => { handleScrollToSection(e, 'about-us'); setIsMenuOpen(false); }}
-              className="hover:underline font-sofia text-white"
-            >
-              About Us
-            </a>
-          </li>
-          <li>
-            <a
-              href="#services"
-              onClick={(e) => { handleScrollToSection2(e, 'services'); setIsMenuOpen(false); }}
-              className="hover:underline font-sofia text-white"
-            >
-              Produk & Layanan
-            </a>
-          </li>
-          <li>
-            <a
-              href="#faq"
-              onClick={(e) => { handleScrollToSection(e, 'faq'); setIsMenuOpen(false); }}
-              className="hover:underline font-sofia text-white"
-            >
-              FAQ
-            </a>
-          </li>
-          <li>
+        <div className="md:hidden bg-pink-900">
+          <ul className="flex flex-col items-center space-y-4 py-2 md:py-4">
+            {!isAdmin && (
+              <>
+                <li>
+                  <a
+                    href="#about-us"
+                    onClick={(e) => { handleScrollToSection(e, 'about-us'); setIsMenuOpen(false); }}
+                    className="hover:underline font-sofia text-white"
+                  >
+                    About Us
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#services"
+                    onClick={(e) => { handleScrollToSection2(e, 'services'); setIsMenuOpen(false); }}
+                    className="hover:underline font-sofia text-white"
+                  >
+                    Produk & Layanan
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#faq"
+                    onClick={(e) => { handleScrollToSection(e, 'faq'); setIsMenuOpen(false); }}
+                    className="hover:underline font-sofia text-white"
+                  >
+                    FAQ
+                  </a>
+                </li>
+              </>
+            )}
             {userName ? (
               <div className="flex flex-col items-center space-y-4">
                 <span
@@ -275,47 +299,59 @@ export function Navbar() {
                 </span>
                 {isDropdownOpen && (
                   <div className="w-96 bg-pink-900 flex flex-col items-center">
-                    <button
-                      onClick={handleProfileClick}
-                      className="w-full px-4 py-2 text-white text-center flex items-center justify-center font-sofia text-base hover:bg-pink-700"
-                    >
-                      <Image src="/Image/IconButton/profile.png" alt="User Profile" width={18} height={18} className="mr-2" />
-                      Profile
-                    </button>
-                    <button
-                      onClick={handleWishlistClick}
-                      className="w-full px-4 py-2 text-white text-center flex items-center justify-center font-sofia text-base hover:bg-pink-700"
-                    >
-                      {/* TODO: Change To Wishlist Icon */}
-                      <Image src="/Image/IconButton/shopping.png" alt="User Profile" width={18} height={18} className="mr-2" />
-                      Wishlist
-                    </button>
-                    <button
-                      onClick={handleHistoryClick}
-                      className="w-full px-4 py-2 text-white text-center flex items-center justify-center font-sofia text-base hover:bg-pink-700"
-                    >
-                      <Image src="/Image/IconButton/history.png" alt="User Profile" width={18} height={18} className="mr-2" />
-                      Histori Pemesanan
-                    </button>
-                    <button
-                      onClick={handleSignOutClick}
-                      className="w-full px-4 py-2 text-white text-center flex items-center justify-center font-sofia text-base hover:bg-pink-700"
-                    >
-                      <Image src="/Image/IconButton/logout.png" alt="Sign Out" width={16} height={16} className="mr-2" />
-                      Sign Out
-                    </button>
+                    {isAdmin ? (
+                      <button
+                        onClick={handleSignOutClick}
+                        className="w-full px-4 py-2 text-white text-center flex items-center justify-center font-sofia text-base hover:bg-pink-700"
+                      >
+                        <Image src="/Image/IconButton/logout.png" alt="Sign Out" width={16} height={16} className="mr-2" />
+                        Sign Out
+                      </button>
+                    ) : (
+                      <>
+                        <button
+                          onClick={handleProfileClick}
+                          className="w-full px-4 py-2 text-white text-center flex items-center justify-center font-sofia text-base hover:bg-pink-700"
+                        >
+                          <Image src="/Image/IconButton/profile.png" alt="User Profile" width={18} height={18} className="mr-2" />
+                          Profile
+                        </button>
+                        <button
+                          onClick={handleWishlistClick}
+                          className="w-full px-4 py-2 text-white text-center flex items-center justify-center font-sofia text-base hover:bg-pink-700"
+                        >
+                          <Image src="/Image/IconButton/shopping.png" alt="User Wishlist" width={18} height={18} className="mr-2" />
+                          Wishlist
+                        </button>
+                        <button
+                          onClick={handleHistoryClick}
+                          className="w-full px-4 py-2 text-white text-center flex items-center justify-center font-sofia text-base hover:bg-pink-700"
+                        >
+                          <Image src="/Image/IconButton/history.png" alt="Order History" width={18} height={18} className="mr-2" />
+                          Histori Pemesanan
+                        </button>
+                        <button
+                          onClick={handleSignOutClick}
+                          className="w-full px-4 py-2 text-white text-center flex items-center justify-center font-sofia text-base hover:bg-pink-700"
+                        >
+                          <Image src="/Image/IconButton/logout.png" alt="Sign Out" width={16} height={16} className="mr-2" />
+                          Sign Out
+                        </button>
+                      </>
+                    )}
                   </div>
                 )}
               </div>
             ) : (
-              <button onClick={handleSignInClick} className="font-sofia text-white">
-                Sign In
-              </button>
+              <li>
+                <button onClick={handleSignInClick} className="font-sofia text-white">
+                  Sign In
+                </button>
+              </li>
             )}
-          </li>
-        </ul>
-      </div>
-    )}
+          </ul>
+        </div>
+      )}
     </nav>
   );
 }
