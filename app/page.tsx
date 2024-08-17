@@ -289,31 +289,58 @@ export function Navbar() {
             {!isAdmin && (
               <>
                 <li>
-                  <a
-                    href="#about-us"
-                    onClick={(e) => { handleScrollToSection(e, 'about-us'); setIsMenuOpen(false); }}
-                    className="hover:underline font-sofia text-white"
-                  >
-                    About Us
-                  </a>
+                  {pathname === '/' ? (
+                    <a
+                      href="#about-us"
+                      onClick={(e) => handleScrollToSection(e, 'about-us')}
+                      className="hover:underline font-sofia text-white"
+                    >
+                      About Us
+                    </a>
+                  ) : (
+                    <a
+                      href="/#about-us"
+                      className="hover:underline font-sofia text-white"
+                    >
+                      About Us
+                    </a>
+                  )}
                 </li>
                 <li>
-                  <a
-                    href="#services"
-                    onClick={(e) => { handleScrollToSection2(e, 'services'); setIsMenuOpen(false); }}
-                    className="hover:underline font-sofia text-white"
-                  >
-                    Produk & Layanan
-                  </a>
+                  {pathname === '/' ? (
+                    <a
+                      href="#services"
+                      onClick={(e) => handleScrollToSection(e, 'services')}
+                      className="hover:underline font-sofia text-white"
+                    >
+                      Produk & Layanan
+                    </a>
+                  ) : (
+                    <a
+                      href="/#services"
+                      className="hover:underline font-sofia text-white"
+                    >
+                      Produk & Layanan
+                    </a>
+                  )}
                 </li>
                 <li>
-                  <a
-                    href="#faq"
-                    onClick={(e) => { handleScrollToSection(e, 'faq'); setIsMenuOpen(false); }}
-                    className="hover:underline font-sofia text-white"
-                  >
-                    FAQ
-                  </a>
+                  {pathname === '/' ? (
+                    <a
+                      href="#faq"
+                      onClick={(e) => handleScrollToSection(e, 'faq')}
+                      className="hover:underline font-sofia text-white"
+                    >
+                      FAQ
+                    </a>
+                  ) : (
+                    <a
+                      href="/#faq"
+                      className="hover:underline font-sofia text-white"
+                    >
+                      FAQ
+                    </a>
+                  )}
                 </li>
               </>
             )}
@@ -699,7 +726,7 @@ function FAQ({ faqs }: { faqs: Faq[] }) {
 
   return (
     <section id="faq" className="p-8 md:p-16 mt-8 md:-mt-8">
-      <h1 className="text-3xl md:text-4xl font-bold mb-12 text-pink-900 font-sofia">
+      <h1 className="text-3xl md:text-4xl font-bold mb-12 text-pink-900 font-sofia mt-0 md:mt-16">
         Pertanyaan Yang Sering Ditanyakan
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-4">
@@ -860,7 +887,7 @@ export function ContactBox() {
         <div className="text-center mb-6">
           <div className="flex flex-col items-center">
             <Image src="/Image/logo.png" alt="Logevent Logo" width={60} height={60} className='mb-2 cursor-pointer'/>
-            <p className="mt-2 mb-4 font-sofia">Jangan khawatir pusing nyari vendor, Logevent solusinya</p>
+            <p className="mt-2 mb-4 font-sofia px-5 md:px-0">Jangan khawatir pusing nyari vendor, Logevent solusinya</p>
           </div>
         </div>
         
