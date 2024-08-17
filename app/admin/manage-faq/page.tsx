@@ -18,7 +18,7 @@ export default function Adminquestion() {
     };
   
     const handleNext = () => {
-      router.push('/admin/statistics');
+      router.push('/admin/settings');
     };
 
     return (
@@ -192,66 +192,70 @@ function Managequestion() {
             </div>
             {faqs.map(question => (
                 <div key={question.id} className="bg-white p-4 rounded-md mb-2 text-black shadow-md">
-                    <div className="flex flex-col md:flex-row justify-start md:justify-between md:items-center">
-                        <div className="flex items-center mb-3 md:mb-0">
-                            <button onClick={() => toggleQuestion(question.id)} className="flex items-center">
-                                <span className="text-sm md:text-base md:mr-2">{expandedQuestionId === question.id ? 'V' : '>'}</span>
-                                <span className="text-sm md:text-base ml-2">{question.id}. {question.question}</span>
-                            </button>
-                        </div>
-                        <div className="flex items-center ml-auto">
-                            <button
-                                className="text-sm md:text-base bg-white hover:bg-pink-100 border border-pink-500 text-pink-500 px-1 md:px-3 py-1 md:py-[0.35rem] rounded-md mr-2"
-                                onClick={() => handleEditClick(question.id)}
-                            >
-                                Edit FAQ
-                            </button>
-                            <button
-                                className="bg-red-500 text-white p-1 md:p-2 rounded-md"
-                                onClick={() => handleDeleteClick(question.id)}
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fillRule="evenodd" d="M6.5 4a1 1 0 00-.894.553L5 5H3a1 1 0 000 2h1v9a2 2 0 002 2h8a2 2 0 002-2V7h1a1 1 0 100-2h-2l-.606-1.447A1 1 0 0013.5 4h-7zM6 7v9h8V7H6zm4-3a1 1 0 011 1v1h-2V5a1 1 0 011-1z" clipRule="evenodd" />
-                                </svg>
-                            </button>
-                        </div>
+                <div className="flex flex-col md:flex-row justify-start md:justify-between md:items-center">
+                    <div className="flex flex-wrap items-center mb-3 md:mb-0">
+                        <button onClick={() => toggleQuestion(question.id)} className="flex items-center text-left">
+                            <span className="text-sm md:text-base md:mr-2">
+                                {expandedQuestionId === question.id ? 'V' : '>'}
+                            </span>
+                            <span className="text-sm md:text-base ml-2 overflow-wrap break-words w-1/2 md:w-auto">
+                                {question.id}. {question.question}
+                            </span>
+                        </button>
                     </div>
-                    {expandedQuestionId === question.id && (
-                        <div className="mt-5">
-                            {editingQuestionId === question.id ? (
-                                <>
-                                    <p className="text-sm md:text-base">Pertanyaan:</p>
-                                    <input
-                                        type="text"
-                                        name="question"
-                                        value={editedQuestion.question}
-                                        onChange={handleInputChange}
-                                        className="w-full mb-2 p-1 md:p-2 border border-gray-300 rounded-md text-sm md:text-base"
-                                    />
-                                    <p className="text-sm md:text-base">Jawaban:</p>
-                                    <textarea
-                                        name="answer"
-                                        value={editedQuestion.answer}
-                                        onChange={handleInputChange}
-                                        className="w-full mb-2 p-1 md:p-2 border border-gray-300 rounded-md text-sm md:text-base"
-                                    />
-                                    <div className="flex justify-end mt-2">
-                                        <button
-                                            className="bg-blue-500 text-white p-1 md:p-2 rounded-md text-sm md:text-base"
-                                            onClick={() => handleSave(question.id)}
-                                        >
-                                            Save
-                                        </button>
-                                    </div>
-                                </>
-                            ) : (
-                                <>
-                                    <p className="text-sm md:text-base">{question.answer}</p>
-                                </>
-                            )}
-                        </div>
-                    )}
+                    <div className="flex items-center ml-auto">
+                        <button
+                            className="text-sm md:text-base bg-white hover:bg-pink-100 border border-pink-500 text-pink-500 px-1 md:px-3 py-1 md:py-[0.35rem] rounded-md mr-2"
+                            onClick={() => handleEditClick(question.id)}
+                        >
+                            Edit FAQ
+                        </button>
+                        <button
+                            className="bg-red-500 text-white p-1 md:p-2 rounded-md"
+                            onClick={() => handleDeleteClick(question.id)}
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M6.5 4a1 1 0 00-.894.553L5 5H3a1 1 0 000 2h1v9a2 2 0 002 2h8a2 2 0 002-2V7h1a1 1 0 100-2h-2l-.606-1.447A1 1 0 0013.5 4h-7zM6 7v9h8V7H6zm4-3a1 1 0 011 1v1h-2V5a1 1 0 011-1z" clipRule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
+                {expandedQuestionId === question.id && (
+                    <div className="mt-5">
+                        {editingQuestionId === question.id ? (
+                            <>
+                                <p className="text-sm md:text-base">Pertanyaan:</p>
+                                <input
+                                    type="text"
+                                    name="question"
+                                    value={editedQuestion.question}
+                                    onChange={handleInputChange}
+                                    className="w-full mb-2 p-1 md:p-2 border border-gray-300 rounded-md text-sm md:text-base overflow-wrap break-words"
+                                />
+                                <p className="text-sm md:text-base">Jawaban:</p>
+                                <textarea
+                                    name="answer"
+                                    value={editedQuestion.answer}
+                                    onChange={handleInputChange}
+                                    className="w-full mb-2 p-1 md:p-2 border border-gray-300 rounded-md text-sm md:text-base overflow-wrap break-words"
+                                />
+                                <div className="flex justify-end mt-2">
+                                    <button
+                                        className="bg-blue-500 text-white p-1 md:p-2 rounded-md text-sm md:text-base"
+                                        onClick={() => handleSave(question.id)}
+                                    >
+                                        Save
+                                    </button>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <p className="text-sm md:text-base overflow-wrap break-words">{question.answer}</p>
+                            </>
+                        )}
+                    </div>
+                )}
+            </div>
             ))}
             {showPopup && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">

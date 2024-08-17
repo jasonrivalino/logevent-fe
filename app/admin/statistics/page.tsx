@@ -40,7 +40,7 @@ const [visits, setVisits] = useState<Visit[]>([]);
     const router = useRouter();
   
     const handlePrev = () => {
-      router.push('/admin/manage-faq');
+      router.push('/admin/settings');
     };
   
     const handleNext = () => {

@@ -116,6 +116,7 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
   const [copied, setCopied] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
+  const [showOrderPopup, setShowOrderPopup] = useState(false); // New state for order popup
   const router = useRouter();
 
   const resetTimeout = () => {
@@ -203,6 +204,14 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
     setShowPopup(false);
   };
 
+  const handleOrderClick = () => {
+    setShowOrderPopup(true); // Show the order popup
+  };
+
+  const closeOrderPopup = () => {
+    setShowOrderPopup(false); // Close the order popup
+  };
+
   return (
     <div className="px-8 py-4">
       {windowWidth >= 768 ? (
@@ -241,10 +250,9 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
               >
                 {isWishlist ? "Hapus dari Wishlist" : "Tambah ke Wishlist"}
               </button>
-              {/* TODO: Order Popup */}
               <button
                 className="bg-pink-500 text-white rounded-lg px-3 md:px-4 py-2 -ml-4 md:ml-0 mr-[6.5rem] md:mr-0 text-sm md:text-base"
-                onClick={() => router.push('/isi-pemesanan')}
+                onClick={handleOrderClick} // Show the order popup instead of routing
               >
                 Pesan Langsung
               </button>
@@ -344,9 +352,33 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
           </div>
         </div>
       )}
+
+      {showOrderPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 text-black font-sofia">
+          <div className="bg-white rounded-lg p-6 max-w-sm mx-auto">
+            <h2 className="text-lg font-bold mb-4">Order Form</h2>
+            {/* Add your form elements here */}
+            <form>
+              <label className="block mb-2">Name:</label>
+              <input type="text" className="border p-2 mb-4 w-full" />
+
+              <label className="block mb-2">Email:</label>
+              <input type="email" className="border p-2 mb-4 w-full" />
+
+              <label className="block mb-2">Phone:</label>
+              <input type="tel" className="border p-2 mb-4 w-full" />
+
+              <button type="submit" className="bg-pink-500 text-white py-2 px-4 rounded w-full">Submit</button>
+            </form>
+            <button onClick={closeOrderPopup} className="mt-4 bg-pink-500 text-white py-2 px-4 rounded">
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
-};
+}
 
 function Tabs({ scrollToSection, refs }: { scrollToSection: (ref: React.RefObject<any>) => void; refs: { descriptionRef: React.RefObject<any>; reviewsRef: React.RefObject<any> } }) {
   return (
