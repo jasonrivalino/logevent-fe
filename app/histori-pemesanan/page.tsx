@@ -75,24 +75,24 @@ export default function HomePage() {
   return (
     <div className="container mx-auto font-sofia">
       <Navbar />
-      <div className="flex flex-col gap-4 px-14 py-24">
+      <div className="flex flex-col gap-4 px-6 md:px-8 py-16 md:py-20">
         <div className="flex flex-col gap-4 bg-white shadow-lg rounded-xl p-4 md:p-8 mt-6">
-          <div className='flex justify-between'>
+          <div className='flex flex-col md:flex-row justify-between'>
             <div className='flex flex-row'>
-              <FaHistory className="text-4xl text-pink-900 mr-5 -mt-[0.15rem]" />
-              <h1 className="text-3xl font-bold text-pink-900 font-sofia mb-5">
+              <FaHistory className="text-2xl md:text-4xl text-pink-900 mr-3 md:mr-5 mt-1 md:-mt-[0.15rem]" />
+              <h1 className="text-xl md:text-3xl font-bold text-pink-900 font-sofia mt-1 md:mt-0 mb-5">
                 {activeOption === 'Paket Event' ? 'Histori Paket Event' : 'Histori Logistik Vendor'}
               </h1>
             </div>
             <div className="flex flex-row rounded-full border border-white transition-all duration-300">
             <button
-                className={`px-2 py-1 rounded-l-full transition-all duration-300 ${activeOption === 'Logistik Vendor' ? 'bg-pink-600 text-white' : 'bg-white text-pink-600 border border-pink-600'}`}
+                className={`px-2 py-2 md:py-1 text-xs md:text-base rounded-l-full transition-all duration-300 ${activeOption === 'Logistik Vendor' ? 'bg-pink-600 text-white' : 'bg-white text-pink-600 border border-pink-600'}`}
                 onClick={() => handleToggle('Logistik Vendor')}
             >
                 Logistik Vendor
             </button>
             <button
-                className={`px-3 py-1 rounded-r-full transition-all duration-300 ${activeOption === 'Paket Event' ? 'bg-pink-600 text-white' : 'bg-white text-pink-600 border border-pink-600'}`}
+                className={`px-3 py-2 md:py-1 text-xs md:text-base rounded-r-full transition-all duration-300 ${activeOption === 'Paket Event' ? 'bg-pink-600 text-white' : 'bg-white text-pink-600 border border-pink-600'}`}
                 onClick={() => handleToggle('Paket Event')}
             >
                 Paket Event
@@ -125,7 +125,12 @@ const HistoriPaketEvent = ({ eventOrders, eventItems }: { eventOrders: Order[]; 
 
   return (
     <div className="flex flex-col gap-4">
-      {paginatedOrders.map((order) => (
+      {eventOrders.length === 0 ? (
+        <div className="text-center py-40">
+          <p className="text-base md:text-xl text-gray-600 font-bold">Histori Paket Event Anda Kosong</p>
+          <p className="text-xs md:text-base text-gray-500">Segera lakukan pemesanan paket</p>
+        </div>
+      ) : (paginatedOrders.map((order) => (
         <div key={order.id} className="bg-white shadow-lg rounded-xl p-4 md:p-8">
           <h2 className="text-lg md:text-xl font-bold text-pink-900">{convertDate(order.orderDate)}</h2>
           <div className="flex flex-col gap-4 w-[65rem]">
@@ -139,7 +144,7 @@ const HistoriPaketEvent = ({ eventOrders, eventItems }: { eventOrders: Order[]; 
                         alt={`${item.eventName} Image`}
                         width={400}
                         height={200}
-                        className="object-cover w-80 h-28 md:h-auto"
+                        className="object-cover w-full h-28 md:h-auto"
                     />
                     <div className="p-3 md:p-4 md:ml-3 flex-grow font-sofia relative">
                         <h3 className="text-base md:text-xl text-pink-900 font-bold">{item.eventName}</h3>
@@ -184,13 +189,13 @@ const HistoriPaketEvent = ({ eventOrders, eventItems }: { eventOrders: Order[]; 
             }
           </div>
         </div>
-      ))}
+      )))}
       {totalPages > 1 && (
         <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
       )}
     </div>
   );
-};
+}
 
 function HistoriLogistikVendor({ productOrders, productItems }: { productOrders: Order[]; productItems: ProductItem[][] }) {
   const router = useRouter();
@@ -211,64 +216,71 @@ function HistoriLogistikVendor({ productOrders, productItems }: { productOrders:
 
   return (
     <div className="relative py-4">
-      {paginatedOrders.map((order) => (
-        <div key={order.id} className="bg-white shadow-lg rounded-xl p-4 md:p-8 mb-4">
-          <h2 className="text-lg md:text-xl font-bold text-pink-900">{convertDate(order.orderDate)}</h2>
-          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {productItems
-              .filter((items) => items.some((item) => item.cartId === order.cartId))
-              .flat()
-              .map((item) => (
-                <div key={item.productId} className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col justify-between">
-                  <Image
-                    src={item.productImage || "/Image/planetarium.jpg"}
-                    alt={`${item.productName} Image`}
-                    width={245}
-                    height={50}
-                    className="object-cover"
-                  />
-                  <div className="p-3 md:p-3 font-sofia flex flex-col justify-between flex-grow">
-                    <div>
-                      <h3 className="text-sm md:text-base text-pink-900 font-bold mb-2">{item.productName}</h3>
-                      <p className="text-xs md:text-sm text-gray-700">{item.productSpecification}</p>
-                      <p className="text-xs md:text-sm text-gray-500 flex flex-row">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-3 md:h-4 w-3 md:w-4 text-yellow-500 mr-[0.3rem] mt-[0.075rem] md:mt-[0.05rem]"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
+      {productOrders.length === 0 ? (
+        <div className="text-center py-40">
+          <p className="text-base md:text-xl text-gray-600 font-bold">Histori Logistik Vendor Anda Kosong</p>
+          <p className="text-xs md:text-base text-gray-500">Segera lakukan pemesanan produk</p>
+        </div>
+      ) : (
+        paginatedOrders.map((order) => (
+          <div key={order.id} className="bg-white shadow-lg rounded-xl p-4 md:p-8 mb-4">
+            <h2 className="text-lg md:text-xl font-bold text-pink-900">{convertDate(order.orderDate)}</h2>
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-6 gap-2 md:gap-4 mt-4">
+              {productItems
+                .filter((items) => items.some((item) => item.cartId === order.cartId))
+                .flat()
+                .map((item) => (
+                  <div key={item.productId} className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col justify-between">
+                    <Image
+                      src={item.productImage || "/Image/planetarium.jpg"}
+                      alt={`${item.productName} Image`}
+                      width={200}
+                      height={50}
+                      className="object-cover w-full h-20 md:h-32"
+                    />
+                    <div className="p-3 md:p-3 font-sofia flex flex-col justify-between flex-grow">
+                      <div>
+                        <h3 className="text-sm md:text-base text-pink-900 font-bold mb-2">{item.productName}</h3>
+                        <p className="text-xs md:text-sm text-gray-700">{item.productSpecification}</p>
+                        <p className="text-xs md:text-sm text-gray-500 flex flex-row">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-3 md:h-4 w-3 md:w-4 text-yellow-500 mr-[0.3rem] mt-[0.075rem] md:mt-[0.05rem]"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.14 3.51a1 1 0 00.95.69h3.7c.967 0 1.372 1.24.588 1.81l-2.992 2.179a1 1 0 00-.364 1.118l1.14 3.51c.3.921-.755 1.688-1.54 1.118l-2.992-2.178a1 1 0 00-1.175 0l-2.992 2.178c-.785.57-1.84-.197-1.54-1.118l1.14-3.51a1 1 0 00-.364-1.118L2.93 8.937c-.784-.57-.38-1.81.588-1.81h3.7a1 1 0 00.95-.69l1.14-3.51z" />
+                          </svg> {item.productRating && item.productRating.toFixed(2) !== "0.00" ? item.productRating.toFixed(2) : "N/A"}
+                        </p>
+                        <p
+                          className="text-xs md:text-sm text-gray-500"
+                          onClick={() => handleAddressClick(item.vendorAddress)}
                         >
-                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.14 3.51a1 1 0 00.95.69h3.7c.967 0 1.372 1.24.588 1.81l-2.992 2.179a1 1 0 00-.364 1.118l1.14 3.51c.3.921-.755 1.688-1.54 1.118l-2.992-2.178a1 1 0 00-1.175 0l-2.992 2.178c-.785.57-1.84-.197-1.54-1.118l1.14-3.51a1 1 0 00-.364-1.118L2.93 8.937c-.784-.57-.38-1.81.588-1.81h3.7a1 1 0 00.95-.69l1.14-3.51z" />
-                        </svg> {item.productRating && item.productRating.toFixed(2) !== "0.00" ? item.productRating.toFixed(2) : "N/A"}
-                      </p>
-                      <p
-                        className="text-gray-500 cursor-pointer"
-                        onClick={() => handleAddressClick(item.vendorAddress)}
-                      >
-                        {item.vendorAddress}
-                      </p>
-                      <p className="text-xs md:text-sm text-pink-500 font-bold mt-2">Rp{item.productPrice.toLocaleString('id-ID')}</p>
-                    </div>
-                    <div className="flex justify-between items-center mt-4">
-                      {item.isReviewed ? (
-                        <div className="text-green-600 font-bold mt-4">
-                          Reviewed
-                        </div>
-                      ) : (
-                        <button
-                          className="bg-pink-600 hover:bg-pink-800 px-2 py-1 rounded-lg text-white self-start text-xs md:text-base font-bold mt-4"
-                          onClick={() => router.push(`/review/${item.id}`)}
-                        >
-                          Review
-                        </button>
-                      )}
+                          {item.vendorAddress}
+                        </p>
+                        <p className="text-xs md:text-sm text-pink-500 font-bold mt-2">Rp{item.productPrice.toLocaleString('id-ID')}</p>
+                      </div>
+                      <div className="flex justify-between items-center mt-4 ml-auto">
+                        {item.isReviewed ? (
+                          <div className="text-green-600 font-bold">
+                            Reviewed
+                          </div>
+                        ) : (
+                          <button
+                            className="bg-pink-600 hover:bg-pink-800 px-2 py-1 rounded-lg text-white self-start text-xs md:text-base font-bold"
+                            onClick={() => router.push(`/review/${item.id}`)}
+                          >
+                            Review
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+            </div>
           </div>
-        </div>
-      ))}
+        ))
+      )}
       {totalPages > 1 && (
         <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
       )}

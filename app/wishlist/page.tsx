@@ -318,7 +318,7 @@ function WishlistLogistikVendor({ productWishlists }: { productWishlists: Produc
                   alt={`${item.productName} Image`}
                   width={400}
                   height={200}
-                  className="object-cover w-80 h-20 md:h-32"
+                  className="object-cover w-full h-20 md:h-32"
                 />
                 <div className="p-3 md:p-3 font-sofia flex flex-col justify-between flex-grow">
                   <div>

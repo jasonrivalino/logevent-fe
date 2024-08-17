@@ -5,7 +5,7 @@
 import Cookies from 'js-cookie';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 // self-defined modules
 import { readUserProfile } from '@/app/utils/authApi';
@@ -57,6 +57,7 @@ export default function Home() {
 
 export function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -155,31 +156,58 @@ export function Navbar() {
             {!isAdmin && (
               <>
                 <li>
-                  <a
-                    href="#about-us"
-                    onClick={(e) => handleScrollToSection(e, 'about-us')}
-                    className="hover:underline font-sofia text-white"
-                  >
-                    About Us
-                  </a>
+                  {pathname === '/' ? (
+                    <a
+                      href="#about-us"
+                      onClick={(e) => handleScrollToSection(e, 'about-us')}
+                      className="hover:underline font-sofia text-white"
+                    >
+                      About Us
+                    </a>
+                  ) : (
+                    <a
+                      href="/#about-us"
+                      className="hover:underline font-sofia text-white"
+                    >
+                      About Us
+                    </a>
+                  )}
                 </li>
                 <li>
-                  <a
-                    href="#services"
-                    onClick={(e) => handleScrollToSection(e, 'services')}
-                    className="hover:underline font-sofia text-white"
-                  >
-                    Produk & Layanan
-                  </a>
+                  {pathname === '/' ? (
+                    <a
+                      href="#services"
+                      onClick={(e) => handleScrollToSection(e, 'services')}
+                      className="hover:underline font-sofia text-white"
+                    >
+                      Produk & Layanan
+                    </a>
+                  ) : (
+                    <a
+                      href="/#services"
+                      className="hover:underline font-sofia text-white"
+                    >
+                      Produk & Layanan
+                    </a>
+                  )}
                 </li>
                 <li>
-                  <a
-                    href="#faq"
-                    onClick={(e) => handleScrollToSection(e, 'faq')}
-                    className="hover:underline font-sofia text-white"
-                  >
-                    FAQ
-                  </a>
+                  {pathname === '/' ? (
+                    <a
+                      href="#faq"
+                      onClick={(e) => handleScrollToSection(e, 'faq')}
+                      className="hover:underline font-sofia text-white"
+                    >
+                      FAQ
+                    </a>
+                  ) : (
+                    <a
+                      href="/#faq"
+                      className="hover:underline font-sofia text-white"
+                    >
+                      FAQ
+                    </a>
+                  )}
                 </li>
               </>
             )}

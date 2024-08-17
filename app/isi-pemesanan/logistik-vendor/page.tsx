@@ -229,7 +229,7 @@ export default function ReservationFill() {
               />
             </div>
             <div className="flex flex-row gap-4 md:gap-6 mb-4">
-              <div className="flex-1 md:mr-9">
+              <div className="flex-1">
                 <label htmlFor="startDate" className="text-sm md:text-base text-gray-800 mb-1 md:mb-2 mr-3">Mulai Acara *</label>
                 <DatePicker
                   selected={startDate}
