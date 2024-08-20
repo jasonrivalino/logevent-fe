@@ -14,6 +14,7 @@ import { readAllFaqs } from './utils/faqApi';
 import { readTopProducts } from '@/app/utils/productApi';
 import { createVisit } from '@/app/utils/visitApi';
 import { Faq, Product } from '@/app/utils/types';
+import { FaCaretDown } from 'react-icons/fa';
 
 export default function Home() {
   const [faqs, setFaqs] = useState<Faq[]>([]);
@@ -213,12 +214,13 @@ export function Navbar() {
             )}
             {userName ? (
               <li className="relative bg-pink-900">
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
                   <span
-                    className="font-sofia cursor-pointer text-white"
+                    className="font-sofia cursor-pointer text-white flex items-center"
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   >
-                    {userName}
+                    {userName.length > 10 ? `${userName.substring(0, 10)}...` : userName}
+                    <FaCaretDown className="text-white ml-2" />
                   </span>
                   {isDropdownOpen && (
                     <div className="absolute top-full right-0 mt-[1.125rem] w-[13rem] bg-pink-900 shadow-lg max-h-44 overflow-y-auto z-50">
@@ -347,10 +349,11 @@ export function Navbar() {
             {userName ? (
               <div className="flex flex-col items-center space-y-4">
                 <span
-                  className="font-sofia cursor-pointer text-white"
+                  className="font-sofia cursor-pointer text-white flex items-center"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 >
-                  {userName}
+                  {userName.length > 15 ? `${userName.substring(0, 10)}...` : userName}
+                  <FaCaretDown className="text-white ml-2" />
                 </span>
                 {isDropdownOpen && (
                   <div className="w-96 bg-pink-900 flex flex-col items-center">

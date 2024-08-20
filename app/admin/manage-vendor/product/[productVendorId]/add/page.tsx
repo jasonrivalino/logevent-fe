@@ -261,7 +261,7 @@ function AddVendorProduct({ vendor }: { vendor: Vendor }) {
             <label className="block text-gray-700 font-sofia text-sm md:text-base">Kapasitas Produk</label>
             <p className="text-gray-500 text-xs md:text-sm font-sofia mb-1 md:mb-2">Kosongkan jika produk tidak memiliki kapasitas</p>
             <input
-              className="w-full px-3 md:px-4 py-1 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
+              className="w-full px-3 md:px-4 py-1 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 no-spinners"
               type="number"
               placeholder="Masukkan Kapasitas"
               value={capacity}
@@ -310,7 +310,7 @@ function AddVendorProduct({ vendor }: { vendor: Vendor }) {
               <div className="flex">
                 <span className="flex items-center px-3 text-gray-500 border border-r-0 rounded-l-lg border-gray-300">Rp</span>
                 <input
-                className="w-full px-4 py-2 border rounded-r-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
+                className="w-full px-4 py-2 border rounded-r-lg focus:outline-none focus:ring-2 focus:ring-pink-600 no-spinners"
                 type="number"
                 placeholder="Masukkan Harga"
                 value={price}
@@ -401,13 +401,22 @@ function AddVendorProduct({ vendor }: { vendor: Vendor }) {
       {showPopup && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 font-sofia text-black">
           <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-xl font-semibold mb-4">Tambah Kategori Baru</h2>
+            <h2 className="text-xl font-semibold mb-4">Tambah Kategori Produk</h2>
+            <p className="text-sm text-gray-600 mb-1">Nama kategori:</p>
             <input
               type="text"
               value={newCategory}
               onChange={(e) => setNewCategory(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 mb-4"
+              className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 mb-2"
               placeholder="Masukkan kategori"
+            />
+            <p className="text-sm text-gray-600 mb-1">Biaya Layanan:</p>
+            <input
+              type="number"
+              // value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+              className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 mb-6 no-spinners"
+              placeholder="Masukkan biaya layanan"
             />
             <div className="flex justify-end space-x-4">
               <button onClick={() => setShowPopup(false)} className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg">Batal</button>

@@ -454,7 +454,7 @@ const EventImage = ({ event, albums, isWishlist, setIsWishlist }: { event: Event
       )}
 
       {showOrderPopup && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 text-black font-sofia">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 text-black font-sofia z-50">
           <div className="relative bg-white rounded-lg mx-auto max-w-xs md:max-w-4xl mt-16">
             <button 
               onClick={() => closeOrderPopup()} 
