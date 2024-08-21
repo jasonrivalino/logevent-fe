@@ -210,7 +210,7 @@ function WishlistLogistikVendor({ productWishlists }: { productWishlists: Produc
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedItems, setSelectedItems] = useState<ProductWishlist[]>([]);
   const [totalPrice, setTotalPrice] = useState(0);
-  const [quantities, setQuantities] = useState<{ [key: number]: number }>({});
+  const [amount, setAmount] = useState<{ [key: number]: number }>({});
 
   const totalPages = Math.ceil(productWishlists.length / itemsPerPage);
 
@@ -228,29 +228,29 @@ function WishlistLogistikVendor({ productWishlists }: { productWishlists: Produc
     let updatedItems = [];
     let updatedPrice = totalPrice;
 
-    const quantity = quantities[productWishlist.id] || 1;
+    const itemAmount = amount[productWishlist.id] || 1;
 
     if (isSelected) {
       updatedItems = selectedItems.filter((item) => item.id !== productWishlist.id);
-      updatedPrice -= productWishlist.productPrice * quantity;
+      updatedPrice -= productWishlist.productPrice * itemAmount;
     } else {
       updatedItems = [...selectedItems, productWishlist];
-      updatedPrice += productWishlist.productPrice * quantity;
+      updatedPrice += productWishlist.productPrice * itemAmount;
     }
 
     setSelectedItems(updatedItems);
     setTotalPrice(updatedPrice);
   };
 
-  const increaseQuantity = (id: number) => {
-    setQuantities((prev) => ({
+  const increaseAmount = (id: number) => {
+    setAmount((prev) => ({
       ...prev,
       [id]: (prev[id] || 1) + 1,
     }));
   };
 
-  const decreaseQuantity = (id: number) => {
-    setQuantities((prev) => ({
+  const decreaseAmount = (id: number) => {
+    setAmount((prev) => ({
       ...prev,
       [id]: Math.max(1, (prev[id] || 1) - 1),
     }));
@@ -280,8 +280,8 @@ function WishlistLogistikVendor({ productWishlists }: { productWishlists: Produc
             cartId: cart.id,
             eventId: null,
             productId: item.productId,
-            duration: null,
-            quantity: quantities[item.id] || 1,
+            duration: item.productRate === "Hourly" ? amount[item.id] : null,
+            quantity: item.productRate === "Quantity" ? amount[item.id] : null,
           };
 
           await createItem(itemData);
@@ -337,22 +337,24 @@ function WishlistLogistikVendor({ productWishlists }: { productWishlists: Produc
                     <p className="text-xs md:text-sm text-gray-500">{item.vendorAddress}</p>
                     <p className="text-xs md:text-sm text-pink-500 font-bold mt-2">Rp{item.productPrice.toLocaleString('id-ID')}</p>
                   </div>
-                  <div className="flex justify-between items-center mt-2 bg-gray-100 w-2/5 text-xs md:text-base">
-                    <button
-                      className="bg-gray-200 text-gray-700 px-1 md:px-2 md:py-1 rounded-md"
-                      onClick={() => decreaseQuantity(item.id)}
-                      disabled={quantities[item.id] === 1}
-                    >
-                      -
-                    </button>
-                    <span className="mx-2 text-black">{quantities[item.id] || 1}</span>
-                    <button
-                      className="bg-gray-200 text-gray-700 px-1 md:px-2 md:py-1 rounded-md tetx-black"
-                      onClick={() => increaseQuantity(item.id)}
-                    >
-                      +
-                    </button>
-                  </div>
+                  {(item.productRate === "Hourly" || item.productRate === "Quantity") && (
+                    <div className="flex justify-between items-center mt-2 bg-gray-100 w-2/5 text-xs md:text-base">
+                      <button
+                        className="bg-gray-200 text-gray-700 px-1 md:px-2 md:py-1 rounded-md"
+                        onClick={() => decreaseAmount(item.id)}
+                        disabled={amount[item.id] === 1}
+                      >
+                        -
+                      </button>
+                      <span className="mx-2 text-black">{amount[item.id] || 1}</span>
+                      <button
+                        className="bg-gray-200 text-gray-700 px-1 md:px-2 md:py-1 rounded-md"
+                        onClick={() => increaseAmount(item.id)}
+                      >
+                        +
+                      </button>
+                    </div>
+                  )}
                   <div className="flex justify-between items-center">
                     <button className="self-start text-xs md:text-base text-pink-500 hover:text-pink-700 font-bold mt-2"
                       onClick={() => router.push(`/logistik-vendor/info-detail/${item.productId}`)}

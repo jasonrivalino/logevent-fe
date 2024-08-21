@@ -105,6 +105,28 @@ export const updateOrder = async (id: number, orderData: {
   }
 };
 
+export const confirmOrderPayment = async (id: number) => {
+  try {
+    const response = await axios.put(`${API_URL}/orders/confirm-payment/${id}`, {
+      withCredentials: true
+    });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Failed to confirm order payment');
+  }
+};
+
+export const cancelOrder = async (id: number) => {
+  try {
+    const response = await axios.put(`${API_URL}/orders/cancel/${id}`, {
+      withCredentials: true
+    });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Failed to cancel order');
+  }
+};
+
 export const deleteOrder = async (id: number) => {
   try {
     await axios.delete(`${API_URL}/orders/delete/${id}`, {

@@ -10,7 +10,7 @@ import * as XLSX from 'xlsx';
 import { ContactBox, Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
 import { convertDate, generateEmailUrl, generateGoogleMapsUrl, generateWhatsAppUrl } from '@/app/utils/helpers';
-import { readAllOrders } from '@/app/utils/orderApi';
+import { readAllOrders, confirmOrderPayment, cancelOrder } from '@/app/utils/orderApi';
 import { Order } from '@/app/utils/types';
 
 export default function AdminOrderRecap() {
@@ -91,7 +91,8 @@ function Table({ orders, onExport }: { orders: Order[], onExport: () => void }) 
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [showModal, setShowModal] = useState(false);
-    const [action, setAction] = useState(""); // State to store the current action
+    const [action, setAction] = useState("");
+    const [orderId, setOrderId] = useState(0);
     const [modalContent, setModalContent] = useState("");
     const [filteredOrders, setFilteredOrders] = useState<Order[]>(orders);
     const ordersPerPage = 10;
@@ -101,11 +102,48 @@ function Table({ orders, onExport }: { orders: Order[], onExport: () => void }) 
         handleFilter();
     }, [searchQuery, orders]);
 
-    const handleConfirmation = (action: string) => {
-        setAction(action); // Set the current action
+    const handleConfirmation = (action: string, orderId: number) => {
+        setAction(action);
+        setOrderId(orderId);
         setModalContent(action === "approve" ? "Apakah kamu yakin ingin menyelesaikan pemesanan ini?" : "Apakah kamu yakin ingin membatalkan pemesanan ini?");
         setShowModal(true);
     };
+
+    const handleCancel = () => {
+        setAction("");
+        setOrderId(0);
+        setShowModal(false);
+    }
+
+    const handleApprove = (orderId: number) => {
+        try {
+            confirmOrderPayment(orderId);
+            setFilteredOrders(prevOrders =>
+                prevOrders.map(order =>
+                    order.id === orderId ? { ...order, orderStatus: 'Completed' } : order
+                )
+            );
+            setAction("");
+            setOrderId(0);
+        } catch (error: any) {
+            console.error('Failed to confirm order payment:', error.message);
+        }
+    };
+
+    const handleReject = (orderId: number) => {
+        try {
+            cancelOrder(orderId);
+            setFilteredOrders(prevOrders =>
+                prevOrders.map(order =>
+                    order.id === orderId ? { ...order, orderStatus: 'Cancelled' } : order
+                )
+            );
+            setAction("");
+            setOrderId(0);
+        } catch (error: any) {
+            console.error('Failed to cancel order:', error.message);
+        }
+    }
 
     const handleSearch = (event: { target: { value: string; }; }) => {
         const query = event.target.value.toLowerCase();
@@ -203,12 +241,20 @@ function Table({ orders, onExport }: { orders: Order[], onExport: () => void }) 
                                     {order.cartType === 'Product' ? 'Logistik Vendor' : 'Paket Event'}
                                 </td>
                                 <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900 flex justify-center items-center">
-                                    <button onClick={() => handleConfirmation("approve")} className="mr-2">
-                                        <FaCheck className="text-green-500" />
-                                    </button>
-                                    <button onClick={() => handleConfirmation("reject")}>
-                                        <FaTimes className="text-red-500" />
-                                    </button>
+                                    {order.orderStatus === "Pending" ? (
+                                        <>
+                                            <button onClick={() => handleConfirmation("approve", order.id)} className="mr-2">
+                                                <FaCheck className="text-green-500" />
+                                            </button>
+                                            <button onClick={() => handleConfirmation("reject", order.id)}>
+                                                <FaTimes className="text-red-500" />
+                                            </button>
+                                        </>
+                                    ) : order.orderStatus === "Completed" ? (
+                                        <span className="text-green-500">Pesanan Selesai</span>
+                                    ) : order.orderStatus === "Cancelled" ? (
+                                        <span className="text-red-500">Pesanan Dibatalkan</span>
+                                    ) : null}
                                 </td>
                             </tr>
                         ))}
@@ -226,14 +272,14 @@ function Table({ orders, onExport }: { orders: Order[], onExport: () => void }) 
                         <h2 className="text-lg md:text-xl font-bold mb-2 text-pink-900">{action === "approve" ? "Konfirmasi Penyelesaian" : "Konfirmasi Pembatalan"}</h2>
                         <p className="text-sm md:text-base">{modalContent}</p>
                         <div className="flex justify-end mt-4">
-                            <button onClick={() => setShowModal(false)} className="text-sm md:text-base bg-pink-500 hover:bg-pink-600 px-2 py-1 md:p-2 rounded-md mr-2">
+                            <button onClick={handleCancel} className="text-sm md:text-base bg-pink-500 hover:bg-pink-600 px-2 py-1 md:p-2 rounded-md mr-2">
                                 Batal
                             </button>
                             <button onClick={() => {
                                 if (action === "approve") {
-                                    // Handle approve logic here
+                                    handleApprove(orderId);
                                 } else {
-                                    // Handle reject logic here
+                                    handleReject(orderId);
                                 }
                                 setShowModal(false);
                             }} className="text-sm md:text-base bg-green-500 hover:bg-green-600 px-2 py-1 md:p-2 rounded-md">
