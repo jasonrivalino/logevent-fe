@@ -514,30 +514,32 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
                   required
                 />
               </div>
-              <div className="flex flex-row gap-4 md:gap-6 mb-4">
-                <div className="flex-1 relative">
-                  <label htmlFor="startDate" className="text-sm md:text-base text-gray-800 mb-1 md:mb-2 mr-3">Mulai Acara *</label>
-                  <DatePicker
-                    selected={startDate}
-                    onChange={(date: Date | null) => setStartDate(date)}
-                    className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] text-black mt-1 text-xs md:text-sm w-96 md:w-36"
-                    placeholderText="Select start date"
-                    excludeDates={getExcludedDates(bookedDates)}
-                    required
-                    calendarClassName="absolute z-50 mt-1 shadow-lg"
-                  />
-                </div>
-                <div className="flex-1 relative">
-                  <label htmlFor="endDate" className="mb-4 text-sm md:text-base text-gray-800 mr-3">Selesai Acara *</label>
-                  <DatePicker
-                    selected={endDate}
-                    onChange={(date: Date | null) => setEndDate(date)}
-                    className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] text-black mt-1 text-xs md:text-sm w-28 md:w-36"
-                    placeholderText="Select end date"
-                    excludeDates={getExcludedDates(bookedDates)}
-                    required
-                    calendarClassName="absolute z-50 mt-1 shadow-lg"
-                  />
+              <div className="flex flex-col md:flex-row gap-4 md:gap-6 mb-4">
+                <div className='flex flex-row gap-4'>
+                  <div className="flex-1 relative">
+                    <label htmlFor="startDate" className="text-sm md:text-base text-gray-800 mb-1 md:mb-2 mr-3">Mulai Acara *</label>
+                    <DatePicker
+                      selected={startDate}
+                      onChange={(date: Date | null) => setStartDate(date)}
+                      className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] text-black mt-1 text-xs md:text-sm w-28 md:w-36"
+                      placeholderText="Select start date"
+                      excludeDates={getExcludedDates(bookedDates)}
+                      required
+                      calendarClassName="absolute z-50 mt-1 shadow-lg"
+                    />
+                  </div>
+                  <div className="flex-1 relative">
+                    <label htmlFor="endDate" className="mb-4 text-sm md:text-base text-gray-800 mr-3">Selesai Acara *</label>
+                    <DatePicker
+                      selected={endDate}
+                      onChange={(date: Date | null) => setEndDate(date)}
+                      className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] text-black mt-1 text-xs md:text-sm w-28 md:w-36"
+                      placeholderText="Select end date"
+                      excludeDates={getExcludedDates(bookedDates)}
+                      required
+                      calendarClassName="absolute z-50 mt-1 shadow-lg"
+                    />
+                  </div>
                 </div>
                 <div className="flex-1">
                   <label htmlFor="notes" className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Jumlah *</label>

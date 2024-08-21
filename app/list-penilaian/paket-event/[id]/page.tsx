@@ -56,28 +56,30 @@ export default function ReviewPage() {
   }
 
   return (
-    <div className="max-w-8xl mx-auto p-16">
+    <div className="max-w-8xl mx-auto px-6 py-12 md:p-16">
       <Navbar />
-      <div className='text-black font-sofia bg-white rounded-lg mt-14 p-8'>
-        <h1 className="text-3xl font-bold text-pink-900 mb-5">Penilaian & Ulasan</h1>
+      <div className='text-black font-sofia bg-white rounded-lg mt-14 p-6 md:p-8'>
+        <h1 className="text-2xl md:text-3xl font-bold text-pink-900 mb-5 text-center md:text-left">Penilaian & Ulasan</h1>
         <div className="mb-12">
-          <h2 className="text-xl font-semibold">{event.name}</h2>
-          <div className="flex mt-2">
-            <div className="flex items-center border-2 border-pink-600 p-2 mt-4">
-              <span className="text-4xl font-bold">{event.rating && event.rating.toFixed(2) !== "0.00" ? event.rating.toFixed(2) : "N/A"}</span>
-              <span className="text-xl">/5.0</span>
+        <h2 className="text-lg md:text-xl font-semibold">{event.name}</h2>
+          <div className="flex flex-col md:flex-row md:w-auto mt-2">
+            <div className="flex items-center border-2 border-pink-600 p-1 md:p-2 mt-2 md:mt-4 w-1/3 md:w-auto">
+              <span className="text-2xl md:text-4xl font-bold">
+                {event.rating && event.rating.toFixed(2) !== "0.00" ? event.rating.toFixed(2) : "N/A"}
+              </span>
+              <span className="text-base md:text-xl">/5.0</span>
             </div>
-            <span className="ml-5 mt-8">{event.reviewCount} rating diberikan</span>
+            <span className="ml-0 md:ml-5 mt-2 md:mt-8 text-sm md:text-base">{event.reviewCount} rating diberikan</span>
           </div>
         </div>
         {currentReviews.map((review, index) => (
           <div key={index} className="flex items-start mb-10 max-w-8xl">
-            <img src={review.userPicture || "https://via.placeholder.com/50"} alt="User profile" className="w-12 h-12 bg-gray-200 rounded-full mr-4" />
+            <img src={review.userPicture || "https://via.placeholder.com/50"} alt="User profile" className="w-8 md:w-12 h-8 md:h-12 bg-gray-200 rounded-full mr-4" />
             <div className="flex-1">
               <h3 className="font-bold">{review.userName}</h3>
-              <p className="text-sm text-gray-600">{review.tag}</p>
-              <p className="text-sm text-gray-600">{convertDate(review.reviewDate)}</p>
-              <div className="flex items-center mb-1">
+              <p className="text-xs md:text-sm text-gray-600">{review.tag}</p>
+              <p className="text-xs md:text-sm text-gray-600">{convertDate(review.reviewDate)}</p>
+              <div className="flex items-center mb-1 mt-2">
                 {[...Array(5)].map((_, i) => (
                   <svg
                     key={i}
@@ -88,7 +90,7 @@ export default function ReviewPage() {
                   </svg>
                 ))}
               </div>
-              <p className="text-sm mt-2">{review.comment}</p>
+              <p className="text-xs md:text-sm mt-4">{review.comment}</p>
             </div>
           </div>
         ))}

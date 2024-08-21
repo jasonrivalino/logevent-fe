@@ -424,13 +424,22 @@ function AddPackageProduct({ products, vendors }: { products: Product[], vendors
       {showPopup && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 font-sofia text-black">
           <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-xl font-semibold mb-4">Tambah Kategori Baru</h2>
+            <h2 className="text-xl font-semibold mb-4">Tambah Kategori Paket</h2>
+            <p className="text-sm text-gray-600 mb-1">Nama kategori:</p>
             <input
               type="text"
               value={newCategory}
               onChange={(e) => setNewCategory(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 mb-4"
+              className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 mb-2"
               placeholder="Masukkan kategori"
+            />
+            <p className="text-sm text-gray-600 mb-1">Biaya Layanan:</p>
+            <input
+              type="number"
+              // value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+              className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 mb-6 no-spinners"
+              placeholder="Masukkan biaya layanan"
             />
             <div className="flex justify-end space-x-4">
               <button onClick={() => setShowPopup(false)} className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg">Batal</button>

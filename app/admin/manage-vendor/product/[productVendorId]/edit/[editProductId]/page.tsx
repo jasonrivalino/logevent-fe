@@ -509,13 +509,22 @@ function EditVendorProduct({ product, albums }: { product: Product, albums: Albu
       {showPopup && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 font-sofia text-black">
           <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-xl font-semibold mb-4">Tambah Kategori Baru</h2>
+            <h2 className="text-xl font-semibold mb-4">Tambah Kategori Produk</h2>
+            <p className="text-sm text-gray-600 mb-1">Nama kategori:</p>
             <input
               type="text"
               value={newCategory}
               onChange={(e) => setNewCategory(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 mb-4"
+              className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 mb-2"
               placeholder="Masukkan kategori"
+            />
+            <p className="text-sm text-gray-600 mb-1">Biaya Layanan:</p>
+            <input
+              type="number"
+              // value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+              className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 mb-6 no-spinners"
+              placeholder="Masukkan biaya layanan"
             />
             <div className="flex justify-end space-x-4">
               <button onClick={() => setShowPopup(false)} className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg">Batal</button>
@@ -527,16 +536,26 @@ function EditVendorProduct({ product, albums }: { product: Product, albums: Albu
 
       {/* Popup for Editing Category */}
       {showEditPopup && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 text-black">
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 text-black font-sofia">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm mx-auto">
-            <h3 className="text-lg font-semibold">Edit Category</h3>
+            <h2 className="text-xl font-semibold mb-4">Edit Kategori Produk</h2>
+            <p className="text-sm text-gray-600 mb-1">Nama kategori:</p>
             <input
               type="text"
-              className="w-full px-3 py-2 border rounded-lg mt-2"
               value={newCategory}
               onChange={(e) => setNewCategory(e.target.value)}
+              className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 mb-2"
+              placeholder="Masukkan kategori"
             />
-            <div className="mt-4 flex justify-end space-x-2">
+            <p className="text-sm text-gray-600 mb-1">Biaya Layanan:</p>
+            <input
+              type="number"
+              // value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+              className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 mb-6 no-spinners"
+              placeholder="Masukkan biaya layanan"
+            />
+            <div className="flex justify-end space-x-2">
               <button
                 onClick={() => {
                   setCategoryToEdit(null);

@@ -270,20 +270,14 @@ function Table({ orders, onExport }: { orders: Order[], onExport: () => void }) 
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 font-sofia">
                     <div className="bg-white p-4 md:p-8 rounded shadow-lg z-60 max-w-xs md:max-w-md w-full">
                         <h2 className="text-lg md:text-xl font-bold mb-2 text-pink-900">{action === "approve" ? "Konfirmasi Penyelesaian" : "Konfirmasi Pembatalan"}</h2>
-                        <p className="text-sm md:text-base">{modalContent}</p>
+                        <p className="text-sm md:text-base text-black">{modalContent}</p>
                         <div className="flex justify-end mt-4">
-                            <button onClick={handleCancel} className="text-sm md:text-base bg-pink-500 hover:bg-pink-600 px-2 py-1 md:p-2 rounded-md mr-2">
-                                Batal
+                            <button onClick={() => setShowModal(false)} className="text-sm md:text-base bg-pink-500 hover:bg-pink-600 px-2 py-1 md:p-2 rounded-md mr-2">
+                                Cancel
                             </button>
-                            <button onClick={() => {
-                                if (action === "approve") {
-                                    handleApprove(orderId);
-                                } else {
-                                    handleReject(orderId);
-                                }
-                                setShowModal(false);
-                            }} className="text-sm md:text-base bg-green-500 hover:bg-green-600 px-2 py-1 md:p-2 rounded-md">
-                                Konfirmasi
+                            {/* Change button based on popup showed between green or red */}
+                            <button onClick={() => setShowModal(false)} className={`text-sm md:text-base ${action === "approve" ? "bg-green-500 hover:bg-green-600" : "bg-red-500 hover:bg-red-600"} px-2 py-1 md:p-2 rounded-md`}>
+                                {action === "approve" ? "Selesaikan" : "Batalkan"}
                             </button>
                         </div>
                     </div>
