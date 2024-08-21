@@ -272,11 +272,21 @@ function Table({ orders, onExport }: { orders: Order[], onExport: () => void }) 
                         <h2 className="text-lg md:text-xl font-bold mb-2 text-pink-900">{action === "approve" ? "Konfirmasi Penyelesaian" : "Konfirmasi Pembatalan"}</h2>
                         <p className="text-sm md:text-base text-black">{modalContent}</p>
                         <div className="flex justify-end mt-4">
-                            <button onClick={() => setShowModal(false)} className="text-sm md:text-base bg-pink-500 hover:bg-pink-600 px-2 py-1 md:p-2 rounded-md mr-2">
+                            <button onClick={handleCancel} className="text-sm md:text-base bg-pink-500 hover:bg-pink-600 px-2 py-1 md:p-2 rounded-md mr-2">
                                 Cancel
                             </button>
                             {/* Change button based on popup showed between green or red */}
-                            <button onClick={() => setShowModal(false)} className={`text-sm md:text-base ${action === "approve" ? "bg-green-500 hover:bg-green-600" : "bg-red-500 hover:bg-red-600"} px-2 py-1 md:p-2 rounded-md`}>
+                            <button
+                              onClick={() => {
+                                if (action === "approve") {
+                                    handleApprove(orderId);
+                                } else {
+                                    handleReject(orderId);
+                                }
+                                setShowModal(false)
+                              }}
+                              className={`text-sm md:text-base ${action === "approve" ? "bg-green-500 hover:bg-green-600" : "bg-red-500 hover:bg-red-600"} px-2 py-1 md:p-2 rounded-md`}
+                            >
                                 {action === "approve" ? "Selesaikan" : "Batalkan"}
                             </button>
                         </div>
