@@ -4,18 +4,19 @@
 // dependency modules
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
+import DatePicker from 'react-datepicker';
 // self-defined modules
 import { Navbar, ContactBox } from '@/app/page';
 import { readAlbumsByProductId } from '@/app/utils/albumApi';
 import { readUserProfile } from '@/app/utils/authApi';
+import { readActiveProductCartByUserId, createCart, updateCart } from '@/app/utils/cartApi';
 import { areDatesOverlapping, convertDate, generateWhatsAppUrl, getExcludedDates, getRateText, getStars } from '@/app/utils/helpers';
+import { createItem, deleteItemsByCartId } from '@/app/utils/itemApi';
 import { readReviewsByProductId } from '@/app/utils/reviewApi';
+import { readOrderAvailabilityByCartId, createOrder } from '@/app/utils/orderApi';
 import { readProductById } from '@/app/utils/productApi';
 import { readProductWishlistsByUserId, createWishlist, deleteWishlist } from '@/app/utils/wishlistApi';
 import type { Album, Product, Review } from '@/app/utils/types';
-import DatePicker from 'react-datepicker';
-import { createOrder } from '@/app/utils/orderApi';
-import { updateCart } from '@/app/utils/cartApi';
 
 export default function Product() {
   const descriptionRef = useRef(null);
@@ -128,7 +129,7 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [bookedDates, setBookedDates] = useState<string[]>([]);
-  const [quantities, setQuantities] = useState<{ [key: number]: number }>({});
+  const [amount, setAmount] = useState<{ [key: number]: number }>({});
 
   const router = useRouter();
 
@@ -287,15 +288,15 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
     }
   };
 
-  const increaseQuantity = (id: number) => {
-    setQuantities((prev) => ({
+  const increaseAmount = (id: number) => {
+    setAmount((prev) => ({
       ...prev,
       [id]: (prev[id] || 1) + 1,
     }));
   };
 
-  const decreaseQuantity = (id: number) => {
-    setQuantities((prev) => ({
+  const decreaseAmount = (id: number) => {
+    setAmount((prev) => ({
       ...prev,
       [id]: Math.max(1, (prev[id] || 1) - 1),
     }));
@@ -305,7 +306,32 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
     setShowPopup(false);
   };
 
-  const handleOrderClick = () => {
+  const handleOrderClick = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/signin');
+      return;
+    }
+
+    const user = await readUserProfile(token);
+    let cart = await readActiveProductCartByUserId(user.id);
+    if (!cart) {
+      cart = await createCart(user.id, 'Product');
+    }
+
+    await deleteItemsByCartId(cart.id);
+    const itemData = {
+      cartId: cart.id,
+      eventId: null,
+      productId: product.id,
+      duration: product.rate === "Hourly" ? amount[product.id] : null,
+      quantity: product.rate === "Quantity" ? amount[product.id] : null,
+    };
+
+    await createItem(itemData);
+    const bookedDates = await readOrderAvailabilityByCartId(cart.id);
+    setCartId(cart.id);
+    setBookedDates(bookedDates);
     setShowOrderPopup(true); // Show the order popup
   };
 
@@ -541,25 +567,27 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
                     />
                   </div>
                 </div>
-                <div className="flex-1">
-                  <label htmlFor="notes" className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Jumlah *</label>
-                  <div className="flex justify-between items-center mt-2 bg-gray-100 w-2/5 text-xs md:text-base">
-                    <button
-                      className="bg-gray-200 text-gray-700 px-1 md:px-2 md:py-1 rounded-md"
-                      onClick={() => decreaseQuantity(product.id)}
-                      disabled={quantities[product.id] === 1}
-                    >
-                      -
-                    </button>
-                    <span className="mx-2 text-black">{quantities[product.id] || 1}</span>
-                    <button
-                      className="bg-gray-200 text-gray-700 px-1 md:px-2 md:py-1 rounded-md tetx-black"
-                      onClick={() => increaseQuantity(product.id)}
-                    >
-                      +
-                    </button>
+                {(product.rate === "Hourly" || product.rate === "Quantity") && (
+                  <div className="flex-1">
+                    <label htmlFor="notes" className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Jumlah *</label>
+                      <div className="flex justify-between items-center mt-2 bg-gray-100 w-2/5 text-xs md:text-base">
+                        <button
+                          className="bg-gray-200 text-gray-700 px-1 md:px-2 md:py-1 rounded-md"
+                          onClick={() => decreaseAmount(product.id)}
+                          disabled={amount[product.id] === 1}
+                        >
+                          -
+                        </button>
+                        <span className="mx-2 text-black">{amount[product.id] || 1}</span>
+                        <button
+                          className="bg-gray-200 text-gray-700 px-1 md:px-2 md:py-1 rounded-md"
+                          onClick={() => increaseAmount(product.id)}
+                        >
+                          +
+                        </button>
+                      </div>
                   </div>
-                </div>
+                )}
               </div>
               <div className="flex flex-col mb-1 md:mb-4">
                 <label htmlFor="notes" className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Catatan untuk Vendor:</label>

@@ -12,6 +12,7 @@ import { CommandLeft } from '@/app/admin/commandLeft';
 import { convertDate, generateEmailUrl, generateGoogleMapsUrl, generateWhatsAppUrl } from '@/app/utils/helpers';
 import { readAllOrders, confirmOrderPayment, cancelOrder } from '@/app/utils/orderApi';
 import { Order } from '@/app/utils/types';
+import { set } from 'react-datepicker/dist/date_utils';
 
 export default function AdminOrderRecap() {
     const [orders, setOrders] = useState<Order[]>([]);
@@ -94,6 +95,7 @@ function Table({ orders, onExport }: { orders: Order[], onExport: () => void }) 
     const [action, setAction] = useState("");
     const [orderId, setOrderId] = useState(0);
     const [modalContent, setModalContent] = useState("");
+    const [cancelMessage, setCancelMessage] = useState("");
     const [filteredOrders, setFilteredOrders] = useState<Order[]>(orders);
     const ordersPerPage = 10;
     const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
@@ -132,7 +134,11 @@ function Table({ orders, onExport }: { orders: Order[], onExport: () => void }) 
 
     const handleReject = (orderId: number) => {
         try {
-            cancelOrder(orderId);
+            if (!cancelMessage) {
+                alert('Alasan pembatalan harus diisi');
+                return;
+            }
+            cancelOrder(orderId, cancelMessage);
             setFilteredOrders(prevOrders =>
                 prevOrders.map(order =>
                     order.id === orderId ? { ...order, orderStatus: 'Cancelled' } : order
@@ -140,6 +146,7 @@ function Table({ orders, onExport }: { orders: Order[], onExport: () => void }) 
             );
             setAction("");
             setOrderId(0);
+            setCancelMessage("");
         } catch (error: any) {
             console.error('Failed to cancel order:', error.message);
         }
@@ -271,6 +278,14 @@ function Table({ orders, onExport }: { orders: Order[], onExport: () => void }) 
                     <div className="bg-white p-4 md:p-8 rounded shadow-lg z-60 max-w-xs md:max-w-md w-full">
                         <h2 className="text-lg md:text-xl font-bold mb-2 text-pink-900">{action === "approve" ? "Konfirmasi Penyelesaian" : "Konfirmasi Pembatalan"}</h2>
                         <p className="text-sm md:text-base text-black">{modalContent}</p>
+                        {action === "reject" && (
+                            <textarea
+                                value={cancelMessage}
+                                onChange={(event) => setCancelMessage(event.target.value)}
+                                placeholder="Masukkan alasan pembatalan"
+                                className="w-full mt-4 p-2 border rounded-md text-black"
+                            />
+                        )}
                         <div className="flex justify-end mt-4">
                             <button onClick={handleCancel} className="text-sm md:text-base bg-pink-500 hover:bg-pink-600 px-2 py-1 md:p-2 rounded-md mr-2">
                                 Cancel

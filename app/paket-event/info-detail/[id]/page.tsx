@@ -5,20 +5,21 @@
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
+import DatePicker from 'react-datepicker';
 // self-defined modules
 import { Navbar, ContactBox } from '@/app/page';
 import { readAlbumsByEventId } from '@/app/utils/albumApi';
 import { readUserProfile } from '@/app/utils/authApi';
 import { readBundlesByEventId } from '@/app/utils/bundleApi';
+import { readActiveEventCartByUserId, createCart, updateCart } from '@/app/utils/cartApi';
 import { readEventById } from '@/app/utils/eventApi';
 import { areDatesOverlapping, convertDate, generateWhatsAppUrl, getExcludedDates, getStars } from '@/app/utils/helpers';
+import { createItem, deleteItemsByCartId } from '@/app/utils/itemApi';
+import { readOrderAvailabilityByCartId, createOrder } from '@/app/utils/orderApi';
 import { readProductById } from '@/app/utils/productApi';
 import { readReviewsByEventId } from '@/app/utils/reviewApi';
 import { readEventWishlistsByUserId, createWishlist, deleteWishlist } from '@/app/utils/wishlistApi';
 import type { Album, Event, Product, Review } from '@/app/utils/types';
-import DatePicker from 'react-datepicker';
-import { updateCart } from '@/app/utils/cartApi';
-import { createOrder } from '@/app/utils/orderApi';
 
 export default function Event() {
   const descriptionRef = useRef(null);
@@ -136,7 +137,6 @@ const EventImage = ({ event, albums, isWishlist, setIsWishlist }: { event: Event
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [bookedDates, setBookedDates] = useState<string[]>([]);
-  const [quantities, setQuantities] = useState<{ [key: number]: number }>({});
   const router = useRouter();
 
   const resetTimeout = () => {
@@ -294,25 +294,36 @@ const EventImage = ({ event, albums, isWishlist, setIsWishlist }: { event: Event
     }
   };
 
-  const increaseQuantity = (id: number) => {
-    setQuantities((prev) => ({
-      ...prev,
-      [id]: (prev[id] || 1) + 1,
-    }));
-  };
-
-  const decreaseQuantity = (id: number) => {
-    setQuantities((prev) => ({
-      ...prev,
-      [id]: Math.max(1, (prev[id] || 1) - 1),
-    }));
-  };
-
   const closePopup = () => {
     setShowPopup(false);
   };
 
-  const handleOrderClick = () => {
+  const handleOrderClick = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/signin');
+      return;
+    }
+
+    const user = await readUserProfile(token);
+    let cart = await readActiveEventCartByUserId(user.id);
+    if (!cart) {
+      cart = await createCart(user.id, 'Event');
+    }
+
+    await deleteItemsByCartId(cart.id);
+    const itemData = {
+      cartId: cart.id,
+      eventId: event.id,
+      productId: null,
+      duration: null,
+      quantity: null,
+    };
+
+    await createItem(itemData);
+    const bookedDates = await readOrderAvailabilityByCartId(cart.id);
+    setCartId(cart.id);
+    setBookedDates(bookedDates);
     setShowOrderPopup(true); // Show the order popup
   };
 

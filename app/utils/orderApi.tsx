@@ -116,9 +116,10 @@ export const confirmOrderPayment = async (id: number) => {
   }
 };
 
-export const cancelOrder = async (id: number) => {
+export const cancelOrder = async (id: number, cancelMessage: string) => {
   try {
     const response = await axios.put(`${API_URL}/orders/cancel/${id}`, {
+      cancelMessage,
       withCredentials: true
     });
     return response.data;
