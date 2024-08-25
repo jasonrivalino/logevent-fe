@@ -93,6 +93,7 @@ function EditVendorProduct({ product, albums }: { product: Product, albums: Albu
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [newCategory, setNewCategory] = useState('');
+  const [newFee, setNewFee] = useState('');
   const [categoryToEdit, setCategoryToEdit] = useState<Category | null>(null);
   const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -163,6 +164,7 @@ function EditVendorProduct({ product, albums }: { product: Product, albums: Albu
     if (newCategoryValue !== '') {
       const categoryData = {
         name: newCategoryValue,
+        fee: parseFloat(newFee),
         type: 'Product'
       };
 
@@ -170,6 +172,7 @@ function EditVendorProduct({ product, albums }: { product: Product, albums: Albu
       setCategories([...categories, newCategory]);
       setSelectedCategoryId(newCategory.id);
       setNewCategory('');
+      setNewFee('');
     }
     setShowPopup(false);
   };
@@ -177,6 +180,7 @@ function EditVendorProduct({ product, albums }: { product: Product, albums: Albu
   const handleEditCategory = (category: Category) => {
     setCategoryToEdit(category);
     setNewCategory(category.name);
+    setNewFee(category.fee.toString());
     setShowEditPopup(true);
   };
 
@@ -187,14 +191,15 @@ function EditVendorProduct({ product, albums }: { product: Product, albums: Albu
 
   const handleUpdateCategory = async () => {
     if (categoryToEdit) {
-      const updatedCategory = { ...categoryToEdit, name: newCategory };
+      const updatedCategory = { ...categoryToEdit, name: newCategory, fee: parseFloat(newFee) };
       setCategories(categories.map(cat => cat.id === categoryToEdit.id ? updatedCategory : cat));
 
-      const categoryData = { name: newCategory };
+      const categoryData = { name: newCategory, fee: parseFloat(newFee) };
       await updateCategory(categoryToEdit.id, categoryData);
       
       setCategoryToEdit(null);
       setNewCategory('');
+      setNewFee('');
     }
     setShowEditPopup(false);
   };
@@ -521,8 +526,8 @@ function EditVendorProduct({ product, albums }: { product: Product, albums: Albu
             <p className="text-sm text-gray-600 mb-1">Biaya Layanan:</p>
             <input
               type="number"
-              // value={newCategory}
-              onChange={(e) => setNewCategory(e.target.value)}
+              value={newFee}
+              onChange={(e) => setNewFee(e.target.value)}
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 mb-6 no-spinners"
               placeholder="Masukkan biaya layanan"
             />
@@ -550,8 +555,8 @@ function EditVendorProduct({ product, albums }: { product: Product, albums: Albu
             <p className="text-sm text-gray-600 mb-1">Biaya Layanan:</p>
             <input
               type="number"
-              // value={newCategory}
-              onChange={(e) => setNewCategory(e.target.value)}
+              value={newFee}
+              onChange={(e) => setNewFee(e.target.value)}
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 mb-6 no-spinners"
               placeholder="Masukkan biaya layanan"
             />

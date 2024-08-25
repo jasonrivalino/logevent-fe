@@ -89,6 +89,7 @@ function AddPackageProduct({ products, vendors }: { products: Product[], vendors
   const [searchQuery, setSearchQuery] = useState('');
   const [showPopup, setShowPopup] = useState(false);
   const [newCategory, setNewCategory] = useState('');
+  const [newFee, setNewFee] = useState('');
 
   const [paginatedProducts, setPaginatedProducts] = useState<Product[]>([]);
   const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
@@ -138,6 +139,7 @@ function AddPackageProduct({ products, vendors }: { products: Product[], vendors
     if (newCategoryValue !== '') {
       const categoryData = {
         name: newCategoryValue,
+        fee: parseFloat(newFee),
         type: 'Event'
       };
   
@@ -145,6 +147,7 @@ function AddPackageProduct({ products, vendors }: { products: Product[], vendors
       setCategories([...categories, newCategory]);
       setSelectedCategoryId(newCategory.id);
       setNewCategory('');
+      setNewFee('');
       setShowPopup(false);
     }
   };
@@ -436,8 +439,8 @@ function AddPackageProduct({ products, vendors }: { products: Product[], vendors
             <p className="text-sm text-gray-600 mb-1">Biaya Layanan:</p>
             <input
               type="number"
-              // value={newCategory}
-              onChange={(e) => setNewCategory(e.target.value)}
+              value={newFee}
+              onChange={(e) => setNewFee(e.target.value)}
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 mb-6 no-spinners"
               placeholder="Masukkan biaya layanan"
             />

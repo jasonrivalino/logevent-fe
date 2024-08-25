@@ -24,6 +24,7 @@ export interface Cart {
 export interface Category {
   id: number;
   name: string;
+  fee: number;
   type: string;
 }
 
@@ -139,6 +140,15 @@ export interface Review {
   comment: string | null;
   tag: string | null;
   reviewDate: string;
+}
+
+export interface Setting {
+  id: number;
+  description: string | null;
+  youtubeUrl: string | null;
+  vendorCount: number;
+  productCount: number;
+  orderCount: number;
 }
 
 export interface Vendor {

@@ -4,43 +4,29 @@
 // dependency modules
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { FaCheck, FaTimes } from 'react-icons/fa';
-import * as XLSX from 'xlsx';
 // self-defined modules
 import { ContactBox, Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
-import { convertDate, generateEmailUrl, generateGoogleMapsUrl, generateWhatsAppUrl } from '@/app/utils/helpers';
-import { readAllOrders } from '@/app/utils/orderApi';
-import { Order } from '@/app/utils/types';
+import { readLatestSettings, createSetting } from '@/app/utils/settingApi';
+import { Setting } from '@/app/utils/types';
 
 export default function AdminOrderRecap() {
-    const [orders, setOrders] = useState<Order[]>([]);
+    const [setting, setSetting] = useState<Setting | null>(null);
 
     useEffect(() => {
-        const fetchOrders = async () => {
+        const fetchLatestSettings = async () => {
             try {
-                const data = await readAllOrders();
-                setOrders(data);
+                const data = await readLatestSettings();
+                setSetting(data);
             } catch (error: any) {
-                console.error('Failed to fetch orders:', error.message);
+                console.error('Failed to fetch latest settings', error.message);
             }
         };
 
-        fetchOrders();
+        fetchLatestSettings();
     }, []);
 
     const router = useRouter();
-
-    function exportToExcel(orders: Order[]) {
-        const workbook = XLSX.utils.book_new();
-        const worksheet = XLSX.utils.json_to_sheet(orders);
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Orders');
-        XLSX.writeFile(workbook, 'orders.xlsx');
-    }
-
-    const handleExport = () => {
-        exportToExcel(orders);
-    };
   
     const handlePrev = () => {
       router.push('/admin/manage-faq');
@@ -62,7 +48,7 @@ export default function AdminOrderRecap() {
                         <CommandLeft />
                     </div>
                     <div className="flex-grow ml-0 md:ml-7 py-[0.15rem]">
-                        <Settings />
+                        {setting && <Settings setting={setting} />}
                     </div>
                 </div>
             </div>
@@ -87,7 +73,59 @@ export default function AdminOrderRecap() {
     );
 };
 
-function Settings() {
+function Settings({ setting }: { setting: Setting }) {
+    const [description, setDescription] = useState('');
+    const [youtubeUrl, setYoutubeUrl] = useState('');
+    const [vendorCount, setVendorCount] = useState('');
+    const [productCount, setProductCount] = useState('');
+    const [orderCount, setOrderCount] = useState('');
+
+    useEffect(() => {
+        setDescription(setting.description || '');
+        setYoutubeUrl(setting.youtubeUrl || '');
+        setVendorCount(setting.vendorCount.toString() || '');
+        setProductCount(setting.productCount.toString() || '');
+        setOrderCount(setting.orderCount.toString() || '');
+    }, [setting]);
+
+    const handleSubmit = async () => {
+        if (!description) {
+            alert('Deskripsi tidak boleh kosong');
+        }
+
+        if (!youtubeUrl) {
+            alert('Link YouTube tidak boleh kosong');
+        }
+
+        if (!vendorCount) {
+            alert('Jumlah Vendor tidak boleh kosong');
+        }
+
+        if (!productCount) {
+            alert('Jumlah Produk tidak boleh kosong');
+        }
+
+        if (!orderCount) {
+            alert('Jumlah Pesanan tidak boleh kosong');
+        }
+
+        const newSetting = {
+            description,
+            youtubeUrl,
+            vendorCount: parseInt(vendorCount),
+            productCount: parseInt(productCount),
+            orderCount: parseInt(orderCount),
+        };
+
+        try {
+            await createSetting(newSetting);
+            alert('Setting berhasil diperbarui');
+            window.location.reload();
+        } catch (error: any) {
+            console.error('Failed to update setting', error.message);
+        }
+    };
+
     return (
         <div className="bg-white border-2 rounded-xl w-full mb-4 md:mb-0 px-6 md:px-8 py-6 overflow-x-auto font-sofia">
             <div className="flex justify-center md:justify-start">
@@ -104,7 +142,8 @@ function Settings() {
                         name="deskripsi"
                         rows={4}
                         className="mt-1 p-2 md:p-3 block w-full rounded-md text-xs md:text-base border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm bg-gray-100"
-                        defaultValue="Kami menghadirkan pengalaman terbaik untuk penyewaan vendor logistik event secara praktis. Dengan pilihan vendor yang handal dan produk yang berkualitas tinggi, kami memastikan bahwa setiap event Anda berjalan lancar dan sesuai harapan."
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
                     />
                 </div>
                 
@@ -116,7 +155,8 @@ function Settings() {
                         name="linkYouTube"
                         id="linkYouTube"
                         className="mt-1 mb-4 md:mb-0 p-2 md:p-3 block w-full rounded-md text-xs md:text-base border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm bg-gray-100"
-                        defaultValue="https://youtu.be/ZZI2uAkUfHA"
+                        value={youtubeUrl}
+                        onChange={(e) => setYoutubeUrl(e.target.value)}
                     />
                 </div>
 
@@ -129,7 +169,8 @@ function Settings() {
                             id="vendorMitra"
                             name="vendorMitra"
                             className="p-2 block w-1/4 md:w-full ml-auto rounded-md text-xs md:text-base border-gray-300 shadow-sm bg-gray-100 focus:border-pink-500 focus:ring-pink-500 sm:text-xl text-center no-spinners"
-                            defaultValue={30}
+                            value={vendorCount}
+                            onChange={(e) => setVendorCount(e.target.value)}
                         />
                     </div>
                     <div className="md:text-center flex flex-row md:flex-col mb-4 md:mb-0">
@@ -139,7 +180,8 @@ function Settings() {
                             id="logistikVendor"
                             name="logistikVendor"
                             className="mt-1 p-2 block w-1/4 md:w-full ml-auto rounded-md text-xs md:text-base border-gray-300 shadow-sm bg-gray-100 focus:border-pink-500 focus:ring-pink-500 sm:text-xl text-center no-spinners"
-                            defaultValue={100}
+                            value={productCount}
+                            onChange={(e) => setProductCount(e.target.value)}
                         />
                     </div>
                     <div className="md:text-center flex flex-row md:flex-col">
@@ -149,7 +191,8 @@ function Settings() {
                             id="eventSukses"
                             name="eventSukses"
                             className="mt-1 p-2 block w-1/4 md:w-full ml-auto rounded-md text-xs md:text-base border-gray-300 shadow-sm bg-gray-100 focus:border-pink-500 focus:ring-pink-500 sm:text-xl text-center no-spinners"
-                            defaultValue={30}
+                            value={orderCount}
+                            onChange={(e) => setOrderCount(e.target.value)}
                         />
                     </div>
                 </div>
@@ -158,6 +201,7 @@ function Settings() {
                 <div className="flex justify-end">
                     <button
                         type="button"
+                        onClick={handleSubmit} 
                         className="px-4 md:px-6 py-1 md:py-2 bg-pink-900 text-white rounded-lg shadow hover:bg-pink-800 focus:outline-none mt-5"
                     >
                         Save

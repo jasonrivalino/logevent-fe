@@ -12,21 +12,25 @@ import { readUserProfile } from '@/app/utils/authApi';
 import { generateWhatsAppUrl } from '@/app/utils/helpers';
 import { readAllFaqs } from './utils/faqApi';
 import { readTopProducts } from '@/app/utils/productApi';
+import { readLatestSettings } from './utils/settingApi';
 import { createVisit } from '@/app/utils/visitApi';
-import { Faq, Product } from '@/app/utils/types';
+import { Faq, Product, Setting } from '@/app/utils/types';
 import { FaCaretDown } from 'react-icons/fa';
 
 export default function Home() {
   const [faqs, setFaqs] = useState<Faq[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const [setting, setSetting] = useState<Setting | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const faqs = await readAllFaqs();
         const products = await readTopProducts();
+        const setting = await readLatestSettings();
         setFaqs(faqs);
         setProducts(products);
+        setSetting(setting);
         
         await createVisit();
       } catch (error) {
@@ -42,7 +46,7 @@ export default function Home() {
       <Navbar />
       <main className="flex flex-col items-center justify-center min-h-screen">
         <Introduction />
-        <AboutUsSection />
+        <AboutUsSection setting={setting} />
         <LayananSection />
         <KeunggulanSection />
         <FAQ faqs={faqs} />
@@ -500,7 +504,7 @@ function Introduction() {
   );
 }
 
-function AboutUsSection() {
+function AboutUsSection({ setting }: { setting: Setting | null }) {
   const handleChat = () => {
     const adminNumber = process.env.NEXT_PUBLIC_ADMIN_NUMBER;
     const messageTemplate = `Hai Admin LOGEVENT, saya tertarik menjadi bagian dari mitra Vendor LOGEVENT, apa saja persyaratan yang harus saya persiapkan?`;
@@ -515,7 +519,7 @@ function AboutUsSection() {
         <div className="w-full md:w-1/2">
           <iframe 
             className="w-full h-48 md:h-96 rounded-lg" 
-            src="https://www.youtube.com/embed/ZZl2uAkUfHA" 
+            src={setting?.youtubeUrl || "https://www.youtube.com/embed/ZZl2uAkUfHA"} 
             title="YouTube video player" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
             allowFullScreen
@@ -525,21 +529,21 @@ function AboutUsSection() {
           <h2 className="text-lg md:text-4xl font-bold text-pink-500 font-poppins">Tentang Kami</h2>
           <h3 className="text-2xl md:text-5xl font-semibold font-poppins text-pink-900 mt-2 md:mt-4">Welcome To Logevent</h3>
           <p className="mt-4 md:mt-8 font-sofia text-black text-sm md:text-base">
-            Kami menghadirkan pengalaman terbaik untuk penyewaan vendor untuk event secara praktis. Dengan pilihan vendor yang handal dan produk yang berkualitas tinggi, kami memastikan bahwa setiap proyek bangunan Anda berjalan lancar dan sesuai harapan.
+            {setting?.description}
           </p>
           <div className="w-full md:w-3/5 mt-4 md:mt-8">
             <div className="flex justify-between">
               <div className="text-left">
-                <h4 className="text-3xl font-bold text-pink-900 font-poppins">30 +</h4>
+                <h4 className="text-3xl font-bold text-pink-900 font-poppins">{setting?.vendorCount} +</h4>
                 <p className="text-sm text-black font-poppins">Vendor Mitra</p>
               </div>
               <div className="text-left">
-                <h4 className="text-3xl font-bold text-pink-900 font-poppins">30 +</h4>
-                <p className="text-sm text-black font-poppins">Vendor Mitra</p>
+                <h4 className="text-3xl font-bold text-pink-900 font-poppins">{setting?.productCount} +</h4>
+                <p className="text-sm text-black font-poppins">Logistik Vendor</p>
               </div>
               <div className="text-left">
-                <h4 className="text-3xl font-bold text-pink-900 font-poppins">30 +</h4>
-                <p className="text-sm text-black font-poppins">Vendor Mitra</p>
+                <h4 className="text-3xl font-bold text-pink-900 font-poppins">{setting?.orderCount} +</h4>
+                <p className="text-sm text-black font-poppins">Event Terlaksana</p>
               </div>
             </div>
           </div>

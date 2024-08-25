@@ -87,6 +87,7 @@ function AddVendorProduct({ vendor }: { vendor: Vendor }) {
   const [productImages, setProductImages] = useState<string[]>([]);
   const [showPopup, setShowPopup] = useState(false);
   const [newCategory, setNewCategory] = useState('');
+  const [newFee, setNewFee] = useState('');
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -140,6 +141,7 @@ function AddVendorProduct({ vendor }: { vendor: Vendor }) {
     if (newCategoryValue !== '') {
       const categoryData = {
         name: newCategoryValue,
+        fee: parseFloat(newFee),
         type: 'Product'
       };
   
@@ -147,6 +149,7 @@ function AddVendorProduct({ vendor }: { vendor: Vendor }) {
       setCategories([...categories, newCategory]);
       setSelectedCategoryId(newCategory.id);
       setNewCategory('');
+      setNewFee('');
       setShowPopup(false);
     }
   };
@@ -413,8 +416,8 @@ function AddVendorProduct({ vendor }: { vendor: Vendor }) {
             <p className="text-sm text-gray-600 mb-1">Biaya Layanan:</p>
             <input
               type="number"
-              // value={newCategory}
-              onChange={(e) => setNewCategory(e.target.value)}
+              value={newFee}
+              onChange={(e) => setNewFee(e.target.value)}
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 mb-6 no-spinners"
               placeholder="Masukkan biaya layanan"
             />

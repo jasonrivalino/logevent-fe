@@ -29,6 +29,7 @@ export const readEventCategories = async () => {
 
 export const createCategory = async (categoryData: {
   name: string;
+  fee: number
   type: string;
 }) => {
   try {
@@ -43,6 +44,7 @@ export const createCategory = async (categoryData: {
 
 export const updateCategory = async (categoryId: number, categoryData: {
   name?: string;
+  fee?: number;
   type?: string;
 }) => {
   try {
