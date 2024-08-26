@@ -9,10 +9,9 @@ import * as XLSX from 'xlsx';
 // self-defined modules
 import { ContactBox, Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
-import { convertDate, generateEmailUrl, generateGoogleMapsUrl, generateWhatsAppUrl } from '@/app/utils/helpers';
+import { convertDate, generateEmailUrl, generateGoogleMapsUrl, generateWhatsAppUrl, getCartTypeDescription } from '@/app/utils/helpers';
 import { readAllOrders, confirmOrderPayment, cancelOrder } from '@/app/utils/orderApi';
 import { Order } from '@/app/utils/types';
-import { set } from 'react-datepicker/dist/date_utils';
 
 export default function AdminOrderRecap() {
     const [orders, setOrders] = useState<Order[]>([]);
@@ -245,7 +244,7 @@ function Table({ orders, onExport }: { orders: Order[], onExport: () => void }) 
                                 <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900">{convertDate(order.startDate)}</td>
                                 <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900">{convertDate(order.endDate)}</td>
                                 <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900">
-                                    {order.cartType === 'Product' ? 'Logistik Vendor' : 'Paket Event'}
+                                    {getCartTypeDescription(order.cartType)}
                                 </td>
                                 <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900 flex justify-center items-center">
                                     {order.orderStatus === "Pending" ? (
