@@ -177,10 +177,10 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
   };
 
   const handleChat = () => {
-    const vendorNumber = product.vendorPhone;
-    const messageTemplate = `Hai Vendor ${product.vendorName} LOGEVENT, saya tertarik dengan Produk ${product.name}. Bisa berikan informasi lebih lanjut?`;
+    const adminNumber = process.env.NEXT_PUBLIC_ADMIN_NUMBER;
+    const messageTemplate = `Hai Admin LOGEVENT, saya tertarik dengan Produk ${product.name} dari Vendor ${product.vendorName}. Bisa berikan informasi lebih lanjut?`;
     
-    const whatsappUrl = generateWhatsAppUrl(vendorNumber || "", messageTemplate);
+    const whatsappUrl = generateWhatsAppUrl(adminNumber || "", messageTemplate);
     window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
   };
 

@@ -16,35 +16,12 @@ export const readLatestSettings = async () => {
   }
 };
 
-export const createSetting = async (settingData: {
-  description: string;
-  youtubeUrl: string;
-  vendorCount: number;
-  productCount: number;
-  orderCount: number;
-}) => {
-  try {
-    const response = await axios.post(`${API_URL}/settings/create`, 
-      settingData, 
-      {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        withCredentials: true,
-      }
-    );
-    return response.data;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.message || 'Failed to create setting');
-  }
-};
-
 export const updateSetting = async (settingData: {
-  description: string;
-  youtubeUrl: string;
-  vendorCount: number;
-  productCount: number;
-  orderCount: number;
+  description?: string;
+  youtubeUrl?: string;
+  vendorCount?: number;
+  productCount?: number;
+  orderCount?: number;
 }) => {
   try {
     const response = await axios.put(`${API_URL}/settings/update`, 
@@ -59,16 +36,5 @@ export const updateSetting = async (settingData: {
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Failed to update setting');
-  }
-};
-
-export const deleteSetting = async () => {
-  try {
-    const response = await axios.delete(`${API_URL}/settings/delete`, {
-      withCredentials: true,
-    });
-    return response.data;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.message || 'Failed to delete setting');
   }
 };

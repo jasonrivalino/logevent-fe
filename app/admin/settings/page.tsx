@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 // self-defined modules
 import { ContactBox, Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
-import { readLatestSettings, createSetting } from '@/app/utils/settingApi';
+import { readLatestSettings, updateSetting } from '@/app/utils/settingApi';
 import { Setting } from '@/app/utils/types';
 
 export default function AdminOrderRecap() {
@@ -118,7 +118,7 @@ function Settings({ setting }: { setting: Setting }) {
         };
 
         try {
-            await createSetting(newSetting);
+            await updateSetting(newSetting);
             alert('Setting berhasil diperbarui');
             window.location.reload();
         } catch (error: any) {

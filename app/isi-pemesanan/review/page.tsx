@@ -1,11 +1,26 @@
+// app/isi-pemesanan/review/page.tsx
 'use client';
 
-import React from "react";
-import { useRouter } from 'next/navigation';
+// dependency modules
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from 'next/navigation';
+// self-defined modules
 import { ContactBox } from "@/app/page";
 
 export default function ReviewPesanan() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const [email, setEmail] = useState('');
+
+    const name = searchParams.get('name') || '';
+    const phone = searchParams.get('phone') || '';
+    const address = searchParams.get('address') || '';
+    const notes = searchParams.get('notes') || '';
+    const startDate = searchParams.get('startDate');
+    const endDate = searchParams.get('endDate');
+
+    const formattedStartDate = startDate ? new Date(startDate).toLocaleDateString('id-ID') : 'N/A';
+    const formattedEndDate = endDate ? new Date(endDate).toLocaleDateString('id-ID') : 'N/A';
 
     const invoiceItems = [
         {
@@ -38,8 +53,12 @@ export default function ReviewPesanan() {
         },
       ];
 
+    // useEffect(() => {
+    //   const fetchData = async () => {
+
+
     const handleBackClick = () => {
-        router.push('/isi-pemesanan');
+        router.push('/wishlist');
     };
 
     return (
@@ -69,13 +88,13 @@ export default function ReviewPesanan() {
               <div className="w-full md:w-1/2 text-black">
                 <h3 className="text-pink-500 font-bold mb-2 text-lg md:text-xl">Identitas</h3>
                 <div className="text-xs md:text-sm text-gray-600">
-                    <p>Nama Lengkap : Vendor A</p>
-                    <p>Nomor Whatsapp : 0812345678967</p>
-                    <p>Email : satria@gmail.com</p>
-                    <p>Alamat : Bandung, Bandung</p>
-                    <p>Tanggal mulai acara : 3/9/2024</p>
-                    <p>Tanggal berakhir acara : 5/9/2024</p>
-                    <p>Catatan untuk vendor :</p>
+                  <p>Nama Lengkap : {name}</p>
+                  <p>Nomor Whatsapp : {phone}</p>
+                  <p>Email : {email}</p>
+                  <p>Alamat : {address}</p>
+                  <p>Tanggal mulai acara : {formattedStartDate}</p>
+                  <p>Tanggal berakhir acara : {formattedEndDate}</p>
+                  <p>Catatan untuk vendor : {notes || 'Tidak ada catatan'}</p>
                 </div>
               </div>
             </div>

@@ -519,7 +519,7 @@ function AboutUsSection({ setting }: { setting: Setting | null }) {
         <div className="w-full md:w-1/2">
           <iframe 
             className="w-full h-48 md:h-96 rounded-lg" 
-            src={setting?.youtubeUrl || "https://www.youtube.com/embed/ZZl2uAkUfHA"} 
+            src={setting?.youtubeUrl || ""} 
             title="YouTube video player" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
             allowFullScreen

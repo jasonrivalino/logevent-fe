@@ -48,6 +48,19 @@ export const generateWhatsAppUrl = (number: string, message: string) => {
   return `https://wa.me/${encodedNumber}?text=${encodedMessage}`;
 };
 
+export const getCartTypeDescription = (cartType: string) => {
+  switch (cartType) {
+    case 'Event Organizer':
+      return 'Event Organizer';
+    case 'Product':
+      return 'Logistik Vendor';
+    case 'Event':
+      return 'Paket Event';
+    default:
+      return 'Unknown Type';
+  }
+};
+
 export const getExcludedDates = (bookedDates: string[]) => {
   if (!Array.isArray(bookedDates)) {
     return [];

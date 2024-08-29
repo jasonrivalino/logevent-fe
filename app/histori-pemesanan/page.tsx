@@ -35,11 +35,11 @@ export default function HomePage() {
           const eventOrders = orders.filter((order: { cartType: string; }) => order.cartType === 'Event');
           eventOrders.sort((a: Order, b: Order) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime());
 
-          const productOrders = orders.filter((order: { cartType: string; }) => order.cartType === 'Product');
+          const productOrders = orders.filter((order: { cartType: string; }) => order.cartType === 'Product' || order.cartType === 'Event Organizer');
           productOrders.sort((a: Order, b: Order) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime());
 
           const eventCarts = carts.filter((cart: { type: string; }) => cart.type === 'Event');
-          const productCarts = carts.filter((cart: { type: string; }) => cart.type === 'Product');
+          const productCarts = carts.filter((cart: { type: string; }) => cart.type === 'Product' || cart.type === 'Event Organizer');
 
           const eventItems: EventItem[][] = [];
           for (const cart of eventCarts) {
