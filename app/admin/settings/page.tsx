@@ -78,15 +78,15 @@ export default function AdminOrderRecap() {
 const Popup = ({ isOpen, onClose, onSubmit, title, children }: { isOpen: boolean, onClose: () => void, onSubmit: () => void, title: string, children: React.ReactNode }) => {
     if (!isOpen) return null;
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center text-black">
-        <div className="bg-white p-6 rounded-lg shadow-lg w-80">
-          <h3 className="text-lg font-bold mb-4">{title}</h3>
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center text-black z-50">
+        <div className="bg-white p-4 md:p-6 rounded-lg shadow-lg w-72 md:w-80">
+          <h3 className="text-base md:text-lg font-bold mb-4">{title}</h3>
           {children}
           <div className="flex justify-end space-x-2 mt-4">
-            <button onClick={onClose} className="bg-gray-300 text-black px-4 py-2 rounded-md">
+            <button onClick={onClose} className="bg-gray-300 text-black px-4 py-2 rounded-md text-sm md:text-base">
               Cancel
             </button>
-            <button onClick={onSubmit} className="bg-pink-900 text-white px-4 py-2 rounded-md">
+            <button onClick={onSubmit} className="bg-pink-900 text-white px-4 py-2 rounded-md text-sm md:text-base">
               Confirm
             </button>
           </div>
@@ -183,7 +183,7 @@ const Popup = ({ isOpen, onClose, onSubmit, title, children }: { isOpen: boolean
   
         {/* About Us Settings Collapsible */}
         <div
-          className="flex justify-between items-center cursor-pointer p-4 bg-white rounded-lg border-2 border-gray-200 shadow-md"
+          className="flex justify-between items-center cursor-pointer p-2 md:p-4 bg-white rounded-lg border-2 border-gray-200 shadow-md"
           onClick={() => setIsOpen(!isOpen)}
         >
           <h2 className="text-lg md:text-2xl font-bold text-gray-700">About Us Settings</h2>
@@ -279,7 +279,7 @@ const Popup = ({ isOpen, onClose, onSubmit, title, children }: { isOpen: boolean
   
         {/* Email Admin Collapsible */}
         <div
-          className="flex justify-between items-center cursor-pointer p-4 bg-white rounded-lg border-2 border-gray-200 shadow-md mt-6"
+          className="flex justify-between items-center cursor-pointer p-2 md:p-4 bg-white rounded-lg border-2 border-gray-200 shadow-md mt-3 md:mt-6"
           onClick={() => setIsEmailOpen(!isEmailOpen)}
         >
           <h2 className="text-lg md:text-2xl font-bold text-gray-700">Email Admin</h2>
@@ -287,9 +287,9 @@ const Popup = ({ isOpen, onClose, onSubmit, title, children }: { isOpen: boolean
         </div>
   
         {isEmailOpen && (
-          <div className="space-y-2 md:space-y-4 text-black mt-4 border border-gray-300 p-4 md:p-6 rounded-md">
+          <div className="space-y-2 md:space-y-4 text-black mt-4 border border-gray-300 p-2 md:p-6 rounded-md">
             {emails.map((email, index) => (
-              <div key={index} className="flex justify-between items-center bg-gray-100 p-3 rounded-lg border border-gray-300">
+              <div key={index} className="flex justify-between items-center bg-gray-100 p-3 rounded-lg border border-gray-300 text-xs md:text-base">
                 <span>{email}</span>
                 <div className="flex space-x-2">
                   <button onClick={() => showEditPopup(index)} className="text-pink-900">
@@ -305,7 +305,7 @@ const Popup = ({ isOpen, onClose, onSubmit, title, children }: { isOpen: boolean
               <button
                 type="button"
                 onClick={showPopup}
-                className="px-4 py-2 bg-pink-900 text-white rounded-lg shadow hover:bg-pink-800 focus:outline-none mt-2 ml-auto"
+                className="px-2 md:px-4 py-1 md:py-2 text-xs md:text-base bg-pink-900 text-white rounded-lg shadow hover:bg-pink-800 focus:outline-none mt-2 ml-auto"
               >
                 + Tambah Email
               </button>
@@ -323,7 +323,7 @@ const Popup = ({ isOpen, onClose, onSubmit, title, children }: { isOpen: boolean
           {popupState.type !== 'delete' && (
             <input
               type="email"
-              className="border p-2 w-full"
+              className="border p-2 w-full text-sm md:text-base rounded-md"
               value={popupState.email}
               onChange={(e) => setPopupState({ ...popupState, email: e.target.value })}
               placeholder="Enter email"
