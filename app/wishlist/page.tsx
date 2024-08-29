@@ -5,7 +5,7 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { SetStateAction, useEffect, useState } from 'react';
-import { FaCartPlus } from 'react-icons/fa';
+import { FaCartPlus, FaTrashAlt } from 'react-icons/fa';
 // self-defined modules
 import { ContactBox, Navbar } from '@/app/page';
 import { readUserProfile } from '@/app/utils/authApi';
@@ -39,7 +39,7 @@ export default function HomePage() {
         setEventWishlists(eventWishlists);
         setProductWishlists(productWishlists);
       } catch (error: any) {
-        console.error(error.message);
+        console.error((error as any).message);
         router.push('/signin');
       }
     };
@@ -89,6 +89,8 @@ export default function HomePage() {
 const WishlistPaketEvent = ({ eventWishlists }: { eventWishlists: EventWishlist[] }) => {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
+  const [showPopup, setShowPopup] = useState(false);
+  const [eventToRemove, setEventToRemove] = useState<EventWishlist | null>(null);
   const eventsPerPage = 5;
 
   const handleDetailClick = (id: string | number) => {
@@ -133,6 +135,22 @@ const WishlistPaketEvent = ({ eventWishlists }: { eventWishlists: EventWishlist[
     }
   };
 
+  const handleDeleteClick = (event: EventWishlist) => {
+    setEventToRemove(event);
+    setShowPopup(true);
+  };
+
+  const confirmDelete = () => {
+    if (eventToRemove) {
+      // Remove the event from the wishlist
+      const updatedWishlists = eventWishlists.filter((item) => item.id !== eventToRemove.id);
+      // Update the state with the new wishlist
+      // setEventWishlists(updatedWishlists);
+      setShowPopup(false);
+      setEventToRemove(null);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-4">
       {eventWishlists.length === 0 ? (        
@@ -147,6 +165,12 @@ const WishlistPaketEvent = ({ eventWishlists }: { eventWishlists: EventWishlist[
               key={event.id}
               className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col md:flex-row justify-between relative mt-4"
             >
+              {/* Delete icon */}
+              <FaTrashAlt
+                className="text-red-600 hover:text-red-700 absolute top-2 right-2 cursor-pointer w-5 h-5"
+                onClick={() => handleDeleteClick(event)}
+              />
+              
               <Image
                 src={event.eventImage || '/images/placeholder-image.jpg'}
                 alt={`${event.eventName} Image`}
@@ -200,6 +224,30 @@ const WishlistPaketEvent = ({ eventWishlists }: { eventWishlists: EventWishlist[
           )}
         </>
       )}
+      
+      {/* Confirmation Popup */}
+      {showPopup && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-10/12 md:w-full">
+            <p className="text-black text-base md:text-lg font-bold mb-4">Hapus Paket Event</p>
+            <p className="text-black text-sm md:text-base mb-4">Apakah Anda yakin ingin menghapus paket ini dari wishlist?</p>
+            <div className="flex justify-end">
+              <button
+                className="bg-gray-300 hover:bg-gray-400 text-black px-4 py-2 rounded mr-2 text-sm md:text-base"
+                onClick={() => setShowPopup(false)}
+              >
+                Batal
+              </button>
+              <button
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm md:text-base"
+                onClick={confirmDelete}
+              >
+                Hapus
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -211,10 +259,11 @@ function WishlistLogistikVendor({ productWishlists }: { productWishlists: Produc
   const [selectedItems, setSelectedItems] = useState<ProductWishlist[]>([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [amount, setAmount] = useState<{ [key: number]: number }>({});
+  const [showPopup, setShowPopup] = useState(false); // State for confirmation popup
 
   const totalPages = Math.ceil(productWishlists.length / itemsPerPage);
 
-  const handlePageChange = (page: number) => {
+  const handlePageChange = (page: SetStateAction<number>) => {
     setCurrentPage(page);
   };
 
@@ -256,7 +305,20 @@ function WishlistLogistikVendor({ productWishlists }: { productWishlists: Produc
     }));
   };
 
-  const handleSubmit = async (e: { preventDefault: () => void }) => {
+  const handleRemoveSelectedItems = () => {
+    setShowPopup(true); // Show confirmation popup
+  };
+
+  const confirmRemoveItems = () => {
+    const updatedProductWishlists = productWishlists.filter(
+      (item) => !selectedItems.includes(item)
+    );
+    setSelectedItems([]);
+    setTotalPrice(0);
+    setShowPopup(false); // Hide confirmation popup
+  };
+
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
 
     if (selectedItems.length < 1) {
@@ -288,8 +350,8 @@ function WishlistLogistikVendor({ productWishlists }: { productWishlists: Produc
         }
 
         router.push('/isi-pemesanan/logistik-vendor');
-      } catch (error: any) {
-        console.error(error.message);
+      } catch (error) {
+        console.log(error);
       }
     }
   };
@@ -371,15 +433,57 @@ function WishlistLogistikVendor({ productWishlists }: { productWishlists: Produc
           )}
         </>
       )}
-      <footer className="fixed bottom-0 left-0 right-0 bg-gray-100 shadow-md p-4 z-50">
+
+      {/* Confirmation Popup */}
+      {showPopup && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 text-black">
+          <div className="bg-white p-6 rounded-md shadow-md w-10/12 md:w-full">
+            <h2 className="text-base md:text-lg font-bold mb-4">Konfirmasi Hapus</h2>
+            <p className="text-sm md:text-base mb-4">Apakah Anda yakin ingin menghapus produk yang dipilih?</p>
+            <div className="flex justify-end gap-4">
+              <button
+                className="bg-gray-300 text-black px-4 py-2 rounded-md text-sm md:text-base"
+                onClick={() => setShowPopup(false)}
+              >
+                Batal
+              </button>
+              <button
+                className="bg-red-600 text-white px-4 py-2 rounded-md text-sm md:text-base"
+                onClick={confirmRemoveItems}
+              >
+                Hapus
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <footer className="fixed bottom-0 left-0 right-0 bg-gray-100 shadow-md p-4 z-40">
         <div className="flex justify-between items-center">
           <div>
-            <p className="text-black font-sofia text-sm md:text-base">Jumlah Barang: {selectedItems.length}</p>
-            <p className="text-black font-sofia text-sm md:text-base">Total Harga: Rp{totalPrice.toLocaleString('id-ID')}</p>
+            <p className="text-black font-sofia text-sm md:text-base">
+              Jumlah Barang: {selectedItems.length}
+            </p>
+            <p className="text-black font-sofia text-sm md:text-base">
+              Total: Rp{totalPrice.toLocaleString('id-ID')}
+            </p>
           </div>
-          <button className="bg-pink-500 text-white px-2 md:px-4 py-2 rounded-md font-sofia text-xs md:text-base" onClick={handleSubmit}>
-            Lanjutkan Pemesanan
-          </button>
+          <div className="flex flex-col md:flex-row gap-1 md:gap-4">
+            <button
+              className="bg-red-600 border text-white hover:bg-red-600 hover:text-white font-bold py-1 md:py-2 px-2 md:px-4 rounded-md transition-colors duration-300 ease-in-out text-sm md:text-base"
+              onClick={handleRemoveSelectedItems}
+              disabled={selectedItems.length === 0}
+            >
+              Hapus Pilihan
+            </button>
+            <button
+              className="bg-pink-500 text-white hover:bg-pink-700 font-bold py-1 md:py-2 px-2 md:px-4 rounded-md transition-colors duration-300 ease-in-out text-sm md:text-base"
+              onClick={handleSubmit}
+              disabled={selectedItems.length === 0}
+            >
+              Tambah ke Keranjang
+            </button>
+          </div>
         </div>
       </footer>
     </div>

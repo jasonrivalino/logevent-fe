@@ -7,10 +7,11 @@ import { useState, useEffect, useRef } from 'react';
 // self-defined modules
 import { Navbar, ContactBox } from '@/app/page';
 import { readAlbumsByProductId } from '@/app/utils/albumApi';
-import { convertDate, generateWhatsAppUrl, getStars } from '@/app/utils/helpers';
+import { convertDate, generateWhatsAppUrl, getExcludedDates, getStars } from '@/app/utils/helpers';
 import { readReviewsByProductId } from '@/app/utils/reviewApi';
 import { readProductById } from '@/app/utils/productApi';
 import { Album, Product, Review } from '@/app/utils/types';
+import DatePicker from 'react-datepicker';
 
 export default function EventOrganizer() {
   const descriptionRef = useRef(null);
@@ -86,10 +87,19 @@ const useWindowWidth = () => {
 
 const ProductImage = ({ product, albums }: { product: Product; albums: Album[]; }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showOrderPopup, setShowOrderPopup] = useState(false); // State for order popup
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [notes, setNotes] = useState('');
   const timeoutRef = useRef<null | NodeJS.Timeout>(null);
   const windowWidth = useWindowWidth();
   const productUrl = typeof window !== 'undefined' ? window.location.href : '';
   const [copied, setCopied] = useState(false);
+  const [bookedDates, setBookedDates] = useState<string[]>([]);
+  const [amount, setAmount] = useState<{ [key: number]: number }>({});
   const router = useRouter();
 
   const resetTimeout = () => {
@@ -143,6 +153,31 @@ const ProductImage = ({ product, albums }: { product: Product; albums: Album[]; 
     window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
   };
 
+  const closeOrderPopup = () => {
+    setShowOrderPopup(false);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Handle form submission logic here
+    console.log('Order submitted:', { name, phone, address, startDate, endDate, notes });
+    closeOrderPopup(); // Close popup after submission
+  };
+
+  const increaseAmount = (id: number) => {
+    setAmount((prev) => ({
+      ...prev,
+      [id]: (prev[id] || 1) + 1,
+    }));
+  };
+
+  const decreaseAmount = (id: number) => {
+    setAmount((prev) => ({
+      ...prev,
+      [id]: Math.max(1, (prev[id] || 1) - 1),
+    }));
+  };
+
   return (
     <div className="px-8 pt-4 md:pb-16">
       {windowWidth >= 768 ? (
@@ -171,10 +206,9 @@ const ProductImage = ({ product, albums }: { product: Product; albums: Album[]; 
               </div>
             </div>
             <div className="flex space-x-4 w-full md:w-1/2 md:justify-end items-center mt-3 md:mt-0">
-              {/* TODO: Order Popup */}
               <button
                 className="bg-pink-500 text-white rounded-lg px-3 md:px-4 py-2 -ml-4 md:ml-0 mr-[6.5rem] md:mr-0 text-sm md:text-base"
-                onClick={() => router.push('/isi-pemesanan')}
+                onClick={() => setShowOrderPopup(true)} // Show popup on click
               >
                 Pesan Langsung
               </button>
@@ -236,15 +270,142 @@ const ProductImage = ({ product, albums }: { product: Product; albums: Album[]; 
                 </button>
               </div>
             </div>
-            <div className="flex flex-col md:flex-row md:space-x-0 md:space-y-4 md:items-center mt-3 md:mt-0">
-                {/* TODO: Order Popup */}
-                <button
-                  className="bg-pink-500 text-white rounded-lg px-2 md:px-4 py-[0.35rem] md:py-2 mt-2 text-sm md:text-base -ml-4"
-                  onClick={() => router.push('/isi-pemesanan')}
-                >
-                  Pesan Langsung
-                </button>
+            <div className="w-full flex justify-center mt-3 md:mt-0">
+              <button
+                className="bg-pink-500 text-white rounded-lg px-3 md:px-4 py-2 text-sm md:text-base"
+                onClick={() => setShowOrderPopup(true)} // Show popup on click
+              >
+                Pesan Langsung
+              </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Order Popup */}
+      {showOrderPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 text-black font-sofia">
+          <div className="relative bg-white rounded-lg mx-auto max-w-xs md:max-w-4xl mt-16">
+            <button 
+              onClick={() => closeOrderPopup()} 
+              className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-8 h-8 flex justify-center items-center"
+            >
+              &times;
+            </button>
+            <form className="flex flex-col w-full p-6 shadow-lg rounded-lg bg-white" onSubmit={handleSubmit}>
+              <h2 className="mb-4 md:mb-8 text-2xl md:text-3xl text-center text-gray-800">Isi Data Pemesanan</h2>
+              <div className="flex flex-col md:flex-row gap-4 md:gap-6 mb-3 md:mb-4">
+                <div className="flex flex-1 flex-row -mb-2 md:mb-0">
+                  <div className="flex flex-col w-full">
+                    <label htmlFor="name" className="mt-1 text-sm md:text-base text-gray-800 md:mr-2">
+                      Nama *
+                    </label>
+                    <input
+                      id="name"
+                      name="name"
+                      type="text"
+                      className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] text-black text-xs md:text-sm w-full"
+                      placeholder="Isi nama pemesan"
+                      value={name || ''}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-1 flex-row">
+                  <div className="flex flex-col w-full">
+                    <label htmlFor="phone" className="mt-1 text-sm md:text-base text-gray-800 mr-9 md:mr-5">
+                      No. Telepon *
+                    </label>
+                    <input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] text-black text-xs md:text-sm w-full"
+                      placeholder="Isi nomor telepon"
+                      value={phone || ''}
+                      onChange={(e) => setPhone(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col mb-1 md:mb-4">
+                <label htmlFor="address" className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Alamat *</label>
+                <textarea
+                  id="address"
+                  name="address"
+                  className="input-placeholder border border-gray-300 rounded-md p-2 md:p-3 text-black text-xs md:text-sm"
+                  rows={2}
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder="Enter your address"
+                  required
+                />
+              </div>
+              <div className="flex flex-col md:flex-row gap-4 md:gap-6 mb-4">
+                <div className='flex flex-row gap-4'>
+                  <div className="flex-1 relative">
+                    <label htmlFor="startDate" className="text-sm md:text-base text-gray-800 mb-1 md:mb-2 mr-3">Mulai Acara *</label>
+                    <DatePicker
+                      selected={startDate}
+                      onChange={(date: Date | null) => setStartDate(date)}
+                      className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] text-black mt-1 text-xs md:text-sm w-28 md:w-36"
+                      placeholderText="Select start date"
+                      excludeDates={getExcludedDates(bookedDates)}
+                      required
+                      calendarClassName="absolute z-50 mt-1 shadow-lg"
+                    />
+                  </div>
+                  <div className="flex-1 relative">
+                    <label htmlFor="endDate" className="mb-4 text-sm md:text-base text-gray-800 mr-3">Selesai Acara *</label>
+                    <DatePicker
+                      selected={endDate}
+                      onChange={(date: Date | null) => setEndDate(date)}
+                      className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] text-black mt-1 text-xs md:text-sm w-28 md:w-36"
+                      placeholderText="Select end date"
+                      excludeDates={getExcludedDates(bookedDates)}
+                      required
+                      calendarClassName="absolute z-50 mt-1 shadow-lg"
+                    />
+                  </div>
+                </div>
+                {(product.rate === "Hourly" || product.rate === "Quantity") && (
+                  <div className="flex-1">
+                    <label htmlFor="notes" className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Jumlah *</label>
+                      <div className="flex justify-between items-center mt-2 bg-gray-100 w-2/5 text-xs md:text-base">
+                        <button
+                          className="bg-gray-200 text-gray-700 px-1 md:px-2 md:py-1 rounded-md"
+                          onClick={() => decreaseAmount(product.id)}
+                          disabled={amount[product.id] === 1}
+                        >
+                          -
+                        </button>
+                        <span className="mx-2 text-black">{amount[product.id] || 1}</span>
+                        <button
+                          className="bg-gray-200 text-gray-700 px-1 md:px-2 md:py-1 rounded-md"
+                          onClick={() => increaseAmount(product.id)}
+                        >
+                          +
+                        </button>
+                      </div>
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col mb-1 md:mb-4">
+                <label htmlFor="notes" className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Catatan untuk Vendor:</label>
+                <textarea
+                  id="notes"
+                  name="notes"
+                  className="input-placeholder border border-gray-300 rounded-md p-2 md:p-3 text-black text-xs md:text-sm"
+                  rows={2}
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Enter your notes"
+                />
+              </div>
+              <button type="submit" className="mt-5 md:mt-2 p-1 md:p-2 rounded bg-pink-800 hover:bg-pink-900 text-white">Submit</button>
+            </form>
           </div>
         </div>
       )}
@@ -318,4 +479,8 @@ function Reviews({ product, reviews }: { product: Product; reviews: Review[] }) 
       </div>
     </div>
   );
+}
+
+function setAmount(arg0: (prev: any) => any) {
+  throw new Error('Function not implemented.');
 }
