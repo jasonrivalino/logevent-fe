@@ -9,6 +9,7 @@ import { ContactBox, Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
 import { readLatestSettings, updateSetting } from '@/app/utils/settingApi';
 import { Setting } from '@/app/utils/types';
+import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 
 export default function AdminOrderRecap() {
     const [setting, setSetting] = useState<Setting | null>(null);
@@ -19,7 +20,7 @@ export default function AdminOrderRecap() {
                 const data = await readLatestSettings();
                 setSetting(data);
             } catch (error: any) {
-                console.error('Failed to fetch latest settings', error.message);
+                console.error('Failed to fetch latest settings', (error as any).message);
             }
         };
 
@@ -73,141 +74,265 @@ export default function AdminOrderRecap() {
     );
 };
 
-function Settings({ setting }: { setting: Setting }) {
+// Popup Component
+const Popup = ({ isOpen, onClose, onSubmit, title, children }: { isOpen: boolean, onClose: () => void, onSubmit: () => void, title: string, children: React.ReactNode }) => {
+    if (!isOpen) return null;
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center text-black">
+        <div className="bg-white p-6 rounded-lg shadow-lg w-80">
+          <h3 className="text-lg font-bold mb-4">{title}</h3>
+          {children}
+          <div className="flex justify-end space-x-2 mt-4">
+            <button onClick={onClose} className="bg-gray-300 text-black px-4 py-2 rounded-md">
+              Cancel
+            </button>
+            <button onClick={onSubmit} className="bg-pink-900 text-white px-4 py-2 rounded-md">
+              Confirm
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+  
+  function Settings({ setting }: { setting: Setting }) {
+    const [isOpen, setIsOpen] = useState(false);
+    const [isEmailOpen, setIsEmailOpen] = useState(false);
     const [description, setDescription] = useState('');
     const [youtubeUrl, setYoutubeUrl] = useState('');
     const [vendorCount, setVendorCount] = useState('');
     const [productCount, setProductCount] = useState('');
     const [orderCount, setOrderCount] = useState('');
-
+    const [emails, setEmails] = useState(['satriaoctavianus28@gmail.com', '13521168@std.stei.itb.ac.id']);
+    const [popupState, setPopupState] = useState<{ isOpen: boolean, type: string, index: number | null, email: string }>({ isOpen: false, type: '', index: null, email: '' });
+  
     useEffect(() => {
-        setDescription(setting.description || '');
-        setYoutubeUrl(setting.youtubeUrl || '');
-        setVendorCount(setting.vendorCount.toString() || '');
-        setProductCount(setting.productCount.toString() || '');
-        setOrderCount(setting.orderCount.toString() || '');
+      setDescription(setting.description || '');
+      setYoutubeUrl(setting.youtubeUrl || '');
+      setVendorCount(setting.vendorCount.toString() || '');
+      setProductCount(setting.productCount.toString() || '');
+      setOrderCount(setting.orderCount.toString() || '');
     }, [setting]);
-
-    const handleSubmit = async () => {
-        if (!description) {
-            alert('Deskripsi tidak boleh kosong');
-        }
-
-        if (!youtubeUrl) {
-            alert('Link YouTube tidak boleh kosong');
-        }
-
-        if (!vendorCount) {
-            alert('Jumlah Vendor tidak boleh kosong');
-        }
-
-        if (!productCount) {
-            alert('Jumlah Produk tidak boleh kosong');
-        }
-
-        if (!orderCount) {
-            alert('Jumlah Pesanan tidak boleh kosong');
-        }
-
-        const newSetting = {
-            description,
-            youtubeUrl,
-            vendorCount: parseInt(vendorCount),
-            productCount: parseInt(productCount),
-            orderCount: parseInt(orderCount),
-        };
-
-        try {
-            await updateSetting(newSetting);
-            alert('Setting berhasil diperbarui');
-            window.location.reload();
-        } catch (error: any) {
-            console.error('Failed to update setting', error.message);
-        }
+  
+    const isValidEmail = (email: string) => {
+      // Regular expression for validating email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
     };
-
+  
+    const showPopup = () => {
+      setPopupState({ isOpen: true, type: 'add', index: null, email: '' });
+    };
+  
+    const showEditPopup = (index: number) => {
+      setPopupState({ isOpen: true, type: 'edit', index, email: emails[index] });
+    };
+  
+    const showDeletePopup = (index: number) => {
+      setPopupState({ isOpen: true, type: 'delete', index, email: emails[index] });
+    };
+  
+    const handlePopupSubmit = () => {
+      if (popupState.type !== 'delete' && !isValidEmail(popupState.email)) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+  
+      if (popupState.type === 'add') {
+        setEmails([...emails, popupState.email]);
+      } else if (popupState.type === 'edit' && popupState.index !== null) {
+        const updatedEmails = [...emails];
+        updatedEmails[popupState.index] = popupState.email;
+        setEmails(updatedEmails);
+      } else if (popupState.type === 'delete' && popupState.index !== null) {
+        setEmails(emails.filter((_, i) => i !== popupState.index));
+      }
+  
+      setPopupState({ isOpen: false, type: '', index: null, email: '' });
+    };
+  
+    const handleSubmit = async () => {
+      if (!description || !youtubeUrl || !vendorCount || !productCount || !orderCount) {
+        alert('All fields must be filled out');
+        return;
+      }
+  
+      const newSetting = {
+        description,
+        youtubeUrl,
+        vendorCount: parseInt(vendorCount),
+        productCount: parseInt(productCount),
+        orderCount: parseInt(orderCount),
+      };
+  
+      try {
+        await updateSetting(newSetting);
+        alert('Settings updated successfully');
+        window.location.reload();
+      } catch (error) {
+        console.error('Failed to update setting', (error as any).message);
+      }
+    };
+  
     return (
-        <div className="bg-white border-2 rounded-xl w-full mb-4 md:mb-0 px-6 md:px-8 py-6 overflow-x-auto font-sofia">
-            <div className="flex justify-center md:justify-start">
-                <h1 className="text-lg md:text-3xl font-bold mb-4 md:mb-6 text-pink-900 font-sofia">Welcome Admin LogEvent!</h1>
-            </div>
+      <div className="bg-white border-2 rounded-xl w-full mb-4 md:mb-0 px-6 md:px-8 py-6 overflow-x-auto font-sofia">
+        {/* Main Content */}
+        <div className="flex justify-center md:justify-start">
+          <h1 className="text-lg md:text-3xl font-bold mb-4 md:mb-6 text-pink-900 font-sofia">Welcome Admin LogEvent!</h1>
+        </div>
+  
+        {/* About Us Settings Collapsible */}
+        <div
+          className="flex justify-between items-center cursor-pointer p-4 bg-white rounded-lg border-2 border-gray-200 shadow-md"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <h2 className="text-lg md:text-2xl font-bold text-gray-700">About Us Settings</h2>
+          <button className="text-pink-900">{isOpen ? '▲' : '▼'}</button>
+        </div>
+  
+        {/* Collapsible Content */}
+        {isOpen && (
+        <div className="border border-gray-300 p-4 md:p-6 rounded-md mt-4">
             <div className="space-y-2 md:space-y-4 text-black">
-                <h2 className="text-lg md:text-2xl font-bold text-gray-700 text-center md:text-left">About Us Page Settings</h2>
-                
-                {/* Title Section */}
-                <div>
-                    <label htmlFor="deskripsi" className="block font-medium text-gray-700 text-sm md:text-base">Deskripsi</label>
-                    <textarea
-                        id="deskripsi"
-                        name="deskripsi"
-                        rows={4}
-                        className="mt-1 p-2 md:p-3 block w-full rounded-md text-xs md:text-base border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm bg-gray-100"
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                    />
-                </div>
-                
-                {/* Link YouTube Section */}
-                <div>
-                    <label htmlFor="linkYouTube" className="block font-medium text-gray-700 text-sm md:text-base">Link YouTube</label>
-                    <input
-                        type="text"
-                        name="linkYouTube"
-                        id="linkYouTube"
-                        className="mt-1 mb-4 md:mb-0 p-2 md:p-3 block w-full rounded-md text-xs md:text-base border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm bg-gray-100"
-                        value={youtubeUrl}
-                        onChange={(e) => setYoutubeUrl(e.target.value)}
-                    />
-                </div>
+            <div>
+                <label htmlFor="deskripsi" className="block font-medium text-gray-700 text-sm md:text-base">
+                Deskripsi
+                </label>
+                <textarea
+                id="deskripsi"
+                name="deskripsi"
+                rows={4}
+                className="mt-1 p-2 md:p-3 block w-full rounded-md text-xs md:text-base border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm bg-gray-100"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                />
+            </div>
 
-                {/* Statistics Section */}
-                <div className="flex flex-col md:flex-row justify-between md:space-x-4">
-                    <div className="md:text-center flex flex-row md:flex-col mb-4 md:mb-0">
-                        <label htmlFor="vendorMitra" className="block font-medium mt-2 md:mt-0 text-gray-700 text-sm md:text-base">Vendor Mitra</label>
-                        <input
-                            type="number"
-                            id="vendorMitra"
-                            name="vendorMitra"
-                            className="p-2 block w-1/4 md:w-full ml-auto rounded-md text-xs md:text-base border-gray-300 shadow-sm bg-gray-100 focus:border-pink-500 focus:ring-pink-500 sm:text-xl text-center no-spinners"
-                            value={vendorCount}
-                            onChange={(e) => setVendorCount(e.target.value)}
-                        />
-                    </div>
-                    <div className="md:text-center flex flex-row md:flex-col mb-4 md:mb-0">
-                        <label htmlFor="logistikVendor" className="block font-medium mt-2 md:mt-0 text-gray-700 text-sm md:text-base">Logistik Vendor</label>
-                        <input
-                            type="number"
-                            id="logistikVendor"
-                            name="logistikVendor"
-                            className="mt-1 p-2 block w-1/4 md:w-full ml-auto rounded-md text-xs md:text-base border-gray-300 shadow-sm bg-gray-100 focus:border-pink-500 focus:ring-pink-500 sm:text-xl text-center no-spinners"
-                            value={productCount}
-                            onChange={(e) => setProductCount(e.target.value)}
-                        />
-                    </div>
-                    <div className="md:text-center flex flex-row md:flex-col">
-                        <label htmlFor="eventSukses" className="block font-medium mt-2 md:mt-0 text-gray-700 text-sm md:text-base">Event Sukses Terlaksana</label>
-                        <input
-                            type="number"
-                            id="eventSukses"
-                            name="eventSukses"
-                            className="mt-1 p-2 block w-1/4 md:w-full ml-auto rounded-md text-xs md:text-base border-gray-300 shadow-sm bg-gray-100 focus:border-pink-500 focus:ring-pink-500 sm:text-xl text-center no-spinners"
-                            value={orderCount}
-                            onChange={(e) => setOrderCount(e.target.value)}
-                        />
-                    </div>
-                </div>
+            <div>
+                <label htmlFor="linkYouTube" className="block font-medium text-gray-700 text-sm md:text-base">
+                Link YouTube
+                </label>
+                <input
+                type="text"
+                name="linkYouTube"
+                id="linkYouTube"
+                className="mt-1 mb-4 md:mb-0 p-2 md:p-3 block w-full rounded-md text-xs md:text-base border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm bg-gray-100"
+                value={youtubeUrl}
+                onChange={(e) => setYoutubeUrl(e.target.value)}
+                />
+            </div>
 
-                {/* Save Button */}
-                <div className="flex justify-end">
-                    <button
-                        type="button"
-                        onClick={handleSubmit} 
-                        className="px-4 md:px-6 py-1 md:py-2 bg-pink-900 text-white rounded-lg shadow hover:bg-pink-800 focus:outline-none mt-5"
-                    >
-                        Save
-                    </button>
+            <div className="flex flex-col md:flex-row justify-between md:space-x-4">
+                <div className="md:text-center flex flex-row md:flex-col mb-4 md:mb-0">
+                <label htmlFor="vendorMitra" className="block font-medium mt-2 md:mt-0 text-gray-700 text-sm md:text-base">
+                    Vendor Mitra
+                </label>
+                <input
+                    type="number"
+                    id="vendorMitra"
+                    name="vendorMitra"
+                    className="p-2 block w-1/4 md:w-full ml-auto rounded-md text-xs md:text-base border-gray-300 shadow-sm bg-gray-100 focus:border-pink-500 focus:ring-pink-500 sm:text-xl text-center no-spinners"
+                    value={vendorCount}
+                    onChange={(e) => setVendorCount(e.target.value)}
+                />
                 </div>
+                <div className="md:text-center flex flex-row md:flex-col mb-4 md:mb-0">
+                <label htmlFor="logistikVendor" className="block font-medium mt-2 md:mt-0 text-gray-700 text-sm md:text-base">
+                    Logistik Vendor
+                </label>
+                <input
+                    type="number"
+                    id="logistikVendor"
+                    name="logistikVendor"
+                    className="mt-1 p-2 block w-1/4 md:w-full ml-auto rounded-md text-xs md:text-base border-gray-300 shadow-sm bg-gray-100 focus:border-pink-500 focus:ring-pink-500 sm:text-xl text-center no-spinners"
+                    value={productCount}
+                    onChange={(e) => setProductCount(e.target.value)}
+                />
+                </div>
+                <div className="md:text-center flex flex-row md:flex-col">
+                <label htmlFor="eventSukses" className="block font-medium mt-2 md:mt-0 text-gray-700 text-sm md:text-base">
+                    Event Sukses Terlaksana
+                </label>
+                <input
+                    type="number"
+                    id="eventSukses"
+                    name="eventSukses"
+                    className="mt-1 p-2 block w-1/4 md:w-full ml-auto rounded-md text-xs md:text-base border-gray-300 shadow-sm bg-gray-100 focus:border-pink-500 focus:ring-pink-500 sm:text-xl text-center no-spinners"
+                    value={orderCount}
+                    onChange={(e) => setOrderCount(e.target.value)}
+                />
+                </div>
+            </div>
+
+            <div className="flex justify-end">
+                <button
+                type="button"
+                onClick={handleSubmit}
+                className="px-4 md:px-6 py-1 md:py-2 bg-pink-900 text-white rounded-lg shadow hover:bg-pink-800 focus:outline-none mt-5"
+                >
+                Save
+                </button>
+            </div>
             </div>
         </div>
+        )}
+  
+        {/* Email Admin Collapsible */}
+        <div
+          className="flex justify-between items-center cursor-pointer p-4 bg-white rounded-lg border-2 border-gray-200 shadow-md mt-6"
+          onClick={() => setIsEmailOpen(!isEmailOpen)}
+        >
+          <h2 className="text-lg md:text-2xl font-bold text-gray-700">Email Admin</h2>
+          <button className="text-pink-900">{isEmailOpen ? '▲' : '▼'}</button>
+        </div>
+  
+        {isEmailOpen && (
+          <div className="space-y-2 md:space-y-4 text-black mt-4 border border-gray-300 p-4 md:p-6 rounded-md">
+            {emails.map((email, index) => (
+              <div key={index} className="flex justify-between items-center bg-gray-100 p-3 rounded-lg border border-gray-300">
+                <span>{email}</span>
+                <div className="flex space-x-2">
+                  <button onClick={() => showEditPopup(index)} className="text-pink-900">
+                    <FaEdit />
+                  </button>
+                  <button onClick={() => showDeletePopup(index)} className="text-red-600">
+                    <FaTrashAlt />
+                  </button>
+                </div>
+              </div>
+            ))}
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={showPopup}
+                className="px-4 py-2 bg-pink-900 text-white rounded-lg shadow hover:bg-pink-800 focus:outline-none mt-2 ml-auto"
+              >
+                + Tambah Email
+              </button>
+            </div>
+          </div>
+        )}
+  
+        {/* Popup for Add, Edit, and Delete */}
+        <Popup
+          isOpen={popupState.isOpen}
+          onClose={() => setPopupState({ isOpen: false, type: '', index: null, email: '' })}
+          onSubmit={handlePopupSubmit}
+          title={popupState.type === 'add' ? 'Add Email' : popupState.type === 'edit' ? 'Edit Email' : 'Delete Email'}
+        >
+          {popupState.type !== 'delete' && (
+            <input
+              type="email"
+              className="border p-2 w-full"
+              value={popupState.email}
+              onChange={(e) => setPopupState({ ...popupState, email: e.target.value })}
+              placeholder="Enter email"
+            />
+          )}
+          {popupState.type === 'delete' && (
+            <p>Are you sure you want to delete this email: {popupState.email}?</p>
+          )}
+        </Popup>
+      </div>
     );
-}
+  }
