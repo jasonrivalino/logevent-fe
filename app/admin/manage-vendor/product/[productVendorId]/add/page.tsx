@@ -293,9 +293,15 @@ function AddVendorProduct({ vendor }: { vendor: Vendor }) {
                 Kategori Paket *
               </label>
               <select
+                onFocus={(e) => e.target.size = 3}
+                onBlur={(e) => e.target.size = 1}
+                onChange={(e) => {
+                  e.target.size = 1;
+                  e.target.blur();
+                  handleCategoryChange(e);
+                }}
                 className="w-full md:w-11/12 px-2 md:px-4 py-1 md:py-[0.65rem] border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 bg-white text-sm md:text-base overflow-auto max-h-48"
                 value={selectedCategoryId ?? 0}
-                onChange={handleCategoryChange}
                 required
               >
                 {/* Show 5 categories on top and if more than make scrollable */}

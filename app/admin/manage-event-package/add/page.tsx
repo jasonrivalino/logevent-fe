@@ -351,9 +351,15 @@ function AddPackageProduct({ products, vendors }: { products: Product[], vendors
             <div className="w-full mb-2 md:mb-0">
               <label className="block text-gray-700 font-sofia mb-1 md:mb-2 text-sm md:text-base">Kategori Paket *</label>
               <select
+                onFocus={(e) => e.target.size = 3}
+                onBlur={(e) => e.target.size = 1}
+                onChange={(e) => {
+                  e.target.size = 1;
+                  e.target.blur();
+                  handleCategoryChange(e);
+                }}
                 className="w-full md:w-11/12 px-2 md:px-4 py-1 md:py-[0.65rem] border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 bg-white text-sm md:text-base"
                 value={selectedCategoryId ?? 0}
-                onChange={handleCategoryChange}
               >
                 <option value={0}>Pilih Kategori</option>
                 {categories.map(category => (

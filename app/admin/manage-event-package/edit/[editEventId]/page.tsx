@@ -469,9 +469,9 @@ function EditPackageProduct() {
                   {categories.find(cat => cat.id === selectedCategoryId)?.name || 'Pilih Kategori'}
                 </button>
                 {isDropdownOpen && (
-                  <div className="absolute bg-white border rounded-lg shadow-lg mt-1 w-full z-10">
-                    {categories.map((category) => (
-                      <div 
+                  <div className="absolute bg-white border rounded-lg shadow-lg mt-1 w-full z-10 max-h-40 overflow-y-auto">
+                    {categories.map(category => (
+                      <div
                         key={category.id}
                         onClick={() => handleOptionClick(category.id)}
                         className="flex items-center justify-between p-2 hover:bg-gray-100 cursor-pointer text-xs md:text-base"
@@ -668,6 +668,7 @@ function EditPackageProduct() {
           </div>
         </div>
       )}
+      
       {isPopupOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 relative mt-12 overflow-hidden md:w-4/5 h-4/5 w-11/12">              

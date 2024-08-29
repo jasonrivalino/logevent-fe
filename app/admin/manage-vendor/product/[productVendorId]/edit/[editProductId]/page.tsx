@@ -369,7 +369,7 @@ function EditVendorProduct({ product, albums }: { product: Product, albums: Albu
                   {categories.find(cat => cat.id === selectedCategoryId)?.name || 'Pilih Kategori'}
                 </button>
                 {isDropdownOpen && (
-                  <div className="absolute bg-white border rounded-lg shadow-lg mt-1 w-full z-10">
+                  <div className="absolute bg-white border rounded-lg shadow-lg mt-1 w-full z-10 max-h-40 overflow-y-auto">
                     {categories.map((category) => (
                       <div 
                         key={category.id}
