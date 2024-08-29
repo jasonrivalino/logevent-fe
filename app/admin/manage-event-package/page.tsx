@@ -230,7 +230,7 @@ function ManageEventPackage({ events }: { events: Event[] }) {
             {showPopup && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black z-50 bg-opacity-50">
                     <div className="bg-white p-6 rounded-md shadow-lg w-10/12 md:w-full">
-                        <p className="mb-4 text-black">Are you sure you want to delete this package?</p>
+                        <p className="mb-4 text-black">Apakah kamu yakin ingin menghapus paket ini?</p>
                         <div className="flex justify-end">
                             <button
                                 className="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded mr-2"
