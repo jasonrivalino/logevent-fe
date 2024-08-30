@@ -344,8 +344,8 @@ function EditVendorProduct({ product, albums }: { product: Product, albums: Albu
         </div>
         <div className="md:flex space-x-6">
           <div className="w-full -mt-1 md:mt-4">
-            <label className="block text-gray-700 font-sofia text-sm md:text-base">Deskripsi Paket</label>
-            <p className="text-gray-500 text-xs md:text-sm font-sofia mb-1 md:mb-2">Pastikan deskripsi paket memuat penjelasan detail terkait paketmu agar pembeli mudah mengerti dan menemukan paketmu</p>
+            <label className="block text-gray-700 font-sofia text-sm md:text-base">Deskripsi Produk</label>
+            <p className="text-gray-500 text-xs md:text-sm font-sofia mb-1 md:mb-2">Pastikan deskripsi produk memuat penjelasan detail terkait produk agar pembeli mudah mengerti dan menemukan produk</p>
             <textarea
               rows={3}
               className="w-full px-2 md:px-4 py-1 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
@@ -358,7 +358,7 @@ function EditVendorProduct({ product, albums }: { product: Product, albums: Albu
         <div className="flex flex-col md:flex-row md:space-x-6">
           <div className="flex flex-col md:flex-row -mt-2 md:mt-0">
             <div className="w-full mb-2 md:mb-0">
-              <label className="block text-gray-700 font-sofia text-sm md:text-base">Kategori Paket</label>
+              <label className="block text-gray-700 font-sofia text-sm md:text-base">Kategori Produk</label>
               <p className="text-gray-500 text-xs md:text-sm font-sofia mb-1 md:mb-2">Kategori produk yang tersedia</p>
               <div className="relative">
                 <button
@@ -417,7 +417,7 @@ function EditVendorProduct({ product, albums }: { product: Product, albums: Albu
               </div>
             </div>
             <div className="w-full md:w-[21rem]">
-              <label className="block text-gray-700 font-sofia mb-1 md:mb-2 text-sm md:text-base">Harga Paket</label>
+              <label className="block text-gray-700 font-sofia mb-1 md:mb-2 text-sm md:text-base">Harga Produk</label>
               <div className="flex">
                 <span className="flex items-center px-3 text-gray-500 border border-r-0 rounded-l-lg border-gray-300">Rp</span>
                 <input
@@ -468,7 +468,7 @@ function EditVendorProduct({ product, albums }: { product: Product, albums: Albu
           <div className="w-full md:w-1/2">
             <div className="flex flex-row mt-4">
               <div className="flex flex-col w-1/2">
-                <label className="block text-gray-700 font-sofia text-sm md:text-base -mt-2 md:mt-0">Foto Paket (masukkan 5 foto)</label>
+                <label className="block text-gray-700 font-sofia text-sm md:text-base -mt-2 md:mt-0">Foto Produk (masukkan 5 foto)</label>
               </div>
               <label className="border bg-pink-600 px-2 md:py-1 -mt-1 mb-3 rounded-lg cursor-pointer flex justify-center items-center ml-auto">
                 <span className="text-white text-sm md:text-base">Upload Image</span>

@@ -408,7 +408,7 @@ function EditPackageProduct() {
             <div className="md:flex space-x-6">
               <div className="w-full mt-3 md:mt-4">
                 <label className="block text-gray-700 font-sofia text-sm md:text-base">Deskripsi Paket *</label>
-                <p className="text-gray-500 text-xs md:text-sm font-sofia mb-2">Pastikan deskripsi paket memuat penjelasan detail terkait paketmu agar pembeli mudah mengerti dan menemukan paketmu</p>
+                <p className="text-gray-500 text-xs md:text-sm font-sofia mb-2">Pastikan deskripsi paket memuat penjelasan detail terkait paket agar pembeli mudah mengerti dan menemukan paket</p>
                 <textarea
                   rows={3}
                   className="w-full px-2 md:px-4 py-1 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
@@ -602,7 +602,7 @@ function EditPackageProduct() {
       {showEditPopup && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 text-black font-sofia">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm mx-auto">
-            <h2 className="text-xl font-semibold mb-4">Edit Kategori Produk</h2>
+            <h2 className="text-xl font-semibold mb-4">Edit Kategori Paket</h2>
             <p className="text-sm text-gray-600 mb-1">Nama kategori:</p>
             <input
               type="text"
