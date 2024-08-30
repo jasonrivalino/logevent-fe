@@ -28,6 +28,11 @@ export interface Category {
   type: string;
 }
 
+export interface City {
+  id: number;
+  name: string;
+}
+
 export interface Event {
   id: number;
   categoryId: number;
@@ -97,6 +102,8 @@ export interface Product {
   vendorName: string;
   vendorPhone: string;
   vendorAddress: string;
+  cityId: number;
+  cityName: string;
   categoryId: number;
   categoryName: string;
   name: string;
@@ -153,6 +160,8 @@ export interface Setting {
 
 export interface Vendor {
   id: number;
+  cityId: number;
+  cityName: string;
   email: string;
   name: string;
   phone: string;

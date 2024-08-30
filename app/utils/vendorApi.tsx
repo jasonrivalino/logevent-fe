@@ -28,6 +28,7 @@ export const readVendorById = async (id: number) => {
 };
 
 export const createVendor = async (vendorData: {
+  cityId: number;
   email: string;
   name: string;
   phone: string;
@@ -50,6 +51,7 @@ export const createVendor = async (vendorData: {
 };
 
 export const updateVendor = async (id: number, vendorData: {
+  cityId?: number;
   email?: string;
   name?: string;
   phone?: string;

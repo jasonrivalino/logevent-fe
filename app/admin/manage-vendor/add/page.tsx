@@ -3,12 +3,14 @@
 
 // dependency modules
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // self-defined modules
 import { Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
 import { ContactBoxShort } from '@/app/signin/page';
+import { readAllCities, createCity } from '@/app/utils/cityApi';
 import { createVendor } from '@/app/utils/vendorApi';
+import { City } from '@/app/utils/types';
 
 export default function AdminVendor() {
     const router = useRouter();
@@ -56,10 +58,12 @@ export default function AdminVendor() {
 function AddVendor() {
     const router = useRouter();
     const [showPopup, setShowPopup] = useState(false);
-    const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
-      null
-    );
-  
+
+    const [cities, setCities] = useState<City[]>([]);
+    const [selectedCityId, setSelectedCityId] = useState<number | null>(null);
+    const [newCity, setNewCity] = useState('');
+    const [formSubmitted, setFormSubmitted] = useState(false);
+
     const [vendorData, setVendorData] = useState({
       name: '',
       phone: '',
@@ -69,17 +73,18 @@ function AddVendor() {
       socialMedia: '',
       documentUrl: '',
     });
-  
-    const [categories, setCategories] = useState([
-      { id: 1, name: 'Jakarta' },
-      { id: 2, name: 'Bandung' },
-      { id: 3, name: 'Surabaya' },
-      { id: 4, name: 'Yogyakarta' },
-      { id: 5, name: 'Bali' },
-    ]);
-  
-    const [newCategory, setNewCategory] = useState('');
-    const [formSubmitted, setFormSubmitted] = useState(false);
+
+    useEffect(() => {
+      const fetchCities = async () => {
+        try {
+          const cities = await readAllCities();
+          setCities(cities);
+        } catch (error: any) {
+          console.error('Failed to fetch cities:', error.message);
+        }
+      };
+      fetchCities();
+    }, []);
   
     const handleChange = (e: { target: { name: any; value: any } }) => {
       const { name, value } = e.target;
@@ -89,26 +94,25 @@ function AddVendor() {
       }));
     };
   
-    const handleCategoryChange = (event: { target: { value: any } }) => {
+    const handleCityChange = (event: { target: { value: any } }) => {
       if (event.target.value === 'add-new') {
         setShowPopup(true);
       } else {
-        setSelectedCategoryId(parseInt(event.target.value));
+        setSelectedCityId(parseInt(event.target.value));
       }
     };
   
-    const handleAddCategory = async () => {
-      const newCategoryValue = newCategory.trim();
-      if (newCategoryValue !== '') {
-        const newCategoryObj = {
-          id: categories.length + 1, // Generate a new ID
-          name: newCategoryValue,
+    const handleAddCity = async () => {
+      const newCityValue = newCity.trim();
+      if (newCityValue !== '') {
+        const cityData = {
+          name: newCityValue,
         };
   
-        // Add the new category to the list and select it
-        setCategories([...categories, newCategoryObj]);
-        setSelectedCategoryId(newCategoryObj.id);
-        setNewCategory('');
+        const newCity = await createCity(cityData);
+        setCities([...cities, newCity]);
+        setSelectedCityId(newCity.id);
+        setNewCity('');
         setShowPopup(false);
       }
     };
@@ -117,9 +121,42 @@ function AddVendor() {
       e.preventDefault();
       setFormSubmitted(true);
       try {
-        await createVendor(vendorData);
+        if (!vendorData.name) {
+          throw new Error('Nama vendor tidak boleh kosong');
+        }
+
+        if (!vendorData.phone) {
+          throw new Error('Nomortelepon vendor tidak boleh kosong');
+        }
+
+        if (!vendorData.email) {
+          throw new Error('Email vendor tidak boleh kosong');
+        }
+
+        if (!vendorData.address) {
+          throw new Error('Alamat vendor tidak boleh kosong');
+        }
+
+        if (!vendorData.instagram) {
+          throw new Error('Instagram vendor tidak boleh kosong');
+        }
+
+        if (!vendorData.documentUrl) {
+          throw new Error('Link MoU vendor tidak boleh kosong');
+        }
+
+        if (!selectedCityId) {
+          throw new Error('Kota vendor harus dipilih');
+        }
+        
+        const vendorDataWithCityId = {
+          ...vendorData,
+          cityId: selectedCityId,
+        };
+        await createVendor(vendorDataWithCityId);
         router.push('/admin/manage-vendor');
       } catch (error: any) {
+        alert(error.message);
         console.error('Failed to create vendor:', error.message);
       }
     };
@@ -203,7 +240,7 @@ function AddVendor() {
                     name="address"
                     value={vendorData.address}
                     onChange={handleChange}
-                    className={`shadow appearance-none border rounded w-full mb-3 md:mb-0 py-1 md:py-2 px-3 text-sm md:text-base text-white leading-tight focus:outline-none focus:shadow-outline ${
+                    className={`shadow appearance-none border rounded w-full mb-3 md:mb-0 py-1 md:py-2 px-3 text-sm md:text-base text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
                         formSubmitted && !vendorData.address ? 'border-red-500' : ''
                     }`}
                     placeholder="Alamat"
@@ -224,16 +261,16 @@ function AddVendor() {
                     onChange={(e) => {
                         e.target.size = 1;
                         e.target.blur();
-                        handleCategoryChange(e);
+                        handleCityChange(e);
                     }}
                     className="w-full text-black px-2 md:px-4 py-1 md:py-[0.65rem] border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 bg-white text-sm md:text-base overflow-auto max-h-48"
-                    value={selectedCategoryId ?? 0}
+                    value={selectedCityId ?? 0}
                     required
                     >
-                    <option value="">Pilih Kota</option>
-                    {categories.map((category) => (
-                        <option key={category.id} value={category.id}>
-                        {category.name}
+                    <option value={0}>Pilih Kota</option>
+                    {cities.map((city) => (
+                        <option key={city.id} value={city.id}>
+                        {city.name}
                         </option>
                     ))}
                     <option value="add-new">+ Tambah Kota</option>
@@ -334,8 +371,8 @@ function AddVendor() {
                     <input
                       type="text"
                       name="city"
-                      value={newCategory}
-                      onChange={(e) => setNewCategory(e.target.value)}
+                      value={newCity}
+                      onChange={(e) => setNewCity(e.target.value)}
                       className="shadow appearance-none border rounded w-full mb-3 md:mb-0 py-1 md:py-2 px-3 text-sm md:text-base text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                       placeholder="Nama Kota"
                       required
@@ -344,7 +381,7 @@ function AddVendor() {
                 </div>
                 <div className="flex items-center justify-center md:justify-end -mb-2">
                   <button
-                    onClick={handleAddCategory}
+                    onClick={handleAddCity}
                     type="button"
                     className="bg-pink-800 hover:bg-pink-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                   >

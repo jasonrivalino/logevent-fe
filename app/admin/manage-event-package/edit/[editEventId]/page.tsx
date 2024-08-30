@@ -229,7 +229,6 @@ function EditPackageProduct() {
       setCategories(categories.map(cat => cat.id === categoryToEdit.id ? updatedCategory : cat));
 
       const categoryData = { name: newCategory, fee: parseFloat(newFee) };
-      console.log("categoryData", categoryData);
       await updateCategory(categoryToEdit.id, categoryData);
       
       setCategoryToEdit(null);
