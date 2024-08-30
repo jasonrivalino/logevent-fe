@@ -9,13 +9,15 @@ import { useState, useEffect } from 'react';
 // self-defined modules
 import { Navbar, ContactBox } from '@/app/page';
 import { readProductCategories } from '@/app/utils/categoryApi';
+import { readAllCities } from '@/app/utils/cityApi';
 import { generateGoogleMapsUrl } from '@/app/utils/helpers';
 import { readAllProducts } from '@/app/utils/productApi';
 import { Product } from '@/app/utils/types';
-import { Category } from '@/app/utils/types';
+import { Category, City } from '@/app/utils/types';
 
 export default function LogistikVendor() {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [cities, setCities] = useState<City[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
   useEffect(() => {
@@ -23,8 +25,10 @@ export default function LogistikVendor() {
       try {
         const products = await readAllProducts();
         const categories = await readProductCategories();
+        const cities = await readAllCities();
         setFilteredProducts(products);
         setCategories(categories);
+        setCities(cities);
       } catch (error) {
         console.error('Failed to fetch products:', error);
       }
@@ -41,7 +45,7 @@ export default function LogistikVendor() {
         </Head>
         <Navbar />
         <div className="flex flex-col md:flex-row py-14 md:py-20">
-          <ProductList products={filteredProducts} categories={categories} />
+          <ProductList products={filteredProducts} categories={categories} cities={cities} />
         </div>
       </div>
       <ContactBox />
@@ -49,12 +53,22 @@ export default function LogistikVendor() {
   );
 }
 
-export function Filter({ categories, tempCategory, tempLocation, tempPriceRange, setCategory, setLocation, setPriceRange, handleReset }: { categories: Category[], tempCategory: string, tempLocation: string, tempPriceRange: string, setCategory: any, setLocation: any, setPriceRange: any, handleReset: any }) {
+export function Filter({ categories, tempCategory, cities, tempCity, tempPriceRange, setCategory, setCity, setPriceRange, handleReset }: {
+    categories: Category[], 
+    tempCategory: string,
+    cities: City[],
+    tempCity: string,
+    tempPriceRange: string,
+    setCategory: any,
+    setCity: any,
+    setPriceRange: any,
+    handleReset: any 
+  }) {
   return (
     <div className="w-full md:w-96 md:pl-4 md:pr-8 py-4 -mb-2 md:mb-0">
       <h2 className="text-xl md:text-2xl font-semibold font-sofia text-black mb-4">Filter by</h2>
       <div className="mb-2 md:mb-4">
-        <label htmlFor="category" className="block mb-1 md:mb-2 text-gray-700 font-sofia text-sm md:text-base">Kategori Vendor</label>
+        <label htmlFor="category" className="block mb-1 md:mb-2 text-gray-700 font-sofia text-sm md:text-base">Kategori Produk</label>
         <select
           id="category"
           className="w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia"
@@ -75,14 +89,15 @@ export function Filter({ categories, tempCategory, tempLocation, tempPriceRange,
           <select
             id="location"
             className="w-32 md:w-full p-[0.35rem] md:p-2 text-xs md:text-base border rounded bg-white text-black font-sofia"
-            onChange={(e) => setLocation(e.target.value)}
-            value={tempLocation}
+            onChange={(e) => setCity(e.target.value)}
+            value={tempCity}
           >
             <option value="" className="font-sofia">Pilih lokasi vendor</option>
-            <option value="Jakarta" className="font-sofia">Jakarta</option>
-            <option value="Jawa Barat" className="font-sofia">Jawa Barat</option>
-            <option value="Jawa Tengah" className="font-sofia">Jawa Tengah</option>
-            <option value="Jawa Timur" className="font-sofia">Jawa Timur</option>
+            {cities.map(city => (
+              <option key={city.id} value={city.name}>
+                {city.name}
+              </option>
+            ))}
           </select>
         </div>
         <div className="mb-4 md:mb-8">
@@ -113,19 +128,19 @@ export function Filter({ categories, tempCategory, tempLocation, tempPriceRange,
   );
 }
 
-export function ProductList({ products, categories }: { products: Product[], categories: Category[] }) {
+export function ProductList({ products, categories, cities }: { products: Product[], categories: Category[], cities: City[] }) {
   const router = useRouter();
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
   const [tempCategory, setTempCategory] = useState('');
-  const [tempLocation, setTempLocation] = useState('');
+  const [tempCity, setTempCity] = useState('');
   const [tempPriceRange, setTempPriceRange] = useState('');
 
   useEffect(() => {
     handleFilter();
-  }, [searchQuery, tempCategory, tempLocation, tempPriceRange, products]);
+  }, [searchQuery, tempCategory, tempCity, tempPriceRange, products]);
 
   const handleFilter = () => {
     let result = products;
@@ -140,8 +155,8 @@ export function ProductList({ products, categories }: { products: Product[], cat
       result = result.filter(product => product.categoryName === tempCategory);
     }
 
-    if (tempLocation) {
-      result = result.filter(product => product.vendorAddress.includes(tempLocation));
+    if (tempCity) {
+      result = result.filter(product => product.cityName.includes(tempCity));
     }
 
     if (tempPriceRange) {
@@ -179,7 +194,7 @@ export function ProductList({ products, categories }: { products: Product[], cat
   const handleReset = () => {
     setSearchQuery('');
     setTempCategory('');
-    setTempLocation('');
+    setTempCity('');
     setTempPriceRange('');
     setFilteredProducts(products);
     setCurrentPage(1);
@@ -202,11 +217,12 @@ export function ProductList({ products, categories }: { products: Product[], cat
       <Filter
         categories={categories}
         tempCategory={tempCategory}
-        tempLocation={tempLocation}
+        cities={cities}
+        tempCity={tempCity}
         tempPriceRange={tempPriceRange}
         handleReset={handleReset}
         setCategory={setTempCategory}
-        setLocation={setTempLocation}
+        setCity={setTempCity}
         setPriceRange={setTempPriceRange}
       />
       <div className="w-full md:w-[69rem] h-full p-5 md:p-6 mr-4 bg-white rounded-2xl">

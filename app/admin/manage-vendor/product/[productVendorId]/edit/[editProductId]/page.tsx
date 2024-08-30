@@ -366,9 +366,11 @@ function EditVendorProduct({ product, albums }: { product: Product, albums: Albu
                   onClick={toggleDropdown}
                   className="w-full md:w-11/12 px-2 md:px-4 py-1 md:py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 bg-white text-sm md:text-base"
                 >
-                  {categories.find(cat => cat.id === selectedCategoryId)?.name || 'Pilih Kategori'}
+                  {selectedCategoryId === 1
+                  ? product.categoryName || 'Pilih Kategori'
+                  : categories.find(cat => cat.id === selectedCategoryId)?.name || 'Pilih Kategori'}
                 </button>
-                {isDropdownOpen && (
+                {isDropdownOpen && selectedCategoryId !== 1 && (
                   <div className="absolute bg-white border rounded-lg shadow-lg mt-1 w-full z-10 max-h-40 overflow-y-auto">
                     {categories.map((category) => (
                       <div 
