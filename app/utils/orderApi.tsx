@@ -83,14 +83,16 @@ export const createOrder = async (orderData: {
 };
 
 export const updateOrder = async (id: number, orderData: {
-  productId?: number;
+  cartId?: number;
   name?: string;
   phone?: string;
-  email?: string;
   address?: string;
-  usageDate?: Date;
+  notes?: string | null;
+  startDate?: Date;
+  endDate?: Date;
   orderDate?: Date;
-  orderImage?: string;
+  orderTotal?: number;
+  orderStatus?: string;
 }) => {
   try {
     const response = await axios.put(`${API_URL}/orders/update/${id}`, orderData, {
@@ -102,6 +104,22 @@ export const updateOrder = async (id: number, orderData: {
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Failed to update order');
+  }
+};
+
+export const confirmEventOrganizer = async (id: number, orderData: {
+  newOrderTotal: number;
+}) => {
+  try {
+    const response = await axios.put(`${API_URL}/orders/confirm-event-organizer/${id}`, orderData, {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      withCredentials: true
+    });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Failed to confirm event organizer');
   }
 };
 

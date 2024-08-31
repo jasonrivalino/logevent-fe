@@ -12,7 +12,7 @@ import { readAlbumsByProductId } from '@/app/utils/albumApi';
 import { readActiveEventOrganizerCartByUserId, createCart, updateCart } from '@/app/utils/cartApi';
 import { areDatesOverlapping, convertDate, generateWhatsAppUrl, getExcludedDates, getStars } from '@/app/utils/helpers';
 import { createItem, deleteItemsByCartId } from '@/app/utils/itemApi';
-import { readOrderAvailabilityByCartId, createOrder } from '@/app/utils/orderApi';
+import { readOrderAvailabilityByCartId, createOrder, updateOrder } from '@/app/utils/orderApi';
 import { readProductById } from '@/app/utils/productApi';
 import { readReviewsByProductId } from '@/app/utils/reviewApi';
 import { Album, Product, Review } from '@/app/utils/types';
@@ -266,13 +266,18 @@ const ProductImage = ({ product, albums }: { product: Product; albums: Album[]; 
         startDateString: startDate.toISOString(),
         endDateString: endDate.toISOString()
       };
+      const order = await createOrder(orderData);
   
       const cartData = {
         cartStatus: 'Checked Out'
       };
-  
-      await createOrder(orderData);
       await updateCart(cartId, cartData);
+
+      const newOrderData = {
+        orderStatus: 'Unconfirmed'
+      }
+      await updateOrder(order.id, newOrderData);
+  
       router.push('/isi-pemesanan/complete');
     } catch (error: any) {
       console.error('Failed to create order:', error.message);

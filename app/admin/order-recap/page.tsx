@@ -4,13 +4,13 @@
 // dependency modules
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { FaCheck, FaTimes } from 'react-icons/fa';
+import { FaCheck, FaPencilAlt, FaTimes } from 'react-icons/fa';
 import * as XLSX from 'xlsx';
 // self-defined modules
 import { ContactBox, Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
 import { convertDate, generateEmailUrl, generateGoogleMapsUrl, generateWhatsAppUrl, getCartTypeDescription } from '@/app/utils/helpers';
-import { readAllOrders, confirmOrderPayment, cancelOrder } from '@/app/utils/orderApi';
+import { readAllOrders, confirmEventOrganizer, confirmOrderPayment, cancelOrder } from '@/app/utils/orderApi';
 import { Order } from '@/app/utils/types';
 
 export default function AdminOrderRecap() {
@@ -95,6 +95,7 @@ function Table({ orders, onExport }: { orders: Order[], onExport: () => void }) 
     const [orderId, setOrderId] = useState(0);
     const [modalContent, setModalContent] = useState("");
     const [cancelMessage, setCancelMessage] = useState("");
+    const [cost, setCost] = useState("");
     const [filteredOrders, setFilteredOrders] = useState<Order[]>(orders);
     const ordersPerPage = 10;
     const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
@@ -106,7 +107,13 @@ function Table({ orders, onExport }: { orders: Order[], onExport: () => void }) 
     const handleConfirmation = (action: string, orderId: number) => {
         setAction(action);
         setOrderId(orderId);
-        setModalContent(action === "approve" ? "Apakah kamu yakin ingin menyelesaikan pemesanan ini?" : "Apakah kamu yakin ingin membatalkan pemesanan ini?");
+        if (action === "approve") {
+            setModalContent("Apakah kamu yakin ingin menyelesaikan pemesanan ini?");
+        } else if (action === "reject") {
+            setModalContent("Apakah kamu yakin ingin membatalkan pemesanan ini?");
+        } else if (action === "edit") {
+            setModalContent("Masukkan biaya Event Organizer yang disepakati dengan customer");
+        }
         setShowModal(true);
     };
 
@@ -116,9 +123,9 @@ function Table({ orders, onExport }: { orders: Order[], onExport: () => void }) 
         setShowModal(false);
     }
 
-    const handleApprove = (orderId: number) => {
+    const handleApprove = async (orderId: number) => {
         try {
-            confirmOrderPayment(orderId);
+            await confirmOrderPayment(orderId);
             setFilteredOrders(prevOrders =>
                 prevOrders.map(order =>
                     order.id === orderId ? { ...order, orderStatus: 'Completed' } : order
@@ -126,18 +133,19 @@ function Table({ orders, onExport }: { orders: Order[], onExport: () => void }) 
             );
             setAction("");
             setOrderId(0);
+            setShowModal(false);
         } catch (error: any) {
             console.error('Failed to confirm order payment:', error.message);
         }
     };
 
-    const handleReject = (orderId: number) => {
+    const handleReject = async (orderId: number) => {
         try {
             if (!cancelMessage) {
                 alert('Alasan pembatalan harus diisi');
                 return;
             }
-            cancelOrder(orderId, cancelMessage);
+            await cancelOrder(orderId, cancelMessage);
             setFilteredOrders(prevOrders =>
                 prevOrders.map(order =>
                     order.id === orderId ? { ...order, orderStatus: 'Cancelled' } : order
@@ -146,10 +154,32 @@ function Table({ orders, onExport }: { orders: Order[], onExport: () => void }) 
             setAction("");
             setOrderId(0);
             setCancelMessage("");
+            setShowModal(false);
         } catch (error: any) {
             console.error('Failed to cancel order:', error.message);
         }
-    }
+    };
+
+    const handleEdit = async (orderId: number) => {
+        try {
+            if (!cost) {
+                alert('Biaya EO harus diisi');
+                return;
+            }
+            await confirmEventOrganizer(orderId, { newOrderTotal: Number(cost) });
+            setFilteredOrders(prevOrders =>
+                prevOrders.map(order =>
+                    order.id === orderId ? { ...order, orderStatus: 'Pending' } : order
+                )
+            );
+            setAction("");
+            setOrderId(0);
+            setCost("");
+            setShowModal(false);
+        } catch (error: any) {
+            console.error('Failed to edit order:', error.message);
+        }
+    };
 
     const handleSearch = (event: { target: { value: string; }; }) => {
         const query = event.target.value.toLowerCase();
@@ -247,7 +277,13 @@ function Table({ orders, onExport }: { orders: Order[], onExport: () => void }) 
                                     {getCartTypeDescription(order.cartType)}
                                 </td>
                                 <td className="px-4 py-[0.4rem] md:py-2 whitespace-nowrap text-sm text-gray-900 flex justify-center items-center">
-                                    {order.orderStatus === "Pending" ? (
+                                    {order.orderStatus === "Unconfirmed" ? (
+                                        <>
+                                            <button onClick={() => handleConfirmation("edit", order.id)} className="mr-2">
+                                                <FaPencilAlt className="text-blue-500" />
+                                            </button>
+                                        </>
+                                    ) : order.orderStatus === "Pending" ? (
                                         <>
                                             <button onClick={() => handleConfirmation("approve", order.id)} className="mr-2">
                                                 <FaCheck className="text-green-500" />
@@ -275,7 +311,13 @@ function Table({ orders, onExport }: { orders: Order[], onExport: () => void }) 
             {showModal && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 font-sofia">
                     <div className="bg-white p-4 md:p-8 rounded shadow-lg z-60 max-w-xs md:max-w-md w-full">
-                        <h2 className="text-lg md:text-xl font-bold mb-2 text-pink-900">{action === "approve" ? "Konfirmasi Penyelesaian" : "Konfirmasi Pembatalan"}</h2>
+                        <h2 className="text-lg md:text-xl font-bold mb-2 text-pink-900">
+                            {action === "approve" 
+                                ? "Konfirmasi Penyelesaian" 
+                                : action === "reject" 
+                                    ? "Konfirmasi Pembatalan" 
+                                    : "Konfirmasi Biaya EO"}
+                        </h2>
                         <p className="text-sm md:text-base text-black">{modalContent}</p>
                         {action === "reject" && (
                             <textarea
@@ -285,23 +327,34 @@ function Table({ orders, onExport }: { orders: Order[], onExport: () => void }) 
                                 className="w-full mt-4 p-2 border rounded-md text-black"
                             />
                         )}
+                        {action === "edit" && (
+                            <input
+                                type="text"
+                                value={cost}
+                                onChange={(event) => setCost(event.target.value)}
+                                placeholder="Masukkan biaya"
+                                className="w-full mt-4 p-2 border rounded-md text-black"
+                            />
+                        )}
                         <div className="flex justify-end mt-4">
                             <button onClick={handleCancel} className="text-sm md:text-base bg-pink-500 hover:bg-pink-600 px-2 py-1 md:p-2 rounded-md mr-2">
                                 Cancel
                             </button>
-                            {/* Change button based on popup showed between green or red */}
                             <button
-                              onClick={() => {
-                                if (action === "approve") {
-                                    handleApprove(orderId);
-                                } else {
-                                    handleReject(orderId);
-                                }
-                                setShowModal(false)
-                              }}
-                              className={`text-sm md:text-base ${action === "approve" ? "bg-green-500 hover:bg-green-600" : "bg-red-500 hover:bg-red-600"} px-2 py-1 md:p-2 rounded-md`}
+                                onClick={() => {
+                                    if (action === "approve") {
+                                        handleApprove(orderId);
+                                    } else if (action === "reject") {
+                                        handleReject(orderId);
+                                    } else if (action === "edit") {
+                                        handleEdit(orderId);
+                                    }
+                                }}
+                                className={`text-sm md:text-base ${action === "approve" ? "bg-green-500 hover:bg-green-600" 
+                                    : action === "reject" ? "bg-red-500 hover:bg-red-600" 
+                                    : "bg-blue-500 hover:bg-blue-600"} px-2 py-1 md:p-2 rounded-md`}
                             >
-                                {action === "approve" ? "Selesaikan" : "Batalkan"}
+                                {action === "approve" ? "Selesaikan" : action === "reject" ? "Batalkan" : "Konfirmasi"}
                             </button>
                         </div>
                     </div>
