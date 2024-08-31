@@ -46,6 +46,21 @@ export const readActiveProductCartByUserId = async (userId: number) => {
   }
 };
 
+export const readActiveEventOrganizerCartByUserId = async (userId: number) => {
+  try {
+    const response = await axios.get(`${API_URL}/carts/read/event-organizer/${userId}`, {
+      withCredentials: true
+    });
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.status === 404) {
+      return null;
+    }
+
+    throw new Error(error.response?.data?.message || `Failed to fetch active event organizer cart for user ${userId}`);
+  }
+};
+
 export const readCartById = async (cartId: number) => {
   try {
     const response = await axios.get(`${API_URL}/carts/read/${cartId}`, {

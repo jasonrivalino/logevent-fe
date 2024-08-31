@@ -249,7 +249,6 @@ const EventImage = ({ event, albums, isWishlist, setIsWishlist }: { event: Event
       newErrors.endDate = 'Tanggal yang dipilih termasuk dalam tanggal yang sudah dipesan';
     }
     if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
       return;
     }
 
@@ -315,10 +314,9 @@ const EventImage = ({ event, albums, isWishlist, setIsWishlist }: { event: Event
       duration: null,
       quantity: null,
     };
+    await createItem(itemData);
 
     const bookedDates = await readOrderAvailabilityByCartId(cart.id);
-    await createItem(itemData);
-    
     setCartId(cart.id);
     setBookedDates(bookedDates);
     setShowOrderPopup(true); // Show the order popup
@@ -792,8 +790,4 @@ function Reviews({ event, reviews }: { event: Event, reviews: Review[] }) {
       </div>
     </div>
   );
-}
-
-function setErrors(newErrors: { name?: string; phone?: string; address?: string; startDate?: string; endDate?: string; }) {
-  throw new Error('Function not implemented.');
 }

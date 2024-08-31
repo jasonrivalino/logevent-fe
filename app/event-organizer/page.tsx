@@ -4,14 +4,18 @@
 // dependency modules
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
+import DatePicker from 'react-datepicker';
 // self-defined modules
 import { Navbar, ContactBox } from '@/app/page';
+import { readUserProfile } from '@/app/utils/authApi';
 import { readAlbumsByProductId } from '@/app/utils/albumApi';
-import { convertDate, generateWhatsAppUrl, getExcludedDates, getStars } from '@/app/utils/helpers';
-import { readReviewsByProductId } from '@/app/utils/reviewApi';
+import { readActiveEventOrganizerCartByUserId, createCart, updateCart } from '@/app/utils/cartApi';
+import { areDatesOverlapping, convertDate, generateWhatsAppUrl, getExcludedDates, getStars } from '@/app/utils/helpers';
+import { createItem, deleteItemsByCartId } from '@/app/utils/itemApi';
+import { readOrderAvailabilityByCartId, createOrder } from '@/app/utils/orderApi';
 import { readProductById } from '@/app/utils/productApi';
+import { readReviewsByProductId } from '@/app/utils/reviewApi';
 import { Album, Product, Review } from '@/app/utils/types';
-import DatePicker from 'react-datepicker';
 
 export default function EventOrganizer() {
   const descriptionRef = useRef(null);
@@ -100,6 +104,7 @@ const ProductImage = ({ product, albums }: { product: Product; albums: Album[]; 
   const [copied, setCopied] = useState(false);
   const [bookedDates, setBookedDates] = useState<string[]>([]);
   const [amount, setAmount] = useState<{ [key: number]: number }>({});
+  const [cartId, setCartId] = useState<number | null>(null);
   const router = useRouter();
 
   const resetTimeout = () => {
@@ -157,13 +162,6 @@ const ProductImage = ({ product, albums }: { product: Product; albums: Album[]; 
     setShowOrderPopup(false);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle form submission logic here
-    console.log('Order submitted:', { name, phone, address, startDate, endDate, notes });
-    closeOrderPopup(); // Close popup after submission
-  };
-
   const increaseAmount = (id: number) => {
     setAmount((prev) => ({
       ...prev,
@@ -176,6 +174,109 @@ const ProductImage = ({ product, albums }: { product: Product; albums: Album[]; 
       ...prev,
       [id]: Math.max(1, (prev[id] || 1) - 1),
     }));
+  };
+
+  const handleOrderClick = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/signin');
+      return;
+    }
+
+    const user = await readUserProfile(token);
+    let cart = await readActiveEventOrganizerCartByUserId(user.id);
+    if (!cart) {
+      cart = await createCart(user.id, 'Event Organizer');
+    }
+
+    await deleteItemsByCartId(cart.id);
+    const itemData = {
+      cartId: cart.id,
+      eventId: null,
+      productId: product.id,
+      duration: null,
+      quantity: null,
+    };
+    await createItem(itemData);
+    
+    const bookedDates = await readOrderAvailabilityByCartId(cart.id);
+    setCartId(cart.id);
+    setBookedDates(bookedDates);
+    setShowOrderPopup(true); // Show the order popup
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const newErrors: { name?: string, phone?: string, address?: string, startDate?: string, endDate?: string } = {};
+
+    if (!name) {
+      newErrors.name = 'Nama tidak boleh kosong';
+    }
+    if (!phone) {
+      newErrors.phone = 'Nomor telepon tidak boleh kosong';
+    }
+    if (!address) {
+      newErrors.address = 'Alamat tidak boleh kosong';
+    }
+    if (!startDate) {
+      newErrors.startDate = 'Tanggal mulai tidak boleh kosong';
+    }
+    if (!endDate) {
+      newErrors.endDate = 'Tanggal akhir tidak boleh kosong';
+    }
+    if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+      newErrors.endDate = 'Tanggal akhir harus setelah tanggal mulai';
+    }
+
+    const bookedDateObjects = bookedDates.map(dateStr => new Date(dateStr));
+    if (startDate && endDate && areDatesOverlapping(startDate, endDate, bookedDateObjects)) {
+      newErrors.startDate = 'Tanggal yang dipilih termasuk dalam tanggal yang sudah dipesan';
+      newErrors.endDate = 'Tanggal yang dipilih termasuk dalam tanggal yang sudah dipesan';
+    }
+    if (Object.keys(newErrors).length > 0) {
+      return;
+    }
+
+    try {
+      if (!cartId) {
+        throw new Error('User ID is missing');
+      }
+      if (!name) {
+        throw new Error('Name is missing');
+      }
+      if (!phone) {
+        throw new Error('Phone number is missing');
+      }
+      if (!address) {
+        throw new Error('Address is missing');
+      }
+      if (!startDate) {
+        throw new Error('Start date is missing');
+      }
+      if (!endDate) {
+        throw new Error('End date is missing');
+      }
+      
+      const orderData = {
+        cartId,
+        name,
+        phone,
+        address,
+        notes: notes || null,
+        startDateString: startDate.toISOString(),
+        endDateString: endDate.toISOString()
+      };
+  
+      const cartData = {
+        cartStatus: 'Checked Out'
+      };
+  
+      await createOrder(orderData);
+      await updateCart(cartId, cartData);
+      router.push('/isi-pemesanan/complete');
+    } catch (error: any) {
+      console.error('Failed to create order:', error.message);
+    }
   };
 
   return (
@@ -208,7 +309,7 @@ const ProductImage = ({ product, albums }: { product: Product; albums: Album[]; 
             <div className="flex space-x-4 w-full md:w-1/2 md:justify-end items-center mt-3 md:mt-0">
               <button
                 className="bg-pink-500 text-white rounded-lg px-3 md:px-4 py-2 -ml-4 md:ml-0 mr-[6.5rem] md:mr-0 text-sm md:text-base"
-                onClick={() => setShowOrderPopup(true)} // Show popup on click
+                onClick={handleOrderClick} // Show popup on click
               >
                 Pesan Langsung
               </button>

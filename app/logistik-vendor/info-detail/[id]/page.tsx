@@ -243,7 +243,6 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
       newErrors.endDate = 'Tanggal yang dipilih termasuk dalam tanggal yang sudah dipesan';
     }
     if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
       return;
     }
 
@@ -285,6 +284,7 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
         endDate: endDate.toISOString()
       };
       
+      await deleteItemsByCartId(cartId);
       await createItem(itemData);
       const queryString = new URLSearchParams(orderData).toString();
       router.push(`/isi-pemesanan/review?${queryString}`);
@@ -321,12 +321,20 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
     const user = await readUserProfile(token);
     let cart = await readActiveProductCartByUserId(user.id);
     if (!cart) {
-    cart = await createCart(user.id, 'Product');
+      cart = await createCart(user.id, 'Product');
     }
-    
-    const bookedDates = await readOrderAvailabilityByCartId(cart.id);
-    await deleteItemsByCartId(cart.id);
 
+    await deleteItemsByCartId(cart.id);
+    const itemData = {
+      cartId: cart.id,
+      eventId: null,
+      productId: product.id,
+      duration: product.rate === "Hourly" ? amount[product.id] : null,
+      quantity: product.rate === "Quantity" ? amount[product.id] : null,
+    };
+    await createItem(itemData);
+
+    const bookedDates = await readOrderAvailabilityByCartId(cart.id);
     setCartId(cart.id);
     setBookedDates(bookedDates);
     setShowOrderPopup(true); // Show the order popup
@@ -673,8 +681,4 @@ function Reviews({ product, reviews }: { product: Product, reviews: Review[] }) 
       </div>
     </div>
   );
-}
-
-function setErrors(newErrors: { name?: string; phone?: string; address?: string; startDate?: string; endDate?: string; }) {
-  throw new Error('Function not implemented.');
 }
