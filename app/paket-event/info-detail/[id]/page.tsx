@@ -11,11 +11,11 @@ import { Navbar, ContactBox } from '@/app/page';
 import { readAlbumsByEventId } from '@/app/utils/albumApi';
 import { readUserProfile } from '@/app/utils/authApi';
 import { readBundlesByEventId } from '@/app/utils/bundleApi';
-import { readActiveEventCartByUserId, createCart, updateCart } from '@/app/utils/cartApi';
+import { readActiveEventCartByUserId, createCart } from '@/app/utils/cartApi';
 import { readEventById } from '@/app/utils/eventApi';
 import { areDatesOverlapping, convertDate, generateWhatsAppUrl, getExcludedDates, getStars } from '@/app/utils/helpers';
 import { createItem, deleteItemsByCartId } from '@/app/utils/itemApi';
-import { readOrderAvailabilityByCartId, createOrder } from '@/app/utils/orderApi';
+import { readOrderAvailabilityByCartId } from '@/app/utils/orderApi';
 import { readProductById } from '@/app/utils/productApi';
 import { readReviewsByEventId } from '@/app/utils/reviewApi';
 import { readEventWishlistsByUserId, createWishlist, deleteWishlist } from '@/app/utils/wishlistApi';
@@ -274,21 +274,17 @@ const EventImage = ({ event, albums, isWishlist, setIsWishlist }: { event: Event
       }
 
       const orderData = {
-        cartId,
+        cartId: cartId.toString(), 
         name,
         phone,
         address,
-        notes: notes || null,
-        startDate,
-        endDate
-      };
-      const cartData = {
-        cartStatus: 'Checked Out'
+        notes: notes,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString()
       };
 
-      await createOrder(orderData);
-      await updateCart(cartId, cartData);
-      router.push('/isi-pemesanan/complete');
+      const queryString = new URLSearchParams(orderData).toString();
+      router.push(`/isi-pemesanan/review?${queryString}`);
     } catch (error: any) {
       console.error('Failed to create order:', error.message);
     }
@@ -320,8 +316,9 @@ const EventImage = ({ event, albums, isWishlist, setIsWishlist }: { event: Event
       quantity: null,
     };
 
-    await createItem(itemData);
     const bookedDates = await readOrderAvailabilityByCartId(cart.id);
+    await createItem(itemData);
+    
     setCartId(cart.id);
     setBookedDates(bookedDates);
     setShowOrderPopup(true); // Show the order popup

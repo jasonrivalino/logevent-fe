@@ -7,24 +7,28 @@ import { useEffect, useState } from 'react';
 // self-defined modules
 import { ContactBox, Navbar } from '@/app/page';
 import { CommandLeft } from '@/app/admin/commandLeft';
-import { readLatestSettings, updateSetting } from '@/app/utils/settingApi';
-import { Setting } from '@/app/utils/types';
+import { readAllAdmins, createAdmin, updateAdmin, deleteAdmin } from '@/app/utils/adminApi';
+import { readSetting, updateSetting } from '@/app/utils/settingApi';
+import { Admin, Setting } from '@/app/utils/types';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 
 export default function AdminOrderRecap() {
     const [setting, setSetting] = useState<Setting | null>(null);
+    const [admins, setAdmins] = useState<Admin[]>([]);
 
     useEffect(() => {
-        const fetchLatestSettings = async () => {
+        const fetchData = async () => {
             try {
-                const data = await readLatestSettings();
-                setSetting(data);
+                const setting = await readSetting();
+                const admins = await readAllAdmins();
+                setSetting(setting);
+                setAdmins(admins);
             } catch (error: any) {
                 console.error('Failed to fetch latest settings', (error as any).message);
             }
         };
 
-        fetchLatestSettings();
+        fetchData();
     }, []);
 
     const router = useRouter();
@@ -49,7 +53,7 @@ export default function AdminOrderRecap() {
                         <CommandLeft />
                     </div>
                     <div className="flex-grow ml-0 md:ml-7 py-[0.15rem]">
-                        {setting && <Settings setting={setting} />}
+                        {setting && <Settings setting={setting} admins={admins} />}
                     </div>
                 </div>
             </div>
@@ -95,15 +99,16 @@ const Popup = ({ isOpen, onClose, onSubmit, title, children }: { isOpen: boolean
     );
   };
   
-  function Settings({ setting }: { setting: Setting }) {
+  function Settings({ setting, admins }: { setting: Setting, admins: Admin[] }) {
     const [isOpen, setIsOpen] = useState(false);
     const [isEmailOpen, setIsEmailOpen] = useState(false);
+    const [emailIds, setEmailIds] = useState<number[]>([]);
+    const [emails, setEmails] = useState<string[]>([]);
     const [description, setDescription] = useState('');
     const [youtubeUrl, setYoutubeUrl] = useState('');
     const [vendorCount, setVendorCount] = useState('');
     const [productCount, setProductCount] = useState('');
     const [orderCount, setOrderCount] = useState('');
-    const [emails, setEmails] = useState(['satriaoctavianus28@gmail.com', '13521168@std.stei.itb.ac.id']);
     const [popupState, setPopupState] = useState<{ isOpen: boolean, type: string, index: number | null, email: string }>({ isOpen: false, type: '', index: null, email: '' });
   
     useEffect(() => {
@@ -112,7 +117,9 @@ const Popup = ({ isOpen, onClose, onSubmit, title, children }: { isOpen: boolean
       setVendorCount(setting.vendorCount.toString() || '');
       setProductCount(setting.productCount.toString() || '');
       setOrderCount(setting.orderCount.toString() || '');
-    }, [setting]);
+      setEmailIds(admins.map((admin) => admin.id));
+      setEmails(admins.map((admin) => admin.email));
+    }, [admins, setting]);
   
     const isValidEmail = (email: string) => {
       // Regular expression for validating email format
@@ -132,20 +139,43 @@ const Popup = ({ isOpen, onClose, onSubmit, title, children }: { isOpen: boolean
       setPopupState({ isOpen: true, type: 'delete', index, email: emails[index] });
     };
   
-    const handlePopupSubmit = () => {
+    const handlePopupSubmit = async () => {
       if (popupState.type !== 'delete' && !isValidEmail(popupState.email)) {
         alert('Please enter a valid email address.');
         return;
       }
   
       if (popupState.type === 'add') {
-        setEmails([...emails, popupState.email]);
+        const adminData = {
+          email: popupState.email,
+        };
+
+        try {
+          const newAdmin = await createAdmin(adminData);
+          setEmailIds([...emailIds, newAdmin.id]);
+          setEmails([...emails, newAdmin.email]);
+        } catch (error) {
+          console.error('Failed to create admin', (error as any).message);
+        }
       } else if (popupState.type === 'edit' && popupState.index !== null) {
-        const updatedEmails = [...emails];
-        updatedEmails[popupState.index] = popupState.email;
-        setEmails(updatedEmails);
+        const adminData = {
+          email: popupState.email,
+        };
+
+        try {
+          const updatedAdmin = await updateAdmin(emailIds[popupState.index], adminData);
+          setEmails(emails.map((email, index) => index === popupState.index ? updatedAdmin.email : email));
+        } catch (error) {
+          console.error('Failed to update admin', (error as any).message);
+        }
       } else if (popupState.type === 'delete' && popupState.index !== null) {
-        setEmails(emails.filter((_, i) => i !== popupState.index));
+        try {
+          await deleteAdmin(emailIds[popupState.index]);
+          setEmailIds(emailIds.filter((id, index) => index !== popupState.index));
+          setEmails(emails.filter((email, index) => index !== popupState.index));
+        } catch (error) {
+          console.error('Failed to delete admin', (error as any).message);
+        }
       }
   
       setPopupState({ isOpen: false, type: '', index: null, email: '' });
@@ -157,7 +187,7 @@ const Popup = ({ isOpen, onClose, onSubmit, title, children }: { isOpen: boolean
         return;
       }
   
-      const newSetting = {
+      const settingData = {
         description,
         youtubeUrl,
         vendorCount: parseInt(vendorCount),
@@ -166,9 +196,12 @@ const Popup = ({ isOpen, onClose, onSubmit, title, children }: { isOpen: boolean
       };
   
       try {
-        await updateSetting(newSetting);
-        alert('Settings updated successfully');
-        window.location.reload();
+        const newSetting = await updateSetting(settingData);
+        setDescription(newSetting.description);
+        setYoutubeUrl(newSetting.youtubeUrl);
+        setVendorCount(newSetting.vendorCount.toString());
+        setProductCount(newSetting.productCount.toString());
+        setOrderCount(newSetting.orderCount.toString());
       } catch (error) {
         console.error('Failed to update setting', (error as any).message);
       }

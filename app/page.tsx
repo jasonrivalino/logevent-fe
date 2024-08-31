@@ -7,15 +7,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
+import { FaCaretDown } from 'react-icons/fa';
 // self-defined modules
 import { readUserProfile } from '@/app/utils/authApi';
 import { generateWhatsAppUrl } from '@/app/utils/helpers';
-import { readAllFaqs } from './utils/faqApi';
+import { readAllFaqs } from '@/app/utils/faqApi';
 import { readTopProducts } from '@/app/utils/productApi';
-import { readLatestSettings } from './utils/settingApi';
+import { readSetting } from '@/app/utils/settingApi';
 import { createVisit } from '@/app/utils/visitApi';
 import { Faq, Product, Setting } from '@/app/utils/types';
-import { FaCaretDown } from 'react-icons/fa';
 
 export default function Home() {
   const [faqs, setFaqs] = useState<Faq[]>([]);
@@ -27,7 +27,7 @@ export default function Home() {
       try {
         const faqs = await readAllFaqs();
         const products = await readTopProducts();
-        const setting = await readLatestSettings();
+        const setting = await readSetting();
         setFaqs(faqs);
         setProducts(products);
         setSetting(setting);

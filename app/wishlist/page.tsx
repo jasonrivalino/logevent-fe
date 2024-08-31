@@ -11,7 +11,7 @@ import { ContactBox, Navbar } from '@/app/page';
 import { readUserProfile } from '@/app/utils/authApi';
 import { readActiveEventCartByUserId, readActiveProductCartByUserId, createCart } from '@/app/utils/cartApi';
 import { createItem, deleteItemsByCartId } from '@/app/utils/itemApi';
-import { readEventWishlistsByUserId, readProductWishlistsByUserId } from '@/app/utils/wishlistApi';
+import { readEventWishlistsByUserId, readProductWishlistsByUserId, deleteWishlist } from '@/app/utils/wishlistApi';
 import { EventWishlist, ProductWishlist } from '@/app/utils/types';
 
 export default function HomePage() {
@@ -140,12 +140,10 @@ const WishlistPaketEvent = ({ eventWishlists }: { eventWishlists: EventWishlist[
     setShowPopup(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDeleteEventWishlists = () => {
     if (eventToRemove) {
-      // Remove the event from the wishlist
-      const updatedWishlists = eventWishlists.filter((item) => item.id !== eventToRemove.id);
-      // Update the state with the new wishlist
-      // setEventWishlists(updatedWishlists);
+      deleteWishlist(eventToRemove.id);
+      eventWishlists.splice(eventWishlists.indexOf(eventToRemove), 1);
       setShowPopup(false);
       setEventToRemove(null);
     }
@@ -240,7 +238,7 @@ const WishlistPaketEvent = ({ eventWishlists }: { eventWishlists: EventWishlist[
               </button>
               <button
                 className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm md:text-base"
-                onClick={confirmDelete}
+                onClick={confirmDeleteEventWishlists}
               >
                 Hapus
               </button>
@@ -257,7 +255,6 @@ function WishlistLogistikVendor({ productWishlists }: { productWishlists: Produc
   const itemsPerPage = 12;
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedItems, setSelectedItems] = useState<ProductWishlist[]>([]);
-  const [totalPrice, setTotalPrice] = useState(0);
   const [amount, setAmount] = useState<{ [key: number]: number }>({});
   const [showPopup, setShowPopup] = useState(false); // State for confirmation popup
 
@@ -275,20 +272,16 @@ function WishlistLogistikVendor({ productWishlists }: { productWishlists: Produc
   const handleCheckboxChange = (productWishlist: ProductWishlist) => {
     const isSelected = selectedItems.includes(productWishlist);
     let updatedItems = [];
-    let updatedPrice = totalPrice;
 
     const itemAmount = amount[productWishlist.id] || 1;
 
     if (isSelected) {
       updatedItems = selectedItems.filter((item) => item.id !== productWishlist.id);
-      updatedPrice -= productWishlist.productPrice * itemAmount;
     } else {
       updatedItems = [...selectedItems, productWishlist];
-      updatedPrice += productWishlist.productPrice * itemAmount;
     }
 
     setSelectedItems(updatedItems);
-    setTotalPrice(updatedPrice);
   };
 
   const increaseAmount = (id: number) => {
@@ -309,13 +302,13 @@ function WishlistLogistikVendor({ productWishlists }: { productWishlists: Produc
     setShowPopup(true); // Show confirmation popup
   };
 
-  const confirmRemoveItems = () => {
-    const updatedProductWishlists = productWishlists.filter(
-      (item) => !selectedItems.includes(item)
-    );
+  const confirmDeleteProductWishlists = () => {
+    for (const item of selectedItems) {
+      deleteWishlist(item.id);
+      productWishlists.splice(productWishlists.indexOf(item), 1);
+    }
     setSelectedItems([]);
-    setTotalPrice(0);
-    setShowPopup(false); // Hide confirmation popup
+    setShowPopup(false);
   };
 
   const handleSubmit = async (e: { preventDefault: () => void; }) => {
@@ -449,7 +442,7 @@ function WishlistLogistikVendor({ productWishlists }: { productWishlists: Produc
               </button>
               <button
                 className="bg-red-600 text-white px-4 py-2 rounded-md text-sm md:text-base"
-                onClick={confirmRemoveItems}
+                onClick={confirmDeleteProductWishlists}
               >
                 Hapus
               </button>
@@ -463,9 +456,6 @@ function WishlistLogistikVendor({ productWishlists }: { productWishlists: Produc
           <div>
             <p className="text-black font-sofia text-sm md:text-base">
               Jumlah Barang: {selectedItems.length}
-            </p>
-            <p className="text-black font-sofia text-sm md:text-base">
-              Total: Rp{totalPrice.toLocaleString('id-ID')}
             </p>
           </div>
           <div className="flex flex-col md:flex-row gap-1 md:gap-4">

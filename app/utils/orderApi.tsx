@@ -66,8 +66,8 @@ export const createOrder = async (orderData: {
   phone: string;  
   address: string;
   notes: string | null;
-  startDate: Date;
-  endDate: Date;
+  startDateString: string;
+  endDateString: string;
 }) => {
   try {
     const response = await axios.post(`${API_URL}/orders/create`, orderData, {

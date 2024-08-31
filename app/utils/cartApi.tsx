@@ -46,6 +46,17 @@ export const readActiveProductCartByUserId = async (userId: number) => {
   }
 };
 
+export const readCartById = async (cartId: number) => {
+  try {
+    const response = await axios.get(`${API_URL}/carts/read/${cartId}`, {
+      withCredentials: true
+    });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || `Failed to fetch cart ${cartId}`);
+  }
+};
+
 export const createCart = async (userId: number, type: string) => {
   try {
     const response = await axios.post(`${API_URL}/carts/create`, { userId, type }, {

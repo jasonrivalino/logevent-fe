@@ -1,5 +1,10 @@
 // app/utils/types.tsx
 
+export interface Admin {
+  id: number;
+  email: string;
+}
+
 export interface Album {
   id: number;
   eventId: number | null;
@@ -59,6 +64,8 @@ export interface EventItem {
   eventImage: string | null;
   eventBundles: string | null;
   eventRating: number;
+  categoryName: string;
+  categoryFee: number;
   isReviewed: boolean;
 };
 
@@ -129,6 +136,8 @@ export interface ProductItem {
   productRating: number;
   vendorId: number;
   vendorAddress: string;
+  categoryName: string;
+  categoryFee: number;
   duration: number | null;
   quantity: number | null;
   isReviewed: boolean;

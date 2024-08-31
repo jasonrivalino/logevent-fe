@@ -11,9 +11,9 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { Navbar } from '@/app/page';
 import { ContactBoxShort } from '@/app/signin/page';
 import { readUserProfile } from '@/app/utils/authApi';
-import { readActiveProductCartByUserId, updateCart } from '@/app/utils/cartApi';
+import { readActiveProductCartByUserId } from '@/app/utils/cartApi';
 import { areDatesOverlapping, getExcludedDates } from '@/app/utils/helpers';
-import { readOrderAvailabilityByCartId, createOrder } from '@/app/utils/orderApi';
+import { readOrderAvailabilityByCartId } from '@/app/utils/orderApi';
 
 export default function ReservationFill() {
   const router = useRouter();
@@ -85,21 +85,17 @@ export default function ReservationFill() {
       }
 
       const orderData = {
-        cartId,
+        cartId: cartId.toString(), 
         name,
         phone,
         address,
-        notes: notes || null,
-        startDate,
-        endDate
-      };
-      const cartData = {
-        cartStatus: 'Checked Out'
+        notes: notes,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString()
       };
 
-      await createOrder(orderData);
-      await updateCart(cartId, cartData);
-      router.push('/isi-pemesanan/complete');
+      const queryString = new URLSearchParams(orderData).toString();
+      router.push(`/isi-pemesanan/review?${queryString}`);
     } catch (error: any) {
       console.error('Failed to create order:', error.message);
     }
@@ -195,6 +191,7 @@ export default function ReservationFill() {
                     onChange={(e) => setName(e.target.value)}
                     required
                   />
+                  {errors.name && <p className="text-red-500 text-xs md:text-sm mt-1">{errors.name}</p>}
                 </div>
               </div>
               <div className="flex flex-1 flex-row">
@@ -212,6 +209,7 @@ export default function ReservationFill() {
                     onChange={(e) => setPhone(e.target.value)}
                     required
                   />
+                  {errors.phone && <p className="text-red-500 text-xs md:text-sm mt-1">{errors.phone}</p>}
                 </div>
               </div>
             </div>
@@ -227,6 +225,7 @@ export default function ReservationFill() {
                 placeholder="Enter your address"
                 required
               />
+              {errors.address && <p className="text-red-500 text-xs md:text-sm mt-1">{errors.address}</p>}
             </div>
             <div className="flex flex-row gap-4 md:gap-6 mb-4">
               <div className="flex-1">
@@ -239,6 +238,7 @@ export default function ReservationFill() {
                   excludeDates={getExcludedDates(bookedDates)}
                   required
                 />
+                {errors.startDate && <p className="text-red-500 text-xs md:text-sm mt-1">{errors.startDate}</p>}
               </div>
               <div className="flex-1">
                 <label htmlFor="endDate" className="mb-4 text-sm md:text-base text-gray-800 mr-3">Selesai Acara *</label>
@@ -250,6 +250,7 @@ export default function ReservationFill() {
                   excludeDates={getExcludedDates(bookedDates)}
                   required
                 />
+                {errors.endDate && <p className="text-red-500 text-xs md:text-sm mt-1">{errors.endDate}</p>}
               </div>
             </div>
             <div className="flex flex-col mb-1 md:mb-4">

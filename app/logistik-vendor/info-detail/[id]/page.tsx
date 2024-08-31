@@ -9,11 +9,11 @@ import DatePicker from 'react-datepicker';
 import { Navbar, ContactBox } from '@/app/page';
 import { readAlbumsByProductId } from '@/app/utils/albumApi';
 import { readUserProfile } from '@/app/utils/authApi';
-import { readActiveProductCartByUserId, createCart, updateCart } from '@/app/utils/cartApi';
+import { readActiveProductCartByUserId, createCart } from '@/app/utils/cartApi';
 import { areDatesOverlapping, convertDate, generateWhatsAppUrl, getExcludedDates, getRateText, getStars } from '@/app/utils/helpers';
 import { createItem, deleteItemsByCartId } from '@/app/utils/itemApi';
 import { readReviewsByProductId } from '@/app/utils/reviewApi';
-import { readOrderAvailabilityByCartId, createOrder } from '@/app/utils/orderApi';
+import { readOrderAvailabilityByCartId } from '@/app/utils/orderApi';
 import { readProductById } from '@/app/utils/productApi';
 import { readProductWishlistsByUserId, createWishlist, deleteWishlist } from '@/app/utils/wishlistApi';
 import type { Album, Product, Review } from '@/app/utils/types';
@@ -267,22 +267,27 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
         throw new Error('End date is missing');
       }
 
+      const itemData = {
+        cartId: cartId,
+        eventId: null,
+        productId: product.id,
+        duration: product.rate === "Hourly" ? amount[product.id] : null,
+        quantity: product.rate === "Quantity" ? amount[product.id] : null,
+      };
+      
       const orderData = {
-        cartId,
+        cartId: cartId.toString(), 
         name,
         phone,
         address,
-        notes: notes || null,
-        startDate,
-        endDate
+        notes: notes,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString()
       };
-      const cartData = {
-        cartStatus: 'Checked Out'
-      };
-
-      await createOrder(orderData);
-      await updateCart(cartId, cartData);
-      router.push('/isi-pemesanan/complete');
+      
+      await createItem(itemData);
+      const queryString = new URLSearchParams(orderData).toString();
+      router.push(`/isi-pemesanan/review?${queryString}`);
     } catch (error: any) {
       console.error('Failed to create order:', error.message);
     }
@@ -316,20 +321,12 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
     const user = await readUserProfile(token);
     let cart = await readActiveProductCartByUserId(user.id);
     if (!cart) {
-      cart = await createCart(user.id, 'Product');
+    cart = await createCart(user.id, 'Product');
     }
-
-    await deleteItemsByCartId(cart.id);
-    const itemData = {
-      cartId: cart.id,
-      eventId: null,
-      productId: product.id,
-      duration: product.rate === "Hourly" ? amount[product.id] : null,
-      quantity: product.rate === "Quantity" ? amount[product.id] : null,
-    };
-
-    await createItem(itemData);
+    
     const bookedDates = await readOrderAvailabilityByCartId(cart.id);
+    await deleteItemsByCartId(cart.id);
+
     setCartId(cart.id);
     setBookedDates(bookedDates);
     setShowOrderPopup(true); // Show the order popup

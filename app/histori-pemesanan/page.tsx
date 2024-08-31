@@ -17,6 +17,7 @@ import { readOrdersByUserId } from '@/app/utils/orderApi';
 import { EventItem, ProductItem, Order } from '@/app/utils/types';
 
 export default function HomePage() {
+  const router = useRouter();
   const [activeOption, setActiveOption] = useState('Logistik Vendor');
   const [eventOrders, setEventOrders] = useState<Order[]>([]);
   const [productOrders, setProductOrders] = useState<Order[]>([]);
@@ -61,6 +62,7 @@ export default function HomePage() {
           console.error('Failed to fetch data:', error.message);
           localStorage.removeItem('token');
           Cookies.remove('token');
+          router.push('/login');
         }
       }
     };

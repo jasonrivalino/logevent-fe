@@ -5,7 +5,7 @@ import axios from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export const readLatestSettings = async () => {
+export const readSetting = async () => {
   try {
     const response = await axios.get(`${API_URL}/settings/read`, {
       withCredentials: true,

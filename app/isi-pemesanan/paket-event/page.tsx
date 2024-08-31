@@ -11,9 +11,9 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { Navbar } from '@/app/page';
 import { ContactBoxShort } from '@/app/signin/page';
 import { readUserProfile } from '@/app/utils/authApi';
-import { readActiveEventCartByUserId, updateCart } from '@/app/utils/cartApi';
+import { readActiveEventCartByUserId } from '@/app/utils/cartApi';
 import { areDatesOverlapping, getExcludedDates } from '@/app/utils/helpers';
-import { readOrderAvailabilityByCartId, createOrder } from '@/app/utils/orderApi';
+import { readOrderAvailabilityByCartId } from '@/app/utils/orderApi';
 
 export default function ReservationFill() {
   const router = useRouter();
@@ -85,21 +85,17 @@ export default function ReservationFill() {
       }
 
       const orderData = {
-        cartId,
+        cartId: cartId.toString(), 
         name,
         phone,
         address,
-        notes: notes || null,
-        startDate,
-        endDate
-      };
-      const cartData = {
-        cartStatus: 'Checked Out'
+        notes: notes,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString()
       };
 
-      await createOrder(orderData);
-      await updateCart(cartId, cartData);
-      router.push('/isi-pemesanan/complete');
+      const queryString = new URLSearchParams(orderData).toString();
+      router.push(`/isi-pemesanan/review?${queryString}`);
     } catch (error: any) {
       console.error('Failed to create order:', error.message);
     }
