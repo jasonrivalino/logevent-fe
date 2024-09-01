@@ -5,6 +5,7 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 // self-defined modules
 import { Navbar, ContactBox } from '@/app/page';
 import { readAlbumsByProductId } from '@/app/utils/albumApi';
@@ -487,28 +488,36 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
 
       {showOrderPopup && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 text-black font-sofia">
-          <div className="relative bg-white rounded-lg mx-auto max-w-xs md:max-w-4xl mt-16">
-            <button 
-              onClick={() => closeOrderPopup()} 
+          <div className="relative bg-white rounded-lg mx-auto max-w-xs md:max-w-lg mt-16 p-4">
+            <button
+              onClick={() => closeOrderPopup()}
               className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-8 h-8 flex justify-center items-center"
             >
               &times;
             </button>
-            <form className="flex flex-col w-full p-6 shadow-lg rounded-lg bg-white" onSubmit={handleSubmit}>
-              <h2 className="mb-4 md:mb-8 text-2xl md:text-3xl text-center text-gray-800">Isi Data Pemesanan</h2>
+            <form
+              className="flex flex-col w-full p-6 shadow-lg rounded-lg bg-white"
+              onSubmit={handleSubmit}
+            >
+              <h2 className="mb-4 md:mb-8 text-2xl md:text-3xl text-center text-gray-800">
+                Isi Data Pemesanan
+              </h2>
               <div className="flex flex-col md:flex-row gap-4 md:gap-6 mb-3 md:mb-4">
                 <div className="flex flex-1 flex-row -mb-2 md:mb-0">
                   <div className="flex flex-col w-full">
-                    <label htmlFor="name" className="mt-1 text-sm md:text-base text-gray-800 md:mr-2">
+                    <label
+                      htmlFor="name"
+                      className="mt-1 text-sm md:text-base text-gray-800 md:mr-2"
+                    >
                       Nama *
                     </label>
                     <input
                       id="name"
                       name="name"
                       type="text"
-                      className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] text-black text-xs md:text-sm w-full"
+                      className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] mt-1 text-black text-xs md:text-sm w-full"
                       placeholder="Isi nama pemesan"
-                      value={name || ''}
+                      value={name || ""}
                       onChange={(e) => setName(e.target.value)}
                       required
                     />
@@ -516,16 +525,19 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
                 </div>
                 <div className="flex flex-1 flex-row">
                   <div className="flex flex-col w-full">
-                    <label htmlFor="phone" className="mt-1 text-sm md:text-base text-gray-800 mr-9 md:mr-5">
+                    <label
+                      htmlFor="phone"
+                      className="mt-1 text-sm md:text-base text-gray-800 mr-9 md:mr-5"
+                    >
                       No. Telepon *
                     </label>
                     <input
                       id="phone"
                       name="phone"
                       type="tel"
-                      className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] text-black text-xs md:text-sm w-full"
+                      className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] mt-1 text-black text-xs md:text-sm w-full"
                       placeholder="Isi nomor telepon"
-                      value={phone || ''}
+                      value={phone || ""}
                       onChange={(e) => setPhone(e.target.value)}
                       required
                     />
@@ -533,11 +545,16 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
                 </div>
               </div>
               <div className="flex flex-col mb-1 md:mb-4">
-                <label htmlFor="address" className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Alamat *</label>
+                <label
+                  htmlFor="address"
+                  className="mb-1 md:mb-2 text-sm md:text-base text-gray-800"
+                >
+                  Alamat *
+                </label>
                 <textarea
                   id="address"
                   name="address"
-                  className="input-placeholder border border-gray-300 rounded-md p-2 md:p-3 text-black text-xs md:text-sm"
+                  className="input-placeholder border border-gray-300 rounded-md p-2 md:p-3 text-black text-xs md:text-sm mb-2 md:mb-0"
                   rows={2}
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
@@ -546,56 +563,80 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
                 />
               </div>
               <div className="flex flex-col md:flex-row gap-4 md:gap-6 mb-4">
-                <div className='flex flex-row gap-4'>
-                  <div className="flex-1 relative">
-                    <label htmlFor="startDate" className="text-sm md:text-base text-gray-800 mb-1 md:mb-2 mr-3">Mulai Acara *</label>
-                    <DatePicker
-                      selected={startDate}
-                      onChange={(date: Date | null) => setStartDate(date)}
-                      className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] text-black mt-1 text-xs md:text-sm w-28 md:w-36"
-                      placeholderText="Select start date"
-                      excludeDates={getExcludedDates(bookedDates)}
-                      required
-                      calendarClassName="absolute z-50 mt-1 shadow-lg"
-                    />
+                <div className="flex flex-1 flex-col md:flex-row gap-4">
+                  <div className="flex flex-3 flex-row">
+                    <div className="flex flex-col w-full">
+                      <label
+                          htmlFor="startDate"
+                          className="text-sm md:text-base text-gray-800 mr-3"
+                        >
+                          Mulai Acara *
+                        </label>
+                        <DatePicker
+                          selected={startDate}
+                          onChange={(date: Date | null) => setStartDate(date)}
+                          className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] text-black mt-1 text-xs md:text-sm w-full"
+                          placeholderText="Select start date"
+                          excludeDates={getExcludedDates(bookedDates)}
+                          required
+                          calendarClassName="z-50 shadow-lg"
+                        />
+                    </div>
                   </div>
-                  <div className="flex-1 relative">
-                    <label htmlFor="endDate" className="mb-4 text-sm md:text-base text-gray-800 mr-3">Selesai Acara *</label>
-                    <DatePicker
-                      selected={endDate}
-                      onChange={(date: Date | null) => setEndDate(date)}
-                      className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] text-black mt-1 text-xs md:text-sm w-28 md:w-36"
-                      placeholderText="Select end date"
-                      excludeDates={getExcludedDates(bookedDates)}
-                      required
-                      calendarClassName="absolute z-50 mt-1 shadow-lg"
-                    />
+                  <div className="flex flex-3 flex-row">
+                    <div className="flex flex-col w-full">
+                      <label
+                        htmlFor="endDate"
+                        className="text-sm md:text-base text-gray-800"
+                      >
+                        Selesai Acara *
+                      </label>
+                      <DatePicker
+                        selected={endDate}
+                        onChange={(date: Date | null) => setEndDate(date)}
+                        className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] mt-1 text-black text-xs md:text-sm w-full"
+                        placeholderText="Select end date"
+                        excludeDates={getExcludedDates(bookedDates)}
+                        required
+                        calendarClassName="z-50 shadow-lg"
+                      />
+                    </div>
                   </div>
                 </div>
                 {(product.rate === "Hourly" || product.rate === "Quantity") && (
-                  <div className="flex-1">
-                    <label htmlFor="notes" className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Jumlah *</label>
-                      <div className="flex justify-between items-center mt-2 bg-gray-100 w-2/5 text-xs md:text-base">
-                        <button
-                          className="bg-gray-200 text-gray-700 px-1 md:px-2 md:py-1 rounded-md"
-                          onClick={() => decreaseAmount(product.id)}
-                          disabled={amount[product.id] === 1}
-                        >
-                          -
-                        </button>
-                        <span className="mx-2 text-black">{amount[product.id] || 1}</span>
-                        <button
-                          className="bg-gray-200 text-gray-700 px-1 md:px-2 md:py-1 rounded-md"
-                          onClick={() => increaseAmount(product.id)}
-                        >
-                          +
-                        </button>
-                      </div>
+                  <div className="flex-5">
+                    <label
+                      htmlFor="notes"
+                      className="text-sm md:text-base text-gray-800"
+                    >
+                      Jumlah *
+                    </label>
+                    <div className="flex justify-between items-center mt-1 bg-gray-100 w-2/5 text-xs md:text-base">
+                      <button
+                        className="bg-gray-200 text-gray-700 px-1 md:px-2 md:py-1 rounded-md"
+                        onClick={() => decreaseAmount(product.id)}
+                        disabled={amount[product.id] === 1}
+                      >
+                        -
+                      </button>
+                      <span className="mx-2 text-black">{amount[product.id] || 1}</span>
+                      <button
+                        className="bg-gray-200 text-gray-700 px-1 md:px-2 md:py-1 rounded-md"
+                        onClick={() => increaseAmount(product.id)}
+                      >
+                        +
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
               <div className="flex flex-col mb-1 md:mb-4">
-                <label htmlFor="notes" className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Catatan untuk Vendor:</label>
+                <label
+                  htmlFor="notes"
+                  className="mb-1 md:mb-2 text-sm md:text-base text-gray-800"
+                >
+                  Catatan untuk Vendor:
+                </label>
                 <textarea
                   id="notes"
                   name="notes"
@@ -606,7 +647,12 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
                   placeholder="Enter your notes"
                 />
               </div>
-              <button type="submit" className="mt-5 md:mt-2 p-1 md:p-2 rounded bg-pink-800 hover:bg-pink-900 text-white">Submit</button>
+              <button
+                type="submit"
+                className="mt-5 md:mt-2 p-1 md:p-2 rounded bg-pink-800 hover:bg-pink-900 text-white"
+              >
+                Submit
+              </button>
             </form>
           </div>
         </div>
