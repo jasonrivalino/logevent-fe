@@ -365,14 +365,17 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
                 {product.capacity ? 'Kapasitas: ' + product.capacity + ' Orang' : "Paket Event ini tidak memiliki kapasitas"}
               </p>
               <p className="text-base md:text-lg text-gray-800 font-extrabold">Rp{product.price.toLocaleString('id-ID')} {getRateText(product.rate)}</p>
-              <div className="text-sm md:text-base flex flex-col md:flex-row items-center space-x-2 text-gray-600">
+              
+              <div className="text-sm md:text-base text-gray-600">
                 <span>{product.vendorAddress}</span>
-                <span className='hidden md:block'>|</span>
+              </div>
+              
+              <div className="text-sm md:text-base flex flex-col md:flex-row items-center space-x-2 text-gray-600">
                 <div className="flex items-center">
                   {getStars(product.rating)}
-                  <span> ({product.rating && product.rating.toFixed(2) !== "0.00" ? product.rating.toFixed(2) : "N/A"})</span>
+                  <span className="ml-1">({product.rating && product.rating.toFixed(2) !== "0.00" ? product.rating.toFixed(2) : "N/A"})</span>
                 </div>
-                <span className='hidden md:block'>|</span>
+                <span className='mx-2'>|</span>
                 <span>{product.reviewCount} reviews</span>
               </div>
             </div>

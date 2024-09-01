@@ -216,7 +216,7 @@ export function EventList({ events, categories }: { events: Event[], categories:
                 alt={`${event.name} image`}
                 width={400}
                 height={200}
-                className="object-cover w-80 h-28 md:h-auto"
+                className="object-cover w-80 h-28 md:h-52"
               />
               <div className="p-3 md:p-4 md:ml-3 flex-grow font-sofia">
                 <h3 className="text-base md:text-xl text-pink-900 font-bold">{event.name}</h3>

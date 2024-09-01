@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+
 // self-defined modules
 import { Navbar, ContactBox } from '@/app/page';
 import { readUserProfile } from '@/app/utils/authApi';
@@ -301,14 +302,17 @@ const ProductImage = ({ product, albums }: { product: Product; albums: Album[]; 
             <div className="w-full md:w-1/2">
               <h1 className="text-2xl md:text-3xl text-pink-900 font-bold mt-4">{product.name}</h1>
               <p className="text-base md:text-lg text-gray-800 font-extrabold">Diskusikan Biaya EO dengan Admin Sebelum Memesan</p>
-              <div className="text-sm md:text-base flex items-center space-x-2 text-gray-600">
+              
+              <div className="text-sm md:text-base text-gray-600">
                 <span>{product.vendorAddress}</span>
-                <span>|</span>
+              </div>
+
+              <div className="text-sm md:text-base flex flex-col md:flex-row items-center space-x-2 text-gray-600">
                 <div className="flex items-center">
                   {getStars(product.rating)}
-                  <span> ({product.rating && product.rating.toFixed(2) !== "0.00" ? product.rating.toFixed(2) : "N/A"})</span>
+                  <span className="ml-1">({product.rating && product.rating.toFixed(2) !== "0.00" ? product.rating.toFixed(2) : "N/A"})</span>
                 </div>
-                <span>|</span>
+                <span className='mx-2'>|</span>
                 <span>{product.reviewCount} reviews</span>
               </div>
             </div>
@@ -377,9 +381,9 @@ const ProductImage = ({ product, albums }: { product: Product; albums: Album[]; 
                 </button>
               </div>
             </div>
-            <div className="w-full flex justify-center mt-3 md:mt-0">
+            <div className="w-full flex flex-col items-start mt-3 md:mt-0">
               <button
-                className="bg-pink-500 text-white rounded-lg px-3 md:px-4 py-2 text-sm md:text-base"
+                className="bg-pink-500 text-white rounded-lg px-3 md:px-4 py-2 -ml-4 text-sm md:text-base"
                 onClick={() => setShowOrderPopup(true)} // Show popup on click
               >
                 Pesan Langsung
