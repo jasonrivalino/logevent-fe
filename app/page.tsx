@@ -129,18 +129,6 @@ export function Navbar() {
     }
   };
 
-  const handleScrollToSection2 = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
-    e.preventDefault();
-    const element = document.getElementById(sectionId);
-    if (element) {
-      const offsetTop = element.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({
-        top: offsetTop,
-        behavior: 'smooth',
-      });
-    }
-  };
-
   return (
     <nav className="fixed top-0 left-0 w-full bg-pink-900 shadow-md z-50">
       <div className="container mx-auto px-12 py-4 flex justify-between items-center">
@@ -153,6 +141,8 @@ export function Navbar() {
           onClick={() => {
             if (!isAdmin) {
               router.push('/');
+            } else {
+              router.push('/admin/statistics');
             }
           }}
         />
@@ -229,13 +219,22 @@ export function Navbar() {
                   {isDropdownOpen && (
                     <div className="absolute top-full right-0 mt-[1.125rem] w-[13rem] bg-pink-900 shadow-lg max-h-44 overflow-y-auto z-50">
                       {isAdmin ? (
-                        <button
-                          onClick={handleSignOutClick}
-                          className="pl-[1.3rem] py-[0.6rem] text-white w-full justify-start flex items-center font-sofia text-base hover:bg-pink-800"
-                        >
-                          <Image src="/Image/IconButton/logout.png" alt="Sign Out" width={16} height={16} className="mr-[0.7rem] mb-[0.15rem]" />
-                          Sign Out
-                        </button>
+                        <>
+                          <button
+                            onClick={handleProfileClick}
+                            className="pl-[1.2rem] py-[0.6rem] text-white w-full justify-start flex items-center font-sofia text-base hover:bg-pink-800"
+                          >
+                            <Image src="/Image/IconButton/profile.png" alt="User Profile" width={18} height={18} className="mr-[0.8rem]" />
+                            Profile
+                          </button>
+                          <button
+                            onClick={handleSignOutClick}
+                            className="pl-[1.3rem] py-[0.6rem] text-white w-full justify-start flex items-center font-sofia text-base hover:bg-pink-800"
+                          >
+                              <Image src="/Image/IconButton/logout.png" alt="Sign Out" width={16} height={16} className="mr-[0.7rem] mb-[0.15rem]" />
+                              Sign Out
+                          </button>
+                        </>
                       ) : (
                         <>
                           <button
@@ -362,13 +361,22 @@ export function Navbar() {
                 {isDropdownOpen && (
                   <div className="w-96 bg-pink-900 flex flex-col items-center">
                     {isAdmin ? (
-                      <button
-                        onClick={handleSignOutClick}
-                        className="w-full px-4 py-2 text-white text-center flex items-center justify-center font-sofia text-base hover:bg-pink-700"
-                      >
-                        <Image src="/Image/IconButton/logout.png" alt="Sign Out" width={16} height={16} className="mr-2" />
-                        Sign Out
-                      </button>
+                      <>
+                        <button
+                          onClick={handleProfileClick}
+                          className="w-full px-4 py-2 text-white text-center flex items-center justify-center font-sofia text-base hover:bg-pink-700"
+                        >
+                          <Image src="/Image/IconButton/profile.png" alt="User Profile" width={18} height={18} className="mr-2" />
+                          Profile
+                        </button>
+                        <button
+                          onClick={handleSignOutClick}
+                          className="w-full px-4 py-2 text-white text-center flex items-center justify-center font-sofia text-base hover:bg-pink-700"
+                        >
+                          <Image src="/Image/IconButton/logout.png" alt="Sign Out" width={16} height={16} className="mr-2" />
+                          Sign Out
+                        </button>
+                      </>
                     ) : (
                       <>
                         <button
