@@ -172,7 +172,7 @@ export default function ReviewPesanan() {
                   <th className="p-1 md:p-4 text-center text-xs md:text-base">JUMLAH</th>
                   <th className="p-1 md:p-4 text-center text-xs md:text-base">
                     TOTAL HARGA
-                    <div className="text-[10px] md:text-xs text-gray-500 italic">
+                    <div className="text-[10px] md:text-xs text-gray-600 italic">
                       *sudah termasuk biaya layanan
                     </div>
                   </th>
