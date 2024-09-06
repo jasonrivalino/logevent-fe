@@ -142,13 +142,22 @@ export default function ReviewPesanan() {
             <div className="w-full md:w-1/2 text-black">
               <h3 className="text-pink-500 font-bold mb-2 text-lg md:text-xl">Identitas</h3>
               <div className="text-xs md:text-sm text-gray-600">
-                <p>Nama Lengkap : {name}</p>
-                <p>Nomor Whatsapp : {phone}</p>
-                <p>Email : {email}</p>
-                <p>Alamat : {address}</p>
-                <p>Tanggal mulai acara : {formattedStartDate}</p>
-                <p>Tanggal berakhir acara : {formattedEndDate}</p>
-                <p>Catatan untuk vendor : {notes || 'Tidak ada catatan'}</p>
+                {[
+                  { label: 'Nama Lengkap', value: name },
+                  { label: 'Nomor Whatsapp', value: phone },
+                  { label: 'Email', value: email },
+                  { label: 'Alamat', value: address },
+                  { label: 'Tanggal mulai acara', value: formattedStartDate },
+                  { label: 'Tanggal berakhir acara', value: formattedEndDate },
+                  { label: 'Catatan untuk vendor', value: notes || 'Tidak ada catatan' },
+                ].map((item, index) => (
+                  <div key={index} className="flex">
+                    <span className="w-28 md:w-40">{item.label}:</span>
+                    <span className={`${
+                      item.label === 'Email' ? 'break-all' : ''
+                    }`}>{item.value}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -218,17 +227,25 @@ export default function ReviewPesanan() {
               </table>
           </div>
 
-          <div className="flex justify-between items-stretch mb-8">
+                  
+          <div className="flex flex-col md:flex-row justify-between items-stretch mb-8">
             {/* Payment Info */}
-            <div className="text-xs md:text-base flex-1">
+            <div className="text-xs md:text-base flex-1 mb-4 md:mb-0">
               <p><strong>Payment Info:</strong></p>
-              <p>Account No: 102470393708</p>
-              <p>A.C Name: Satria Octavianus Nababan</p>
-              <p>Bank Details: Bank Jago</p>
+              {[
+                { label: 'Account No', value: '102470393708' },
+                { label: 'A.C Name', value: 'Satria Octavianus Nababan' },
+                { label: 'Bank Details', value: 'Bank Jago' },
+              ].map((item, index) => (
+                <div key={index} className="flex">
+                  <span className="w-20 md:w-28">{item.label} :</span>
+                  <span>{item.value}</span>
+                </div>
+              ))}
             </div>
 
             {/* Total Payment */}
-            <div className="text-right text-xs md:text-base flex-1">
+            <div className="md:text-right text-xs md:text-base flex-1">
               <p className="text-sm md:text-lg font-bold">Total Pembayaran: Rp {totalPayment.toLocaleString('id-ID')}</p>
             </div>
           </div>

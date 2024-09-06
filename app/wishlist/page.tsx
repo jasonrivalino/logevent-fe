@@ -226,7 +226,7 @@ const WishlistPaketEvent = ({ eventWishlists }: { eventWishlists: EventWishlist[
       {/* Confirmation Popup */}
       {showPopup && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-10/12 md:w-full">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-10/12 md:w-1/2">
             <p className="text-black text-base md:text-lg font-bold mb-4">Hapus Paket Event</p>
             <p className="text-black text-sm md:text-base mb-4">Apakah Anda yakin ingin menghapus paket ini dari wishlist?</p>
             <div className="flex justify-end">
@@ -430,7 +430,7 @@ function WishlistLogistikVendor({ productWishlists }: { productWishlists: Produc
       {/* Confirmation Popup */}
       {showPopup && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 text-black">
-          <div className="bg-white p-6 rounded-md shadow-md w-10/12 md:w-full">
+          <div className="bg-white p-6 rounded-md shadow-md w-10/12 md:w-1/2">
             <h2 className="text-base md:text-lg font-bold mb-4">Konfirmasi Hapus</h2>
             <p className="text-sm md:text-base mb-4">Apakah Anda yakin ingin menghapus produk yang dipilih?</p>
             <div className="flex justify-end gap-4">

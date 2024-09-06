@@ -172,7 +172,7 @@ function ManageEventPackage({ events }: { events: Event[] }) {
                             alt={`${event.name} Image`}
                             width={400}
                             height={200}
-                            className="object-cover w-full md:w-80 h-28 md:h-auto"
+                            className="object-cover w-full md:w-80 h-28 md:h-52"
                         />
                         <div className="p-3 md:p-4 md:ml-3 flex-grow font-sofia relative">
                             {/* Icon buttons */}
