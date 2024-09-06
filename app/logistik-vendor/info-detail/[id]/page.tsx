@@ -616,6 +616,7 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
                     </label>
                     <div className="flex justify-between items-center mt-1 bg-gray-100 w-2/5 text-xs md:text-base">
                       <button
+                        type="button"
                         className="bg-gray-200 text-gray-700 px-1 md:px-2 md:py-1 rounded-md"
                         onClick={() => decreaseAmount(product.id)}
                         disabled={amount[product.id] === 1}
@@ -624,6 +625,7 @@ function ProductImage({ product, albums, isWishlist, setIsWishlist }: { product:
                       </button>
                       <span className="mx-2 text-black">{amount[product.id] || 1}</span>
                       <button
+                        type="button"
                         className="bg-gray-200 text-gray-700 px-1 md:px-2 md:py-1 rounded-md"
                         onClick={() => increaseAmount(product.id)}
                       >

@@ -14,6 +14,7 @@ const ProfilePage = () => {
   const [name, setName] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
   const [phone, setPhone] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -25,6 +26,9 @@ const ProfilePage = () => {
           setName(user.name);
           setEmail(user.email);
           setPhone(user.phone);
+          if (user.isAdmin) {
+            setIsAdmin(true);
+          }
         } catch (error: any) {
           console.error('Failed to fetch user data:', error.message);
           localStorage.removeItem('token');
@@ -92,27 +96,29 @@ const ProfilePage = () => {
         <h2 className="text-2xl md:text-3xl text-gray-700 font-bold mb-6 text-center">Profil Pengguna</h2>
         <div className="bg-white w-full max-w-72 md:max-w-3xl p-4 md:p-8 rounded-md shadow-md flex">
           <form onSubmit={handleSubmit} className="w-full flex flex-col md:flex-row">
-            <div className="flex flex-col items-center w-full md:w-1/4 mr-8">
-              <h3 className="text-lg md:text-xl font-semibold text-gray-700 mb-2">Foto Profil</h3>
-              <div className=" w-16 md:w-32 h-20 md:h-40 bg-gray-300 overflow-hidden mb-4">
-                {imagePreview ? (
-                  <img src={imagePreview} alt="Selected" className="object-cover w-full h-full" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-500">
-                    Foto Profil
-                  </div>
-                )}
+            {!isAdmin && (
+              <div className="flex flex-col items-center w-full md:w-1/4 mr-8">
+                <h3 className="text-lg md:text-xl font-semibold text-gray-700 mb-2">Foto Profil</h3>
+                <div className="w-16 md:w-32 h-20 md:h-40 bg-gray-300 overflow-hidden mb-4">
+                  {imagePreview ? (
+                    <img src={imagePreview} alt="Selected" className="object-cover w-full h-full" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-500">
+                      Foto Profil
+                    </div>
+                  )}
+                </div>
+                <label className="md:mt-4 inline-block cursor-pointer bg-pink-900 text-white mb-4 md:mb-0 py-1 md:py-2 px-4 rounded-md text-xs md:text-base">
+                  Pilih Foto
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageUpload}
+                  />
+                </label>
               </div>
-              <label className="md:mt-4 inline-block cursor-pointer bg-pink-900 text-white mb-4 md:mb-0 py-1 md:py-2 px-4 rounded-md text-xs md:text-base">
-                Pilih Foto
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleImageUpload}
-                />
-              </label>
-            </div>
+            )}
             <div className="space-y-2 w-full md:w-2/3">
               <div>
                 <label className="text-sm md:text-base block text-gray-700">Nama</label>
