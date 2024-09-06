@@ -105,7 +105,6 @@ const ProductImage = ({ product, albums }: { product: Product; albums: Album[]; 
   const productUrl = typeof window !== 'undefined' ? window.location.href : '';
   const [copied, setCopied] = useState(false);
   const [bookedDates, setBookedDates] = useState<string[]>([]);
-  const [amount, setAmount] = useState<{ [key: number]: number }>({});
   const [cartId, setCartId] = useState<number | null>(null);
   const router = useRouter();
 
@@ -162,20 +161,6 @@ const ProductImage = ({ product, albums }: { product: Product; albums: Album[]; 
 
   const closeOrderPopup = () => {
     setShowOrderPopup(false);
-  };
-
-  const increaseAmount = (id: number) => {
-    setAmount((prev) => ({
-      ...prev,
-      [id]: (prev[id] || 1) + 1,
-    }));
-  };
-
-  const decreaseAmount = (id: number) => {
-    setAmount((prev) => ({
-      ...prev,
-      [id]: Math.max(1, (prev[id] || 1) - 1),
-    }));
   };
 
   const handleOrderClick = async () => {

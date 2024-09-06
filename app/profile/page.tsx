@@ -119,7 +119,7 @@ const ProfilePage = () => {
                 </label>
               </div>
             )}
-            <div className="space-y-2 w-full md:w-2/3">
+            <div className={`space-y-2 w-full ${!isAdmin ? 'md:w-2/3' : 'md:w-full'}`}>
               <div>
                 <label className="text-sm md:text-base block text-gray-700">Nama</label>
                 <input

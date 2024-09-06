@@ -152,10 +152,11 @@ export default function ReviewPesanan() {
                   { label: 'Catatan untuk vendor', value: notes || 'Tidak ada catatan' },
                 ].map((item, index) => (
                   <div key={index} className="flex">
-                    <span className="w-28 md:w-40">{item.label}:</span>
-                    <span className={`${
-                      item.label === 'Email' ? 'break-all' : ''
-                    }`}>{item.value}</span>
+                    <span className="w-28 md:w-40">{item.label}</span>
+                    <span className="mr-1">:</span>
+                    <span className={`${item.label === 'Email' ? 'break-all' : ''}`}>
+                      {item.value}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -165,13 +166,17 @@ export default function ReviewPesanan() {
           <div className="-mx-6 md:-mx-10 text-black mb-10">
               <table className="w-full text-left border-collapse md:mb-8">
               <thead>
-                  <tr className="border-t-2 border-b-2 border-black">
-                  {/* Make table aligned center */}
+                <tr className="border-t-2 border-b-2 border-black">
                   <th className="p-1 md:p-4 text-center text-xs md:text-base">INFO PRODUK</th>
                   <th className="p-1 md:p-4 text-center text-xs md:text-base">HARGA SATUAN</th>
                   <th className="p-1 md:p-4 text-center text-xs md:text-base">JUMLAH</th>
-                  <th className="p-1 md:p-4 text-center text-xs md:text-base">TOTAL HARGA</th>
-                  </tr>
+                  <th className="p-1 md:p-4 text-center text-xs md:text-base">
+                    TOTAL HARGA
+                    <div className="text-[10px] md:text-xs text-gray-500 italic">
+                      *sudah termasuk biaya layanan
+                    </div>
+                  </th>
+                </tr>
               </thead>
               <tbody>
                   {eventItems.map((item, index) => {
@@ -231,14 +236,15 @@ export default function ReviewPesanan() {
           <div className="flex flex-col md:flex-row justify-between items-stretch mb-8">
             {/* Payment Info */}
             <div className="text-xs md:text-base flex-1 mb-4 md:mb-0">
-              <p><strong>Payment Info:</strong></p>
+              <p><strong>Payment Info</strong></p>
               {[
                 { label: 'Account No', value: '102470393708' },
                 { label: 'A.C Name', value: 'Satria Octavianus Nababan' },
                 { label: 'Bank Details', value: 'Bank Jago' },
               ].map((item, index) => (
                 <div key={index} className="flex">
-                  <span className="w-20 md:w-28">{item.label} :</span>
+                  <span className="w-20 md:w-28">{item.label}</span>
+                  <span className="mr-1">:</span>
                   <span>{item.value}</span>
                 </div>
               ))}
