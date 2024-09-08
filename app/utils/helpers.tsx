@@ -43,9 +43,8 @@ export const generateInstagramUrl = (username: string) => {
 };
 
 export const generateWhatsAppUrl = (number: string, message: string) => {
-  const encodedNumber = encodeURIComponent(number);
   const encodedMessage = encodeURIComponent(message);
-  return `https://wa.me/${encodedNumber}?text=${encodedMessage}`;
+  return `https://web.whatsapp.com/send?phone=${number}&text=${encodedMessage}`;
 };
 
 export const getCartTypeDescription = (cartType: string) => {
