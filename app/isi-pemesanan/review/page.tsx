@@ -139,7 +139,7 @@ export default function ReviewPesanan() {
           <h2 className="text-center text-pink-600 text-3xl font-semibold mb-6 md:mb-10">Review Pesanan</h2>
 
           <div className="flex justify-between mb-8">
-            <div className="w-full md:w-1/2 text-black">
+            <div className="w-full text-black">
               <h3 className="text-pink-500 font-bold mb-2 text-lg md:text-xl">Identitas</h3>
               <div className="text-xs md:text-sm text-gray-600">
                 {[
