@@ -30,8 +30,8 @@ export default function ReviewPesanan() {
 
   const startDate = new Date(startDateString);
   const endDate = new Date(endDateString);
-  const formattedStartDate = startDateString ? new Date(startDateString).toLocaleDateString('id-ID') : 'N/A';
-  const formattedEndDate = endDateString ? new Date(endDateString).toLocaleDateString('id-ID') : 'N/A';
+  const formattedStartDate = startDateString ? new Date(startDateString).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : 'N/A';
+  const formattedEndDate = endDateString ? new Date(endDateString).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : 'N/A';
 
   useEffect(() => {
     const fetchData = async () => {
@@ -118,28 +118,28 @@ export default function ReviewPesanan() {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       {/* Back button with SVG arrow */}
-      <button 
-          onClick={handleBackClick} 
-          className="absolute top-4 left-4 p-2 rounded-full bg-white text-black shadow-lg flex items-center justify-center w-10 h-10 md:w-12 md:h-12 hover:bg-gray-100"
+      <button
+        onClick={handleBackClick}
+        className="absolute top-4 left-4 p-2 rounded-full bg-white text-black shadow-lg flex items-center justify-center w-10 h-10 md:w-12 md:h-12 hover:bg-gray-100"
       >
-          <svg
+        <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
           className="w-6 h-6 text-gray-700"
-          >
+        >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
+        </svg>
       </button>
-
+  
       {/* Review Pesanan */}
       <div className="flex flex-col flex-1 items-center justify-center p-6 md:p-16 font-sofia text-black">
         <div className="bg-white rounded-xl shadow-lg px-6 py-10 md:p-10 max-w-4xl w-full"> {/* Increased padding */}
           <h2 className="text-center text-pink-600 text-3xl font-semibold mb-6 md:mb-10">Review Pesanan</h2>
-
+  
           <div className="flex justify-between mb-8">
-            <div className="w-full text-black">
+            <div className="w-full text-black max-w-6xl"> {/* Limiting width of the Identitas section */}
               <h3 className="text-pink-500 font-bold mb-2 text-lg md:text-xl">Identitas</h3>
               <div className="text-xs md:text-sm text-gray-600">
                 {[
@@ -151,10 +151,10 @@ export default function ReviewPesanan() {
                   { label: 'Tanggal berakhir acara', value: formattedEndDate },
                   { label: 'Catatan untuk vendor', value: notes || 'Tidak ada catatan' },
                 ].map((item, index) => (
-                  <div key={index} className="flex">
-                    <span className="w-28 md:w-40">{item.label}</span>
-                    <span className="mr-1">:</span>
-                    <span className={`${item.label === 'Email' ? 'break-all' : ''}`}>
+                  <div key={index} className="grid grid-cols-12 items-start mb-1">
+                    <span className="col-span-4 md:col-span-3 font-semibold">{item.label}</span>
+                    <span className="col-span-1 ml-2 md:-ml-12">:</span>
+                    <span className="col-span-7 md:col-span-8 md:-ml-24 break-words ">
                       {item.value}
                     </span>
                   </div>

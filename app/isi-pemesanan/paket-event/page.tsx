@@ -177,28 +177,28 @@ export default function ReservationFill() {
             <h2 className="mb-4 md:mb-8 text-2xl md:text-3xl text-center text-gray-800">Isi Data Pemesanan</h2>
               <div className="flex flex-col md:flex-row gap-4 md:gap-6 mb-3 md:mb-4">
                 <div className="flex flex-1 flex-row -mb-2 md:mb-0">
-                  <div className="flex flex-col">
-                    <label htmlFor="name" className="mt-1 text-sm md:text-base text-gray-800 mr-[4.42rem] md:mr-2">Nama:</label>
+                  <div className="flex flex-col w-full">
+                    <label htmlFor="name" className="mt-1 text-sm md:text-base text-gray-800 mr-[4.42rem] md:mr-2">Nama *</label>
                     <input
                       id="name"
                       name="name"
                       type="text"
-                      className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] text-black text-xs md:text-sm md:mr-[3rem] w-[8.1rem] md:w-auto"
+                      className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] text-black text-xs md:text-sm w-full"
                       placeholder="Isi nama pemesan"
                       value={name || ''}
                       onChange={(e) => setName(e.target.value)}
                     />
                     {errors.name && <p className="text-red-500 text-xs md:text-sm mt-1">{errors.name}</p>}
-                  </div>    
+                  </div>
                 </div>
                 <div className="flex flex-1 flex-row">
-                  <div className="flex flex-col">
-                    <label htmlFor="phone" className="mt-1 text-sm md:text-base text-gray-800 mr-9 md:mr-5">No. Telepon:</label>
+                  <div className="flex flex-col w-full">
+                    <label htmlFor="phone" className="mt-1 text-sm md:text-base text-gray-800 mr-9 md:mr-5">No. Telepon *</label>
                     <input
                       id="phone"
                       name="phone"
                       type="tel"
-                      className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] text-black text-xs md:text-sm w-[8.1rem] md:w-[8.8rem]"
+                      className="input-placeholder border border-gray-300 rounded-md p-1 md:p-[0.4rem] text-black text-xs md:text-sm w-full"
                       placeholder="Isi nomor telepon"
                       value={phone || ''}
                       onChange={(e) => setPhone(e.target.value)}
@@ -208,7 +208,7 @@ export default function ReservationFill() {
                 </div>
               </div>
             <div className="flex flex-col mb-1 md:mb-4">
-              <label htmlFor="address" className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Masukkan Alamat:</label>
+              <label htmlFor="address" className="mb-1 md:mb-2 text-sm md:text-base text-gray-800">Alamat *</label>
               <textarea
                 id="address"
                 name="address"
@@ -221,8 +221,8 @@ export default function ReservationFill() {
               {errors.address && <p className="text-red-500 text-xs md:text-sm mt-1">{errors.address}</p>}
             </div>
             <div className="flex flex-row gap-4 md:gap-6 mb-4">
-              <div className="flex-1 md:mr-9">
-                <label htmlFor="startDate" className="text-sm md:text-base text-gray-800 mb-1 md:mb-2 mr-3">Mulai Acara:</label>
+              <div className="flex-1">
+                <label htmlFor="startDate" className="text-sm md:text-base text-gray-800 mb-1 md:mb-2 mr-3">Mulai Acara *</label>
                 <DatePicker
                   selected={startDate}
                   onChange={(date: Date | null) => setStartDate(date)}
@@ -233,7 +233,7 @@ export default function ReservationFill() {
                 {errors.startDate && <p className="text-red-500 text-xs md:text-sm mt-1">{errors.startDate}</p>}
               </div>
               <div className="flex-1">
-                <label htmlFor="endDate" className="mb-4 text-sm md:text-base text-gray-800 mr-3">Selesai Acara:</label>
+                <label htmlFor="endDate" className="mb-4 text-sm md:text-base text-gray-800 mr-3">Selesai Acara *</label>
                 <DatePicker
                   selected={endDate}
                   onChange={(date: Date | null) => setEndDate(date)}
