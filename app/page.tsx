@@ -845,7 +845,7 @@ function ListProduct({ products }: { products: Product[] }) {
                   alt={`${product.name} Image`}
                   width={400}
                   height={200}
-                  className="object-cover h-20 md:h-40 w-full"
+                  className="object-cover h-36 md:h-40 w-full"
                 />
                 <div className="p-4 ml-2 font-sofia flex flex-col justify-between flex-grow">
                   <div>
